@@ -51,10 +51,7 @@ namespace MongoDB.Framework.Configuration.Fluent
         /// <param name="member">The member.</param>
         public void Id(MemberInfo member)
         {
-            this.Instance.IdMemberMap = new MemberMap(member, "_id")
-            {
-                Converter = new OidValueConverter()
-            };
+            this.Instance.IdMap = new IdMap(member);
         }
 
         /// <summary>
@@ -77,7 +74,7 @@ namespace MongoDB.Framework.Configuration.Fluent
         /// Maps the specified member.
         /// </summary>
         /// <param name="member">The member.</param>
-        public void Id(Expression<Func<TRootEntity, object>> member)
+        public void Id(Expression<Func<TRootEntity, string>> member)
         {
             if (member == null)
                 throw new ArgumentNullException("member");

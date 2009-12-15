@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\AutoMappingMongoConfiguration.cs" />
+    <Compile Include="Configuration\IdMap.cs" />
     <Compile Include="Configuration\DefaultValueConverter.cs" />
     <Compile Include="Configuration\DiscriminatedEntityMap.cs" />
     <Compile Include="Configuration\EntityMap.cs" />
@@ -71,11 +72,11 @@
     <Compile Include="Configuration\MemberMap.cs" />
     <Compile Include="Configuration\MongoConfiguration.cs" />
     <Compile Include="Configuration\MongoConfigurationException.cs" />
-    <Compile Include="Configuration\OidValueConverter.cs" />
     <Compile Include="Configuration\RootEntityMap.cs" />
     <Compile Include="Configuration\UnknownDiscriminatorValueException.cs" />
     <Compile Include="Configuration\UnmappedMemberException.cs" />
     <Compile Include="Configuration\UnmappedTypeException.cs" />
+    <Compile Include="EntityMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\LateBoundReflection.cs" />
     <Compile Include="Visitors\ExpressionVisitor.cs" />

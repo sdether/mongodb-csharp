@@ -20,10 +20,10 @@ namespace MongoDB.Framework.Configuration
         public string CollectionName { get; set; }
 
         /// <summary>
-        /// Gets or sets the id member map.
+        /// Gets or sets the id map.
         /// </summary>
-        /// <value>The id member map.</value>
-        public MemberMap IdMemberMap { get; set; }
+        /// <value>The id map.</value>
+        public IdMap IdMap{ get; set; }
 
         #endregion
 

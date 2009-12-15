@@ -60,7 +60,7 @@ namespace MongoDB.Framework.Configuration.Fluent
         /// Uses the extended properties.
         /// </summary>
         /// <param name="member">The member.</param>
-        public void UseExtendedProperties(Expression<Func<TEntity, object>> member)
+        public void UseExtendedProperties(Expression<Func<TEntity, IDictionary<string, object>>> member)
         {
             if (member == null)
                 throw new ArgumentNullException("member");
