@@ -53,6 +53,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\Fluent\FluentRootEntityMapTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Domain.cs" />
     <Compile Include="EntityMapperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
