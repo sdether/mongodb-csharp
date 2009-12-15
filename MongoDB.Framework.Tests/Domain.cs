@@ -11,6 +11,7 @@ namespace MongoDB.Framework
     {
         public PartyMap()
         {
+            WithCollectionName("party");
             Id(x => x.Id);
             Map("Name");
 

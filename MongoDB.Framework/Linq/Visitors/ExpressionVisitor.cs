@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace MongoDB.Framework.Visitors
+namespace MongoDB.Framework.Linq.Visitors
 {
     /// <summary>
     /// Provides virtual methods that can be used by subclasses to parse an expression tree.

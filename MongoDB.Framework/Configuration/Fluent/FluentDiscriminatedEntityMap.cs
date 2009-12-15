@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
-using MongoDB.Framework.Visitors;
+using MongoDB.Framework.Linq.Visitors;
 
 namespace MongoDB.Framework.Configuration.Fluent
 {

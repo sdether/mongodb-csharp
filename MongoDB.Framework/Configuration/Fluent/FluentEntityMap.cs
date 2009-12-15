@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
-using MongoDB.Framework.Visitors;
+using MongoDB.Framework.Linq.Visitors;
 
 namespace MongoDB.Framework.Configuration.Fluent
 {

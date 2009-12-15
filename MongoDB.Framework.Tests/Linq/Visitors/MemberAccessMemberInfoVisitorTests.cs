@@ -7,7 +7,7 @@ using System.Text;
 
 using NUnit.Framework;
 
-namespace MongoDB.Framework.Visitors
+namespace MongoDB.Framework.Linq.Visitors
 {
     [TestFixture]
     public class MemberAccessMemberInfoVisitorTests

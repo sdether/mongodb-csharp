@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
-namespace MongoDB.Framework.Visitors
+namespace MongoDB.Framework.Linq.Visitors
 {
     public class MemberAccessMemberInfoVisitor : ExpressionVisitor
     {
