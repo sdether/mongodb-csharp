@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\AutoMappingMongoConfiguration.cs" />
+    <Compile Include="Configuration\Fluent\FluentIndex.cs" />
     <Compile Include="Configuration\IdMap.cs" />
     <Compile Include="Configuration\DefaultValueConverter.cs" />
     <Compile Include="Configuration\DiscriminatedEntityMap.cs" />
@@ -67,7 +68,8 @@
     <Compile Include="Configuration\Fluent\FluentDiscriminatedEntityMap.cs" />
     <Compile Include="Configuration\Fluent\FluentEntityMap.cs" />
     <Compile Include="Configuration\Fluent\FluentRootEntityMap.cs" />
-    <Compile Include="Configuration\Fluent\FluentValueMap.cs" />
+    <Compile Include="Configuration\Fluent\FluentMemberMap.cs" />
+    <Compile Include="Configuration\Index.cs" />
     <Compile Include="Configuration\IValueConverter.cs" />
     <Compile Include="Configuration\MemberMap.cs" />
     <Compile Include="Configuration\MongoConfiguration.cs" />

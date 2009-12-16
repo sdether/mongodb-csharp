@@ -68,6 +68,8 @@ namespace MongoDB.Framework
         public PartyMap()
         {
             WithCollectionName("party");
+            Index("phone_area").Ascending("PhoneNumber.area");
+
             Id(x => x.Id);
             Map("Name");
 

@@ -20,6 +20,15 @@ namespace MongoDB.Framework.Configuration
         /// </summary>
         /// <value>The name of the database.</value>
         public string DatabaseName { get; set; }
+
+        /// <summary>
+        /// Gets the root entity maps.
+        /// </summary>
+        /// <value>The root entity maps.</value>
+        public IEnumerable<RootEntityMap> RootEntityMaps
+        {
+            get { return this.rootEntityMaps.Values.Distinct(); }
+        }
  
         #endregion
 

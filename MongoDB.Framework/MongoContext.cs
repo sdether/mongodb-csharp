@@ -55,6 +55,8 @@ namespace MongoDB.Framework
 
             this.entityMapper = new EntityMapper(configuration);
             this.entitiesToInsert = new List<object>();
+
+            this.Initialize();
         }
 
         /// <summary>
@@ -77,6 +79,14 @@ namespace MongoDB.Framework
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Initializes the mongo database with indexes, etc...
+        /// </summary>
+        public virtual void Initialize()
+        {
+            this.EnsureIndexes();
         }
 
         /// <summary>
@@ -184,6 +194,27 @@ namespace MongoDB.Framework
                 return;
 
             this.mongo.Disconnect();
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void EnsureIndexes()
+        {
+            foreach (var rootEntityMap in this.Configuration.RootEntityMaps)
+            {
+                IMongoCollection collection = this.Database.GetCollection(rootEntityMap.CollectionName);
+
+                foreach (var index in rootEntityMap.Indexes)
+                {
+                    Document fieldsAndDirections = new Document();
+                    foreach (var pair in index.DocumentKeys)
+                        fieldsAndDirections.Add(pair.Key, pair.Value == IndexDirection.Ascending ? 1 : -1);
+
+                    collection.MetaData.CreateIndex(fieldsAndDirections, index.IsUnique);
+                }
+            }
         }
 
         #endregion

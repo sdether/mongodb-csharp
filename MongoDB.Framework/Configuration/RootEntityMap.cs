@@ -11,6 +11,12 @@ namespace MongoDB.Framework.Configuration
 {
     public class RootEntityMap : EntityMap
     {
+        #region Private Fields
+
+        private List<Index> indexes;
+        
+        #endregion
+
         #region Public Properties
 
         /// <summary>
@@ -25,6 +31,15 @@ namespace MongoDB.Framework.Configuration
         /// <value>The id map.</value>
         public IdMap IdMap{ get; set; }
 
+        /// <summary>
+        /// Gets the indexes.
+        /// </summary>
+        /// <value>The indexes.</value>
+        public IEnumerable<Index> Indexes
+        {
+            get { return this.indexes; }
+        }
+
         #endregion
 
         #region Constructors
@@ -37,6 +52,7 @@ namespace MongoDB.Framework.Configuration
             : base(type)
         {
             this.CollectionName = type.Name;
+            this.indexes = new List<Index>();
         }
 
         /// <summary>
@@ -48,6 +64,22 @@ namespace MongoDB.Framework.Configuration
             : this(type)
         {
             this.CollectionName = collectionName;
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Adds the index.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        public void AddIndex(Index index)
+        {
+            if (index == null)
+                throw new ArgumentNullException("index");
+
+            this.indexes.Add(index);
         }
 
         #endregion

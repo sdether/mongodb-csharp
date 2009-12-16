@@ -89,6 +89,18 @@ namespace MongoDB.Framework.Configuration.Fluent
         }
 
         /// <summary>
+        /// Indexes the specified name.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns></returns>
+        public FluentIndex Index(string name)
+        {
+            var index = new Index(name);
+            this.Instance.AddIndex(index);
+            return new FluentIndex(index);
+        }
+
+        /// <summary>
         /// Withes the name of the collection.
         /// </summary>
         /// <param name="name">The name.</param>
