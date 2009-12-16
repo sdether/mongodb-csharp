@@ -17,20 +17,21 @@ namespace MongoDB.Framework.Linq.Visitors
     {
         #region Public Static Methods
 
-        public static void PopulateSpec(MongoQuerySpec spec, MongoConfiguration configuration, Expression expression)
+        public static Document CreateQuery(MongoConfiguration configuration, Expression expression)
         {
-            var visitor = new MongoWhereClauseExpressionTreeVisitor(spec, configuration);
+            var visitor = new MongoWhereClauseExpressionTreeVisitor(configuration);
             visitor.VisitExpression(expression);
+            return visitor.query;
         }
 
         #endregion
 
         #region Private Fields
 
-        private MongoConfiguration configuration;
-        private MongoQuerySpec spec;
-        private List<MemberInfo> memberPathParts;
         private Dictionary<string, Document> conditions;
+        private MongoConfiguration configuration;
+        private List<MemberInfo> memberPathParts;
+        private Document query;
 
         #endregion
 
@@ -39,14 +40,13 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoWhereClauseExpressionTreeVisitor"/> class.
         /// </summary>
-        /// <param name="spec">The spec.</param>
         /// <param name="configuration">The configuration.</param>
-        private MongoWhereClauseExpressionTreeVisitor(MongoQuerySpec spec, MongoConfiguration configuration)
+        private MongoWhereClauseExpressionTreeVisitor(MongoConfiguration configuration)
         {
             this.conditions = new Dictionary<string, Document>();
             this.configuration = configuration;
-            this.spec = spec;
             this.memberPathParts = new List<MemberInfo>();
+            this.query = new Document();
         }
 
         #endregion
@@ -106,12 +106,12 @@ namespace MongoDB.Framework.Linq.Visitors
 
             
             if (op == "$eq")
-                this.spec.Query[key] = value;
+                this.query[key] = value;
             else
             {
-                Document doc = (Document)this.spec.Query[key];
+                Document doc = (Document)this.query[key];
                 if (doc == null)
-                    this.spec.Query[key] = doc = new Document();
+                    this.query[key] = doc = new Document();
 
                 doc.Append(op, value);
             }

@@ -90,6 +90,30 @@ namespace MongoDB.Framework.Linq
             Assert.AreEqual(1, parties.Count());
         }
 
+        [Test]
+        public void Test_skip_operator()
+        {
+            var parties = new MongoQueryable<Party>(database, entityMapper).Skip(1).ToList();
+
+            Assert.AreEqual(2, parties.Count());
+        }
+
+        [Test]
+        public void Test_take_operator()
+        {
+            var parties = new MongoQueryable<Party>(database, entityMapper).Take(1).ToList();
+
+            Assert.AreEqual(1, parties.Count());
+        }
+
+        [Test]
+        public void Test_skip_and_take_operator()
+        {
+            var parties = new MongoQueryable<Party>(database, entityMapper).Skip(1).Take(2).ToList();
+
+            Assert.AreEqual(2, parties.Count());
+        }
+
         [TestFixtureTearDown]
         public void FixtureTearDown()
         {

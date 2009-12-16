@@ -33,7 +33,7 @@ namespace MongoDB.Framework.Linq
 
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
-            var spec = MongoQueryModelVisitor.TranslateToMongoQuerySpec(queryModel, this.entityMapper);
+            var spec = MongoQueryModelVisitor.CreateMongoQuerySpecification(queryModel, this.entityMapper.Configuration);
             var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(typeof(T));
             var collection = this.database.GetCollection(rootEntityMap.CollectionName);
             if (rootEntityMap.Type != typeof(T))
@@ -42,7 +42,7 @@ namespace MongoDB.Framework.Linq
                 spec.Query[rootEntityMap.DiscriminateDocumentKey] = discriminatedEntityMap.DiscriminatingValue;
             }
 
-            var cursor = collection.Find(spec.Query, spec.Limit, spec.Skip, spec.Fields);
+            var cursor = collection.Find(spec.Query, spec.Limit, spec.Skip, spec.Projection);
 
             return MapFromDocuments<T>(cursor.Documents);
         }

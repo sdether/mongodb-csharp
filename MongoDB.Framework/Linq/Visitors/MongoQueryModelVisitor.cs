@@ -6,6 +6,9 @@ using System.Text;
 using MongoDB.Driver;
 using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses;
+using MongoDB.Framework.Configuration;
+using Remotion.Data.Linq.Clauses.ResultOperators;
+using System.Linq.Expressions;
 
 namespace MongoDB.Framework.Linq.Visitors
 {
@@ -14,19 +17,19 @@ namespace MongoDB.Framework.Linq.Visitors
         #region Public Static Methods
 
         /// <summary>
-        /// Translates the QueryModel to a MongoQuerySpec.
+        /// Creates the mongo query specification.
         /// </summary>
         /// <param name="queryModel">The query model.</param>
         /// <param name="entityMapper">The entity mapper.</param>
         /// <returns></returns>
-        public static MongoQuerySpec TranslateToMongoQuerySpec(QueryModel queryModel, EntityMapper entityMapper)
+        public static MongoQuerySpecification CreateMongoQuerySpecification(QueryModel queryModel, MongoConfiguration configuration)
         {
             if (queryModel == null)
                 throw new ArgumentNullException("queryModel");
-            if (entityMapper == null)
-                throw new ArgumentNullException("entityMapper");
+            if (configuration == null)
+                throw new ArgumentNullException("configuration");
 
-            var visitor = new MongoQueryModelVisitor(entityMapper);
+            var visitor = new MongoQueryModelVisitor(configuration);
             visitor.VisitQueryModel(queryModel);
             return visitor.querySpec;
         }
@@ -35,8 +38,8 @@ namespace MongoDB.Framework.Linq.Visitors
 
         #region Private Fields
 
-        private EntityMapper entityMapper;
-        private MongoQuerySpec querySpec;
+        private MongoConfiguration configuration;
+        private MongoQuerySpecification querySpec;
 
         #endregion
 
@@ -46,10 +49,10 @@ namespace MongoDB.Framework.Linq.Visitors
         /// Initializes a new instance of the <see cref="MongoQueryModelVisitor"/> class.
         /// </summary>
         /// <param name="entityMapper">The entity mapper.</param>
-        private MongoQueryModelVisitor(EntityMapper entityMapper)
+        private MongoQueryModelVisitor(MongoConfiguration configuration)
         {
-            this.entityMapper = entityMapper;
-            this.querySpec = new MongoQuerySpec();
+            this.configuration = configuration;
+            this.querySpec = new MongoQuerySpecification();
         }
 
         #endregion
@@ -64,17 +67,36 @@ namespace MongoDB.Framework.Linq.Visitors
         {
             queryModel.SelectClause.Accept(this, queryModel);
             this.VisitBodyClauses(queryModel.BodyClauses, queryModel);
+            this.VisitResultOperators(queryModel.ResultOperators, queryModel);
         }
 
         /// <summary>
-        /// Visits the select clause.
+        /// Visits the result operator.
         /// </summary>
-        /// <param name="selectClause">The select clause.</param>
+        /// <param name="resultOperator">The result operator.</param>
         /// <param name="queryModel">The query model.</param>
-        public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
+        /// <param name="index">The index.</param>
+        public override void VisitResultOperator(ResultOperatorBase resultOperator, QueryModel queryModel, int index)
         {
-            //MongoSelectClauseExpressionTreeVisitor.PopulateFields(this.querySpec, this.entityMapper, selectClause.Selector);
-            base.VisitSelectClause(selectClause, queryModel);
+            if (resultOperator is SkipResultOperator)
+            {
+                if (index > 0 && this.querySpec.Limit > 0)
+                    throw new NotSupportedException("Skip operators must come before Take operators.");
+
+                var constantExpression = ((SkipResultOperator)resultOperator).Count as ConstantExpression;
+                if(constantExpression == null)
+                    throw new NotSupportedException("Only constant skip counts are supported.");
+                this.querySpec.Skip = (int)constantExpression.Value;
+            }
+            else if (resultOperator is TakeResultOperator)
+            {
+                var constantExpression = ((TakeResultOperator)resultOperator).Count as ConstantExpression;
+                if (constantExpression == null)
+                    throw new NotSupportedException("Only constant take counts are supported.");
+                this.querySpec.Limit = (int)constantExpression.Value;
+            }
+
+            base.VisitResultOperator(resultOperator, queryModel, index);
         }
 
         /// <summary>
@@ -85,7 +107,8 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            MongoWhereClauseExpressionTreeVisitor.PopulateSpec(this.querySpec, this.entityMapper.Configuration, whereClause.Predicate);
+            var query = MongoWhereClauseExpressionTreeVisitor.CreateQuery(this.configuration, whereClause.Predicate);
+            this.querySpec.Query = query;
 
             base.VisitWhereClause(whereClause, queryModel, index);
         }

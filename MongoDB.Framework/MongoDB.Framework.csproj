@@ -79,13 +79,12 @@
     <Compile Include="EntityMapper.cs" />
     <Compile Include="Linq\MongoQueryable.cs" />
     <Compile Include="Linq\MongoQueryExecutor.cs" />
-    <Compile Include="Linq\MongoQuerySpec.cs" />
+    <Compile Include="Linq\MongoQuerySpecification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\LateBoundReflection.cs" />
     <Compile Include="Linq\Visitors\ExpressionVisitor.cs" />
     <Compile Include="Linq\Visitors\MemberAccessMemberInfoVisitor.cs" />
     <Compile Include="Linq\Visitors\MongoQueryModelVisitor.cs" />
-    <Compile Include="Linq\Visitors\MongoSelectClauseExpressionTreeVisitor.cs" />
     <Compile Include="Linq\Visitors\MongoWhereClauseExpressionTreeVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
