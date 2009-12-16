@@ -4,9 +4,65 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Framework.Configuration.Fluent;
+using MongoDB.Framework.Configuration;
+using MongoDB.Driver;
 
 namespace MongoDB.Framework
 {
+    public static class Domain
+    {
+        public static MongoContext Context { get; private set; }
+
+        static Domain()
+        {
+            var configuration = new MongoConfiguration()
+            {
+                DatabaseName = "tests"
+            };
+            configuration.AddRootEntityMap(new PartyMap().Instance);
+            Context = new MongoContext(configuration);
+        }
+
+        public static void SetupEnvironment()
+        {
+            var person1 = new Person()
+            {
+                Name = "Bob McBob",
+                BirthDate = new DateTime(1900, 1, 1),
+                PhoneNumber = new PhoneNumber() { AreaCode = "123", Prefix = "456", Number = "7890" },
+                ExtendedProperties = new Dictionary<string, object>
+                {
+                    { "not-mapped", true }
+                }
+            };
+
+            var person2 = new Person()
+            {
+                Name = "Jane McJane",
+                BirthDate = new DateTime(2000, 2, 2),
+                PhoneNumber = new PhoneNumber() { AreaCode = "111", Prefix = "222", Number = "3333" }
+            };
+
+            var organization = new Organization()
+            {
+                Name = "The Muffler Show",
+                EmployeeCount = 23,
+                PhoneNumber = new PhoneNumber() { AreaCode = "111", Prefix = "654", Number = "3210" }
+            };
+
+            Context.Insert(person1);
+            Context.Insert(person2);
+            Context.Insert(organization);
+            Context.SubmitChanges();
+        }
+
+        public static void TearDownEnvironment()
+        {
+            Context.Database.SendCommand(new Document().Append("drop", "party"));
+            Context.Dispose();
+        }
+    }
+
     public class PartyMap : FluentRootEntityMap<Party>
     {
         public PartyMap()
