@@ -1,61 +1,10 @@
-MongoDB-CSharp
-==============
-This is a community supported release of a driver to connect to MongoDB using .Net.  It is written entirely in C# and has been tested and developed under both Windows and Mono 2.0 (Ubuntu 32-bit 9.04).  Currently many features have been implemented with a few remaining.  The api is very likely to change and be in flux for a while but is quickly settling down.  At this point it is becoming a solid base to add many more advanced features.
+This is a forked repository. Have a look at
+samus’s mongodb-csharp wiki
+for more basic information.
 
-Current Features
-================
-- Connect to a server.
-- Query
-- Insert
-- Update
-- Delete
-- Most BSON types supported
-- DBRef support
-- Isolation and conversion between BSON types and native .net types.
-- Database, Collection and Cursor objects.
-- Index handling routines (List, Create, Drop)
-- Count
-- Roughly 80% unit test coverage.  This can and will be improved on.
-- Paired connections
-- Authentication (Does not reauthorize on auto reconnect yet).
+This fork is to provider a fuller framework for integrating into C# or VB.NET. The goal is to provide the feature sets of full blown OR/Ms (NHibernate, EntityFramework) such as POCO objects, change tracking, and Linq support.
 
-Missing Features
-================
-- Auto reconnect options
-- Connection pooling (maybe not implemented)
-- A few BSON Types (easy to add)
-- Database commands (can send queries to $cmd if necessary)
-- Exceptions (In progress)
-- hint, explain, $where
-- database profiling: set/get profiling level, get profiling info
-- GridFS support
-- Many unit tests
+We will do our best to keep up-to-date with the driver implemenation here so as to reap the benefits of their work. Eventually, we would like to merge back so as not to have 2 projects.
 
-Installation
-============
-Currently using the driver in the GAC is not supported.  Simply copy the driver assembly somewhere and reference it in your project.  It should be deployed in your application's bin directory.  It is not necessary to use the test assembly.
-
-Patches
-=======
-Patches are welcome and will likely be accepted.  By submitting a patch you assign the copyright to me, Sam Corder.  This is necessary to simplify the number of copyright holders should it become necessary that the copyright need to be reassigned or the code relicensed.  The code will always be available under an OSI approved license.
-
-Usage
-=====
-One of the best sources for how to use the driver is the unit tests.  Basic usage can be found in the TestCollection set of test cases.
-
-At the simplest query the database like this:
- using MongoDB.Driver;
- Mongo db = new Mongo();
- db.Connect(); //Connect to localhost on the default port.
- Document query = new Document();
- query["field1"] = 10;
- Document result = db["tests"]["reads"].FindOne(query);
- db.Disconnect();
-
-Contributors
-============
-- Sam Corder (samus)
-- Seth Edwards (Sedward)
-- Sergey Bartunov (sbos)
-
+Much of this work is made possible by the contributions of Gnomony(http://www.gnomony.com).
 
