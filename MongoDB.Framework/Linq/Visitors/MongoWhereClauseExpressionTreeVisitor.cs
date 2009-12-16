@@ -17,11 +17,10 @@ namespace MongoDB.Framework.Linq.Visitors
     {
         #region Public Static Methods
 
-        public static Document CreateQuery(MongoConfiguration configuration, Expression expression)
+        public static void ModifyQuery(Document query, MongoConfiguration configuration, Expression expression)
         {
-            var visitor = new MongoWhereClauseExpressionTreeVisitor(configuration);
+            var visitor = new MongoWhereClauseExpressionTreeVisitor(configuration, query);
             visitor.VisitExpression(expression);
-            return visitor.query;
         }
 
         #endregion
@@ -41,12 +40,12 @@ namespace MongoDB.Framework.Linq.Visitors
         /// Initializes a new instance of the <see cref="MongoWhereClauseExpressionTreeVisitor"/> class.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        private MongoWhereClauseExpressionTreeVisitor(MongoConfiguration configuration)
+        private MongoWhereClauseExpressionTreeVisitor(MongoConfiguration configuration, Document query)
         {
             this.conditions = new Dictionary<string, Document>();
             this.configuration = configuration;
             this.memberPathParts = new List<MemberInfo>();
-            this.query = new Document();
+            this.query = query;
         }
 
         #endregion

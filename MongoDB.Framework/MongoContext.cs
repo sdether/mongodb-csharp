@@ -14,7 +14,6 @@ namespace MongoDB.Framework
         #region Private Fields
 
         private Mongo mongo;
-        private Database database;
         private EntityMapper entityMapper;
 
         private List<object> entitiesToInsert;
@@ -48,13 +47,13 @@ namespace MongoDB.Framework
             if (configuration == null)
                 throw new ArgumentNullException("configuration");
 
-            this.Configuration = configuration;
-            this.entityMapper = new EntityMapper(configuration);
-
             this.mongo = new Mongo();
             this.mongo.Connect();
-            this.database = this.mongo.getDB(configuration.DatabaseName);
 
+            this.Configuration = configuration;
+            this.Database = this.mongo.getDB(configuration.DatabaseName);
+
+            this.entityMapper = new EntityMapper(configuration);
             this.entitiesToInsert = new List<object>();
         }
 
@@ -123,7 +122,7 @@ namespace MongoDB.Framework
         /// <returns></returns>
         public IQueryable<TEntity> Query<TEntity>()
         {
-            return new MongoQueryable<TEntity>(this.database, this.entityMapper);
+            return new MongoQueryable<TEntity>(this.Database, this.entityMapper);
         }
 
         /// <summary>
@@ -133,7 +132,7 @@ namespace MongoDB.Framework
         /// <returns></returns>
         public Document SendCommand(string command)
         {
-            return this.database.SendCommand(command);
+            return this.Database.SendCommand(command);
         }
 
         /// <summary>
@@ -143,7 +142,7 @@ namespace MongoDB.Framework
         /// <returns></returns>
         public Document SendCommand(Document command)
         {
-            return this.database.SendCommand(command);
+            return this.Database.SendCommand(command);
         }
 
         /// <summary>
@@ -164,7 +163,7 @@ namespace MongoDB.Framework
 
             foreach (var documentCollection in documentCollections)
             {
-                this.database.GetCollection(documentCollection.Key)
+                this.Database.GetCollection(documentCollection.Key)
                     .Insert(documentCollection.Value);
             }
 

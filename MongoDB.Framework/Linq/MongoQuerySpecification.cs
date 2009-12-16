@@ -8,23 +8,48 @@ namespace MongoDB.Framework.Linq
 {
     public class MongoQuerySpecification
     {
-        public bool IsFirstCall { get; set; }
+        private Document projection;
+        private Document query;
+        private Document orderBy;
+
+        public bool IsCount { get; set; }
 
         public int Limit { get; set; }
 
-        public Document Projection { get; set; }
+        public Document Projection
+        {
+            get
+            {
+                if (this.projection == null)
+                    this.projection = new Document();
+                return this.projection;
+            }
+        }
 
-        public Document Query { get; set; }
+        public Document Query
+        {
+            get
+            {
+                if (this.query == null)
+                    this.query = new Document();
+                return this.query;
+            }
+        }
 
-        public Document OrderBy { get; set; }
+        public Document OrderBy
+        {
+            get
+            {
+                if (this.orderBy == null)
+                    this.orderBy = new Document();
+                return this.orderBy;
+            }
+        }
 
         public int Skip { get; set; }
 
         public MongoQuerySpecification()
         {
-            this.Limit = 0;
-            this.Skip = 0;
-            this.IsFirstCall = true;
         }
     }
 }

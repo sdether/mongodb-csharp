@@ -84,7 +84,7 @@ namespace MongoDB.Framework.Linq.Visitors
                     throw new NotSupportedException("Skip operators must come before Take operators.");
 
                 var constantExpression = ((SkipResultOperator)resultOperator).Count as ConstantExpression;
-                if(constantExpression == null)
+                if (constantExpression == null)
                     throw new NotSupportedException("Only constant skip counts are supported.");
                 this.querySpec.Skip = (int)constantExpression.Value;
             }
@@ -95,8 +95,12 @@ namespace MongoDB.Framework.Linq.Visitors
                     throw new NotSupportedException("Only constant take counts are supported.");
                 this.querySpec.Limit = (int)constantExpression.Value;
             }
-
-            base.VisitResultOperator(resultOperator, queryModel, index);
+            else if (resultOperator is CountResultOperator)
+            {
+                this.querySpec.IsCount = true;
+            }
+            else
+                throw new NotSupportedException(string.Format("Operator {0} is not supported.", resultOperator.GetType()));
         }
 
         /// <summary>
@@ -107,10 +111,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            var query = MongoWhereClauseExpressionTreeVisitor.CreateQuery(this.configuration, whereClause.Predicate);
-            this.querySpec.Query = query;
-
-            base.VisitWhereClause(whereClause, queryModel, index);
+            MongoWhereClauseExpressionTreeVisitor.ModifyQuery(this.querySpec.Query, this.configuration, whereClause.Predicate);
         }
 
         #endregion

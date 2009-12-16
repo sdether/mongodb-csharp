@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 
 using Remotion.Data.Linq;
-using MongoDB.Driver;
 
+using MongoDB.Driver;
+using MongoDB.Framework.Configuration;
 using MongoDB.Framework.Linq.Visitors;
-using System.Diagnostics;
 
 namespace MongoDB.Framework.Linq
 {
@@ -34,14 +34,11 @@ namespace MongoDB.Framework.Linq
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
             var spec = MongoQueryModelVisitor.CreateMongoQuerySpecification(queryModel, this.entityMapper.Configuration);
+            
             var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(typeof(T));
-            var collection = this.database.GetCollection(rootEntityMap.CollectionName);
-            if (rootEntityMap.Type != typeof(T))
-            {
-                var discriminatedEntityMap = rootEntityMap.GetDiscriminatedEntityMapByType(typeof(T));
-                spec.Query[rootEntityMap.DiscriminateDocumentKey] = discriminatedEntityMap.DiscriminatingValue;
-            }
+            this.AddDiscriminatingKeyIfNecessary(typeof(T), rootEntityMap, spec);
 
+            var collection = this.database.GetCollection(rootEntityMap.CollectionName);
             var cursor = collection.Find(spec.Query, spec.Limit, spec.Skip, spec.Projection);
 
             return MapFromDocuments<T>(cursor.Documents);
@@ -49,7 +46,19 @@ namespace MongoDB.Framework.Linq
 
         public T ExecuteScalar<T>(QueryModel queryModel)
         {
-            throw new NotImplementedException();
+            Type entityType = queryModel.MainFromClause.ItemType;
+            var spec = MongoQueryModelVisitor.CreateMongoQuerySpecification(queryModel, this.entityMapper.Configuration);
+            var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(entityType);
+            this.AddDiscriminatingKeyIfNecessary(entityType, rootEntityMap, spec);
+
+            var collection = this.database.GetCollection(rootEntityMap.CollectionName);
+
+            if (spec.IsCount)
+            {
+                return (T)Convert.ChangeType(collection.Count(spec.Query), typeof(T));
+            }
+
+            throw new NotSupportedException();
         }
 
         public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
@@ -62,6 +71,15 @@ namespace MongoDB.Framework.Linq
             foreach (var document in documents)
             {
                 yield return (T)this.entityMapper.MapDocumentToEntity(document, typeof(T));
+            }
+        }
+
+        private void AddDiscriminatingKeyIfNecessary(Type entityType, RootEntityMap rootEntityMap, MongoQuerySpecification spec)
+        {
+            if (rootEntityMap.Type != entityType)
+            {
+                var discriminatedEntityMap = rootEntityMap.GetDiscriminatedEntityMapByType(entityType);
+                spec.Query[rootEntityMap.DiscriminateDocumentKey] = discriminatedEntityMap.DiscriminatingValue;
             }
         }
     }

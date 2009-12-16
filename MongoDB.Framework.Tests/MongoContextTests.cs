@@ -16,7 +16,7 @@ namespace MongoDB.Framework
         }
 
         [Test]
-        public void Test_root_query()
+        public void Test_root_entity_query()
         {
             var parties = (from p in Domain.Context.Query<Party>()
                            where p.PhoneNumber.AreaCode == "111"
@@ -26,7 +26,7 @@ namespace MongoDB.Framework
         }
 
         [Test]
-        public void Test_discriminated_query()
+        public void Test_discriminated_entity_query()
         {
             var parties = (from p in Domain.Context.Query<Organization>()
                            where p.PhoneNumber.AreaCode == "111"
@@ -36,7 +36,7 @@ namespace MongoDB.Framework
         }
 
         [Test]
-        public void Test_combinated_query()
+        public void Test_combined_query()
         {
             var parties = (from p in Domain.Context.Query<Organization>()
                            where p.EmployeeCount > 12 && p.EmployeeCount < 24
@@ -67,6 +67,22 @@ namespace MongoDB.Framework
             var parties = Domain.Context.Query<Party>().Skip(1).Take(2).ToList();
 
             Assert.AreEqual(2, parties.Count());
+        }
+
+        [Test]
+        public void Test_count_with_root_entity()
+        {
+            var partyCount = Domain.Context.Query<Party>().Count();
+
+            Assert.AreEqual(3, partyCount);
+        }
+
+        [Test]
+        public void Test_count_with_discriminated_entity()
+        {
+            var personCount = Domain.Context.Query<Person>().Count();
+
+            Assert.AreEqual(2, personCount);
         }
 
         [TestFixtureTearDown]
