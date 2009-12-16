@@ -34,14 +34,24 @@ namespace MongoDB.Framework.Linq
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
             var spec = MongoQueryModelVisitor.CreateMongoQuerySpecification(queryModel, this.entityMapper.Configuration);
-            
+
             var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(typeof(T));
             this.AddDiscriminatingKeyIfNecessary(typeof(T), rootEntityMap, spec);
 
             var collection = this.database.GetCollection(rootEntityMap.CollectionName);
-            var cursor = collection.Find(spec.Query, spec.Limit, spec.Skip, spec.Projection);
-
-            return MapFromDocuments<T>(cursor.Documents);
+            if (spec.IsSingle)
+            {
+                var document = collection.FindOne(spec.Query);
+                if (document == null)
+                    return Enumerable.Empty<T>();
+                else
+                    return new[] { (T)this.entityMapper.MapDocumentToEntity(document, typeof(T)) };
+            }
+            else
+            {
+                var cursor = collection.Find(spec.Query, spec.Limit, spec.Skip, spec.Projection);
+                return MapFromDocuments<T>(cursor.Documents);
+            }
         }
 
         public T ExecuteScalar<T>(QueryModel queryModel)
@@ -63,7 +73,11 @@ namespace MongoDB.Framework.Linq
 
         public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
         {
-            throw new NotImplementedException();
+            var items = this.ExecuteCollection<T>(queryModel);
+            if (items.Count() == 0 && returnDefaultWhenEmpty)
+                return default(T);
+
+            return items.First();
         }
 
         private IEnumerable<T> MapFromDocuments<T>(IEnumerable<Document> documents)

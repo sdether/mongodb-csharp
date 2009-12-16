@@ -99,6 +99,10 @@ namespace MongoDB.Framework.Linq.Visitors
             {
                 this.querySpec.IsCount = true;
             }
+            else if (resultOperator is FirstResultOperator || resultOperator is SingleResultOperator)
+            {
+                this.querySpec.Limit = 1;
+            }
             else
                 throw new NotSupportedException(string.Format("Operator {0} is not supported.", resultOperator.GetType()));
         }

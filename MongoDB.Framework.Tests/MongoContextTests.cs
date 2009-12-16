@@ -85,6 +85,22 @@ namespace MongoDB.Framework
             Assert.AreEqual(2, personCount);
         }
 
+        [Test]
+        public void Test_first_with_root_entity()
+        {
+            var party = Domain.Context.Query<Party>().First();
+
+            Assert.IsNotNull(party);
+        }
+
+        [Test]
+        public void Test_first_with_discriminated_entity()
+        {
+            var person = Domain.Context.Query<Person>().First();
+
+            Assert.IsNotNull(person);
+        }
+
         [TestFixtureTearDown]
         public void FixtureTearDown()
         {

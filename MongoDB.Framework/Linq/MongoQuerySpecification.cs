@@ -14,6 +14,17 @@ namespace MongoDB.Framework.Linq
 
         public bool IsCount { get; set; }
 
+        public bool IsSingle
+        {
+            get
+            {
+                return this.Limit == 1
+                    && this.Skip == 0
+                    && (this.projection == null || this.orderBy.Count == 0)
+                    && (this.orderBy == null || this.orderBy.Count == 0);
+            }
+        }
+
         public int Limit { get; set; }
 
         public Document Projection
