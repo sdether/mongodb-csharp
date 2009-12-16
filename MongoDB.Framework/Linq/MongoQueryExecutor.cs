@@ -34,8 +34,13 @@ namespace MongoDB.Framework.Linq
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
             var spec = MongoQueryModelVisitor.TranslateToMongoQuerySpec(queryModel, this.entityMapper);
-
-            var collection = this.GetCollectionFromType(typeof(T));
+            var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(typeof(T));
+            var collection = this.database.GetCollection(rootEntityMap.CollectionName);
+            if (rootEntityMap.Type != typeof(T))
+            {
+                var discriminatedEntityMap = rootEntityMap.GetDiscriminatedEntityMapByType(typeof(T));
+                spec.Query[rootEntityMap.DiscriminateDocumentKey] = discriminatedEntityMap.DiscriminatingValue;
+            }
 
             var cursor = collection.Find(spec.Query, spec.Limit, spec.Skip, spec.Fields);
 
@@ -52,17 +57,10 @@ namespace MongoDB.Framework.Linq
             throw new NotImplementedException();
         }
 
-        private IMongoCollection GetCollectionFromType(Type type)
-        {
-            var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(type);
-            return this.database.GetCollection(rootEntityMap.CollectionName);
-        }
-
         private IEnumerable<T> MapFromDocuments<T>(IEnumerable<Document> documents)
         {
             foreach (var document in documents)
             {
-                Console.WriteLine(document.ToString());
                 yield return (T)this.entityMapper.MapDocumentToEntity(document, typeof(T));
             }
         }

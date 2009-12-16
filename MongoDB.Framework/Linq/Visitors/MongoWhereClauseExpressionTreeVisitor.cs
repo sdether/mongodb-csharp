@@ -30,6 +30,7 @@ namespace MongoDB.Framework.Linq.Visitors
         private MongoConfiguration configuration;
         private MongoQuerySpec spec;
         private List<MemberInfo> memberPathParts;
+        private Dictionary<string, Document> conditions;
 
         #endregion
 
@@ -42,6 +43,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="configuration">The configuration.</param>
         private MongoWhereClauseExpressionTreeVisitor(MongoQuerySpec spec, MongoConfiguration configuration)
         {
+            this.conditions = new Dictionary<string, Document>();
             this.configuration = configuration;
             this.spec = spec;
             this.memberPathParts = new List<MemberInfo>();
@@ -53,22 +55,17 @@ namespace MongoDB.Framework.Linq.Visitors
 
         protected override Expression VisitBinaryExpression(BinaryExpression expression)
         {
-            if (expression.Left.NodeType != ExpressionType.MemberAccess)
-                throw new NotSupportedException("MemberAccess expression must appear on the left side of a binary statement.");
-            this.VisitExpression(expression.Left);
-            string key = this.CreateDocumentKeyFromMemberPathParts();
-
-            if (expression.Right.NodeType != ExpressionType.Constant)
-                throw new NotSupportedException("Constant expression must appear on the right side of a binary statement.");
-
-            object value = ((ConstantExpression)expression.Right).Value;
-
             string op = null;
             switch (expression.NodeType)
             {
-                case ExpressionType.Equal:
-                    this.spec.Query.Add(key, value);
+                case ExpressionType.And:
+                case ExpressionType.AndAlso:
+                    this.VisitExpression(expression.Left);
+                    this.VisitExpression(expression.Right);
                     return expression;
+                case ExpressionType.Equal:
+                    op = "$eq";
+                    break;
                 case ExpressionType.GreaterThan:
                     op = "$gt";
                     break;
@@ -85,10 +82,40 @@ namespace MongoDB.Framework.Linq.Visitors
                     op = "$ne";
                     break;
                 default:
-                    throw new NotSupportedException();
+                    throw new NotSupportedException(string.Format("The binary operator {0} is not supported.", expression.NodeType));
             }
 
-            this.spec.Query.Append(key, new Document().Append(op, value));
+            string key;
+            object value;
+            if (expression.Left.NodeType == ExpressionType.MemberAccess &&
+                expression.Right.NodeType == ExpressionType.Constant)
+            {
+                this.VisitExpression(expression.Left);
+                key = this.CreateDocumentKeyFromMemberPathParts();
+                value = ((ConstantExpression)expression.Right).Value;
+            }
+            else if (expression.Left.NodeType == ExpressionType.Constant &&
+                expression.Right.NodeType == ExpressionType.MemberAccess)
+            {
+                this.VisitExpression(expression.Right);
+                key = this.CreateDocumentKeyFromMemberPathParts();
+                value = ((ConstantExpression)expression.Left).Value;
+            }
+            else
+                throw new NotSupportedException();
+
+            
+            if (op == "$eq")
+                this.spec.Query[key] = value;
+            else
+            {
+                Document doc = (Document)this.spec.Query[key];
+                if (doc == null)
+                    this.spec.Query[key] = doc = new Document();
+
+                doc.Append(op, value);
+            }
+            
             return expression;
         }
 
@@ -136,6 +163,8 @@ namespace MongoDB.Framework.Linq.Visitors
                 memberMap = entityMap.GetMemberMap(this.memberPathParts[i].DeclaringType, this.memberPathParts[i].Name);
                 key += "." + memberMap.DocumentKey;
             }
+
+            this.memberPathParts.Clear();
 
             return key;
         }

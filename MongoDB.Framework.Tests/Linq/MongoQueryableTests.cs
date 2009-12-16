@@ -61,13 +61,33 @@ namespace MongoDB.Framework.Linq
         }
 
         [Test]
-        public void Test()
+        public void Test_root_query()
         {
             var parties = (from p in new MongoQueryable<Party>(database, entityMapper)
                           where p.PhoneNumber.AreaCode == "111"
                           select p).ToList();
 
-            Assert.AreEqual(2, parties.Count());                        
+            Assert.AreEqual(2, parties.Count());
+        }
+
+        [Test]
+        public void Test_discriminated_query()
+        {
+            var parties = (from p in new MongoQueryable<Organization>(database, entityMapper)
+                           where p.PhoneNumber.AreaCode == "111"
+                           select p).ToList();
+
+            Assert.AreEqual(1, parties.Count());
+        }
+        
+        [Test]
+        public void Test_combinated_query()
+        {
+            var parties = (from p in new MongoQueryable<Organization>(database, entityMapper)
+                           where p.EmployeeCount > 12 && p.EmployeeCount < 24
+                           select p).ToList();
+
+            Assert.AreEqual(1, parties.Count());
         }
 
         [TestFixtureTearDown]
