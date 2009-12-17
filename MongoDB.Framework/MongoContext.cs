@@ -6,6 +6,7 @@ using System.Text;
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
 using MongoDB.Framework.Linq;
+using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework
 {
@@ -13,20 +14,13 @@ namespace MongoDB.Framework
     {
         #region Private Fields
 
+        private ChangeTracker changeTracker;
         private Mongo mongo;
         private EntityMapper entityMapper;
-
-        private List<object> entitiesToInsert;
 
         #endregion
 
         #region Public Properties
-
-        /// <summary>
-        /// Gets or sets the configuration.
-        /// </summary>
-        /// <value>The configuration.</value>
-        public MongoConfiguration Configuration { get; private set; }
 
         /// <summary>
         /// Gets or sets the database.
@@ -42,21 +36,22 @@ namespace MongoDB.Framework
         /// Initializes a new instance of the <see cref="MongoContext&lt;TEntity&gt;"/> class.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        public MongoContext(MongoConfiguration configuration)
+        public MongoContext(EntityMapper entityMapper, ChangeTracker changeTracker, Mongo mongo, Database database)
         {
-            if (configuration == null)
-                throw new ArgumentNullException("configuration");
+            if (entityMapper == null)
+                throw new ArgumentNullException("entityMapper");
+            if (changeTracker == null)
+                throw new ArgumentNullException("changeTracker");
+            if (mongo == null)
+                throw new ArgumentNullException("mongo");
+            if (database == null)
+                throw new ArgumentNullException("database");
 
-            this.mongo = new Mongo();
-            this.mongo.Connect();
+            this.mongo = mongo;
+            this.Database = database;
 
-            this.Configuration = configuration;
-            this.Database = this.mongo.getDB(configuration.DatabaseName);
-
-            this.entityMapper = new EntityMapper(configuration);
-            this.entitiesToInsert = new List<object>();
-
-            this.Initialize();
+            this.entityMapper = entityMapper;
+            this.changeTracker = changeTracker;
         }
 
         /// <summary>
@@ -82,24 +77,16 @@ namespace MongoDB.Framework
         }
 
         /// <summary>
-        /// Initializes the mongo database with indexes, etc...
-        /// </summary>
-        public virtual void Initialize()
-        {
-            this.EnsureIndexes();
-        }
-
-        /// <summary>
         /// Inserts the entity.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity.</param>
-        public void Insert<TEntity>(TEntity entity)
+        public void InsertOnSubmit<TEntity>(TEntity entity)
         {
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
-            this.entitiesToInsert.Add(entity);
+            this.changeTracker.Track(null, entity).MoveToAdded();
         }
 
         /// <summary>
@@ -107,9 +94,9 @@ namespace MongoDB.Framework
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The entities.</param>
-        public void InsertAll<TEntity>(params TEntity[] entities)
+        public void InsertAllOnSubmit<TEntity>(params TEntity[] entities)
         {
-            this.InsertAll((IEnumerable<TEntity>)entities);
+            this.InsertAllOnSubmit((IEnumerable<TEntity>)entities);
         }
 
         /// <summary>
@@ -117,12 +104,13 @@ namespace MongoDB.Framework
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The entities.</param>
-        public void InsertAll<TEntity>(IEnumerable<TEntity> entities)
+        public void InsertAllOnSubmit<TEntity>(IEnumerable<TEntity> entities)
         {
             if (entities == null)
                 throw new ArgumentNullException("entities");
 
-            this.entitiesToInsert.AddRange(entities.Cast<object>());
+            foreach (var entity in entities)
+                this.changeTracker.Track(null, entity).MoveToAdded();
         }
 
         /// <summary>
@@ -160,24 +148,10 @@ namespace MongoDB.Framework
         /// </summary>
         public void SubmitChanges()
         {
-            Dictionary<string, List<Document>> documentCollections = new Dictionary<string, List<Document>>();
-            foreach(var entityGroup in this.entitiesToInsert.GroupBy(e => e.GetType()))
-            {
-                var rootEntityMap = this.Configuration.GetRootEntityMapFor(entityGroup.Key);
-                List<Document> documents;
-                if (!documentCollections.TryGetValue(rootEntityMap.CollectionName, out documents))
-                    documentCollections[rootEntityMap.CollectionName] = documents = new List<Document>();
-                foreach (var entity in entityGroup)
-                    documents.Add(this.entityMapper.MapEntityToDocument(entity));
-            }
-
-            foreach (var documentCollection in documentCollections)
-            {
-                this.Database.GetCollection(documentCollection.Key)
-                    .Insert(documentCollection.Value);
-            }
-
-            this.entitiesToInsert.Clear();
+            ChangeSet changeSet = this.changeTracker.GetChangeSet();
+            this.PerformInserts(changeSet.Added);
+            this.PerformUpdates(changeSet.Modified);
+            this.PerformDeletes(changeSet.Removed);
         }
 
         #endregion
@@ -200,19 +174,69 @@ namespace MongoDB.Framework
 
         #region Private Methods
 
-        private void EnsureIndexes()
+        /// <summary>
+        /// Performs the adds.
+        /// </summary>
+        /// <param name="added">The added.</param>
+        private void PerformInserts(IList<object> inserted)
         {
-            foreach (var rootEntityMap in this.Configuration.RootEntityMaps)
+            Dictionary<string, List<Document>> documentCollections = new Dictionary<string, List<Document>>();
+            foreach (var entityGroup in inserted.GroupBy(a => a.GetType()))
             {
-                IMongoCollection collection = this.Database.GetCollection(rootEntityMap.CollectionName);
-
-                foreach (var index in rootEntityMap.Indexes)
+                var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(entityGroup.Key);
+                List<Document> documents;
+                if (!documentCollections.TryGetValue(rootEntityMap.CollectionName, out documents))
+                    documentCollections[rootEntityMap.CollectionName] = documents = new List<Document>();
+                foreach (var entity in entityGroup)
                 {
-                    Document fieldsAndDirections = new Document();
-                    foreach (var pair in index.DocumentKeys)
-                        fieldsAndDirections.Add(pair.Key, pair.Value == IndexDirection.Ascending ? 1 : -1);
+                    var document = this.entityMapper.MapEntityToDocument(entity);
+                    documents.Add(document);
+                    this.changeTracker.GetTrackedObject(entity).MoveToPossibleModified(document);
+                }
+            }
 
-                    collection.MetaData.CreateIndex(fieldsAndDirections, index.IsUnique);
+            foreach (var documentCollection in documentCollections)
+            {
+                this.Database.GetCollection(documentCollection.Key)
+                    .Insert(documentCollection.Value);
+            }
+        }
+
+        /// <summary>
+        /// Performs the updates.
+        /// </summary>
+        /// <param name="updated">The updated.</param>
+        private void PerformUpdates(IList<object> updated)
+        {
+            foreach (var entityGroup in updated.GroupBy(a => a.GetType()))
+            {
+                var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(entityGroup.Key);
+                var collection = this.Database.GetCollection(rootEntityMap.CollectionName);
+                foreach (var entity in entityGroup)
+                {
+                    var document = this.entityMapper.MapEntityToDocument(entity);
+                    collection.Update(document);
+                    this.changeTracker.GetTrackedObject(entity).MoveToPossibleModified(document);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Performs the removes.
+        /// </summary>
+        /// <param name="removed">The removed.</param>
+        private void PerformDeletes(IList<object> deleted)
+        {
+            foreach (var entityGroup in deleted.GroupBy(a => a.GetType()))
+            {
+                var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(entityGroup.Key);
+                var collection = this.Database.GetCollection(rootEntityMap.CollectionName);
+                foreach (var entity in entityGroup)
+                {
+                    //TODO: investigate using the in clause for deleting multiples...
+                    var document = new Document().Append("_id", new Oid((string)rootEntityMap.IdMap.Getter(entity)));
+                    collection.Delete(document);
+                    this.changeTracker.GetTrackedObject(entity).MoveToDead();
                 }
             }
         }

@@ -11,6 +11,8 @@ namespace MongoDB.Framework
 {
     public static class Domain
     {
+        public static MongoContextFactory ContextFactory { get; private set; }
+
         public static MongoContext Context { get; private set; }
 
         static Domain()
@@ -20,7 +22,8 @@ namespace MongoDB.Framework
                 DatabaseName = "tests"
             };
             configuration.AddRootEntityMap(new PartyMap().Instance);
-            Context = new MongoContext(configuration);
+            ContextFactory = new MongoContextFactory(configuration);
+            Context = ContextFactory.OpenContext();
         }
 
         public static void SetupEnvironment()
@@ -50,9 +53,9 @@ namespace MongoDB.Framework
                 PhoneNumber = new PhoneNumber() { AreaCode = "111", Prefix = "654", Number = "3210" }
             };
 
-            Context.Insert(person1);
-            Context.Insert(person2);
-            Context.Insert(organization);
+            Context.InsertOnSubmit(person1);
+            Context.InsertOnSubmit(person2);
+            Context.InsertOnSubmit(organization);
             Context.SubmitChanges();
         }
 

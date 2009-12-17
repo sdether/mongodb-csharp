@@ -29,6 +29,15 @@ namespace MongoDB.Framework.Configuration
         /// <value>The setter.</value>
         public Action<object, object> Setter { get; private set; }
 
+        /// <summary>
+        /// Gets the transient value.
+        /// </summary>
+        /// <value>The transient value.</value>
+        public string[] TransientValues
+        {
+            get { return new [] { null, string.Empty }; }
+        }
+
         #endregion
 
         #region Constructors
