@@ -119,6 +119,20 @@ namespace MongoDB.Framework
             }
         }
 
+        [Test]
+        public void Test_deleting()
+        {
+            var party = context.Query<Party>().First(p => p.Name == "Bob McBob");
+            context.DeleteOnSubmit(party);
+
+            context.SubmitChanges();
+
+            using (var context2 = Domain.ContextFactory.OpenContext())
+            {
+                Assert.IsNull(context.Query<Party>().FirstOrDefault(p => p.Name == "Bob McBob"));
+            }
+        }
+
         [TearDown]
         public void TearDown()
         {

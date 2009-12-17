@@ -8,10 +8,10 @@ namespace MongoDB.Framework.Tracking
 {
     public enum TrackedObjectState
     {
-        Added,
+        Inserted,
         PossiblyModified,
         Modified,
-        Removed,
+        Deleted,
         Dead
     }
 }

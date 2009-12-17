@@ -109,7 +109,7 @@ namespace MongoDB.Framework.Tracking
                 var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(this.Current.GetType());
                 var value = (string)rootEntityMap.IdMap.Getter(this.Current);
                 if (rootEntityMap.IdMap.TransientValues.Contains(value))
-                    this.MoveToAdded();
+                    this.MoveToInserted();
                 else
                     this.MoveToModified();
                 return;
@@ -120,17 +120,13 @@ namespace MongoDB.Framework.Tracking
                 this.MoveToModified();
         }
 
-        #endregion
-
-        #region Public Methods
-
         /// <summary>
-        /// Moves to added.
+        /// Moves to inserted.
         /// </summary>
-        public void MoveToAdded()
+        public void MoveToInserted()
         {
             this.Original = null;
-            this.State = TrackedObjectState.Added;
+            this.State = TrackedObjectState.Inserted;
         }
 
         /// <summary>
@@ -162,12 +158,12 @@ namespace MongoDB.Framework.Tracking
         }
 
         /// <summary>
-        /// Moves to removed.
+        /// Moves to deleted.
         /// </summary>
-        public void MoveToRemoved()
+        public void MoveToDeleted()
         {
             this.Original = null;
-            this.State = TrackedObjectState.Removed;
+            this.State = TrackedObjectState.Deleted;
         }
 
         #endregion

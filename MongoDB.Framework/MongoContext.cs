@@ -77,40 +77,71 @@ namespace MongoDB.Framework
         }
 
         /// <summary>
-        /// Inserts the entity.
+        /// Deletes the on submit.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity.</param>
-        public void InsertOnSubmit<TEntity>(TEntity entity)
+        public void DeleteOnSubmit(object entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException("entity");
-
-            this.changeTracker.Track(null, entity).MoveToAdded();
+            this.DeleteAllOnSubmit(new[] { entity });
         }
 
         /// <summary>
-        /// Inserts all the entities.
+        /// Deletes all on submit.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The entities.</param>
-        public void InsertAllOnSubmit<TEntity>(params TEntity[] entities)
+        public void DeleteAllOnSubmit(params object[] entities)
         {
-            this.InsertAllOnSubmit((IEnumerable<TEntity>)entities);
+            this.DeleteAllOnSubmit((IEnumerable<object>)entities);
         }
 
         /// <summary>
-        /// Inserts all the entities.
+        /// Deletes all on submit.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The entities.</param>
-        public void InsertAllOnSubmit<TEntity>(IEnumerable<TEntity> entities)
+        public void DeleteAllOnSubmit(IEnumerable<object> entities)
         {
             if (entities == null)
                 throw new ArgumentNullException("entities");
 
             foreach (var entity in entities)
-                this.changeTracker.Track(null, entity).MoveToAdded();
+                this.changeTracker.GetTrackedObject(entity).MoveToDeleted();
+        }
+
+        /// <summary>
+        /// Inserts the entity.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="entity">The entity.</param>
+        public void InsertOnSubmit(object entity)
+        {
+            this.InsertAllOnSubmit(new[] { entity });
+        }
+
+        /// <summary>
+        /// Inserts all the entities.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="entities">The entities.</param>
+        public void InsertAllOnSubmit(params object[] entities)
+        {
+            this.InsertAllOnSubmit((IEnumerable<object>)entities);
+        }
+
+        /// <summary>
+        /// Inserts all the entities.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="entities">The entities.</param>
+        public void InsertAllOnSubmit(IEnumerable<object> entities)
+        {
+            if (entities == null)
+                throw new ArgumentNullException("entities");
+
+            foreach (var entity in entities)
+                this.changeTracker.Track(null, entity).MoveToInserted();
         }
 
         /// <summary>
@@ -149,9 +180,9 @@ namespace MongoDB.Framework
         public void SubmitChanges()
         {
             ChangeSet changeSet = this.changeTracker.GetChangeSet();
-            this.PerformInserts(changeSet.Added);
+            this.PerformInserts(changeSet.Inserted);
             this.PerformUpdates(changeSet.Modified);
-            this.PerformDeletes(changeSet.Removed);
+            this.PerformDeletes(changeSet.Deleted);
         }
 
         #endregion

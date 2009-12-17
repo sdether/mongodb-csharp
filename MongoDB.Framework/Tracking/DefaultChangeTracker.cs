@@ -49,10 +49,10 @@ namespace MongoDB.Framework.Tracking
                 trackedObject.DetermineState();
                 switch(trackedObject.State)
                 {
-                    case TrackedObjectState.Added:
+                    case TrackedObjectState.Inserted:
                         added.Add(trackedObject.Current);
                         break;
-                    case TrackedObjectState.Removed:
+                    case TrackedObjectState.Deleted:
                         removed.Add(trackedObject.Current);
                         break;
                     case TrackedObjectState.Modified:
