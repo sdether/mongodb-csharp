@@ -8,11 +8,13 @@ using Remotion.Data.Linq;
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
 using MongoDB.Framework.Linq.Visitors;
+using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework.Linq
 {
     public class MongoQueryExecutor : IQueryExecutor
     {
+        private ChangeTracker changeTracker;
         private Database database;
         private EntityMapper entityMapper;
 
@@ -20,13 +22,16 @@ namespace MongoDB.Framework.Linq
         /// Initializes a new instance of the <see cref="MongoQueryExecutor"/> class.
         /// </summary>
         /// <param name="mongo">The mongo.</param>
-        public MongoQueryExecutor(Database database, EntityMapper entityMapper)
+        public MongoQueryExecutor(Database database, EntityMapper entityMapper, ChangeTracker changeTracker)
         {
             if (database == null)
                 throw new ArgumentNullException("database");
             if (entityMapper == null)
                 throw new ArgumentNullException("entityMapper");
+            if (changeTracker == null)
+                throw new ArgumentNullException("changeTracker");
 
+            this.changeTracker = changeTracker;
             this.database = database;
             this.entityMapper = entityMapper;
         }
@@ -39,18 +44,26 @@ namespace MongoDB.Framework.Linq
             this.AddDiscriminatingKeyIfNecessary(typeof(T), rootEntityMap, spec);
 
             var collection = this.database.GetCollection(rootEntityMap.CollectionName);
+            IEnumerable<Document> documents;
             if (spec.IsSingle)
             {
                 var document = collection.FindOne(spec.Query);
                 if (document == null)
-                    return Enumerable.Empty<T>();
+                    documents = Enumerable.Empty<Document>();
                 else
-                    return new[] { (T)this.entityMapper.MapDocumentToEntity(document, typeof(T)) };
+                    documents = new[] { document };
             }
             else
             {
                 var cursor = collection.Find(spec.Query, spec.Limit, spec.Skip, spec.Projection);
-                return MapFromDocuments<T>(cursor.Documents);
+                documents = cursor.Documents;
+            }
+
+            foreach (var document in documents)
+            {
+                var entity = (T)this.entityMapper.MapDocumentToEntity(document, typeof(T));
+                this.changeTracker.Track(document, entity);
+                yield return entity;
             }
         }
 
@@ -68,24 +81,16 @@ namespace MongoDB.Framework.Linq
                 return (T)Convert.ChangeType(collection.Count(spec.Query), typeof(T));
             }
 
-            throw new NotSupportedException();
+            throw new NotSupportedException("Count is the only allowed aggregate operation.");
         }
 
         public T ExecuteSingle<T>(QueryModel queryModel, bool returnDefaultWhenEmpty)
         {
-            var items = this.ExecuteCollection<T>(queryModel);
+            var items = this.ExecuteCollection<T>(queryModel).ToList();
             if (items.Count() == 0 && returnDefaultWhenEmpty)
                 return default(T);
 
             return items.First();
-        }
-
-        private IEnumerable<T> MapFromDocuments<T>(IEnumerable<Document> documents)
-        {
-            foreach (var document in documents)
-            {
-                yield return (T)this.entityMapper.MapDocumentToEntity(document, typeof(T));
-            }
         }
 
         private void AddDiscriminatingKeyIfNecessary(Type entityType, RootEntityMap rootEntityMap, MongoQuerySpecification spec)

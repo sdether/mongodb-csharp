@@ -100,9 +100,9 @@ namespace MongoDB.Framework
 
             Document document = new Document();
 
-            string id = (string)rootEntityMap.IdMap.Getter(entity);
+            Oid id = (Oid)rootEntityMap.IdMap.GetDocumentValueFromEntity(entity);
             if (id != null)
-                document.Add("_id", new Oid(id));
+                document.Add("_id", id);
             this.MapEntityToDocument(rootEntityMap, entity, document);
 
             return document;
@@ -212,12 +212,7 @@ namespace MongoDB.Framework
                 if (this.entityMap is RootEntityMap)
                 {
                     var rootEntityMap = (RootEntityMap)this.entityMap;
-                    Oid oid = document["_id"] as Oid;
-                    if (oid != null)
-                    {
-                        string id = BitConverter.ToString(oid.Value).Replace("-", "").ToLower();
-                        rootEntityMap.IdMap.Setter(entity, id);
-                    }
+                    rootEntityMap.IdMap.SetDocumentValueOnEntity(entity, this.document["_id"]);
                     this.document.Remove("_id");
                 }
                 this.ApplyMemberMaps(entity);

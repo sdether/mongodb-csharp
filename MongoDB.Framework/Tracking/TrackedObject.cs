@@ -24,9 +24,10 @@ namespace MongoDB.Framework.Tracking
 
                 if (aValue == null && bValue != null || aValue != null && bValue == null)
                     return false;
-                else if (aValue is Document && bValue is Document && !AreDocumentsEqual((Document)aValue, (Document)bValue))
+                else if (aValue is Document && bValue is Document)
                 {
-                    return false;
+                    if(!AreDocumentsEqual((Document)aValue, (Document)bValue))
+                        return false;
                 }
                 else if (aValue is Document || bValue is Document)
                     return false;
@@ -111,6 +112,7 @@ namespace MongoDB.Framework.Tracking
                     this.MoveToAdded();
                 else
                     this.MoveToModified();
+                return;
             }
 
             Document current = this.entityMapper.MapEntityToDocument(this.Current);

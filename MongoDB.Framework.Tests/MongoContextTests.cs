@@ -9,16 +9,19 @@ namespace MongoDB.Framework
     [TestFixture]
     public class MongoContextTests
     {
-        [TestFixtureSetUp]
-        public void FixtureSetup()
+        private MongoContext context;
+
+        [SetUp]
+        public void Setup()
         {
             Domain.SetupEnvironment();
+            context = Domain.ContextFactory.OpenContext();
         }
 
         [Test]
         public void Test_root_entity_query()
         {
-            var parties = (from p in Domain.Context.Query<Party>()
+            var parties = (from p in context.Query<Party>()
                            where p.PhoneNumber.AreaCode == "111"
                            select p).ToList();
 
@@ -28,7 +31,7 @@ namespace MongoDB.Framework
         [Test]
         public void Test_discriminated_entity_query()
         {
-            var parties = (from p in Domain.Context.Query<Organization>()
+            var parties = (from p in context.Query<Organization>()
                            where p.PhoneNumber.AreaCode == "111"
                            select p).ToList();
 
@@ -38,7 +41,7 @@ namespace MongoDB.Framework
         [Test]
         public void Test_combined_query()
         {
-            var parties = (from p in Domain.Context.Query<Organization>()
+            var parties = (from p in context.Query<Organization>()
                            where p.EmployeeCount > 12 && p.EmployeeCount < 24
                            select p).ToList();
 
@@ -48,7 +51,7 @@ namespace MongoDB.Framework
         [Test]
         public void Test_skip_operator()
         {
-            var parties = Domain.Context.Query<Party>().Skip(1).ToList();
+            var parties = context.Query<Party>().Skip(1).ToList();
 
             Assert.AreEqual(2, parties.Count());
         }
@@ -56,7 +59,7 @@ namespace MongoDB.Framework
         [Test]
         public void Test_take_operator()
         {
-            var parties = Domain.Context.Query<Party>().Take(1).ToList();
+            var parties = context.Query<Party>().Take(1).ToList();
 
             Assert.AreEqual(1, parties.Count());
         }
@@ -64,7 +67,7 @@ namespace MongoDB.Framework
         [Test]
         public void Test_skip_and_take_operator()
         {
-            var parties = Domain.Context.Query<Party>().Skip(1).Take(2).ToList();
+            var parties = context.Query<Party>().Skip(1).Take(2).ToList();
 
             Assert.AreEqual(2, parties.Count());
         }
@@ -72,7 +75,7 @@ namespace MongoDB.Framework
         [Test]
         public void Test_count_with_root_entity()
         {
-            var partyCount = Domain.Context.Query<Party>().Count();
+            var partyCount = context.Query<Party>().Count();
 
             Assert.AreEqual(3, partyCount);
         }
@@ -80,7 +83,7 @@ namespace MongoDB.Framework
         [Test]
         public void Test_count_with_discriminated_entity()
         {
-            var personCount = Domain.Context.Query<Person>().Count();
+            var personCount = context.Query<Person>().Count();
 
             Assert.AreEqual(2, personCount);
         }
@@ -88,7 +91,7 @@ namespace MongoDB.Framework
         [Test]
         public void Test_first_with_root_entity()
         {
-            var party = Domain.Context.Query<Party>().First();
+            var party = context.Query<Party>().First();
 
             Assert.IsNotNull(party);
         }
@@ -96,14 +99,31 @@ namespace MongoDB.Framework
         [Test]
         public void Test_first_with_discriminated_entity()
         {
-            var person = Domain.Context.Query<Person>().First();
+            var person = context.Query<Person>().First();
 
             Assert.IsNotNull(person);
         }
 
-        [TestFixtureTearDown]
-        public void FixtureTearDown()
+        [Test]
+        public void Test_updating()
         {
+            var party = context.Query<Party>().First(p => p.Name == "Bob McBob");
+
+            party.Name = "Jack";
+
+            context.SubmitChanges();
+
+            using (var context2 = Domain.ContextFactory.OpenContext())
+            {
+                Assert.IsNotNull(context.Query<Party>().First(p => p.Name == "Jack"));
+            }
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            context.Dispose();
+            context = null;
             Domain.TearDownEnvironment();
         }
     }

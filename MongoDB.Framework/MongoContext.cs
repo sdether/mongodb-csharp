@@ -120,7 +120,7 @@ namespace MongoDB.Framework
         /// <returns></returns>
         public IQueryable<TEntity> Query<TEntity>()
         {
-            return new MongoQueryable<TEntity>(this.Database, this.entityMapper);
+            return new MongoQueryable<TEntity>(this.Database, this.entityMapper, this.changeTracker);
         }
 
         /// <summary>
@@ -180,25 +180,17 @@ namespace MongoDB.Framework
         /// <param name="added">The added.</param>
         private void PerformInserts(IList<object> inserted)
         {
-            Dictionary<string, List<Document>> documentCollections = new Dictionary<string, List<Document>>();
             foreach (var entityGroup in inserted.GroupBy(a => a.GetType()))
             {
                 var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(entityGroup.Key);
-                List<Document> documents;
-                if (!documentCollections.TryGetValue(rootEntityMap.CollectionName, out documents))
-                    documentCollections[rootEntityMap.CollectionName] = documents = new List<Document>();
+                var collection = this.Database.GetCollection(rootEntityMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
                     var document = this.entityMapper.MapEntityToDocument(entity);
-                    documents.Add(document);
+                    collection.Insert(document);
+                    rootEntityMap.IdMap.SetDocumentValueOnEntity(entity, document["_id"]);
                     this.changeTracker.GetTrackedObject(entity).MoveToPossibleModified(document);
                 }
-            }
-
-            foreach (var documentCollection in documentCollections)
-            {
-                this.Database.GetCollection(documentCollection.Key)
-                    .Insert(documentCollection.Value);
             }
         }
 

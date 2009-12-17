@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using MongoDB.Framework.Reflection;
+using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration
 {
@@ -56,6 +57,38 @@ namespace MongoDB.Framework.Configuration
             this.MemberName = memberInfo.Name;
             this.Getter = LateBoundReflection.GetGetter(memberInfo);
             this.Setter = LateBoundReflection.GetSetter(memberInfo);
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Gets the document value from entity.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <returns></returns>
+        public object GetDocumentValueFromEntity(object entity)
+        {
+            string id = (string)this.Getter(entity);
+            if (id != null)
+                return new Oid(id);
+            return null;
+        }
+
+        /// <summary>
+        /// Sets the document value on entity.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="documentValue">The document value.</param>
+        public void SetDocumentValueOnEntity(object entity, object documentValue)
+        {
+            Oid oid = documentValue as Oid;
+            if (oid != null)
+            {
+                string id = BitConverter.ToString(oid.Value).Replace("-", "").ToLower();
+                this.Setter(entity, id);
+            }
         }
 
         #endregion

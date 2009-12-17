@@ -23,46 +23,50 @@ namespace MongoDB.Framework
             };
             configuration.AddRootEntityMap(new PartyMap().Instance);
             ContextFactory = new MongoContextFactory(configuration);
-            Context = ContextFactory.OpenContext();
         }
 
         public static void SetupEnvironment()
         {
-            var person1 = new Person()
+            using (var context = ContextFactory.OpenContext())
             {
-                Name = "Bob McBob",
-                BirthDate = new DateTime(1900, 1, 1),
-                PhoneNumber = new PhoneNumber() { AreaCode = "123", Prefix = "456", Number = "7890" },
-                ExtendedProperties = new Dictionary<string, object>
+                var person1 = new Person()
                 {
-                    { "not-mapped", true }
-                }
-            };
+                    Name = "Bob McBob",
+                    BirthDate = new DateTime(1900, 1, 1),
+                    PhoneNumber = new PhoneNumber() { AreaCode = "123", Prefix = "456", Number = "7890" },
+                    ExtendedProperties = new Dictionary<string, object>
+                    {
+                        { "not-mapped", true }
+                    }
+                };
 
-            var person2 = new Person()
-            {
-                Name = "Jane McJane",
-                BirthDate = new DateTime(2000, 2, 2),
-                PhoneNumber = new PhoneNumber() { AreaCode = "111", Prefix = "222", Number = "3333" }
-            };
+                var person2 = new Person()
+                {
+                    Name = "Jane McJane",
+                    BirthDate = new DateTime(2000, 2, 2),
+                    PhoneNumber = new PhoneNumber() { AreaCode = "111", Prefix = "222", Number = "3333" }
+                };
 
-            var organization = new Organization()
-            {
-                Name = "The Muffler Show",
-                EmployeeCount = 23,
-                PhoneNumber = new PhoneNumber() { AreaCode = "111", Prefix = "654", Number = "3210" }
-            };
+                var organization = new Organization()
+                {
+                    Name = "The Muffler Show",
+                    EmployeeCount = 23,
+                    PhoneNumber = new PhoneNumber() { AreaCode = "111", Prefix = "654", Number = "3210" }
+                };
 
-            Context.InsertOnSubmit(person1);
-            Context.InsertOnSubmit(person2);
-            Context.InsertOnSubmit(organization);
-            Context.SubmitChanges();
+                context.InsertOnSubmit(person1);
+                context.InsertOnSubmit(person2);
+                context.InsertOnSubmit(organization);
+                context.SubmitChanges();
+            }
         }
 
         public static void TearDownEnvironment()
         {
-            Context.Database.SendCommand(new Document().Append("drop", "party"));
-            Context.Dispose();
+            using (var context = ContextFactory.OpenContext())
+            {
+                context.Database.SendCommand(new Document().Append("drop", "party"));
+            }
         }
     }
 
