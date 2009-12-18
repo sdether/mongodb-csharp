@@ -65,6 +65,7 @@
     <Compile Include="Configuration\Visitors\DocumentToEntityTranslator.cs" />
     <Compile Include="Configuration\Visitors\EntityToDocumentTranslator.cs" />
     <Compile Include="Configuration\Visitors\MemberPathToQueryConditionVisitor.cs" />
+    <Compile Include="Linq\Visitors\MongoProjectionExpressionTreeVisitor.cs" />
     <Compile Include="Linq\Visitors\MongoOrderingExpressionTreeVisitor.cs" />
     <Compile Include="Tracking\ChangeTracker.cs" />
     <Compile Include="Tracking\DefaultChangeTracker.cs" />

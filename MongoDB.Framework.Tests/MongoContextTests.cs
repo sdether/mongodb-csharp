@@ -127,6 +127,16 @@ namespace MongoDB.Framework
         }
 
         [Test]
+        public void Test_simple_projection()
+        {
+            var names = (from p in context.Query<Person>()
+                         select p.Name).ToList();
+
+            Assert.Contains("Bob McBob", names);
+            Assert.Contains("Jane McJane", names);
+        }
+
+        [Test]
         public void Test_updating()
         {
             var party = context.Query<Party>().First(p => p.Name == "Bob McBob");

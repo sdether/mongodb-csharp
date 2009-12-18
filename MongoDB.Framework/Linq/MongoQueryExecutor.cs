@@ -40,8 +40,8 @@ namespace MongoDB.Framework.Linq
         {
             var spec = MongoQueryModelVisitor.CreateMongoQuerySpecification(queryModel, this.entityMapper.Configuration);
 
-            var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(typeof(T));
-            this.AddDiscriminatingKeyIfNecessary(typeof(T), rootEntityMap, spec);
+            var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(queryModel.MainFromClause.ItemType);
+            this.AddDiscriminatingKeyIfNecessary(queryModel.MainFromClause.ItemType, rootEntityMap, spec);
 
             var collection = this.database.GetCollection(rootEntityMap.CollectionName);
             IEnumerable<Document> documents;

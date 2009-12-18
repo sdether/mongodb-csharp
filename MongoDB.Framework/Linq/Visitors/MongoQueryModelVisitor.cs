@@ -135,7 +135,10 @@ namespace MongoDB.Framework.Linq.Visitors
 
         public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
         {
+            var fields = new MongoProjectionExpressionTreeVisitor(this.configuration)
+                .GetFieldsFrom(selectClause.Selector);
 
+            fields.CopyTo(this.querySpec.Fields);
         }
 
         /// <summary>
