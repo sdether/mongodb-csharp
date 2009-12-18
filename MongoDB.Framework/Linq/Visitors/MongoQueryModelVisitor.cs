@@ -79,7 +79,9 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitOrdering(Ordering ordering, QueryModel queryModel, OrderByClause orderByClause, int index)
         {
-            string key = MongoOrderingExpressionTreeVisitor.GetDocumentKey(this.configuration, ordering.Expression);
+            string key = new MongoOrderingExpressionTreeVisitor(this.configuration)
+                .GetDocumentKeyFrom(ordering.Expression);
+
             this.querySpec.OrderBy[key] = ordering.OrderingDirection == OrderingDirection.Asc ? 1 : -1;
         }
 
@@ -144,7 +146,10 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            MongoWhereClauseExpressionTreeVisitor.ModifyQuery(this.querySpec.Query, this.configuration, whereClause.Predicate);
+            var query = new MongoWhereClauseExpressionTreeVisitor(this.configuration)
+                .CreateQueryFrom(whereClause.Predicate);
+
+            query.CopyTo(this.querySpec.Query);
         }
 
         #endregion

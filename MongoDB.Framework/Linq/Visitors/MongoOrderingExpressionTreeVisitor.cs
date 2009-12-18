@@ -16,17 +16,6 @@ namespace MongoDB.Framework.Linq.Visitors
 {
     public class MongoOrderingExpressionTreeVisitor : ThrowingExpressionTreeVisitor
     {
-        #region Public Static Methods
-
-        public static string GetDocumentKey(MongoConfiguration configuration, Expression expression)
-        {
-            var visitor = new MongoOrderingExpressionTreeVisitor(configuration);
-            visitor.VisitExpression(expression);
-            return visitor.CreateDocumentKeyFromMemberPathParts();
-        }
-
-        #endregion
-
         #region Private Fields
 
         private MongoConfiguration configuration;
@@ -40,10 +29,25 @@ namespace MongoDB.Framework.Linq.Visitors
         /// Initializes a new instance of the <see cref="MongoWhereClauseExpressionTreeVisitor"/> class.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        private MongoOrderingExpressionTreeVisitor(MongoConfiguration configuration)
+        public MongoOrderingExpressionTreeVisitor(MongoConfiguration configuration)
         {
             this.configuration = configuration;
             this.memberPathParts = new List<MemberInfo>();
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Gets the document key from.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
+        public string GetDocumentKeyFrom(Expression expression)
+        {
+            this.VisitExpression(expression);
+            return this.CreateDocumentKeyFromMemberPathParts();
         }
 
         #endregion
