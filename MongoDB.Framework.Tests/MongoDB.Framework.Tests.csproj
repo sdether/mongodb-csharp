@@ -68,6 +68,8 @@
     <Compile Include="Configuration\Fluent\FluentRootEntityMapTests.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\Visitors\DocumentToEntityTranslatorTests.cs" />
+    <Compile Include="Configuration\Visitors\EntityToDocumentTranslatorTests.cs" />
     <Compile Include="Domain.cs" />
     <Compile Include="EntityMapperTests.cs" />
     <Compile Include="MongoContextTests.cs" />

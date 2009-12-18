@@ -71,6 +71,16 @@ namespace MongoDB.Framework.Configuration
         #region Public Methods
 
         /// <summary>
+        /// Accepts the specified visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
+        public override void Accept(IMapVisitor visitor)
+        {
+            visitor.VisitRootEntityMap(this);
+            base.Accept(visitor);
+        }
+
+        /// <summary>
         /// Adds the index.
         /// </summary>
         /// <param name="index">The index.</param>

@@ -1,0 +1,133 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using MongoDB.Driver;
+
+namespace MongoDB.Framework.Configuration.Visitors
+{
+    public class EntityToDocumentTranslator : IMapVisitor
+    {
+        #region Public Static Methods
+
+        /// <summary>
+        /// Converts the dictionary to document.
+        /// </summary>
+        /// <param name="dictionary">The dictionary.</param>
+        /// <param name="document">The document.</param>
+        public static void TranslateDictionaryToDocument(IDictionary<string, object> dictionary, Document document)
+        {
+            foreach (var kvp in dictionary)
+            {
+                if (kvp.Value is IDictionary<string, object>)
+                {
+                    var subDocument = new Document();
+                    TranslateDictionaryToDocument((IDictionary<string, object>)kvp.Value, subDocument);
+                    document.Add(kvp.Key, subDocument);
+                }
+                else
+                    document.Add(kvp.Key, kvp.Value);
+            }
+        }
+
+        #endregion
+
+        #region Protected Fields
+
+        protected Document document;
+        protected object entity;
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// Gets the document.
+        /// </summary>
+        /// <value>The document.</value>
+        public Document Document
+        {
+            get { return this.document; }
+        }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EntityToDocumentMapVisitor"/> class.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        public EntityToDocumentTranslator(object entity)
+        {
+            if (entity == null)
+                throw new ArgumentNullException("entity");
+
+            this.entity = entity;
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public void VisitRootEntityMap(RootEntityMap rootEntityMap)
+        {
+            this.document = new Document();
+            rootEntityMap.IdMap.Accept(this);
+        }
+
+        public void VisitEntityMap(EntityMap entityMap)
+        {
+            if (this.entity.GetType() != entityMap.Type)
+            {
+                var discriminatedEntityMap = entityMap.GetDiscriminatedEntityMapByType(entity.GetType());
+                discriminatedEntityMap.Accept(this);
+                this.document[entityMap.DiscriminatingDocumentKey] = discriminatedEntityMap.DiscriminatingValue;
+            }
+            else if(entityMap.HasDiscriminatingValue)
+            {
+                this.document[entityMap.DiscriminatingDocumentKey] = entityMap.DiscriminatingValue;
+            }
+
+            if (entityMap.HasExtendedPropertiesMap)
+            {
+                IDictionary<string, object> props = (IDictionary<string, object>)entityMap.ExtendedPropertiesMap.Getter(this.entity);
+                TranslateDictionaryToDocument(props, this.document);
+            }
+        }
+
+        public void VisitDiscriminatedEntityMap(DiscriminatedEntityMap discriminatedEntityMap)
+        {
+            foreach (var componentMap in discriminatedEntityMap.ComponentMaps)
+                componentMap.Accept(this);
+            foreach (var memberMap in discriminatedEntityMap.MemberMaps)
+                memberMap.Accept(this);
+        }
+
+        public void VisitMemberMap(MemberMap memberMap)
+        {
+            this.document[memberMap.DocumentKey] = memberMap.GetDocumentValueFromEntity(this.entity);
+        }
+
+        public void VisitComponentMap(ComponentMap componentMap)
+        {
+            var oldDocument = this.document;
+            var oldEntity = this.entity;
+            this.document = new Document();
+            this.entity = componentMap.Getter(oldEntity);
+            
+            componentMap.EntityMap.Accept(this);
+
+            oldDocument[componentMap.DocumentKey] = document;
+            this.document = oldDocument;
+            this.entity = oldEntity;
+        }
+
+        public void VisitIdMap(IdMap idMap)
+        {
+            this.document["_id"] = idMap.GetDocumentValueFromEntity(this.entity);
+        }
+
+        #endregion
+    }
+}

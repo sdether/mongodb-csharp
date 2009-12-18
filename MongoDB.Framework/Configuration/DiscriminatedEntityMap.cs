@@ -9,10 +9,11 @@ using MongoDB.Framework.Linq.Visitors;
 
 namespace MongoDB.Framework.Configuration
 {
-    public class DiscriminatedEntityMap
+    public class DiscriminatedEntityMap : IMapVisitable
     {
         #region Private Fields
 
+        private Dictionary<string, ComponentMap> componentMaps;
         private Dictionary<string, MemberMap> memberMaps;
 
         #endregion
@@ -24,6 +25,15 @@ namespace MongoDB.Framework.Configuration
         /// </summary>
         /// <value>The discriminating value.</value>
         public object DiscriminatingValue { get; set; }
+
+        /// <summary>
+        /// Gets the component maps.
+        /// </summary>
+        /// <value>The component maps.</value>
+        public IEnumerable<ComponentMap> ComponentMaps
+        {
+            get { return this.componentMaps.Values; }
+        }
 
         /// <summary>
         /// Gets the member maps.
@@ -53,6 +63,7 @@ namespace MongoDB.Framework.Configuration
             if (type == null)
                 throw new ArgumentNullException("type");
 
+            this.componentMaps = new Dictionary<string,ComponentMap>();
             this.memberMaps = new Dictionary<string, MemberMap>();
             this.Type = type;
         }
@@ -62,15 +73,24 @@ namespace MongoDB.Framework.Configuration
         #region Public Methods
 
         /// <summary>
-        /// Adds the entity map.
+        /// Accepts the specified visitor.
         /// </summary>
-        /// <param name="entityMap">The entity map.</param>
-        public void AddEntityMap(EntityMemberMap entityMap)
+        /// <param name="visitor">The visitor.</param>
+        public virtual void Accept(IMapVisitor visitor)
         {
-            if (entityMap == null)
-                throw new ArgumentNullException("entityMap");
+            visitor.VisitDiscriminatedEntityMap(this);
+        }
 
-            this.memberMaps[entityMap.DocumentKey] = entityMap;
+        /// <summary>
+        /// Adds the component map.
+        /// </summary>
+        /// <param name="componentMap">The component map.</param>
+        public void AddComponentMap(ComponentMap componentMap)
+        {
+            if (componentMap == null)
+                throw new ArgumentNullException("componentMap");
+
+            this.componentMaps[componentMap.DocumentKey] = componentMap;
         }
 
         /// <summary>
@@ -97,15 +117,6 @@ namespace MongoDB.Framework.Configuration
                 throw new UnmappedMemberException(string.Format("{0}.{1} has not been mapped.", this.Type, memberName));
 
             return memberMap;
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private bool IsDictionaryOfStringObject(Type type)
-        {
-            return true;
         }
 
         #endregion

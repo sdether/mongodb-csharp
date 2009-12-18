@@ -8,7 +8,7 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration
 {
-    public class IdMap
+    public class IdMap : IMapVisitable
     {
         #region Public Properties
 
@@ -62,6 +62,15 @@ namespace MongoDB.Framework.Configuration
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Accepts the specified visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
+        public void Accept(IMapVisitor visitor)
+        {
+            visitor.VisitIdMap(this);
+        }
 
         /// <summary>
         /// Gets the document value from entity.

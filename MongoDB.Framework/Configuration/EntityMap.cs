@@ -20,21 +20,10 @@ namespace MongoDB.Framework.Configuration
         #region Public Properties
 
         /// <summary>
-        /// Gets a value indicating whether this instance is discriminated.
+        /// Gets or sets the discriminating document key.
         /// </summary>
-        /// <value>
-        /// 	<c>true</c> if this instance is discriminated; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsDiscriminated
-        {
-            get { return !string.IsNullOrEmpty(this.DiscriminateDocumentKey); }
-        }
-
-        /// <summary>
-        /// Gets or sets the discriminate document key.
-        /// </summary>
-        /// <value>The discriminate document key.</value>
-        public string DiscriminateDocumentKey { get; set; }
+        /// <value>The discriminating document key.</value>
+        public string DiscriminatingDocumentKey { get; set; }
 
         /// <summary>
         /// Gets the discriminated entity maps.
@@ -52,6 +41,17 @@ namespace MongoDB.Framework.Configuration
         public ExtendedPropertiesMap ExtendedPropertiesMap { get; set; }
 
         /// <summary>
+        /// Gets a value indicating whether this instance has discriminating document key.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance has discriminating document key; otherwise, <c>false</c>.
+        /// </value>
+        public bool HasDiscriminatingValue
+        {
+            get { return this.DiscriminatingValue != null; }
+        }
+
+        /// <summary>
         /// Gets a value indicating whether this instance has extended properties.
         /// </summary>
         /// <value>
@@ -60,6 +60,17 @@ namespace MongoDB.Framework.Configuration
         public bool HasExtendedPropertiesMap
         {
             get { return this.ExtendedPropertiesMap != null; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is discriminated.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is discriminated; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsDiscriminated
+        {
+            get { return this.discriminatedEntityMaps.Count > 0; }
         }
 
         #endregion
@@ -81,6 +92,16 @@ namespace MongoDB.Framework.Configuration
         #region Public Methods
 
         /// <summary>
+        /// Accepts the specified visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
+        public override void Accept(IMapVisitor visitor)
+        {
+            visitor.VisitEntityMap(this);
+            base.Accept(visitor);
+        }
+
+        /// <summary>
         /// Adds the discriminated entity map.
         /// </summary>
         /// <param name="discriminatedEntityMap">The discriminated entity map.</param>
@@ -100,9 +121,8 @@ namespace MongoDB.Framework.Configuration
         public DiscriminatedEntityMap GetDiscriminatedEntityMapByValue(object discriminatingValue)
         {
             DiscriminatedEntityMap discriminatedEntityMap = null;
-            if (!this.discriminatedEntityMaps.TryGetValue(discriminatingValue, out discriminatedEntityMap))
-                throw new UnknownDiscriminatorException(string.Format("The discriminate value {0} has not been mapped.", discriminatingValue));
-
+            if (!this.discriminatedEntityMaps.TryGetValue(discriminatingValue, out discriminatedEntityMap))                throw new UnknownDiscriminatorException(string.Format("The discriminate value {0} has not been mapped.", discriminatingValue));            
+            
             return this.discriminatedEntityMaps[discriminatingValue];
         }
 
@@ -113,12 +133,8 @@ namespace MongoDB.Framework.Configuration
         /// <returns></returns>
         public DiscriminatedEntityMap GetDiscriminatedEntityMapByType(Type type)
         {
-            var discriminatedEntityMap = this.discriminatedEntityMaps.Values.SingleOrDefault(m => m.Type == type);
-            if (discriminatedEntityMap == null)
-                throw new UnmappedTypeException(string.Format("No discriminated entity mapped for type {0}", type));
-
-            return discriminatedEntityMap;
-        }
+            var discriminatedEntityMap = this.discriminatedEntityMaps.Values.SingleOrDefault(m => m.Type == type);            if (discriminatedEntityMap == null)                throw new UnmappedTypeException(string.Format("No discriminated entity mapped for type {0}", type));
+             return discriminatedEntityMap;        }
 
         /// <summary>
         /// Gets the member map.

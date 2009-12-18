@@ -145,27 +145,28 @@ namespace MongoDB.Framework.Linq.Visitors
 
         private string CreateDocumentKeyFromMemberPathParts()
         {
-            if(this.memberPathParts.Count == 0)
-                throw new InvalidOperationException("No member path parts exist.");
+            //if(this.memberPathParts.Count == 0)
+            //    throw new InvalidOperationException("No member path parts exist.");
 
-            var memberInfo = this.memberPathParts[0];
-            EntityMap entityMap = this.configuration.GetRootEntityMapFor(this.memberPathParts[0].DeclaringType);
-            var memberMap = entityMap.GetMemberMap(memberInfo.DeclaringType, memberInfo.Name);
-            string key = memberMap.DocumentKey;
-            for (int i = 1; i < this.memberPathParts.Count; i++)
-            {
-                var entityMemberMap = memberMap as EntityMemberMap;
-                if (entityMemberMap == null)
-                    throw new UnmappedMemberException(string.Format("{0}.{1} is unmapped.", this.memberPathParts[i].DeclaringType, this.memberPathParts[i].Name));
+            //var memberInfo = this.memberPathParts[0];
+            //EntityMap entityMap = this.configuration.GetRootEntityMapFor(this.memberPathParts[0].DeclaringType);
+            //var memberMap = entityMap.GetMemberMap(memberInfo.DeclaringType, memberInfo.Name);
+            //string key = memberMap.DocumentKey;
+            //for (int i = 1; i < this.memberPathParts.Count; i++)
+            //{
+            //    var entityMemberMap = memberMap as ComponentMap;
+            //    if (entityMemberMap == null)
+            //        throw new UnmappedMemberException(string.Format("{0}.{1} is unmapped.", this.memberPathParts[i].DeclaringType, this.memberPathParts[i].Name));
 
-                entityMap = entityMemberMap.EntityMap;
-                memberMap = entityMap.GetMemberMap(this.memberPathParts[i].DeclaringType, this.memberPathParts[i].Name);
-                key += "." + memberMap.DocumentKey;
-            }
+            //    entityMap = entityMemberMap.EntityMap;
+            //    memberMap = entityMap.GetMemberMap(this.memberPathParts[i].DeclaringType, this.memberPathParts[i].Name);
+            //    key += "." + memberMap.DocumentKey;
+            //}
 
-            this.memberPathParts.Clear();
+            //this.memberPathParts.Clear();
 
-            return key;
+            //return key;
+            return "blah";
         }
 
         #endregion

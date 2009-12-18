@@ -98,7 +98,7 @@ namespace MongoDB.Framework.Linq
             if (rootEntityMap.Type != entityType)
             {
                 var discriminatedEntityMap = rootEntityMap.GetDiscriminatedEntityMapByType(entityType);
-                spec.Query[rootEntityMap.DiscriminateDocumentKey] = discriminatedEntityMap.DiscriminatingValue;
+                spec.Query[rootEntityMap.DiscriminatingDocumentKey] = discriminatedEntityMap.DiscriminatingValue;
             }
         }
     }

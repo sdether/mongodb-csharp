@@ -52,9 +52,9 @@ namespace MongoDB.Framework.Configuration.Fluent
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="member">The member.</param>
         /// <param name="configure">The configure.</param>
-        public void Entity<TEntity>(MemberInfo member, Action<FluentEntityMap<TEntity>> configure)
+        public void Component<TEntity>(MemberInfo member, Action<FluentEntityMap<TEntity>> configure)
         {
-            this.Entity(member, member.Name, configure);
+            this.Component(member, member.Name, configure);
         }
 
         /// <summary>
@@ -64,11 +64,11 @@ namespace MongoDB.Framework.Configuration.Fluent
         /// <param name="member">The member.</param>
         /// <param name="documentKey">The document key.</param>
         /// <param name="configure">The configure.</param>
-        public void Entity<TEntity>(MemberInfo member, string documentKey, Action<FluentEntityMap<TEntity>> configure)
+        public void Component<TEntity>(MemberInfo member, string documentKey, Action<FluentEntityMap<TEntity>> configure)
         {
             var entityMap = new FluentEntityMap<TEntity>();
             configure(entityMap);
-            this.Instance.AddEntityMap(new EntityMemberMap(member, entityMap.Instance));
+            this.Instance.AddComponentMap(new ComponentMap(member, entityMap.Instance));
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace MongoDB.Framework.Configuration.Fluent
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="member">The member.</param>
         /// <param name="configure">The configure.</param>
-        public void Entity<TEntity>(Expression<Func<TDiscriminatedEntity, object>> member, Action<FluentEntityMap<TEntity>> configure)
+        public void Component<TEntity>(Expression<Func<TDiscriminatedEntity, object>> member, Action<FluentEntityMap<TEntity>> configure)
         {
             if (member == null)
                 throw new ArgumentNullException("member");
@@ -88,7 +88,7 @@ namespace MongoDB.Framework.Configuration.Fluent
             if (visitor.Members.Count() > 1)
                 throw new NotSupportedException("Only top-level members are supported.");
 
-            this.Entity(visitor.Members.Single(), configure);
+            this.Component(visitor.Members.Single(), configure);
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace MongoDB.Framework.Configuration.Fluent
         /// <param name="member">The member.</param>
         /// <param name="documentKey">The document key.</param>
         /// <param name="configure">The configure.</param>
-        public void Entity<TEntity>(Expression<Func<TDiscriminatedEntity, object>> member, string documentKey, Action<FluentEntityMap<TEntity>> configure)
+        public void Component<TEntity>(Expression<Func<TDiscriminatedEntity, object>> member, string documentKey, Action<FluentEntityMap<TEntity>> configure)
         {
             if (member == null)
                 throw new ArgumentNullException("member");
@@ -109,7 +109,7 @@ namespace MongoDB.Framework.Configuration.Fluent
             if (visitor.Members.Count() > 1)
                 throw new NotSupportedException("Only top-level members are supported.");
 
-            this.Entity(visitor.Members.Single(), documentKey, configure);
+            this.Component(visitor.Members.Single(), documentKey, configure);
         }
 
         /// <summary>

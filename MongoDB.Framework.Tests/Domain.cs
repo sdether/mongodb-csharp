@@ -80,7 +80,7 @@ namespace MongoDB.Framework
             Id(x => x.Id);
             Map("Name");
 
-            Entity<PhoneNumber>(x => x.PhoneNumber, m =>
+            Component<PhoneNumber>(x => x.PhoneNumber, m =>
             {
                 m.Map(x => x.AreaCode, "area");
                 m.Map(x => x.Prefix, "pfx");
@@ -125,6 +125,11 @@ namespace MongoDB.Framework
         public abstract PartyType Type { get; }
 
         public IDictionary<string, object> ExtendedProperties { get; set; }
+
+        public Party()
+        {
+            this.ExtendedProperties = new Dictionary<string, object>();
+        }
     }
 
     public class Organization : Party

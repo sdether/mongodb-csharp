@@ -58,6 +58,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChangeSet.cs" />
+    <Compile Include="Configuration\IMapVisitor.cs" />
+    <Compile Include="Configuration\IMapVisitable.cs" />
+    <Compile Include="Configuration\Visitors\DocumentToEntityTranslator.cs" />
+    <Compile Include="Configuration\Visitors\EntityToDocumentTranslator.cs" />
     <Compile Include="Linq\Visitors\MongoOrderingExpressionTreeVisitor.cs" />
     <Compile Include="Tracking\ChangeTracker.cs" />
     <Compile Include="Tracking\DefaultChangeTracker.cs" />
@@ -67,7 +71,7 @@
     <Compile Include="Configuration\DefaultValueConverter.cs" />
     <Compile Include="Configuration\DiscriminatedEntityMap.cs" />
     <Compile Include="Configuration\EntityMap.cs" />
-    <Compile Include="Configuration\EntityMemberMap.cs" />
+    <Compile Include="Configuration\ComponentMap.cs" />
     <Compile Include="Configuration\ExtendedPropertiesMap.cs" />
     <Compile Include="Configuration\Fluent\FluentDiscriminatedEntityMap.cs" />
     <Compile Include="Configuration\Fluent\FluentEntityMap.cs" />

@@ -9,7 +9,7 @@ using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration
 {
-    public class MemberMap
+    public class MemberMap : IMapVisitable
     {
         #region Public Properties
 
@@ -80,6 +80,15 @@ namespace MongoDB.Framework.Configuration
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Accepts the specified visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
+        public virtual void Accept(IMapVisitor visitor)
+        {
+            visitor.VisitMemberMap(this);
+        }
 
         /// <summary>
         /// Gets the document value from entity.

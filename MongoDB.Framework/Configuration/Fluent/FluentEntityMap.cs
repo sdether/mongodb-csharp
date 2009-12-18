@@ -52,7 +52,7 @@ namespace MongoDB.Framework.Configuration.Fluent
         /// <returns></returns>
         public FluentEntityDiscriminatorMap<TDiscriminatorType> DiscriminateBy<TDiscriminatorType>(string documentKey)
         {
-            this.Instance.DiscriminateDocumentKey = documentKey;
+            this.Instance.DiscriminatingDocumentKey = documentKey;
             return new FluentEntityDiscriminatorMap<TDiscriminatorType>(this.Instance);
         }
 
