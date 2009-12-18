@@ -49,7 +49,7 @@ namespace MongoDB.Framework
 
                 var organization = new Organization()
                 {
-                    Name = "The Muffler Show",
+                    Name = "The Muffler Shop",
                     EmployeeCount = 23,
                     PhoneNumber = new PhoneNumber() { AreaCode = "111", Prefix = "654", Number = "3210" }
                 };

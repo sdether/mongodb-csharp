@@ -45,7 +45,7 @@ namespace MongoDB.Framework.Linq
 
             var collection = this.database.GetCollection(rootEntityMap.CollectionName);
             IEnumerable<Document> documents;
-            if (spec.IsSingle)
+            if (spec.IsFindOne)
             {
                 var document = collection.FindOne(spec.Query);
                 if (document == null)
@@ -55,7 +55,7 @@ namespace MongoDB.Framework.Linq
             }
             else
             {
-                var cursor = collection.Find(spec.Query, spec.Limit, spec.Skip, spec.Projection);
+                var cursor = collection.Find(spec.GetCompleteQuery(), spec.Limit, spec.Skip, spec.Fields);
                 documents = cursor.Documents;
             }
 

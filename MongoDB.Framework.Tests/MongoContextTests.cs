@@ -23,7 +23,6 @@ namespace MongoDB.Framework
         {
             var parties = (from p in context.Query<Party>()
                            where p.PhoneNumber.AreaCode == "111"
-                           orderby p.Name descending, p.PhoneNumber.AreaCode ascending
                            select p).ToList();
 
             Assert.AreEqual(2, parties.Count());
@@ -103,6 +102,18 @@ namespace MongoDB.Framework
             var person = context.Query<Person>().First();
 
             Assert.IsNotNull(person);
+        }
+
+        [Test]
+        public void Test_ordering()
+        {
+            var parties = (from p in context.Query<Party>()
+                           orderby p.Name descending
+                           select p).ToList();
+
+            Assert.AreEqual("The Muffler Shop", parties[0].Name);
+            Assert.AreEqual("Jane McJane", parties[1].Name);
+            Assert.AreEqual("Bob McBob", parties[2].Name);
         }
 
         [Test]

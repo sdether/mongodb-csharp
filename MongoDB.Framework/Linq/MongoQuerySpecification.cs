@@ -8,32 +8,41 @@ namespace MongoDB.Framework.Linq
 {
     public class MongoQuerySpecification
     {
-        private Document projection;
+        private Document fields;
         private Document query;
         private Document orderBy;
 
         public bool IsCount { get; set; }
 
-        public bool IsSingle
+        public bool IsFindOne
         {
             get
             {
                 return this.Limit == 1
                     && this.Skip == 0
-                    && (this.projection == null || this.orderBy.Count == 0)
+                    && (this.fields == null || this.fields.Count == 0)
                     && (this.orderBy == null || this.orderBy.Count == 0);
             }
         }
 
         public int Limit { get; set; }
 
-        public Document Projection
+        public Document Fields
         {
             get
             {
-                if (this.projection == null)
-                    this.projection = new Document();
-                return this.projection;
+                if (this.fields == null)
+                    this.fields = new Document();
+                return this.fields;
+            }
+        }
+        public Document OrderBy
+        {
+            get
+            {
+                if (this.orderBy == null)
+                    this.orderBy = new Document();
+                return this.orderBy;
             }
         }
 
@@ -47,20 +56,22 @@ namespace MongoDB.Framework.Linq
             }
         }
 
-        public Document OrderBy
-        {
-            get
-            {
-                if (this.orderBy == null)
-                    this.orderBy = new Document();
-                return this.orderBy;
-            }
-        }
 
         public int Skip { get; set; }
 
         public MongoQuerySpecification()
         {
+        }
+
+        public Document GetCompleteQuery()
+        {
+            Document doc = new Document();
+            doc["query"] = this.Query;
+
+            if(this.orderBy != null)
+                doc["orderby"] = this.orderBy;
+
+            return doc;            
         }
     }
 }

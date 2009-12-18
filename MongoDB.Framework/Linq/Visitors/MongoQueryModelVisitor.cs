@@ -89,9 +89,9 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="queryModel">The query model.</param>
         public override void VisitQueryModel(QueryModel queryModel)
         {
-            queryModel.SelectClause.Accept(this, queryModel);
             this.VisitBodyClauses(queryModel.BodyClauses, queryModel);
             this.VisitResultOperators(queryModel.ResultOperators, queryModel);
+            queryModel.SelectClause.Accept(this, queryModel);
         }
 
         /// <summary>
