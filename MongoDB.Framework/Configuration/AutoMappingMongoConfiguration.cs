@@ -29,8 +29,8 @@ namespace MongoDB.Framework.Configuration
             var props = rootEntityMap.Type.GetProperties()
                 .Where(p => p.CanRead && p.CanWrite);
 
-            foreach(var prop in props)
-                rootEntityMap.AddMemberMap(new MemberMap(prop));
+            //foreach(var prop in props)
+            //    rootEntityMap.AddMemberMap(new PrimitiveMemberMap(prop));
         }
     }
 }

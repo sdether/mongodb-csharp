@@ -5,24 +5,20 @@ using System.Text;
 
 namespace MongoDB.Framework.Configuration
 {
-    public class DefaultValueConverter : IValueConverter
+    public class NoOpValueConverter : IValueConverter
     {
-        public static readonly DefaultValueConverter Instance = new DefaultValueConverter();
+        public static readonly NoOpValueConverter Instance = new NoOpValueConverter();
 
-        private DefaultValueConverter()
+        private NoOpValueConverter()
         { }
 
         public object ConvertFromDocumentValue(object documentValue)
         {
-            if (documentValue == global::MongoDB.Driver.MongoDBNull.Value)
-                documentValue = null;
             return documentValue;
         }
 
         public object ConvertToDocumentValue(object memberValue)
         {
-            if (memberValue == null)
-                memberValue = global::MongoDB.Driver.MongoDBNull.Value;
             return memberValue;
         }
     }

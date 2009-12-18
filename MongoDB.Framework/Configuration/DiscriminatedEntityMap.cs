@@ -13,7 +13,6 @@ namespace MongoDB.Framework.Configuration
     {
         #region Private Fields
 
-        private Dictionary<string, ComponentMap> componentMaps;
         private Dictionary<string, MemberMap> memberMaps;
 
         #endregion
@@ -25,15 +24,6 @@ namespace MongoDB.Framework.Configuration
         /// </summary>
         /// <value>The discriminating value.</value>
         public object DiscriminatingValue { get; set; }
-
-        /// <summary>
-        /// Gets the component maps.
-        /// </summary>
-        /// <value>The component maps.</value>
-        public IEnumerable<ComponentMap> ComponentMaps
-        {
-            get { return this.componentMaps.Values; }
-        }
 
         /// <summary>
         /// Gets the member maps.
@@ -63,7 +53,6 @@ namespace MongoDB.Framework.Configuration
             if (type == null)
                 throw new ArgumentNullException("type");
 
-            this.componentMaps = new Dictionary<string,ComponentMap>();
             this.memberMaps = new Dictionary<string, MemberMap>();
             this.Type = type;
         }
@@ -79,18 +68,6 @@ namespace MongoDB.Framework.Configuration
         public virtual void Accept(IMapVisitor visitor)
         {
             visitor.VisitDiscriminatedEntityMap(this);
-        }
-
-        /// <summary>
-        /// Adds the component map.
-        /// </summary>
-        /// <param name="componentMap">The component map.</param>
-        public void AddComponentMap(ComponentMap componentMap)
-        {
-            if (componentMap == null)
-                throw new ArgumentNullException("componentMap");
-
-            this.componentMaps[componentMap.DocumentKey] = componentMap;
         }
 
         /// <summary>

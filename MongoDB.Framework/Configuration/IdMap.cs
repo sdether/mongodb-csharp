@@ -8,27 +8,9 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration
 {
-    public class IdMap : IMapVisitable
+    public class IdMap : MemberMap
     {
         #region Public Properties
-
-        /// <summary>
-        /// Gets or sets the getter.
-        /// </summary>
-        /// <value>The getter.</value>
-        public Func<object, object> Getter { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the name of the member.
-        /// </summary>
-        /// <value>The name of the member.</value>
-        public string MemberName { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the setter.
-        /// </summary>
-        /// <value>The setter.</value>
-        public Action<object, object> Setter { get; private set; }
 
         /// <summary>
         /// Gets the transient value.
@@ -47,17 +29,9 @@ namespace MongoDB.Framework.Configuration
         /// Initializes a new instance of the <see cref="ExtendedPropertiesMap"/> class.
         /// </summary>
         /// <param name="memberInfo">The member info.</param>
-        public IdMap(MemberInfo memberInfo)
-        {
-            if (memberInfo == null)
-                throw new ArgumentNullException("memberInfo");
-            if (typeof(string) != LateBoundReflection.GetMemberValueType(memberInfo))
-                throw new ArgumentException("Id member must be of type string.");
-
-            this.MemberName = memberInfo.Name;
-            this.Getter = LateBoundReflection.GetGetter(memberInfo);
-            this.Setter = LateBoundReflection.GetSetter(memberInfo);
-        }
+        public IdMap(string memberName, Func<object, object> getter, Action<object, object> setter)
+            : base(memberName, getter, setter, "_id")
+        { }
 
         #endregion
 
@@ -67,7 +41,7 @@ namespace MongoDB.Framework.Configuration
         /// Accepts the specified visitor.
         /// </summary>
         /// <param name="visitor">The visitor.</param>
-        public void Accept(IMapVisitor visitor)
+        public override void Accept(IMapVisitor visitor)
         {
             visitor.VisitIdMap(this);
         }
@@ -77,7 +51,7 @@ namespace MongoDB.Framework.Configuration
         /// </summary>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        public object GetDocumentValueFromEntity(object entity)
+        public override object GetDocumentValueFromEntity(object entity)
         {
             string id = (string)this.Getter(entity);
             if (id != null)
@@ -90,7 +64,7 @@ namespace MongoDB.Framework.Configuration
         /// </summary>
         /// <param name="entity">The entity.</param>
         /// <param name="documentValue">The document value.</param>
-        public void SetDocumentValueOnEntity(object entity, object documentValue)
+        public override void SetDocumentValueOnEntity(object entity, object documentValue)
         {
             Oid oid = documentValue as Oid;
             if (oid != null)

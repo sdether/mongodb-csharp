@@ -10,13 +10,13 @@ namespace MongoDB.Framework.Configuration.Fluent
 {
     public class FluentMemberMap
     {
-        private MemberMap memberMap;
+        private PrimitiveMemberMap memberMap;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FluentMemberMap"/> class.
         /// </summary>
         /// <param name="memberMap">The member map.</param>
-        public FluentMemberMap(MemberMap memberMap)
+        public FluentMemberMap(PrimitiveMemberMap memberMap)
         {
             if (memberMap == null)
                 throw new ArgumentNullException("memberMap");

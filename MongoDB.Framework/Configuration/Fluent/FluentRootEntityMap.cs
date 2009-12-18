@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 
 using MongoDB.Framework.Linq.Visitors;
+using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration.Fluent
 {
@@ -51,7 +52,9 @@ namespace MongoDB.Framework.Configuration.Fluent
         /// <param name="member">The member.</param>
         public void Id(MemberInfo member)
         {
-            this.Instance.IdMap = new IdMap(member);
+            var getter = LateBoundReflection.GetGetter(member);
+            var setter = LateBoundReflection.GetSetter(member);
+            this.Instance.IdMap = new IdMap(member.Name, getter, setter);
         }
 
         /// <summary>

@@ -77,6 +77,7 @@ namespace MongoDB.Framework.Configuration.Visitors
         {
             this.entity = this.CreateInstance(rootEntityMap);
             rootEntityMap.IdMap.Accept(this);
+            this.VisitEntityMap(rootEntityMap);
         }
 
         public void VisitEntityMap(EntityMap entityMap)
@@ -95,9 +96,10 @@ namespace MongoDB.Framework.Configuration.Visitors
                 this.document.Remove(entityMap.DiscriminatingDocumentKey);
             }
 
+            this.VisitDiscriminatedEntityMap(entityMap);
+
             if (!entityMap.HasExtendedPropertiesMap)
                 return;
-
             var extProps = new Dictionary<string, object>();
             ConvertDocumentToDictionary(this.document, extProps);
             entityMap.ExtendedPropertiesMap.Setter(entity, extProps);
@@ -108,21 +110,23 @@ namespace MongoDB.Framework.Configuration.Visitors
             if (this.entity == null)
                 throw new NotSupportedException("Discriminated entities cannot be at the root.");
 
-            foreach (var componentMap in discriminatedEntityMap.ComponentMaps)
-                componentMap.Accept(this);
             foreach (var memberMap in discriminatedEntityMap.MemberMaps)
                 memberMap.Accept(this);
         }
 
-        public void VisitMemberMap(MemberMap memberMap)
+        public void VisitPrimitiveMemberMap(PrimitiveMemberMap primitiveMemberMap)
         {
-            memberMap.SetDocumentValueOnEntity(this.entity, this.document[memberMap.DocumentKey]);
-            this.document.Remove(memberMap.DocumentKey);
+            var documentValue = this.document[primitiveMemberMap.DocumentKey];
+            if (documentValue == MongoDBNull.Value)
+                documentValue = null;
+
+            primitiveMemberMap.SetDocumentValueOnEntity(this.entity, documentValue);
+            this.document.Remove(primitiveMemberMap.DocumentKey);
         }
 
-        public void VisitComponentMap(ComponentMap componentMap)
+        public void VisitComponentMemberMap(ComponentMemberMap componentMemberMap)
         {
-            var subDocument = document[componentMap.DocumentKey] as Document;
+            var subDocument = document[componentMemberMap.DocumentKey] as Document;
             if (subDocument == null)
                 return;
 
@@ -131,18 +135,22 @@ namespace MongoDB.Framework.Configuration.Visitors
 
             this.document = subDocument;
             this.entity = null;
-            componentMap.EntityMap.Accept(this);
+            componentMemberMap.EntityMap.Accept(this);
 
-            componentMap.Setter(oldEntity, entity);
+            componentMemberMap.Setter(oldEntity, entity);
             this.entity = oldEntity;
             this.document = oldDocument;
 
-            this.document.Remove(componentMap.DocumentKey);
+            this.document.Remove(componentMemberMap.DocumentKey);
         }
 
         public void VisitIdMap(IdMap idMap)
         {
-            idMap.SetDocumentValueOnEntity(this.entity, this.document["_id"]);
+            var documentValue = this.document["_id"];
+            if (documentValue == MongoDBNull.Value)
+                documentValue = null;
+
+            idMap.SetDocumentValueOnEntity(this.entity, documentValue);
             this.document.Remove("_id");
         }
 

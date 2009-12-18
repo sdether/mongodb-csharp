@@ -29,6 +29,16 @@ namespace MongoDB.Framework
         }
 
         [Test]
+        public void Test_root_entity_query_with_a_component_condition()
+        {
+            var parties = (from p in context.Query<Party>()
+                           where p.PhoneNumber == new PhoneNumber() { AreaCode = "111", Prefix = "222", Number = "3333" }
+                           select p).ToList();
+
+            Assert.AreEqual(1, parties.Count());
+        }
+
+        [Test]
         public void Test_discriminated_entity_query()
         {
             var parties = (from p in context.Query<Organization>()

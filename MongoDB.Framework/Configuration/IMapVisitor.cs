@@ -13,9 +13,9 @@ namespace MongoDB.Framework.Configuration
 
         void VisitDiscriminatedEntityMap(DiscriminatedEntityMap discriminatedEntityMap);
 
-        void VisitMemberMap(MemberMap memberMap);
+        void VisitPrimitiveMemberMap(PrimitiveMemberMap primitiveMemberMap);
 
-        void VisitComponentMap(ComponentMap componentMap);
+        void VisitComponentMemberMap(ComponentMemberMap componentMemberMap);
 
         void VisitIdMap(IdMap idMap);
     }

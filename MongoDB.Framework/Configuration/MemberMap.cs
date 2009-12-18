@@ -1,24 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
-
-using MongoDB.Driver;
 using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration
 {
-    public class MemberMap : IMapVisitable
+    public abstract class MemberMap : IMapVisitable
     {
-        #region Public Properties
-
-        /// <summary>
-        /// Gets or sets the converter.
-        /// </summary>
-        /// <value>The converter.</value>
-        public IValueConverter Converter { get; set; }
-
         /// <summary>
         /// Gets the key.
         /// </summary>
@@ -43,24 +33,23 @@ namespace MongoDB.Framework.Configuration
         /// <value>The setter.</value>
         public Action<object, object> Setter { get; private set; }
 
-        #endregion
-
-        #region Constructors
-
         /// <summary>
         /// Initializes a new instance of the <see cref="MemberMap"/> class.
         /// </summary>
         /// <param name="memberInfo">The member info.</param>
-        public MemberMap(MemberInfo memberInfo)
+        protected MemberMap(string memberName, Func<object, object> getter, Action<object, object> setter)
         {
-            if (memberInfo == null)
-                throw new ArgumentNullException("memberInfo");
+            if (memberName == null)
+                throw new ArgumentException("Cannot be null or empty.", "memberName");
+            if (getter == null)
+                throw new ArgumentNullException("getter");
+            if (setter == null)
+                throw new ArgumentNullException("setter");
 
-            this.Converter = DefaultValueConverter.Instance;
-            this.DocumentKey = memberInfo.Name;
-            this.MemberName = memberInfo.Name;
-            this.Getter = LateBoundReflection.GetGetter(memberInfo);
-            this.Setter = LateBoundReflection.GetSetter(memberInfo);
+            this.DocumentKey = memberName;
+            this.MemberName = memberName;
+            this.Getter = getter;
+            this.Setter = setter;
         }
 
         /// <summary>
@@ -68,8 +57,8 @@ namespace MongoDB.Framework.Configuration
         /// </summary>
         /// <param name="memberInfo">The member info.</param>
         /// <param name="documentKey">The document key.</param>
-        public MemberMap(MemberInfo memberInfo, string documentKey)
-            : this(memberInfo)
+        protected MemberMap(string memberName, Func<object, object> getter, Action<object, object> setter, string documentKey)
+            : this(memberName, getter, setter)
         {
             if (documentKey == null)
                 throw new ArgumentException("Cannot be null or empty.", "documentKey");
@@ -77,42 +66,24 @@ namespace MongoDB.Framework.Configuration
             this.DocumentKey = documentKey;
         }
 
-        #endregion
-
-        #region Public Methods
-
         /// <summary>
         /// Accepts the specified visitor.
         /// </summary>
         /// <param name="visitor">The visitor.</param>
-        public virtual void Accept(IMapVisitor visitor)
-        {
-            visitor.VisitMemberMap(this);
-        }
+        public abstract void Accept(IMapVisitor visitor);
 
         /// <summary>
         /// Gets the document value from entity.
         /// </summary>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        public object GetDocumentValueFromEntity(object entity)
-        {
-            return this.Converter.ConvertToDocumentValue(
-                this.Getter(entity));
-        }
+        public abstract object GetDocumentValueFromEntity(object entity);
 
         /// <summary>
         /// Sets the document value on entity.
         /// </summary>
         /// <param name="entity">The entity.</param>
         /// <param name="documentValue">The document value.</param>
-        public void SetDocumentValueOnEntity(object entity, object documentValue)
-        {
-            this.Setter(
-                entity, 
-                this.Converter.ConvertFromDocumentValue(documentValue));
-        }
-
-        #endregion
+        public abstract void SetDocumentValueOnEntity(object entity, object documentValue);
     }
 }

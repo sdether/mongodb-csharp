@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 
 using MongoDB.Framework.Linq.Visitors;
+using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration.Fluent
 {
@@ -68,7 +69,9 @@ namespace MongoDB.Framework.Configuration.Fluent
         {
             var entityMap = new FluentEntityMap<TEntity>();
             configure(entityMap);
-            this.Instance.AddComponentMap(new ComponentMap(member, entityMap.Instance));
+            var getter = LateBoundReflection.GetGetter(member);
+            var setter = LateBoundReflection.GetSetter(member);
+            this.Instance.AddMemberMap(new ComponentMemberMap(member.Name, getter, setter, documentKey, entityMap.Instance));
         }
 
         /// <summary>
@@ -130,7 +133,9 @@ namespace MongoDB.Framework.Configuration.Fluent
         /// <returns></returns>
         public FluentMemberMap Map(MemberInfo member, string documentKey)
         {
-            var memberMap = new MemberMap(member, documentKey);
+            var getter = LateBoundReflection.GetGetter(member);
+            var setter = LateBoundReflection.GetSetter(member);
+            var memberMap = new PrimitiveMemberMap(member.Name, getter, setter, documentKey);
             this.Instance.AddMemberMap(memberMap);
             return new FluentMemberMap(memberMap);
         }

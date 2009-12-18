@@ -98,7 +98,6 @@ namespace MongoDB.Framework.Configuration
         public override void Accept(IMapVisitor visitor)
         {
             visitor.VisitEntityMap(this);
-            base.Accept(visitor);
         }
 
         /// <summary>

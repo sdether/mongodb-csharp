@@ -63,6 +63,7 @@ namespace MongoDB.Framework.Configuration.Visitors
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
+            this.document = new Document();
             this.entity = entity;
         }
 
@@ -72,8 +73,8 @@ namespace MongoDB.Framework.Configuration.Visitors
 
         public void VisitRootEntityMap(RootEntityMap rootEntityMap)
         {
-            this.document = new Document();
             rootEntityMap.IdMap.Accept(this);
+            this.VisitEntityMap(rootEntityMap);
         }
 
         public void VisitEntityMap(EntityMap entityMap)
@@ -94,38 +95,42 @@ namespace MongoDB.Framework.Configuration.Visitors
                 IDictionary<string, object> props = (IDictionary<string, object>)entityMap.ExtendedPropertiesMap.Getter(this.entity);
                 TranslateDictionaryToDocument(props, this.document);
             }
+
+            this.VisitDiscriminatedEntityMap(entityMap);
         }
 
         public void VisitDiscriminatedEntityMap(DiscriminatedEntityMap discriminatedEntityMap)
         {
-            foreach (var componentMap in discriminatedEntityMap.ComponentMaps)
-                componentMap.Accept(this);
             foreach (var memberMap in discriminatedEntityMap.MemberMaps)
                 memberMap.Accept(this);
         }
 
-        public void VisitMemberMap(MemberMap memberMap)
+        public void VisitPrimitiveMemberMap(PrimitiveMemberMap primitiveMemberMap)
         {
-            this.document[memberMap.DocumentKey] = memberMap.GetDocumentValueFromEntity(this.entity);
+            var value = primitiveMemberMap.GetDocumentValueFromEntity(this.entity) ?? MongoDBNull.Value;
+            this.document[primitiveMemberMap.DocumentKey] = value;
         }
 
-        public void VisitComponentMap(ComponentMap componentMap)
+        public void VisitComponentMemberMap(ComponentMemberMap componentMemberMap)
         {
             var oldDocument = this.document;
             var oldEntity = this.entity;
             this.document = new Document();
-            this.entity = componentMap.Getter(oldEntity);
-            
-            componentMap.EntityMap.Accept(this);
-
-            oldDocument[componentMap.DocumentKey] = document;
+            this.entity = componentMemberMap.Getter(oldEntity);
+            if (this.entity != null)
+            {
+                componentMemberMap.EntityMap.Accept(this);
+                oldDocument[componentMemberMap.DocumentKey] = document;
+            }
             this.document = oldDocument;
             this.entity = oldEntity;
         }
 
         public void VisitIdMap(IdMap idMap)
         {
-            this.document["_id"] = idMap.GetDocumentValueFromEntity(this.entity);
+            var value = idMap.GetDocumentValueFromEntity(this.entity);
+            if (value != null)
+                this.document["_id"] = value;
         }
 
         #endregion

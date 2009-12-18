@@ -10,6 +10,7 @@ using Remotion.Data.Linq.Clauses.ExpressionTreeVisitors;
 
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
+using MongoDB.Framework.Configuration.Visitors;
 
 namespace MongoDB.Framework.Linq.Visitors
 {
@@ -84,36 +85,41 @@ namespace MongoDB.Framework.Linq.Visitors
                     throw new NotSupportedException(string.Format("The binary operator {0} is not supported.", expression.NodeType));
             }
 
-            string key;
             object value;
             if (expression.Left.NodeType == ExpressionType.MemberAccess &&
                 expression.Right.NodeType == ExpressionType.Constant)
             {
                 this.VisitExpression(expression.Left);
-                key = this.CreateDocumentKeyFromMemberPathParts();
                 value = ((ConstantExpression)expression.Right).Value;
             }
             else if (expression.Left.NodeType == ExpressionType.Constant &&
                 expression.Right.NodeType == ExpressionType.MemberAccess)
             {
                 this.VisitExpression(expression.Right);
-                key = this.CreateDocumentKeyFromMemberPathParts();
                 value = ((ConstantExpression)expression.Left).Value;
             }
             else
                 throw new NotSupportedException();
 
-            
+            if (this.memberPathParts.Count == 0)
+                throw new InvalidOperationException("No member path parts exist.");
+
+            var visitor = new MemberPathToQueryConditionVisitor(this.memberPathParts, value);
+            var rootEntityMap = this.configuration.GetRootEntityMapFor(this.memberPathParts[0].DeclaringType);
+            rootEntityMap.Accept(visitor);
+
             if (op == "$eq")
-                this.query[key] = value;
+                this.query[visitor.DocumentKey] = visitor.DocumentValue;
             else
             {
-                Document doc = (Document)this.query[key];
+                Document doc = (Document)this.query[visitor.DocumentKey];
                 if (doc == null)
-                    this.query[key] = doc = new Document();
+                    this.query[visitor.DocumentKey] = doc = new Document();
 
-                doc.Append(op, value);
+                doc.Append(op, visitor.DocumentValue);
             }
+
+            this.memberPathParts.Clear();
             
             return expression;
         }
@@ -137,36 +143,6 @@ namespace MongoDB.Framework.Linq.Visitors
             string itemText = itemAsExpression != null ? FormattingExpressionTreeVisitor.Format(itemAsExpression) : unhandledItem.ToString();
             var message = string.Format("The expression '{0}' (type: {1}) is not supported by this LINQ provider.", itemText, typeof(T));
             return new NotSupportedException(message);
-        }
-
-        #endregion
-
-        #region Private Fields
-
-        private string CreateDocumentKeyFromMemberPathParts()
-        {
-            //if(this.memberPathParts.Count == 0)
-            //    throw new InvalidOperationException("No member path parts exist.");
-
-            //var memberInfo = this.memberPathParts[0];
-            //EntityMap entityMap = this.configuration.GetRootEntityMapFor(this.memberPathParts[0].DeclaringType);
-            //var memberMap = entityMap.GetMemberMap(memberInfo.DeclaringType, memberInfo.Name);
-            //string key = memberMap.DocumentKey;
-            //for (int i = 1; i < this.memberPathParts.Count; i++)
-            //{
-            //    var entityMemberMap = memberMap as ComponentMap;
-            //    if (entityMemberMap == null)
-            //        throw new UnmappedMemberException(string.Format("{0}.{1} is unmapped.", this.memberPathParts[i].DeclaringType, this.memberPathParts[i].Name));
-
-            //    entityMap = entityMemberMap.EntityMap;
-            //    memberMap = entityMap.GetMemberMap(this.memberPathParts[i].DeclaringType, this.memberPathParts[i].Name);
-            //    key += "." + memberMap.DocumentKey;
-            //}
-
-            //this.memberPathParts.Clear();
-
-            //return key;
-            return "blah";
         }
 
         #endregion
