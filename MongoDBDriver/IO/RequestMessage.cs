@@ -33,7 +33,6 @@ namespace MongoDB.Driver.IO
             writer.Write((int)header.OpCode);
             writer.Write(body);
             writer.Flush();
-            Debug.WriteLine(header, "Request Message");
         }
         
         protected abstract void WriteBody(Stream stream);
