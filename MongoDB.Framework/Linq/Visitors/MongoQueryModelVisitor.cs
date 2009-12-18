@@ -60,6 +60,30 @@ namespace MongoDB.Framework.Linq.Visitors
         #region Public Methods
 
         /// <summary>
+        /// Visits the order by clause.
+        /// </summary>
+        /// <param name="orderByClause">The order by clause.</param>
+        /// <param name="queryModel">The query model.</param>
+        /// <param name="index">The index.</param>
+        public override void VisitOrderByClause(OrderByClause orderByClause, QueryModel queryModel, int index)
+        {
+            this.VisitOrderings(orderByClause.Orderings, queryModel, orderByClause);
+        }
+
+        /// <summary>
+        /// Visits the ordering.
+        /// </summary>
+        /// <param name="ordering">The ordering.</param>
+        /// <param name="queryModel">The query model.</param>
+        /// <param name="orderByClause">The order by clause.</param>
+        /// <param name="index">The index.</param>
+        public override void VisitOrdering(Ordering ordering, QueryModel queryModel, OrderByClause orderByClause, int index)
+        {
+            string key = MongoOrderingExpressionTreeVisitor.GetDocumentKey(this.configuration, ordering.Expression);
+            this.querySpec.OrderBy[key] = ordering.OrderingDirection == OrderingDirection.Asc ? 1 : -1;
+        }
+
+        /// <summary>
         /// Visits the query model.
         /// </summary>
         /// <param name="queryModel">The query model.</param>
@@ -105,6 +129,11 @@ namespace MongoDB.Framework.Linq.Visitors
             }
             else
                 throw new NotSupportedException(string.Format("Operator {0} is not supported.", resultOperator.GetType()));
+        }
+
+        public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
+        {
+
         }
 
         /// <summary>

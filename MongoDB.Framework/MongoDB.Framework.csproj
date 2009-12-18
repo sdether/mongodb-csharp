@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChangeSet.cs" />
+    <Compile Include="Linq\Visitors\MongoOrderingExpressionTreeVisitor.cs" />
     <Compile Include="Tracking\ChangeTracker.cs" />
     <Compile Include="Tracking\DefaultChangeTracker.cs" />
     <Compile Include="Configuration\AutoMappingMongoConfiguration.cs" />

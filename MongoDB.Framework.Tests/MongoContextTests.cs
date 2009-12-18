@@ -23,6 +23,7 @@ namespace MongoDB.Framework
         {
             var parties = (from p in context.Query<Party>()
                            where p.PhoneNumber.AreaCode == "111"
+                           orderby p.Name descending, p.PhoneNumber.AreaCode ascending
                            select p).ToList();
 
             Assert.AreEqual(2, parties.Count());
