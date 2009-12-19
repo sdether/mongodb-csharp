@@ -8,10 +8,6 @@ namespace MongoDB.Framework.Linq
 {
     public class MongoQuerySpecification
     {
-        private Document fields;
-        private Document query;
-        private Document orderBy;
-
         public bool IsCount { get; set; }
 
         public bool IsFindOne
@@ -20,47 +16,26 @@ namespace MongoDB.Framework.Linq
             {
                 return this.Limit == 1
                     && this.Skip == 0
-                    && (this.fields == null || this.fields.Count == 0)
-                    && (this.orderBy == null || this.orderBy.Count == 0);
+                    && (this.ProjectedFields.Count == 0)
+                    && (this.OrderBy.Count == 0);
             }
         }
 
         public int Limit { get; set; }
 
-        public Document Fields
-        {
-            get
-            {
-                if (this.fields == null)
-                    this.fields = new Document();
-                return this.fields;
-            }
-        }
-        public Document OrderBy
-        {
-            get
-            {
-                if (this.orderBy == null)
-                    this.orderBy = new Document();
-                return this.orderBy;
-            }
-        }
+        public Document OrderBy { get; private set; }
 
-        public Document Query
-        {
-            get
-            {
-                if (this.query == null)
-                    this.query = new Document();
-                return this.query;
-            }
-        }
+        public IList<ProjectedField> ProjectedFields { get; private set; }
 
+        public Document Query { get; private set; }
 
         public int Skip { get; set; }
 
         public MongoQuerySpecification()
         {
+            this.OrderBy = new Document();
+            this.ProjectedFields = new List<ProjectedField>();
+            this.Query = new Document();
         }
 
         public Document GetCompleteQuery()
@@ -68,10 +43,18 @@ namespace MongoDB.Framework.Linq
             Document doc = new Document();
             doc["query"] = this.Query;
 
-            if(this.orderBy != null)
-                doc["orderby"] = this.orderBy;
+            if(this.OrderBy.Count > 0)
+                doc["orderby"] = this.OrderBy;
 
             return doc;            
+        }
+
+        public Document GetFields()
+        {
+            Document doc = new Document();
+            foreach (var projectedField in this.ProjectedFields)
+                doc.Add(projectedField.DocumentKey, 1);
+            return doc;
         }
     }
 }

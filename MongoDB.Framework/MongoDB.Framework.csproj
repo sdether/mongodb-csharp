@@ -67,6 +67,7 @@
     <Compile Include="Configuration\Visitors\MemberPathToQueryConditionVisitor.cs" />
     <Compile Include="Linq\Visitors\MongoProjectionExpressionTreeVisitor.cs" />
     <Compile Include="Linq\Visitors\MongoOrderingExpressionTreeVisitor.cs" />
+    <Compile Include="Linq\ProjectedField.cs" />
     <Compile Include="Tracking\ChangeTracker.cs" />
     <Compile Include="Tracking\DefaultChangeTracker.cs" />
     <Compile Include="Configuration\AutoMappingMongoConfiguration.cs" />

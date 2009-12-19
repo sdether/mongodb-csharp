@@ -19,7 +19,7 @@ namespace MongoDB.Framework.Linq.Visitors
         #region Private Fields
 
         private MongoConfiguration configuration;
-        private List<MemberInfo> memberPathParts;
+        private List<MemberInfo> memberPath;
 
         #endregion
 
@@ -32,7 +32,7 @@ namespace MongoDB.Framework.Linq.Visitors
         public MongoOrderingExpressionTreeVisitor(MongoConfiguration configuration)
         {
             this.configuration = configuration;
-            this.memberPathParts = new List<MemberInfo>();
+            this.memberPath = new List<MemberInfo>();
         }
 
         #endregion
@@ -57,7 +57,7 @@ namespace MongoDB.Framework.Linq.Visitors
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
             this.VisitExpression(expression.Expression);
-            this.memberPathParts.Add(expression.Member);
+            this.memberPath.Add(expression.Member);
 
             return expression;
         }
@@ -81,8 +81,8 @@ namespace MongoDB.Framework.Linq.Visitors
 
         private string CreateDocumentKeyFromMemberPathParts()
         {
-            var visitor = new MemberPathToDocumentKeyVisitor(this.memberPathParts);
-            var rootEntityMap = this.configuration.GetRootEntityMapFor(this.memberPathParts[0].DeclaringType);
+            var visitor = new MemberPathToDocumentKeyVisitor(this.memberPath);
+            var rootEntityMap = this.configuration.GetRootEntityMapFor(this.memberPath[0].DeclaringType);
             rootEntityMap.Accept(visitor);
             return visitor.DocumentKey;
         }

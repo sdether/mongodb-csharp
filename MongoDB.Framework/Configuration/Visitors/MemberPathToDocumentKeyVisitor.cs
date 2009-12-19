@@ -10,7 +10,7 @@ namespace MongoDB.Framework.Configuration.Visitors
     public class MemberPathToDocumentKeyVisitor : IMapVisitor
     {
         private Stack<MemberInfo> memberPathParts;
-        private List<string> documentKeyParts;
+        private List<MemberMap> memberMapPath;
 
         private string documentKey;
 
@@ -28,8 +28,13 @@ namespace MongoDB.Framework.Configuration.Visitors
         {
             get
             {
-                return string.Join(".", this.documentKeyParts.ToArray());
+                return string.Join(".", this.memberMapPath.Select(mm => mm.DocumentKey).ToArray());
             }
+        }
+
+        public IEnumerable<MemberMap> MemberMapPath
+        {
+            get { return this.memberMapPath; }
         }
 
         public MemberPathToDocumentKeyVisitor(IEnumerable<MemberInfo> memberPathParts)
@@ -38,7 +43,7 @@ namespace MongoDB.Framework.Configuration.Visitors
                 throw new ArgumentNullException("memberPathParts");
 
             this.documentKey = "";
-            this.documentKeyParts = new List<string>();
+            this.memberMapPath = new List<MemberMap>();
             this.memberPathParts = new Stack<MemberInfo>(memberPathParts.Reverse());
         }
 
@@ -65,13 +70,13 @@ namespace MongoDB.Framework.Configuration.Visitors
         public void VisitPrimitiveMemberMap(PrimitiveMemberMap primitiveMemberMap)
         {
             this.memberPathParts.Pop();
-            this.documentKeyParts.Add(primitiveMemberMap.DocumentKey);
+            this.memberMapPath.Add(primitiveMemberMap);
         }
 
         public void VisitComponentMemberMap(ComponentMemberMap componentMemberMap)
         {
             this.memberPathParts.Pop();
-            this.documentKeyParts.Add(componentMemberMap.DocumentKey);
+            this.memberMapPath.Add(componentMemberMap);
             if(!this.IsFinished)
                 componentMemberMap.EntityMap.Accept(this);
         }
@@ -80,7 +85,7 @@ namespace MongoDB.Framework.Configuration.Visitors
         {
             if (this.CurrentMemberInfo.Name == idMap.MemberName)
             {
-                this.documentKeyParts.Add("_id");
+                this.memberMapPath.Add(idMap);
                 this.memberPathParts.Pop();
             }
         }

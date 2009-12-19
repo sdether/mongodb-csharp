@@ -133,12 +133,18 @@ namespace MongoDB.Framework.Linq.Visitors
                 throw new NotSupportedException(string.Format("Operator {0} is not supported.", resultOperator.GetType()));
         }
 
+        /// <summary>
+        /// Visits the select clause.
+        /// </summary>
+        /// <param name="selectClause">The select clause.</param>
+        /// <param name="queryModel">The query model.</param>
         public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
         {
-            var fields = new MongoProjectionExpressionTreeVisitor(this.configuration)
+            var projectedFields = new MongoProjectionExpressionTreeVisitor(this.configuration)
                 .GetFieldsFrom(selectClause.Selector);
 
-            fields.CopyTo(this.querySpec.Fields);
+            foreach (var projectedField in projectedFields)
+                this.querySpec.ProjectedFields.Add(projectedField);
         }
 
         /// <summary>

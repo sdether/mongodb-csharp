@@ -19,8 +19,8 @@ namespace MongoDB.Framework.Linq.Visitors
         #region Private Fields
 
         private MongoConfiguration configuration;
-        private List<MemberInfo> memberPathParts;
-        private Document fields;
+        private List<MemberInfo> memberPath;
+        private List<ProjectedField> projectedFields;
 
         #endregion
 
@@ -33,8 +33,8 @@ namespace MongoDB.Framework.Linq.Visitors
         public MongoProjectionExpressionTreeVisitor(MongoConfiguration configuration)
         {
             this.configuration = configuration;
-            this.memberPathParts = new List<MemberInfo>();
-            this.fields = new Document();
+            this.memberPath = new List<MemberInfo>();
+            this.projectedFields = new List<ProjectedField>();
         }
 
         #endregion
@@ -46,14 +46,15 @@ namespace MongoDB.Framework.Linq.Visitors
         /// </summary>
         /// <param name="expression">The expression.</param>
         /// <returns></returns>
-        public Document GetFieldsFrom(Expression expression)
+        public IEnumerable<ProjectedField> GetFieldsFrom(Expression expression)
         {
             this.VisitExpression(expression);
-            if(this.memberPathParts.Count > 0)
+            if(this.memberPath.Count > 0)
             {
-                this.fields[this.CreateDocumentKeyFromMemberPathParts()] = 1;
+                this.projectedFields.Add(this.CreateProjectFieldFromMemberPath());
+
             }
-            return this.fields;
+            return this.projectedFields;
         }
 
         #endregion
@@ -63,7 +64,7 @@ namespace MongoDB.Framework.Linq.Visitors
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
             this.VisitExpression(expression.Expression);
-            this.memberPathParts.Add(expression.Member);
+            this.memberPath.Add(expression.Member);
 
             return expression;
         }
@@ -85,12 +86,12 @@ namespace MongoDB.Framework.Linq.Visitors
 
         #region Private Fields
 
-        private string CreateDocumentKeyFromMemberPathParts()
+        private ProjectedField CreateProjectFieldFromMemberPath()
         {
-            var visitor = new MemberPathToDocumentKeyVisitor(this.memberPathParts);
-            var rootEntityMap = this.configuration.GetRootEntityMapFor(this.memberPathParts[0].DeclaringType);
+            var visitor = new MemberPathToDocumentKeyVisitor(this.memberPath);
+            var rootEntityMap = this.configuration.GetRootEntityMapFor(this.memberPath[0].DeclaringType);
             rootEntityMap.Accept(visitor);
-            return visitor.DocumentKey;
+            return new ProjectedField(visitor.MemberMapPath);
         }
 
         #endregion
