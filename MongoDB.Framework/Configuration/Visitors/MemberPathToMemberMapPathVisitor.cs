@@ -7,7 +7,7 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration.Visitors
 {
-    public class MemberPathToDocumentKeyVisitor : IMapVisitor
+    public class MemberPathToMemberMapPathVisitor : IMapVisitor
     {
         private Stack<MemberInfo> memberPathParts;
         private List<MemberMap> memberMapPath;
@@ -32,12 +32,12 @@ namespace MongoDB.Framework.Configuration.Visitors
             }
         }
 
-        public IEnumerable<MemberMap> MemberMapPath
+        public IList<MemberMap> MemberMapPath
         {
             get { return this.memberMapPath; }
         }
 
-        public MemberPathToDocumentKeyVisitor(IEnumerable<MemberInfo> memberPathParts)
+        public MemberPathToMemberMapPathVisitor(IEnumerable<MemberInfo> memberPathParts)
         {
             if (memberPathParts == null)
                 throw new ArgumentNullException("memberPathParts");

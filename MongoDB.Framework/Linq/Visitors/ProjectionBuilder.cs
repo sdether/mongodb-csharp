@@ -16,8 +16,24 @@ using Remotion.Data.Linq.Clauses.Expressions;
 
 namespace MongoDB.Framework.Linq.Visitors
 {
-    public class MongoProjectionExpressionTreeVisitor : ThrowingExpressionTreeVisitor
+    public class ProjectionBuilder : ThrowingExpressionTreeVisitor
     {
+        public static MongoQueryProjection<T> Build<T>(MongoConfiguration configuration, Expression expression)
+        {
+            var configurationParameter = Expression.Parameter(typeof(MongoConfiguration), "configuration");
+            var documentParameter = Expression.Parameter(typeof(Document), "document");
+            ProjectionBuilder builder = new ProjectionBuilder(configuration, configurationParameter, documentParameter);
+
+            var body = builder.VisitExpression(expression);
+
+            var projector = Expression.Lambda<Func<MongoConfiguration, Document, T>>(body, configurationParameter, documentParameter);
+
+            var projection = new MongoQueryProjection<T>();
+            projection.Fields = builder.fields;
+            projection.Projector = projector.Compile();
+            return projection;
+        }
+
         #region Private Static Fields
 
         private static MethodInfo resolveValueMethodInfo =
@@ -28,6 +44,7 @@ namespace MongoDB.Framework.Linq.Visitors
         #region Private Fields
 
         private MongoConfiguration configuration;
+        private ParameterExpression configurationParameter;
         private ParameterExpression documentParameter;
         private Document fields;
 
@@ -39,44 +56,31 @@ namespace MongoDB.Framework.Linq.Visitors
         /// Initializes a new instance of the <see cref="MongoWhereClauseExpressionTreeVisitor"/> class.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        public MongoProjectionExpressionTreeVisitor(MongoConfiguration configuration)
+        private ProjectionBuilder(MongoConfiguration configuration, ParameterExpression configurationParameter, ParameterExpression documentParameter)
         {
             this.configuration = configuration;
-            this.documentParameter = Expression.Parameter(typeof(Document), "document");
+            this.configurationParameter = configurationParameter;
+            this.documentParameter = documentParameter;
             this.fields = new Document();
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        /// <summary>
-        /// Gets the document key from.
-        /// </summary>
-        /// <param name="expression">The expression.</param>
-        /// <returns></returns>
-        public Projection<T> GetProjection<T>(Expression expression)
-        {
-            var body = this.VisitExpression(expression);
-
-            var projector = Expression.Lambda<Func<Document, T>>(body, this.documentParameter);
-
-            return new Projection<T>(projector.Compile(), this.fields);
         }
 
         #endregion
 
         #region Protected Methods
 
+        protected override Expression VisitQuerySourceReferenceExpression(QuerySourceReferenceExpression expression)
+        {
+            return base.VisitQuerySourceReferenceExpression(expression);
+        }
+
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
-            var visitor = new MongoMemberMapPathExpressionTreeVisitor(this.configuration);
-            var memberMapPath = visitor.GetMemberMapPath(expression);
+            var memberMapPath = MemberMapPathBuilder.Build(this.configuration, expression);
             this.fields.Add(string.Join(".", memberMapPath.Select(mm => mm.DocumentKey).ToArray()), 1);
 
             var resolver = Activator.CreateInstance(typeof(SingleDocumentValueResolver), memberMapPath);
             var method = resolveValueMethodInfo.MakeGenericMethod(expression.Type);
-            return Expression.Call(Expression.Constant(resolver), method, this.documentParameter);
+            return Expression.Call(Expression.Constant(resolver), method, this.configurationParameter, this.documentParameter);
         }
 
         protected override Expression VisitNewExpression(NewExpression expression)
@@ -101,7 +105,7 @@ namespace MongoDB.Framework.Linq.Visitors
 
         #endregion
 
-        #region Private Class : DocumentValueResolver
+        #region Private Class : SingleDocumentValueResolver
 
         private class SingleDocumentValueResolver
         {
@@ -112,7 +116,7 @@ namespace MongoDB.Framework.Linq.Visitors
                 this.memberMapPath = new List<MemberMap>(memberMapPath);
             }
 
-            public T ResolveValue<T>(Document document)
+            public T ResolveValue<T>(MongoConfiguration configuration, Document document)
             {
                 object value = null;
                 for (int i = 0; i < this.memberMapPath.Count - 1; i++)

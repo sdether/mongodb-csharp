@@ -14,8 +14,15 @@ using MongoDB.Framework.Configuration.Visitors;
 
 namespace MongoDB.Framework.Linq.Visitors
 {
-    public class MongoWhereClauseExpressionTreeVisitor : ThrowingExpressionTreeVisitor
+    public class QueryDocumentBuilder : ThrowingExpressionTreeVisitor
     {
+        public static Document Build(MongoConfiguration configuration, Expression expression)
+        {
+            var builder = new QueryDocumentBuilder(configuration);
+            builder.VisitExpression(expression);
+            return builder.query;
+        }
+
         #region Private Fields
 
         private Dictionary<string, Document> conditions;
@@ -31,27 +38,11 @@ namespace MongoDB.Framework.Linq.Visitors
         /// Initializes a new instance of the <see cref="MongoWhereClauseExpressionTreeVisitor"/> class.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        public MongoWhereClauseExpressionTreeVisitor(MongoConfiguration configuration)
+        private QueryDocumentBuilder(MongoConfiguration configuration)
         {
-            this.conditions = new Dictionary<string, Document>();
             this.configuration = configuration;
-            this.memberPathParts = new List<MemberInfo>();
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        /// <summary>
-        /// Creates the query from.
-        /// </summary>
-        /// <param name="expression">The expression.</param>
-        /// <returns></returns>
-        public Document CreateQueryFrom(Expression expression)
-        {
             this.query = new Document();
-            this.VisitExpression(expression);
-            return query;
+            this.memberPathParts = new List<MemberInfo>();
         }
 
         #endregion

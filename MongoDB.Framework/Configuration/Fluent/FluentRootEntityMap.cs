@@ -82,13 +82,12 @@ namespace MongoDB.Framework.Configuration.Fluent
             if (member == null)
                 throw new ArgumentNullException("member");
 
-            var visitor = new MemberAccessMemberInfoVisitor();
-            visitor.Visit(member);
+            var members = MemberInfoPathExtractor.ExtractFrom(member);
 
-            if (visitor.Members.Count() > 1)
+            if (members.Count > 1)
                 throw new NotSupportedException("Only top-level members are supported.");
 
-            this.Id(visitor.Members.Single());
+            this.Id(members[0]);
         }
 
         /// <summary>

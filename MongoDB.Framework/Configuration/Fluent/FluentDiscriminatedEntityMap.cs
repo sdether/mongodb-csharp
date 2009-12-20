@@ -85,13 +85,12 @@ namespace MongoDB.Framework.Configuration.Fluent
             if (member == null)
                 throw new ArgumentNullException("member");
 
-            var visitor = new MemberAccessMemberInfoVisitor();
-            visitor.Visit(member);
+            var members = MemberInfoPathExtractor.ExtractFrom(member);
 
-            if (visitor.Members.Count() > 1)
+            if (members.Count > 1)
                 throw new NotSupportedException("Only top-level members are supported.");
 
-            this.Component(visitor.Members.Single(), configure);
+            this.Component(members[0], configure);
         }
 
         /// <summary>
@@ -106,13 +105,12 @@ namespace MongoDB.Framework.Configuration.Fluent
             if (member == null)
                 throw new ArgumentNullException("member");
 
-            var visitor = new MemberAccessMemberInfoVisitor();
-            visitor.Visit(member);
+            var members = MemberInfoPathExtractor.ExtractFrom(member);
 
-            if (visitor.Members.Count() > 1)
+            if (members.Count > 1)
                 throw new NotSupportedException("Only top-level members are supported.");
 
-            this.Component(visitor.Members.Single(), documentKey, configure);
+            this.Component(members[0], documentKey, configure);
         }
 
         /// <summary>
@@ -174,13 +172,12 @@ namespace MongoDB.Framework.Configuration.Fluent
             if (member == null)
                 throw new ArgumentNullException("member");
 
-            var visitor = new MemberAccessMemberInfoVisitor();
-            visitor.Visit(member);
+            var members = MemberInfoPathExtractor.ExtractFrom(member);
 
-            if (visitor.Members.Count() > 1)
+            if (members.Count > 1)
                 throw new NotSupportedException("Only top-level members are supported.");
 
-            return this.Map(visitor.Members.Single());
+            return this.Map(members[0]);
         }
 
         /// <summary>
@@ -195,13 +192,12 @@ namespace MongoDB.Framework.Configuration.Fluent
             if (documentKey == null)
                 throw new ArgumentException("Cannot be null or empty.", "documentKey");
 
-            var visitor = new MemberAccessMemberInfoVisitor();
-            visitor.Visit(member);
+            var members = MemberInfoPathExtractor.ExtractFrom(member);
 
-            if (visitor.Members.Count() > 1)
+            if (members.Count > 1)
                 throw new NotSupportedException("Only top-level members are supported.");
 
-            return this.Map(visitor.Members.Single(), documentKey);
+            return this.Map(members[0], documentKey);
         }
 
         #endregion

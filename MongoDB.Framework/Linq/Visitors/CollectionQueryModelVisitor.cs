@@ -79,8 +79,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitOrdering(Ordering ordering, QueryModel queryModel, OrderByClause orderByClause, int index)
         {
-            var memberMapPath = new MongoMemberMapPathExpressionTreeVisitor(this.entityMapper.Configuration)
-                .GetMemberMapPath(ordering.Expression);
+            var memberMapPath = MemberMapPathBuilder.Build(this.entityMapper.Configuration, ordering.Expression);
             var key = string.Join(".", memberMapPath.Select(mm => mm.DocumentKey).ToArray());
             this.querySpec.OrderBy[key] = ordering.OrderingDirection == OrderingDirection.Asc ? 1 : -1;
         }
@@ -136,21 +135,12 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="queryModel">The query model.</param>
         public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
         {
-            if (typeof(T) == queryModel.MainFromClause.ItemType)
+            if (typeof(T) != queryModel.MainFromClause.ItemType)
             {
-                this.querySpec.Projector = d =>
-                {
-                    var entity = (T)this.entityMapper.MapDocumentToEntity(d, typeof(T));
-                    return entity;
-                };
-            }
-            else
-            {
-                var projection = new MongoProjectionExpressionTreeVisitor(this.entityMapper.Configuration)
-                    .GetProjection<T>(selectClause.Selector);
+                var projection = ProjectionBuilder.Build<T>(this.entityMapper.Configuration, selectClause.Selector);
 
-                projection.Fields.CopyTo(this.querySpec.Fields);
-                this.querySpec.Projector = projection.Projector;
+                projection.Fields.CopyTo(this.querySpec.Projection.Fields);
+                this.querySpec.Projection.Projector = projection.Projector;
             }
         }
 
@@ -162,10 +152,8 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            var query = new MongoWhereClauseExpressionTreeVisitor(this.entityMapper.Configuration)
-                .CreateQueryFrom(whereClause.Predicate);
-
-            query.CopyTo(this.querySpec.Query);
+            var query = QueryDocumentBuilder.Build(this.entityMapper.Configuration, whereClause.Predicate);
+            query.CopyTo(this.querySpec.Query);            
         }
 
         #endregion

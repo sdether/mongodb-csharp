@@ -14,8 +14,18 @@ using MongoDB.Framework.Configuration.Visitors;
 
 namespace MongoDB.Framework.Linq.Visitors
 {
-    public class MongoMemberMapPathExpressionTreeVisitor : ThrowingExpressionTreeVisitor
+    public class MemberMapPathBuilder : ThrowingExpressionTreeVisitor
     {
+        public static IList<MemberMap> Build(MongoConfiguration configuration, Expression expression)
+        {
+            var builder = new MemberMapPathBuilder(configuration);
+            builder.VisitExpression(expression);
+            var visitor = new MemberPathToMemberMapPathVisitor(builder.memberPath);
+            var rootEntityMap = configuration.GetRootEntityMapFor(builder.memberPath[0].DeclaringType);
+            rootEntityMap.Accept(visitor);
+            return visitor.MemberMapPath;
+        }
+
         #region Private Fields
 
         private MongoConfiguration configuration;
@@ -29,28 +39,10 @@ namespace MongoDB.Framework.Linq.Visitors
         /// Initializes a new instance of the <see cref="MongoWhereClauseExpressionTreeVisitor"/> class.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        public MongoMemberMapPathExpressionTreeVisitor(MongoConfiguration configuration)
+        private MemberMapPathBuilder(MongoConfiguration configuration)
         {
             this.configuration = configuration;
             this.memberPath = new List<MemberInfo>();
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        /// <summary>
-        /// Gets the document key from.
-        /// </summary>
-        /// <param name="expression">The expression.</param>
-        /// <returns></returns>
-        public IEnumerable<MemberMap> GetMemberMapPath(Expression expression)
-        {
-            this.VisitExpression(expression);
-            var visitor = new MemberPathToDocumentKeyVisitor(this.memberPath);
-            var rootEntityMap = this.configuration.GetRootEntityMapFor(this.memberPath[0].DeclaringType);
-            rootEntityMap.Accept(visitor);
-            return visitor.MemberMapPath;
         }
 
         #endregion

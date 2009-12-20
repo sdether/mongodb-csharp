@@ -57,13 +57,13 @@ namespace MongoDB.Framework.Linq
             }
             else
             {
-                var cursor = collection.Find(spec.GetCompleteQuery(), spec.Limit, spec.Skip, spec.Fields);
+                var cursor = collection.Find(spec.GetCompleteQuery(), spec.Limit, spec.Skip, spec.Projection.Fields);
                 documents = cursor.Documents;
             }
 
             foreach(var document in documents)
             {
-                var entity = spec.Projector(document);
+                var entity = spec.Projection.Projector(this.entityMapper.Configuration, document);
                 if (typeof(T) == itemType)
                     this.changeTracker.Track(document, entity);
                 yield return entity;
