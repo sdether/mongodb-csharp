@@ -17,7 +17,7 @@ namespace MongoDB.Framework
 
         private ChangeTracker changeTracker;
         private Mongo mongo;
-        private EntityMapper entityMapper;
+        private MongoConfiguration configuration;
 
         #endregion
 
@@ -37,10 +37,13 @@ namespace MongoDB.Framework
         /// Initializes a new instance of the <see cref="MongoContext&lt;TEntity&gt;"/> class.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        public MongoContext(EntityMapper entityMapper, ChangeTracker changeTracker, Mongo mongo, Database database)
+        /// <param name="changeTracker">The change tracker.</param>
+        /// <param name="mongo">The mongo.</param>
+        /// <param name="database">The database.</param>
+        public MongoContext(MongoConfiguration configuration, ChangeTracker changeTracker, Mongo mongo, Database database)
         {
-            if (entityMapper == null)
-                throw new ArgumentNullException("entityMapper");
+            if (configuration == null)
+                throw new ArgumentNullException("configuration");
             if (changeTracker == null)
                 throw new ArgumentNullException("changeTracker");
             if (mongo == null)
@@ -51,7 +54,7 @@ namespace MongoDB.Framework
             this.mongo = mongo;
             this.Database = database;
 
-            this.entityMapper = entityMapper;
+            this.configuration = configuration;
             this.changeTracker = changeTracker;
         }
 
@@ -152,7 +155,7 @@ namespace MongoDB.Framework
         /// <returns></returns>
         public IQueryable<TEntity> Query<TEntity>()
         {
-            return new MongoQueryable<TEntity>(this.Database, this.entityMapper, this.changeTracker);
+            return new MongoQueryable<TEntity>(this.Database, this.configuration, this.changeTracker);
         }
 
         /// <summary>
@@ -214,11 +217,13 @@ namespace MongoDB.Framework
         {
             foreach (var entityGroup in inserted.GroupBy(a => a.GetType()))
             {
-                var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(entityGroup.Key);
+                var rootEntityMap = this.configuration.GetRootEntityMapFor(entityGroup.Key);
                 var collection = this.Database.GetCollection(rootEntityMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
-                    var document = this.entityMapper.MapEntityToDocument(entity);
+                    var translator = new EntityToDocumentTranslator(entity);
+                    rootEntityMap.Accept(translator);
+                    var document = translator.Document;
                     collection.Insert(document);
                     rootEntityMap.IdMap.Setter(entity, rootEntityMap.IdMap.GetValueFromDocument(document));
                     this.changeTracker.GetTrackedObject(entity).MoveToPossibleModified(document);
@@ -234,11 +239,13 @@ namespace MongoDB.Framework
         {
             foreach (var entityGroup in updated.GroupBy(a => a.GetType()))
             {
-                var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(entityGroup.Key);
+                var rootEntityMap = this.configuration.GetRootEntityMapFor(entityGroup.Key);
                 var collection = this.Database.GetCollection(rootEntityMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
-                    var document = this.entityMapper.MapEntityToDocument(entity);
+                    var translator = new EntityToDocumentTranslator(entity);
+                    rootEntityMap.Accept(translator);
+                    var document = translator.Document;
                     collection.Update(document);
                     this.changeTracker.GetTrackedObject(entity).MoveToPossibleModified(document);
                 }
@@ -253,7 +260,7 @@ namespace MongoDB.Framework
         {
             foreach (var entityGroup in deleted.GroupBy(a => a.GetType()))
             {
-                var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(entityGroup.Key);
+                var rootEntityMap = this.configuration.GetRootEntityMapFor(entityGroup.Key);
                 var collection = this.Database.GetCollection(rootEntityMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {

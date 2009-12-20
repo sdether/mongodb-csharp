@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Driver;
+using MongoDB.Framework.Configuration;
 
 namespace MongoDB.Framework.Tracking
 {
@@ -11,7 +12,7 @@ namespace MongoDB.Framework.Tracking
     {
         #region Private Fields
 
-        private EntityMapper entityMapper;
+        private MongoConfiguration configuration;
         private Dictionary<object, TrackedObject> trackedObjects;
 
         #endregion
@@ -21,13 +22,13 @@ namespace MongoDB.Framework.Tracking
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultChangeTracker"/> class.
         /// </summary>
-        /// <param name="entityMapper">The entity mapper.</param>
-        public DefaultChangeTracker(EntityMapper entityMapper)
+        /// <param name="configuration">The configuration.</param>
+        public DefaultChangeTracker(MongoConfiguration configuration)
         {
-            if (entityMapper == null)
-                throw new ArgumentNullException("entityMapper");
+            if (configuration == null)
+                throw new ArgumentNullException("configuration");
 
-            this.entityMapper = entityMapper;
+            this.configuration = configuration;
             this.trackedObjects = new Dictionary<object, TrackedObject>();
         }
 
@@ -84,7 +85,7 @@ namespace MongoDB.Framework.Tracking
         /// <param name="current">The current.</param>
         public override TrackedObject Track(Document original, object current)
         {
-            var trackedObject = new TrackedObject(this.entityMapper, original, current);
+            var trackedObject = new TrackedObject(this.configuration, original, current);
             this.trackedObjects.Add(current, trackedObject);
             return trackedObject;
         }

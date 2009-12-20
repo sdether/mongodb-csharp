@@ -17,33 +17,33 @@ namespace MongoDB.Framework.Linq
     public class MongoQueryExecutor : IQueryExecutor
     {
         private ChangeTracker changeTracker;
+        private MongoConfiguration configuration;
         private Database database;
-        private EntityMapper entityMapper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoQueryExecutor"/> class.
         /// </summary>
         /// <param name="mongo">The mongo.</param>
-        public MongoQueryExecutor(Database database, EntityMapper entityMapper, ChangeTracker changeTracker)
+        public MongoQueryExecutor(Database database, MongoConfiguration configuration, ChangeTracker changeTracker)
         {
             if (database == null)
                 throw new ArgumentNullException("database");
-            if (entityMapper == null)
-                throw new ArgumentNullException("entityMapper");
+            if (configuration == null)
+                throw new ArgumentNullException("configuration");
             if (changeTracker == null)
                 throw new ArgumentNullException("changeTracker");
 
             this.changeTracker = changeTracker;
+            this.configuration = configuration;
             this.database = database;
-            this.entityMapper = entityMapper;
         }
 
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
-            var spec = CollectionQueryModelVisitor<T>.CreateMongoQuerySpecification(queryModel, this.entityMapper);
+            var spec = CollectionQueryModelVisitor<T>.CreateMongoQuerySpecification(this.configuration, queryModel);
 
             var itemType = queryModel.MainFromClause.ItemType;
-            var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(itemType);
+            var rootEntityMap = this.configuration.GetRootEntityMapFor(itemType);
             this.AddDiscriminatingKeyIfNecessary(itemType, rootEntityMap, spec.Query);
             var collection = this.database.GetCollection(rootEntityMap.CollectionName);
             IEnumerable<Document> documents;
@@ -63,7 +63,7 @@ namespace MongoDB.Framework.Linq
 
             foreach(var document in documents)
             {
-                var entity = spec.Projection.Projector(this.entityMapper.Configuration, document);
+                var entity = spec.Projection.Projector(this.configuration, document);
                 if (typeof(T) == itemType)
                     this.changeTracker.Track(document, entity);
                 yield return entity;
@@ -72,11 +72,11 @@ namespace MongoDB.Framework.Linq
 
         public T ExecuteScalar<T>(QueryModel queryModel)
         {
-            var scalarVisitor = new ScalarQueryModelVisitor(this.entityMapper.Configuration);
+            var scalarVisitor = new ScalarQueryModelVisitor(this.configuration);
             scalarVisitor.VisitQueryModel(queryModel);
 
             var entityType = queryModel.MainFromClause.ItemType;
-            var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(entityType);
+            var rootEntityMap = this.configuration.GetRootEntityMapFor(entityType);
             this.AddDiscriminatingKeyIfNecessary(entityType, rootEntityMap, scalarVisitor.Query);
 
             var collection = this.database.GetCollection(rootEntityMap.CollectionName);

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MongoDB.Driver;
+using MongoDB.Framework.Configuration;
+using MongoDB.Framework.Configuration.Visitors;
 
 namespace MongoDB.Framework.Tracking
 {
@@ -42,7 +44,7 @@ namespace MongoDB.Framework.Tracking
 
         #region Private Fields
 
-        private EntityMapper entityMapper;
+        private MongoConfiguration configuration;
 
         #endregion
 
@@ -73,17 +75,17 @@ namespace MongoDB.Framework.Tracking
         /// <summary>
         /// Initializes a new instance of the <see cref="TrackedObject"/> class.
         /// </summary>
+        /// <param name="configuration">The configuration.</param>
         /// <param name="original">The original.</param>
         /// <param name="current">The current.</param>
-        /// <param name="entityMapper">The entity mapper.</param>
-        public TrackedObject(EntityMapper entityMapper, Document original, object current)
+        public TrackedObject(MongoConfiguration configuration, Document original, object current)
         {
-            if (entityMapper == null)
-                throw new ArgumentNullException("entityMapper");
+            if (configuration == null)
+                throw new ArgumentNullException("configuration");
             if (current == null)
                 throw new ArgumentNullException("current");
 
-            this.entityMapper = entityMapper;
+            this.configuration = configuration;
             this.Original = original;
             this.Current = current;
             this.State = TrackedObjectState.PossiblyModified;
@@ -104,9 +106,9 @@ namespace MongoDB.Framework.Tracking
             if (this.State != TrackedObjectState.PossiblyModified)
                 return;
 
+            var rootEntityMap = this.configuration.GetRootEntityMapFor(this.Current.GetType());
             if (this.Original == null)
             {
-                var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(this.Current.GetType());
                 var value = (string)rootEntityMap.IdMap.Getter(this.Current);
                 if (rootEntityMap.IdMap.TransientValues.Contains(value))
                     this.MoveToInserted();
@@ -115,7 +117,9 @@ namespace MongoDB.Framework.Tracking
                 return;
             }
 
-            Document current = this.entityMapper.MapEntityToDocument(this.Current);
+            var translator = new EntityToDocumentTranslator(this.Current);
+            rootEntityMap.Accept(translator);
+            Document current = translator.Document;
             if (!AreDocumentsEqual(this.Original, current))
                 this.MoveToModified();
         }

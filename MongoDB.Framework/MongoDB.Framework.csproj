@@ -92,7 +92,6 @@
     <Compile Include="Configuration\UnknownDiscriminatorValueException.cs" />
     <Compile Include="Configuration\UnmappedMemberException.cs" />
     <Compile Include="Configuration\UnmappedTypeException.cs" />
-    <Compile Include="EntityMapper.cs" />
     <Compile Include="MongoContext.cs" />
     <Compile Include="Linq\MongoQueryable.cs" />
     <Compile Include="Linq\MongoQueryExecutor.cs" />

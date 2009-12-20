@@ -67,8 +67,7 @@ namespace MongoDB.Framework
                     }
                 }
             }
-            var entityMapper = new EntityMapper(this.Configuration);
-            return new MongoContext(entityMapper, new DefaultChangeTracker(entityMapper), mongo, database);
+            return new MongoContext(this.Configuration, new DefaultChangeTracker(this.Configuration), mongo, database);
         }
 
         #endregion
