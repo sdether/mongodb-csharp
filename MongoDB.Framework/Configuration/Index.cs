@@ -11,7 +11,7 @@ namespace MongoDB.Framework.Configuration
         Descending
     }
 
-    public class Index
+    public class Index : ConfigurationNode
     {
         public string Name { get; private set; }
 
@@ -26,6 +26,11 @@ namespace MongoDB.Framework.Configuration
 
             this.Name = name;
             this.DocumentKeys = new Dictionary<string, IndexDirection>();
+        }
+
+        public override void Accept(IMapVisitor visitor)
+        {
+            visitor.VisitIndex(this);
         }
     }
 }

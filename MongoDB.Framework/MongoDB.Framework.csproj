@@ -58,9 +58,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChangeSet.cs" />
+    <Compile Include="Configuration\ConfigurationNode.cs" />
     <Compile Include="Configuration\IMapVisitor.cs" />
     <Compile Include="Configuration\IMapVisitable.cs" />
     <Compile Include="Configuration\MemberMap.cs" />
+    <Compile Include="Configuration\Visitors\MapVisitor.cs" />
     <Compile Include="Configuration\Visitors\MemberPathToMemberMapPathVisitor.cs" />
     <Compile Include="Configuration\Visitors\DocumentToEntityTranslator.cs" />
     <Compile Include="Configuration\Visitors\EntityToDocumentTranslator.cs" />

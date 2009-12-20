@@ -6,7 +6,7 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration.Visitors
 {
-    public class DocumentToEntityTranslator : IMapVisitor
+    public class DocumentToEntityTranslator : MapVisitor
     {
         #region Public Static Methods
 
@@ -84,14 +84,14 @@ namespace MongoDB.Framework.Configuration.Visitors
 
         #region Public Methods
 
-        public void VisitRootEntityMap(RootEntityMap rootEntityMap)
+        public override void VisitRootEntityMap(RootEntityMap rootEntityMap)
         {
             this.entity = this.CreateInstance(rootEntityMap);
             rootEntityMap.IdMap.Accept(this);
             this.VisitEntityMap(rootEntityMap);
         }
 
-        public void VisitEntityMap(EntityMap entityMap)
+        public override void VisitEntityMap(EntityMap entityMap)
         {
             if(this.entity == null)
                 this.entity = this.CreateInstance(entityMap);
@@ -116,7 +116,7 @@ namespace MongoDB.Framework.Configuration.Visitors
             entityMap.ExtendedPropertiesMap.Setter(entity, extProps);
         }
 
-        public void VisitDiscriminatedEntityMap(DiscriminatedEntityMap discriminatedEntityMap)
+        public override void VisitDiscriminatedEntityMap(DiscriminatedEntityMap discriminatedEntityMap)
         {
             if (this.entity == null)
                 throw new NotSupportedException("Discriminated entities cannot be at the root.");
@@ -125,14 +125,14 @@ namespace MongoDB.Framework.Configuration.Visitors
                 memberMap.Accept(this);
         }
 
-        public void VisitPrimitiveMemberMap(PrimitiveMemberMap primitiveMemberMap)
+        public override void VisitPrimitiveMemberMap(PrimitiveMemberMap primitiveMemberMap)
         {
             var value = primitiveMemberMap.GetValueFromDocument(this.document);
             primitiveMemberMap.Setter(this.entity, value);
             this.document.Remove(primitiveMemberMap.DocumentKey);
         }
 
-        public void VisitComponentMemberMap(ComponentMemberMap componentMemberMap)
+        public override void VisitComponentMemberMap(ComponentMemberMap componentMemberMap)
         {
             var subDocument = (Document)componentMemberMap.GetValueFromDocument(this.document);
 
@@ -150,7 +150,7 @@ namespace MongoDB.Framework.Configuration.Visitors
             this.document.Remove(componentMemberMap.DocumentKey);
         }
 
-        public void VisitIdMap(IdMap idMap)
+        public override void VisitIdMap(IdMap idMap)
         {
             var value = idMap.GetValueFromDocument(document);
             idMap.Setter(this.entity, value);

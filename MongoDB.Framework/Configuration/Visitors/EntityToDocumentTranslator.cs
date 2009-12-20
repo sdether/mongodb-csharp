@@ -6,7 +6,7 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration.Visitors
 {
-    public class EntityToDocumentTranslator : IMapVisitor
+    public class EntityToDocumentTranslator : MapVisitor
     {
         #region Public Static Methods
 
@@ -82,13 +82,13 @@ namespace MongoDB.Framework.Configuration.Visitors
 
         #region Public Methods
 
-        public void VisitRootEntityMap(RootEntityMap rootEntityMap)
+        public override void VisitRootEntityMap(RootEntityMap rootEntityMap)
         {
             rootEntityMap.IdMap.Accept(this);
             this.VisitEntityMap(rootEntityMap);
         }
 
-        public void VisitEntityMap(EntityMap entityMap)
+        public override void VisitEntityMap(EntityMap entityMap)
         {
             if (this.entity.GetType() != entityMap.Type)
             {
@@ -110,20 +110,20 @@ namespace MongoDB.Framework.Configuration.Visitors
             this.VisitDiscriminatedEntityMap(entityMap);
         }
 
-        public void VisitDiscriminatedEntityMap(DiscriminatedEntityMap discriminatedEntityMap)
+        public override void VisitDiscriminatedEntityMap(DiscriminatedEntityMap discriminatedEntityMap)
         {
             foreach (var memberMap in discriminatedEntityMap.MemberMaps)
                 memberMap.Accept(this);
         }
 
-        public void VisitPrimitiveMemberMap(PrimitiveMemberMap primitiveMemberMap)
+        public override void VisitPrimitiveMemberMap(PrimitiveMemberMap primitiveMemberMap)
         {
             var value = primitiveMemberMap.Getter(this.entity);
             primitiveMemberMap.SetValueOnDocument(value, this.document);
             this.document[primitiveMemberMap.DocumentKey] = value;
         }
 
-        public void VisitComponentMemberMap(ComponentMemberMap componentMemberMap)
+        public override void VisitComponentMemberMap(ComponentMemberMap componentMemberMap)
         {
             var oldDocument = this.document;
             var oldEntity = this.entity;
@@ -138,7 +138,7 @@ namespace MongoDB.Framework.Configuration.Visitors
             this.entity = oldEntity;
         }
 
-        public void VisitIdMap(IdMap idMap)
+        public override void VisitIdMap(IdMap idMap)
         {
             var value = (string)idMap.Getter(this.entity);
             idMap.SetValueOnDocument(value, this.document);

@@ -10,7 +10,7 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration
 {
-    public class DiscriminatedEntityMap : IMapVisitable
+    public class DiscriminatedEntityMap : ConfigurationNode, IMapVisitable
     {
         #region Private Fields
 
@@ -66,7 +66,7 @@ namespace MongoDB.Framework.Configuration
         /// Accepts the specified visitor.
         /// </summary>
         /// <param name="visitor">The visitor.</param>
-        public virtual void Accept(IMapVisitor visitor)
+        public override void Accept(IMapVisitor visitor)
         {
             visitor.VisitDiscriminatedEntityMap(this);
         }

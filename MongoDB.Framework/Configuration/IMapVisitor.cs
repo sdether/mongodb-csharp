@@ -18,5 +18,7 @@ namespace MongoDB.Framework.Configuration
         void VisitComponentMemberMap(ComponentMemberMap componentMemberMap);
 
         void VisitIdMap(IdMap idMap);
+
+        void VisitIndex(Index index);
     }
 }

@@ -7,7 +7,7 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration.Visitors
 {
-    public class MemberPathToMemberMapPathVisitor : IMapVisitor
+    public class MemberPathToMemberMapPathVisitor : MapVisitor
     {
         private Stack<MemberInfo> memberPathParts;
         private List<MemberMap> memberMapPath;
@@ -47,13 +47,13 @@ namespace MongoDB.Framework.Configuration.Visitors
             this.memberPathParts = new Stack<MemberInfo>(memberPathParts.Reverse());
         }
 
-        public void VisitRootEntityMap(RootEntityMap rootEntityMap)
+        public override void VisitRootEntityMap(RootEntityMap rootEntityMap)
         {
             rootEntityMap.IdMap.Accept(this);
             this.VisitEntityMap(rootEntityMap);
         }
 
-        public void VisitEntityMap(EntityMap entityMap)
+        public override void VisitEntityMap(EntityMap entityMap)
         {
             if (this.IsFinished)
                 return;
@@ -62,18 +62,13 @@ namespace MongoDB.Framework.Configuration.Visitors
             memberMap.Accept(this);
         }
 
-        public void VisitDiscriminatedEntityMap(DiscriminatedEntityMap discriminatedEntityMap)
-        {
-            throw new NotSupportedException();
-        }
-
-        public void VisitPrimitiveMemberMap(PrimitiveMemberMap primitiveMemberMap)
+        public override void VisitPrimitiveMemberMap(PrimitiveMemberMap primitiveMemberMap)
         {
             this.memberPathParts.Pop();
             this.memberMapPath.Add(primitiveMemberMap);
         }
 
-        public void VisitComponentMemberMap(ComponentMemberMap componentMemberMap)
+        public override void VisitComponentMemberMap(ComponentMemberMap componentMemberMap)
         {
             this.memberPathParts.Pop();
             this.memberMapPath.Add(componentMemberMap);
@@ -81,7 +76,7 @@ namespace MongoDB.Framework.Configuration.Visitors
                 componentMemberMap.EntityMap.Accept(this);
         }
 
-        public void VisitIdMap(IdMap idMap)
+        public override void VisitIdMap(IdMap idMap)
         {
             if (this.CurrentMemberInfo.Name == idMap.MemberName)
             {

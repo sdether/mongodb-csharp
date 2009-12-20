@@ -8,7 +8,7 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration
 {
-    public abstract class MemberMap : IMapVisitable
+    public abstract class MemberMap : ConfigurationNode, IMapVisitable
     {
         /// <summary>
         /// Gets the key.
@@ -66,12 +66,6 @@ namespace MongoDB.Framework.Configuration
 
             this.DocumentKey = documentKey;
         }
-
-        /// <summary>
-        /// Accepts the specified visitor.
-        /// </summary>
-        /// <param name="visitor">The visitor.</param>
-        public abstract void Accept(IMapVisitor visitor);
 
         /// <summary>
         /// Gets the value from document.
