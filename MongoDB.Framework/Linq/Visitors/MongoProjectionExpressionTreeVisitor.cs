@@ -11,16 +11,25 @@ using Remotion.Data.Linq.Clauses.ExpressionTreeVisitors;
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
 using MongoDB.Framework.Configuration.Visitors;
+using Remotion.Data.Linq.Clauses;
+using Remotion.Data.Linq.Clauses.Expressions;
 
 namespace MongoDB.Framework.Linq.Visitors
 {
     public class MongoProjectionExpressionTreeVisitor : ThrowingExpressionTreeVisitor
     {
+        #region Private Static Fields
+
+        private static MethodInfo resolveValueMethodInfo =
+            typeof(SingleDocumentValueResolver).GetMethod("ResolveValue");
+
+        #endregion
+
         #region Private Fields
 
         private MongoConfiguration configuration;
-        private List<MemberInfo> memberPath;
-        private List<ProjectedField> projectedFields;
+        private ParameterExpression documentParameter;
+        private Document fields;
 
         #endregion
 
@@ -33,8 +42,8 @@ namespace MongoDB.Framework.Linq.Visitors
         public MongoProjectionExpressionTreeVisitor(MongoConfiguration configuration)
         {
             this.configuration = configuration;
-            this.memberPath = new List<MemberInfo>();
-            this.projectedFields = new List<ProjectedField>();
+            this.documentParameter = Expression.Parameter(typeof(Document), "document");
+            this.fields = new Document();
         }
 
         #endregion
@@ -46,15 +55,13 @@ namespace MongoDB.Framework.Linq.Visitors
         /// </summary>
         /// <param name="expression">The expression.</param>
         /// <returns></returns>
-        public IEnumerable<ProjectedField> GetFieldsFrom(Expression expression)
+        public Projection<T> GetProjection<T>(Expression expression)
         {
-            this.VisitExpression(expression);
-            if(this.memberPath.Count > 0)
-            {
-                this.projectedFields.Add(this.CreateProjectFieldFromMemberPath());
+            var body = this.VisitExpression(expression);
 
-            }
-            return this.projectedFields;
+            var projector = Expression.Lambda<Func<Document, T>>(body, this.documentParameter);
+
+            return new Projection<T>(projector.Compile(), this.fields);
         }
 
         #endregion
@@ -63,15 +70,25 @@ namespace MongoDB.Framework.Linq.Visitors
 
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
-            this.VisitExpression(expression.Expression);
-            this.memberPath.Add(expression.Member);
+            var visitor = new MongoMemberMapPathExpressionTreeVisitor(this.configuration);
+            var memberMapPath = visitor.GetMemberMapPath(expression);
+            this.fields.Add(string.Join(".", memberMapPath.Select(mm => mm.DocumentKey).ToArray()), 1);
 
-            return expression;
+            var resolver = Activator.CreateInstance(typeof(SingleDocumentValueResolver), memberMapPath);
+            var method = resolveValueMethodInfo.MakeGenericMethod(expression.Type);
+            return Expression.Call(Expression.Constant(resolver), method, this.documentParameter);
         }
 
-        protected override Expression VisitQuerySourceReferenceExpression(Remotion.Data.Linq.Clauses.Expressions.QuerySourceReferenceExpression expression)
+        protected override Expression VisitNewExpression(NewExpression expression)
         {
-            return expression;
+            var argumentExpressions = new List<Expression>();
+            foreach (var argument in expression.Arguments)
+                argumentExpressions.Add(this.VisitExpression(argument));
+
+            return Expression.New(
+                expression.Constructor,
+                argumentExpressions,
+                expression.Members);
         }
 
         protected override Exception CreateUnhandledItemException<T>(T unhandledItem, string visitMethod)
@@ -84,14 +101,40 @@ namespace MongoDB.Framework.Linq.Visitors
 
         #endregion
 
-        #region Private Fields
+        #region Private Class : DocumentValueResolver
 
-        private ProjectedField CreateProjectFieldFromMemberPath()
+        private class SingleDocumentValueResolver
         {
-            var visitor = new MemberPathToDocumentKeyVisitor(this.memberPath);
-            var rootEntityMap = this.configuration.GetRootEntityMapFor(this.memberPath[0].DeclaringType);
-            rootEntityMap.Accept(visitor);
-            return new ProjectedField(visitor.MemberMapPath);
+            private List<MemberMap> memberMapPath;
+
+            public SingleDocumentValueResolver(IEnumerable<MemberMap> memberMapPath)
+            {
+                this.memberMapPath = new List<MemberMap>(memberMapPath);
+            }
+
+            public T ResolveValue<T>(Document document)
+            {
+                object value = null;
+                for (int i = 0; i < this.memberMapPath.Count - 1; i++)
+                {
+                    value = document[memberMapPath[i].DocumentKey];
+                    if (value is Document)
+                        document = (Document)value;
+                }
+
+                var lastMemberMap = memberMapPath[memberMapPath.Count - 1];
+                var componentMemberMap = lastMemberMap as ComponentMemberMap;
+                if (componentMemberMap != null)
+                {
+                    var visitor = new DocumentToEntityTranslator((Document)document[componentMemberMap.DocumentKey]);
+                    componentMemberMap.EntityMap.Accept(visitor);
+                    return (T)visitor.Entity;
+                }
+                else
+                {
+                    return (T)lastMemberMap.GetValueFromDocument(document);
+                }
+            }
         }
 
         #endregion

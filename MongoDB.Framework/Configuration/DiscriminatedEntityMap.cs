@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 
 using MongoDB.Framework.Linq.Visitors;
+using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration
 {
@@ -68,6 +69,16 @@ namespace MongoDB.Framework.Configuration
         public virtual void Accept(IMapVisitor visitor)
         {
             visitor.VisitDiscriminatedEntityMap(this);
+        }
+
+        /// <summary>
+        /// Creates the entity.
+        /// </summary>
+        /// <param name="document">The document.</param>
+        /// <returns></returns>
+        public virtual object CreateEntity(Document document)
+        {
+            return Activator.CreateInstance(this.Type);
         }
 
         /// <summary>

@@ -69,6 +69,17 @@ namespace MongoDB.Framework.Configuration.Visitors
             this.unmappedValues = new Dictionary<string, object>();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DocumentToEntityTranslator"/> class.
+        /// </summary>
+        /// <param name="document">The document.</param>
+        /// <param name="entity">The entity.</param>
+        public DocumentToEntityTranslator(Document document, object entity)
+            : this(document)
+        {
+            this.entity = entity;
+        }
+
         #endregion
 
         #region Public Methods
@@ -116,19 +127,14 @@ namespace MongoDB.Framework.Configuration.Visitors
 
         public void VisitPrimitiveMemberMap(PrimitiveMemberMap primitiveMemberMap)
         {
-            var documentValue = this.document[primitiveMemberMap.DocumentKey];
-            if (documentValue == MongoDBNull.Value)
-                documentValue = null;
-
-            primitiveMemberMap.SetDocumentValueOnEntity(this.entity, documentValue);
+            var value = primitiveMemberMap.GetValueFromDocument(this.document);
+            primitiveMemberMap.Setter(this.entity, value);
             this.document.Remove(primitiveMemberMap.DocumentKey);
         }
 
         public void VisitComponentMemberMap(ComponentMemberMap componentMemberMap)
         {
-            var subDocument = document[componentMemberMap.DocumentKey] as Document;
-            if (subDocument == null)
-                return;
+            var subDocument = (Document)componentMemberMap.GetValueFromDocument(this.document);
 
             var oldEntity = this.entity;
             var oldDocument = this.document;
@@ -146,12 +152,9 @@ namespace MongoDB.Framework.Configuration.Visitors
 
         public void VisitIdMap(IdMap idMap)
         {
-            var documentValue = this.document["_id"];
-            if (documentValue == MongoDBNull.Value)
-                documentValue = null;
-
-            idMap.SetDocumentValueOnEntity(this.entity, documentValue);
-            this.document.Remove("_id");
+            var value = idMap.GetValueFromDocument(document);
+            idMap.Setter(this.entity, value);
+            this.document.Remove(idMap.DocumentKey);
         }
 
         #endregion

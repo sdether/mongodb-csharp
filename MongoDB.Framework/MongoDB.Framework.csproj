@@ -66,8 +66,9 @@
     <Compile Include="Configuration\Visitors\EntityToDocumentTranslator.cs" />
     <Compile Include="Configuration\Visitors\MemberPathToQueryConditionVisitor.cs" />
     <Compile Include="Linq\Visitors\MongoProjectionExpressionTreeVisitor.cs" />
-    <Compile Include="Linq\Visitors\MongoOrderingExpressionTreeVisitor.cs" />
-    <Compile Include="Linq\ProjectedField.cs" />
+    <Compile Include="Linq\Visitors\MongoMemberMapPathExpressionTreeVisitor.cs" />
+    <Compile Include="Linq\Projection.cs" />
+    <Compile Include="Linq\Visitors\ScalarQueryModelVisitor.cs" />
     <Compile Include="Tracking\ChangeTracker.cs" />
     <Compile Include="Tracking\DefaultChangeTracker.cs" />
     <Compile Include="Configuration\AutoMappingMongoConfiguration.cs" />
@@ -101,7 +102,7 @@
     <Compile Include="Reflection\LateBoundReflection.cs" />
     <Compile Include="Linq\Visitors\ExpressionVisitor.cs" />
     <Compile Include="Linq\Visitors\MemberAccessMemberInfoVisitor.cs" />
-    <Compile Include="Linq\Visitors\MongoQueryModelVisitor.cs" />
+    <Compile Include="Linq\Visitors\CollectionQueryModelVisitor.cs" />
     <Compile Include="Linq\Visitors\MongoWhereClauseExpressionTreeVisitor.cs" />
     <Compile Include="Tracking\TrackedObject.cs" />
     <Compile Include="Tracking\TrackedObjectState.cs" />

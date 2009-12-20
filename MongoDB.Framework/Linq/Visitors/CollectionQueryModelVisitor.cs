@@ -12,7 +12,7 @@ using System.Linq.Expressions;
 
 namespace MongoDB.Framework.Linq.Visitors
 {
-    public class MongoQueryModelVisitor : QueryModelVisitorBase
+    public class CollectionQueryModelVisitor<T> : QueryModelVisitorBase
     {
         #region Public Static Methods
 
@@ -22,14 +22,14 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="queryModel">The query model.</param>
         /// <param name="entityMapper">The entity mapper.</param>
         /// <returns></returns>
-        public static MongoQuerySpecification CreateMongoQuerySpecification(QueryModel queryModel, MongoConfiguration configuration)
+        public static MongoQuerySpecification<T> CreateMongoQuerySpecification(QueryModel queryModel, EntityMapper entityMapper)
         {
             if (queryModel == null)
                 throw new ArgumentNullException("queryModel");
-            if (configuration == null)
-                throw new ArgumentNullException("configuration");
+            if (entityMapper == null)
+                throw new ArgumentNullException("entityMapper");
 
-            var visitor = new MongoQueryModelVisitor(configuration);
+            var visitor = new CollectionQueryModelVisitor<T>(entityMapper);
             visitor.VisitQueryModel(queryModel);
             return visitor.querySpec;
         }
@@ -38,8 +38,8 @@ namespace MongoDB.Framework.Linq.Visitors
 
         #region Private Fields
 
-        private MongoConfiguration configuration;
-        private MongoQuerySpecification querySpec;
+        private EntityMapper entityMapper;
+        private MongoQuerySpecification<T> querySpec;
 
         #endregion
 
@@ -49,10 +49,10 @@ namespace MongoDB.Framework.Linq.Visitors
         /// Initializes a new instance of the <see cref="MongoQueryModelVisitor"/> class.
         /// </summary>
         /// <param name="entityMapper">The entity mapper.</param>
-        private MongoQueryModelVisitor(MongoConfiguration configuration)
+        private CollectionQueryModelVisitor(EntityMapper entityMapper)
         {
-            this.configuration = configuration;
-            this.querySpec = new MongoQuerySpecification();
+            this.entityMapper = entityMapper;
+            this.querySpec = new MongoQuerySpecification<T>();
         }
 
         #endregion
@@ -79,9 +79,9 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitOrdering(Ordering ordering, QueryModel queryModel, OrderByClause orderByClause, int index)
         {
-            string key = new MongoOrderingExpressionTreeVisitor(this.configuration)
-                .GetDocumentKeyFrom(ordering.Expression);
-
+            var memberMapPath = new MongoMemberMapPathExpressionTreeVisitor(this.entityMapper.Configuration)
+                .GetMemberMapPath(ordering.Expression);
+            var key = string.Join(".", memberMapPath.Select(mm => mm.DocumentKey).ToArray());
             this.querySpec.OrderBy[key] = ordering.OrderingDirection == OrderingDirection.Asc ? 1 : -1;
         }
 
@@ -121,10 +121,6 @@ namespace MongoDB.Framework.Linq.Visitors
                     throw new NotSupportedException("Only constant take counts are supported.");
                 this.querySpec.Limit = (int)constantExpression.Value;
             }
-            else if (resultOperator is CountResultOperator)
-            {
-                this.querySpec.IsCount = true;
-            }
             else if (resultOperator is FirstResultOperator || resultOperator is SingleResultOperator)
             {
                 this.querySpec.Limit = 1;
@@ -140,11 +136,22 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="queryModel">The query model.</param>
         public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
         {
-            var projectedFields = new MongoProjectionExpressionTreeVisitor(this.configuration)
-                .GetFieldsFrom(selectClause.Selector);
+            if (typeof(T) == queryModel.MainFromClause.ItemType)
+            {
+                this.querySpec.Projector = d =>
+                {
+                    var entity = (T)this.entityMapper.MapDocumentToEntity(d, typeof(T));
+                    return entity;
+                };
+            }
+            else
+            {
+                var projection = new MongoProjectionExpressionTreeVisitor(this.entityMapper.Configuration)
+                    .GetProjection<T>(selectClause.Selector);
 
-            foreach (var projectedField in projectedFields)
-                this.querySpec.ProjectedFields.Add(projectedField);
+                projection.Fields.CopyTo(this.querySpec.Fields);
+                this.querySpec.Projector = projection.Projector;
+            }
         }
 
         /// <summary>
@@ -155,7 +162,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            var query = new MongoWhereClauseExpressionTreeVisitor(this.configuration)
+            var query = new MongoWhereClauseExpressionTreeVisitor(this.entityMapper.Configuration)
                 .CreateQueryFrom(whereClause.Predicate);
 
             query.CopyTo(this.querySpec.Query);

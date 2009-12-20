@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MongoDB.Driver;
+using System.Linq.Expressions;
 
 namespace MongoDB.Framework.Linq
 {
-    public class MongoQuerySpecification
+    public class MongoQuerySpecification<T>
     {
-        public bool IsCount { get; set; }
+        public Document Fields { get; private set; }
 
         public bool IsFindOne
         {
@@ -16,7 +17,7 @@ namespace MongoDB.Framework.Linq
             {
                 return this.Limit == 1
                     && this.Skip == 0
-                    && (this.ProjectedFields.Count == 0)
+                    && (this.Fields.Count == 0)
                     && (this.OrderBy.Count == 0);
             }
         }
@@ -25,16 +26,16 @@ namespace MongoDB.Framework.Linq
 
         public Document OrderBy { get; private set; }
 
-        public IList<ProjectedField> ProjectedFields { get; private set; }
-
         public Document Query { get; private set; }
+
+        public Func<Document, T> Projector { get; set; }
 
         public int Skip { get; set; }
 
         public MongoQuerySpecification()
         {
             this.OrderBy = new Document();
-            this.ProjectedFields = new List<ProjectedField>();
+            this.Fields = new Document();
             this.Query = new Document();
         }
 
@@ -47,14 +48,6 @@ namespace MongoDB.Framework.Linq
                 doc["orderby"] = this.OrderBy;
 
             return doc;            
-        }
-
-        public Document GetFields()
-        {
-            Document doc = new Document();
-            foreach (var projectedField in this.ProjectedFields)
-                doc.Add(projectedField.DocumentKey, 1);
-            return doc;
         }
     }
 }

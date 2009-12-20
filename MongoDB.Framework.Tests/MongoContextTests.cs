@@ -129,11 +129,21 @@ namespace MongoDB.Framework
         [Test]
         public void Test_simple_projection()
         {
-            var names = (from p in context.Query<Person>()
-                         select p.Name).ToList();
+            var numbers = (from p in context.Query<Person>()
+                         select p.PhoneNumber.Number).ToList();
 
-            Assert.Contains("Bob McBob", names);
-            Assert.Contains("Jane McJane", names);
+            Assert.AreEqual(2, numbers.Count);
+            Assert.Contains("7890", numbers);
+            Assert.Contains("3333", numbers);
+        }
+
+        [Test]
+        public void Test_complex_projection()
+        {
+            var peopleNumbers = (from p in context.Query<Party>()
+                           select new { p.Name, p.PhoneNumber.Number }).ToList();
+
+            Assert.AreEqual(3, peopleNumbers.Count);
         }
 
         [Test]

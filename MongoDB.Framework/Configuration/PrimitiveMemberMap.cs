@@ -58,26 +58,27 @@ namespace MongoDB.Framework.Configuration
         }
 
         /// <summary>
-        /// Gets the document value from entity.
+        /// Gets the value from document.
         /// </summary>
-        /// <param name="entity">The entity.</param>
+        /// <param name="document">The document.</param>
         /// <returns></returns>
-        public override object GetDocumentValueFromEntity(object entity)
+        public override object GetValueFromDocument(Document document)
         {
-            return this.Converter.ConvertToDocumentValue(
-                this.Getter(entity));
+            var value = document[this.DocumentKey];
+            if (value == MongoDBNull.Value)
+                value = null;
+            return this.Converter.ConvertFromDocumentValue(value);
         }
 
         /// <summary>
-        /// Sets the document value on entity.
+        /// Sets the value on document.
         /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <param name="documentValue">The document value.</param>
-        public override void SetDocumentValueOnEntity(object entity, object documentValue)
+        /// <param name="value">The value.</param>
+        /// <param name="document">The document.</param>
+        public override void SetValueOnDocument(object value, Document document)
         {
-            this.Setter(
-                entity, 
-                this.Converter.ConvertFromDocumentValue(documentValue));
+            value = this.Converter.ConvertToDocumentValue(value);
+            document[this.DocumentKey] = value ?? MongoDBNull.Value;
         }
 
         #endregion

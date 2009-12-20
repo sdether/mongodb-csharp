@@ -20,7 +20,7 @@ namespace MongoDB.Framework.Linq.Visitors
 
         private Dictionary<string, Document> conditions;
         private MongoConfiguration configuration;
-        private List<MemberInfo> memberPath;
+        private List<MemberInfo> memberPathParts;
         private Document query;
 
         #endregion
@@ -35,7 +35,7 @@ namespace MongoDB.Framework.Linq.Visitors
         {
             this.conditions = new Dictionary<string, Document>();
             this.configuration = configuration;
-            this.memberPath = new List<MemberInfo>();
+            this.memberPathParts = new List<MemberInfo>();
         }
 
         #endregion
@@ -106,11 +106,11 @@ namespace MongoDB.Framework.Linq.Visitors
             else
                 throw new NotSupportedException();
 
-            if (this.memberPath.Count == 0)
+            if (this.memberPathParts.Count == 0)
                 throw new InvalidOperationException("No member path parts exist.");
 
-            var visitor = new MemberPathToQueryConditionVisitor(this.memberPath, value);
-            var rootEntityMap = this.configuration.GetRootEntityMapFor(this.memberPath[0].DeclaringType);
+            var visitor = new MemberPathToQueryConditionVisitor(this.memberPathParts, value);
+            var rootEntityMap = this.configuration.GetRootEntityMapFor(this.memberPathParts[0].DeclaringType);
             rootEntityMap.Accept(visitor);
 
             if (op == "$eq")
@@ -124,7 +124,7 @@ namespace MongoDB.Framework.Linq.Visitors
                 doc.Append(op, visitor.DocumentValue);
             }
 
-            this.memberPath.Clear();
+            this.memberPathParts.Clear();
             
             return expression;
         }
@@ -132,7 +132,7 @@ namespace MongoDB.Framework.Linq.Visitors
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
             this.VisitExpression(expression.Expression);
-            this.memberPath.Add(expression.Member);
+            this.memberPathParts.Add(expression.Member);
 
             return expression;
         }

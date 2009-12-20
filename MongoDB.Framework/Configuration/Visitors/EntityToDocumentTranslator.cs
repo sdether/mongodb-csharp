@@ -67,6 +67,17 @@ namespace MongoDB.Framework.Configuration.Visitors
             this.entity = entity;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EntityToDocumentMapVisitor"/> class.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="document">The document.</param>
+        public EntityToDocumentTranslator(object entity, Document document)
+            : this(entity)
+        {
+            this.document = document;
+        }
+
         #endregion
 
         #region Public Methods
@@ -107,7 +118,8 @@ namespace MongoDB.Framework.Configuration.Visitors
 
         public void VisitPrimitiveMemberMap(PrimitiveMemberMap primitiveMemberMap)
         {
-            var value = primitiveMemberMap.GetDocumentValueFromEntity(this.entity) ?? MongoDBNull.Value;
+            var value = primitiveMemberMap.Getter(this.entity);
+            primitiveMemberMap.SetValueOnDocument(value, this.document);
             this.document[primitiveMemberMap.DocumentKey] = value;
         }
 
@@ -120,7 +132,7 @@ namespace MongoDB.Framework.Configuration.Visitors
             if (this.entity != null)
             {
                 componentMemberMap.EntityMap.Accept(this);
-                oldDocument[componentMemberMap.DocumentKey] = document;
+                componentMemberMap.SetValueOnDocument(this.document, oldDocument);
             }
             this.document = oldDocument;
             this.entity = oldEntity;
@@ -128,9 +140,8 @@ namespace MongoDB.Framework.Configuration.Visitors
 
         public void VisitIdMap(IdMap idMap)
         {
-            var value = idMap.GetDocumentValueFromEntity(this.entity);
-            if (value != null)
-                this.document["_id"] = value;
+            var value = (string)idMap.Getter(this.entity);
+            idMap.SetValueOnDocument(value, this.document);
         }
 
         #endregion

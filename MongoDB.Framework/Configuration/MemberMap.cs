@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using MongoDB.Framework.Reflection;
+using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration
 {
@@ -73,17 +74,17 @@ namespace MongoDB.Framework.Configuration
         public abstract void Accept(IMapVisitor visitor);
 
         /// <summary>
-        /// Gets the document value from entity.
+        /// Gets the value from document.
         /// </summary>
-        /// <param name="entity">The entity.</param>
+        /// <param name="document">The document.</param>
         /// <returns></returns>
-        public abstract object GetDocumentValueFromEntity(object entity);
+        public abstract object GetValueFromDocument(Document document);
 
         /// <summary>
-        /// Sets the document value on entity.
+        /// Sets the value on document.
         /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <param name="documentValue">The document value.</param>
-        public abstract void SetDocumentValueOnEntity(object entity, object documentValue);
+        /// <param name="value">The value.</param>
+        /// <param name="document">The document.</param>
+        public abstract void SetValueOnDocument(object value, Document document);
     }
 }

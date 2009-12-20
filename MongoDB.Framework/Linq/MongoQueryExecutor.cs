@@ -9,6 +9,8 @@ using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
 using MongoDB.Framework.Linq.Visitors;
 using MongoDB.Framework.Tracking;
+using MongoDB.Framework.Configuration.Visitors;
+using Remotion.Data.Linq.Clauses.ResultOperators;
 
 namespace MongoDB.Framework.Linq
 {
@@ -38,12 +40,11 @@ namespace MongoDB.Framework.Linq
 
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
-            var spec = MongoQueryModelVisitor.CreateMongoQuerySpecification(queryModel, this.entityMapper.Configuration);
+            var spec = CollectionQueryModelVisitor<T>.CreateMongoQuerySpecification(queryModel, this.entityMapper);
 
             var itemType = queryModel.MainFromClause.ItemType;
             var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(itemType);
-            this.AddDiscriminatingKeyIfNecessary(itemType, rootEntityMap, spec);
-
+            this.AddDiscriminatingKeyIfNecessary(itemType, rootEntityMap, spec.Query);
             var collection = this.database.GetCollection(rootEntityMap.CollectionName);
             IEnumerable<Document> documents;
             if (spec.IsFindOne)
@@ -56,28 +57,33 @@ namespace MongoDB.Framework.Linq
             }
             else
             {
-                var cursor = collection.Find(spec.GetCompleteQuery(), spec.Limit, spec.Skip, spec.GetFields());
+                var cursor = collection.Find(spec.GetCompleteQuery(), spec.Limit, spec.Skip, spec.Fields);
                 documents = cursor.Documents;
             }
 
-            if (itemType != typeof(T))
-                return this.ConvertResultsAsProjection<T>(spec.ProjectedFields, documents);
-            
-            return this.ConvertResultsAsEntities<T>(documents);
+            foreach(var document in documents)
+            {
+                var entity = spec.Projector(document);
+                if (typeof(T) == itemType)
+                    this.changeTracker.Track(document, entity);
+                yield return entity;
+            }
         }
 
         public T ExecuteScalar<T>(QueryModel queryModel)
         {
-            Type entityType = queryModel.MainFromClause.ItemType;
-            var spec = MongoQueryModelVisitor.CreateMongoQuerySpecification(queryModel, this.entityMapper.Configuration);
+            var scalarVisitor = new ScalarQueryModelVisitor(this.entityMapper.Configuration);
+            scalarVisitor.VisitQueryModel(queryModel);
+
+            var entityType = queryModel.MainFromClause.ItemType;
             var rootEntityMap = this.entityMapper.Configuration.GetRootEntityMapFor(entityType);
-            this.AddDiscriminatingKeyIfNecessary(entityType, rootEntityMap, spec);
+            this.AddDiscriminatingKeyIfNecessary(entityType, rootEntityMap, scalarVisitor.Query);
 
             var collection = this.database.GetCollection(rootEntityMap.CollectionName);
 
-            if (spec.IsCount)
+            if (scalarVisitor.IsCount)
             {
-                return (T)Convert.ChangeType(collection.Count(spec.Query), typeof(T));
+                return (T)Convert.ChangeType(collection.Count(scalarVisitor.Query), typeof(T));
             }
 
             throw new NotSupportedException("Count is the only allowed aggregate operation.");
@@ -92,34 +98,13 @@ namespace MongoDB.Framework.Linq
             return items.First();
         }
 
-        private void AddDiscriminatingKeyIfNecessary(Type entityType, RootEntityMap rootEntityMap, MongoQuerySpecification spec)
+        private void AddDiscriminatingKeyIfNecessary(Type entityType, RootEntityMap rootEntityMap, Document query)
         {
             if (rootEntityMap.Type != entityType)
             {
                 var discriminatedEntityMap = rootEntityMap.GetDiscriminatedEntityMapByType(entityType);
-                spec.Query[rootEntityMap.DiscriminatingDocumentKey] = discriminatedEntityMap.DiscriminatingValue;
+                query[rootEntityMap.DiscriminatingDocumentKey] = discriminatedEntityMap.DiscriminatingValue;
             }
-        }
-
-        private IEnumerable<T> ConvertResultsAsEntities<T>(IEnumerable<Document> documents)
-        {
-            foreach (var document in documents)
-            {
-                var entity = (T)this.entityMapper.MapDocumentToEntity(document, typeof(T));
-                this.changeTracker.Track(document, entity);
-                yield return entity;
-            }
-        }
-
-        private IEnumerable<T> ConvertResultsAsProjection<T>(IEnumerable<ProjectedField> projectedFields, IEnumerable<Document> documents)
-        {
-            if (!typeof(T).IsPrimitive)
-            {
-                //Convert projected fields and typeof(T) to a temporary EntityMap.
-                //var entityMap = new EntityMap(typeof(T));
-            }
-
-            throw new NotImplementedException();
         }
     }
 }

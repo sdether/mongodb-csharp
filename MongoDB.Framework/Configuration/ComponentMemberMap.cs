@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 
 using MongoDB.Framework.Reflection;
+using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration
 {
@@ -65,23 +66,23 @@ namespace MongoDB.Framework.Configuration
         }
 
         /// <summary>
-        /// Gets the document value from entity.
+        /// Gets the value from document.
         /// </summary>
-        /// <param name="entity">The entity.</param>
+        /// <param name="document">The document.</param>
         /// <returns></returns>
-        public override object GetDocumentValueFromEntity(object entity)
+        public override object GetValueFromDocument(Document document)
         {
-            return this.Getter(entity);
+            return document[this.DocumentKey];
         }
 
         /// <summary>
-        /// Sets the document value on entity.
+        /// Sets the value on document.
         /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <param name="documentValue">The document value.</param>
-        public override void SetDocumentValueOnEntity(object entity, object documentValue)
+        /// <param name="value">The value.</param>
+        /// <param name="document">The document.</param>
+        public override void SetValueOnDocument(object value, Document document)
         {
-            this.Setter(entity, documentValue);
+            document[this.DocumentKey] = value;
         }
 
         #endregion

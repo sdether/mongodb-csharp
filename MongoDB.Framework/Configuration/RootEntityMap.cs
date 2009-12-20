@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 
 using MongoDB.Framework.Linq.Visitors;
+using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration
 {

@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
 using MongoDB.Framework.Linq;
 using MongoDB.Framework.Tracking;
+using MongoDB.Framework.Configuration.Visitors;
 
 namespace MongoDB.Framework
 {
@@ -219,7 +220,7 @@ namespace MongoDB.Framework
                 {
                     var document = this.entityMapper.MapEntityToDocument(entity);
                     collection.Insert(document);
-                    rootEntityMap.IdMap.SetDocumentValueOnEntity(entity, document["_id"]);
+                    rootEntityMap.IdMap.Setter(entity, rootEntityMap.IdMap.GetValueFromDocument(document));
                     this.changeTracker.GetTrackedObject(entity).MoveToPossibleModified(document);
                 }
             }
@@ -256,8 +257,8 @@ namespace MongoDB.Framework
                 var collection = this.Database.GetCollection(rootEntityMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
-                    //TODO: investigate using the in clause for deleting multiples...
-                    var document = new Document().Append("_id", new Oid((string)rootEntityMap.IdMap.Getter(entity)));
+                    var document = new Document();
+                    rootEntityMap.IdMap.SetValueOnDocument(rootEntityMap.IdMap.Getter(entity), document);
                     collection.Delete(document);
                     this.changeTracker.GetTrackedObject(entity).MoveToDead();
                 }

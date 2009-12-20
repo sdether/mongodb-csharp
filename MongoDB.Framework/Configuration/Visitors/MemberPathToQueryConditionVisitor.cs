@@ -98,7 +98,7 @@ namespace MongoDB.Framework.Configuration.Visitors
         {
             if (this.CurrentMemberInfo.Name == idMap.MemberName)
             {
-                this.documentKeyParts.Add("_id");
+                this.documentKeyParts.Add(idMap.DocumentKey);
                 this.documentValue = new Oid((string)this.comparisonValue);
                 this.memberPathParts.Pop();
             }

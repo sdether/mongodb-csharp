@@ -14,7 +14,7 @@ using MongoDB.Framework.Configuration.Visitors;
 
 namespace MongoDB.Framework.Linq.Visitors
 {
-    public class MongoOrderingExpressionTreeVisitor : ThrowingExpressionTreeVisitor
+    public class MongoMemberMapPathExpressionTreeVisitor : ThrowingExpressionTreeVisitor
     {
         #region Private Fields
 
@@ -29,7 +29,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// Initializes a new instance of the <see cref="MongoWhereClauseExpressionTreeVisitor"/> class.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        public MongoOrderingExpressionTreeVisitor(MongoConfiguration configuration)
+        public MongoMemberMapPathExpressionTreeVisitor(MongoConfiguration configuration)
         {
             this.configuration = configuration;
             this.memberPath = new List<MemberInfo>();
@@ -44,10 +44,13 @@ namespace MongoDB.Framework.Linq.Visitors
         /// </summary>
         /// <param name="expression">The expression.</param>
         /// <returns></returns>
-        public string GetDocumentKeyFrom(Expression expression)
+        public IEnumerable<MemberMap> GetMemberMapPath(Expression expression)
         {
             this.VisitExpression(expression);
-            return this.CreateDocumentKeyFromMemberPathParts();
+            var visitor = new MemberPathToDocumentKeyVisitor(this.memberPath);
+            var rootEntityMap = this.configuration.GetRootEntityMapFor(this.memberPath[0].DeclaringType);
+            rootEntityMap.Accept(visitor);
+            return visitor.MemberMapPath;
         }
 
         #endregion
@@ -73,18 +76,6 @@ namespace MongoDB.Framework.Linq.Visitors
             string itemText = itemAsExpression != null ? FormattingExpressionTreeVisitor.Format(itemAsExpression) : unhandledItem.ToString();
             var message = string.Format("The expression '{0}' (type: {1}) is not supported by this LINQ provider.", itemText, typeof(T));
             return new NotSupportedException(message);
-        }
-
-        #endregion
-
-        #region Private Fields
-
-        private string CreateDocumentKeyFromMemberPathParts()
-        {
-            var visitor = new MemberPathToDocumentKeyVisitor(this.memberPath);
-            var rootEntityMap = this.configuration.GetRootEntityMapFor(this.memberPath[0].DeclaringType);
-            rootEntityMap.Accept(visitor);
-            return visitor.DocumentKey;
         }
 
         #endregion
