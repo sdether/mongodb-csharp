@@ -50,12 +50,6 @@ namespace MongoDB.Framework.Configuration.Visitors
             this.memberPathParts = new Stack<MemberInfo>(memberPathParts.Reverse());
         }
 
-        public override void VisitRootEntityMap(RootEntityMap rootEntityMap)
-        {
-            rootEntityMap.IdMap.Accept(this);
-            this.VisitEntityMap(rootEntityMap);
-        }
-
         public override void VisitEntityMap(EntityMap entityMap)
         {
             if (this.IsFinished)

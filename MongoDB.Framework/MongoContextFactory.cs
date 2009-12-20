@@ -47,10 +47,10 @@ namespace MongoDB.Framework
         #region Public Methods
 
         /// <summary>
-        /// Opens the context.
+        /// Creates the context.
         /// </summary>
         /// <returns></returns>
-        public MongoContext OpenContext()
+        public MongoContext CreateContext()
         {
             var mongo = new Mongo();
             mongo.Connect();

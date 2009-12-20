@@ -2,13 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MongoDB.Driver;
 
-namespace MongoDB.Framework.Configuration.Visitors
+using MongoDB.Driver;
+using MongoDB.Framework.Configuration;
+
+namespace MongoDB.Framework
 {
     public class DocumentToEntityTranslator : MapVisitor
     {
         #region Public Static Methods
+
+        /// <summary>
+        /// Translates the specified document.
+        /// </summary>
+        /// <param name="document">The document.</param>
+        /// <param name="configation">The configation.</param>
+        /// <returns></returns>
+        public static object Translate(Document document, ConfigurationNode configurationNode)
+        {
+            var translator = new DocumentToEntityTranslator(document);
+            configurationNode.Accept(translator);
+            return translator.Entity;
+        }
 
         /// <summary>
         /// Converts the document to dictionary.
@@ -59,7 +74,7 @@ namespace MongoDB.Framework.Configuration.Visitors
         /// Initializes a new instance of the <see cref="DocumentToEntityTranslator"/> class.
         /// </summary>
         /// <param name="document">The document.</param>
-        public DocumentToEntityTranslator(Document document)
+        private DocumentToEntityTranslator(Document document)
         {
             if (document == null)
                 throw new ArgumentNullException("document");
@@ -74,7 +89,7 @@ namespace MongoDB.Framework.Configuration.Visitors
         /// </summary>
         /// <param name="document">The document.</param>
         /// <param name="entity">The entity.</param>
-        public DocumentToEntityTranslator(Document document, object entity)
+        private DocumentToEntityTranslator(Document document, object entity)
             : this(document)
         {
             this.entity = entity;
@@ -84,10 +99,17 @@ namespace MongoDB.Framework.Configuration.Visitors
 
         #region Public Methods
 
+        public override void VisitRootEntityMap(RootEntityMap rootEntityMap)
+        {
+            this.entity = this.CreateInstance(rootEntityMap);
+            rootEntityMap.IdMap.Accept(this);
+            this.VisitEntityMap(rootEntityMap);
+        }
+
         public override void VisitEntityMap(EntityMap entityMap)
         {
-            if (this.entity == null)
-                this.entity = entityMap.CreateEntity(this.document);
+            if(this.entity == null)
+                this.entity = this.CreateInstance(entityMap);
 
             if (this.entity.GetType() != entityMap.Type)
             {

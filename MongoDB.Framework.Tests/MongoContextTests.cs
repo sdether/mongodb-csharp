@@ -7,15 +7,15 @@ using NUnit.Framework;
 namespace MongoDB.Framework
 {
     [TestFixture]
-    public class MongoContextTests
+    public class MongoContextTests : IntegrationTestBase
     {
         private MongoContext context;
 
         [SetUp]
-        public void Setup()
+        public void SetUp()
         {
-            Domain.SetupEnvironment();
-            context = Domain.ContextFactory.OpenContext();
+            this.SetupEnvironment();
+            this.context = this.CreateContext();
         }
 
         [Test]
@@ -155,7 +155,7 @@ namespace MongoDB.Framework
 
             context.SubmitChanges();
 
-            using (var context2 = Domain.ContextFactory.OpenContext())
+            using (var context2 = this.CreateContext())
             {
                 Assert.IsNotNull(context.Query<Party>().First(p => p.Name == "Jack"));
             }
@@ -169,7 +169,7 @@ namespace MongoDB.Framework
 
             context.SubmitChanges();
 
-            using (var context2 = Domain.ContextFactory.OpenContext())
+            using (var context2 = this.CreateContext())
             {
                 Assert.IsNull(context.Query<Party>().FirstOrDefault(p => p.Name == "Bob McBob"));
             }
@@ -180,7 +180,7 @@ namespace MongoDB.Framework
         {
             context.Dispose();
             context = null;
-            Domain.TearDownEnvironment();
+            this.TearDownEnvironment();
         }
     }
 }

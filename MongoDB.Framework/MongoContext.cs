@@ -17,11 +17,16 @@ namespace MongoDB.Framework
 
         private ChangeTracker changeTracker;
         private Mongo mongo;
-        private MongoConfiguration configuration;
 
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the configuration.
+        /// </summary>
+        /// <value>The configuration.</value>
+        public MongoConfiguration Configuration { get; private set; }
 
         /// <summary>
         /// Gets or sets the database.
@@ -51,11 +56,10 @@ namespace MongoDB.Framework
             if (database == null)
                 throw new ArgumentNullException("database");
 
-            this.mongo = mongo;
-            this.Database = database;
-
-            this.configuration = configuration;
             this.changeTracker = changeTracker;
+            this.Configuration = configuration;
+            this.Database = database;
+            this.mongo = mongo;
         }
 
         /// <summary>
@@ -155,7 +159,7 @@ namespace MongoDB.Framework
         /// <returns></returns>
         public IQueryable<TEntity> Query<TEntity>()
         {
-            return new MongoQueryable<TEntity>(this.Database, this.configuration, this.changeTracker);
+            return new MongoQueryable<TEntity>(this.Database, this.Configuration, this.changeTracker);
         }
 
         /// <summary>
@@ -217,7 +221,7 @@ namespace MongoDB.Framework
         {
             foreach (var entityGroup in inserted.GroupBy(a => a.GetType()))
             {
-                var rootEntityMap = this.configuration.GetRootEntityMapFor(entityGroup.Key);
+                var rootEntityMap = this.Configuration.GetRootEntityMapFor(entityGroup.Key);
                 var collection = this.Database.GetCollection(rootEntityMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
@@ -239,7 +243,7 @@ namespace MongoDB.Framework
         {
             foreach (var entityGroup in updated.GroupBy(a => a.GetType()))
             {
-                var rootEntityMap = this.configuration.GetRootEntityMapFor(entityGroup.Key);
+                var rootEntityMap = this.Configuration.GetRootEntityMapFor(entityGroup.Key);
                 var collection = this.Database.GetCollection(rootEntityMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
@@ -260,7 +264,7 @@ namespace MongoDB.Framework
         {
             foreach (var entityGroup in deleted.GroupBy(a => a.GetType()))
             {
-                var rootEntityMap = this.configuration.GetRootEntityMapFor(entityGroup.Key);
+                var rootEntityMap = this.Configuration.GetRootEntityMapFor(entityGroup.Key);
                 var collection = this.Database.GetCollection(rootEntityMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
