@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Driver;
-using MongoDB.Framework.Cache;
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Hydration;
+using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework.Persistence
 {
@@ -16,11 +16,11 @@ namespace MongoDB.Framework.Persistence
         /// Initializes a new instance of the <see cref="InsertAction"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
-        /// <param name="sessionLevelCache"></param>
+        /// <param name="changeTracker">The change tracker.</param>
         /// <param name="hydrator">The hydrator.</param>
         /// <param name="mongoCollection">The mongo collection.</param>
-        public InsertAction(MappingStore mappingStore, IEntityCache sessionLevelCache, IEntityHydrator hydrator, IMongoCollection mongoCollection)
-            : base(mappingStore, sessionLevelCache, hydrator, mongoCollection)
+        public InsertAction(MappingStore mappingStore, ChangeTracker changeTracker, IEntityHydrator hydrator, IMongoCollection mongoCollection)
+            : base(mappingStore, changeTracker, hydrator, mongoCollection)
         { }
 
         /// <summary>
@@ -28,9 +28,12 @@ namespace MongoDB.Framework.Persistence
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity.</param>
-        public void Insert<TEntity>(TEntity entity)
+        public void Insert(object entity)
         {
-            var documentMap = this.MappingStore.GetDocumentMapFor<TEntity>();
+            if (entity == null)
+                throw new ArgumentNullException("entity");
+
+            var documentMap = this.MappingStore.GetDocumentMapFor(entity.GetType());
             if (!documentMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
@@ -42,7 +45,7 @@ namespace MongoDB.Framework.Persistence
             if (value != null)
                 documentMap.IdMap.MemberSetter(entity, value);
 
-            this.SessionLevelCache.Store(value, entity);
+            this.ChangeTracker.GetTrackedObject(entity).MoveToPossibleModified(document);
         }
     }
 }

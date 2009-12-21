@@ -9,6 +9,20 @@ namespace MongoDB.Framework.Mapping
     {
         #region Public Properties
 
+        /// <summary>
+        /// Gets the name of the collection.
+        /// </summary>
+        /// <value>The name of the collection.</value>
+        public override string CollectionName
+        {
+            get { return this.RootDocumentMap.CollectionName; }
+            set { throw new NotSupportedException("Cannot set CollectionName on a SubDocumentMap.  Use the CollectionMap."); }
+        }
+
+        /// <summary>
+        /// Gets or sets the discriminator key.
+        /// </summary>
+        /// <value>The discriminator key.</value>
         public override string DiscriminatorKey
         {
             get { return this.RootDocumentMap.DiscriminatorKey; }

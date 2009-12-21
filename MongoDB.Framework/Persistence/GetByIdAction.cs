@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Driver;
-using MongoDB.Framework.Cache;
 using MongoDB.Framework.Hydration;
 using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework.Persistence
 {
@@ -16,12 +16,11 @@ namespace MongoDB.Framework.Persistence
         /// Initializes a new instance of the <see cref="GetByIdAction"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
-        /// <param name="sessionLevelCache">The session level cache.</param>
+        /// <param name="changeTracker">The change tracker.</param>
         /// <param name="hydrator">The hydrator.</param>
         /// <param name="mongoCollection">The mongo collection.</param>
-        /// <param name="query">The query.</param>
-        public GetByIdAction(MappingStore mappingStore, IEntityCache sessionLevelCache, IEntityHydrator hydrator, IMongoCollection mongoCollection)
-            : base(mappingStore, sessionLevelCache, hydrator, mongoCollection)
+        public GetByIdAction(MappingStore mappingStore, ChangeTracker changeTracker, IEntityHydrator hydrator, IMongoCollection mongoCollection)
+            : base(mappingStore, changeTracker, hydrator, mongoCollection)
         { }
 
         /// <summary>
@@ -38,9 +37,9 @@ namespace MongoDB.Framework.Persistence
             if (!documentMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
-            object entity = null;
-            if (this.SessionLevelCache.TryToFind(id, out entity))
-                return (TEntity)entity;
+            TrackedObject trackedObject = null;
+            if (this.ChangeTracker.TryGetTrackedObjectById(id, out trackedObject))
+                return (TEntity)trackedObject.Current;
 
             var document = new Document();
             document[documentMap.IdMap.Key] = documentMap.IdMap.ConvertToDocumentValue(id);

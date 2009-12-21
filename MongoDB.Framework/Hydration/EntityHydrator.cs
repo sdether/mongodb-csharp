@@ -5,64 +5,15 @@ using System.Text;
 
 using MongoDB.Driver;
 using MongoDB.Framework.Mapping;
-using System.Text.RegularExpressions;
-using MongoDB.Framework.Cache;
 using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework.Hydration
 {
     public class EntityHydrator : IEntityHydrator
     {
-        #region Private Static Fields
-
-        private readonly static Dictionary<Type, Func<object, object>> mongoTypeConverters = new Dictionary<Type, Func<object, object>>()
-        {
-            { typeof(Oid), x => ConvertFromOid((Oid)x) },
-            { typeof(MongoRegex), x => ConvertFromMongoRegex((MongoRegex)x) }
-        };
-
-        #endregion
-
-        #region Private Static Methods
-
-        private static Regex ConvertFromMongoRegex(MongoRegex regex)
-        {
-            //TODO: handle options...
-            return new Regex(regex.Expression);
-        }
-
-        /// <summary>
-        /// Converts from oid.
-        /// </summary>
-        /// <param name="oid">The oid.</param>
-        /// <returns></returns>
-        private static string ConvertFromOid(Oid oid)
-        {
-            return BitConverter.ToString(oid.Value).Replace("-","").ToLower();
-        }
-
-        /// <summary>
-        /// Converts the type of from mongo.
-        /// </summary>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        private static object ConvertFromMongoType(object value)
-        {
-            if (value == null)
-                return null;
-            if (value == MongoDBNull.Value)
-                return null;
-            Func<object, object> converter = null;
-            if (mongoTypeConverters.TryGetValue(value.GetType(), out converter))
-                value = converter(value);
-            return value;
-        }
-
-	    #endregion
-
         #region Private Fields
 
-        private IEntityCache entityCache;
+        private ChangeTracker changeTracker;
         private MappingStore mappingStore;
 
         #endregion
@@ -72,15 +23,16 @@ namespace MongoDB.Framework.Hydration
         /// <summary>
         /// Initializes a new instance of the <see cref="EntityHydrator"/> class.
         /// </summary>
-        /// <param name="mongoConfiguration">The mongo configuration.</param>
-        public EntityHydrator(MappingStore mappingStore, IEntityCache entityCache)
+        /// <param name="mappingStore">The mapping store.</param>
+        /// <param name="changeTracker">The change tracker.</param>
+        public EntityHydrator(MappingStore mappingStore, ChangeTracker changeTracker)
         {
             if (mappingStore == null)
                 throw new ArgumentNullException("mappingStore");
-            if (entityCache == null)
-                throw new ArgumentNullException("entityCache");
+            if (changeTracker == null)
+                throw new ArgumentNullException("changeTracker");
 
-            this.entityCache = entityCache;
+            this.changeTracker = changeTracker;
             this.mappingStore = mappingStore;
         }
 
@@ -102,15 +54,16 @@ namespace MongoDB.Framework.Hydration
             if (documentMap.HasId)
             {
                 var value = document[documentMap.IdMap.Key];
-                id = (string)ConvertFromMongoType(value);
-                if (id != null && this.entityCache.TryToFind(id, out entity))
-                    return (TEntity)entity;
+                id = (string)documentMap.IdMap.ConvertFromDocumentValue(value);
+                TrackedObject trackedObject;
+                if (id != null && this.changeTracker.TryGetTrackedObjectById(id, out trackedObject))
+                    return (TEntity)trackedObject.Current;
             }
 
             entity = this.CreateEntityFromDocument(documentMap, document);
 
             if (id != null)
-                this.entityCache.Store(id, entity);
+                this.changeTracker.Track(document, entity);
             return (TEntity)entity;
         }
 
@@ -221,7 +174,7 @@ namespace MongoDB.Framework.Hydration
             {
                 var value = document[simpleValueMap.Key];
                 document.Remove(simpleValueMap.Key);
-                value = ConvertFromMongoType(value);
+                value = simpleValueMap.ConvertFromDocumentValue(value);
                 simpleValueMap.MemberSetter(entity, value);
             }
         }

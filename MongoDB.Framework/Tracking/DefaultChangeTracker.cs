@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Driver;
-using MongoDB.Framework.Configuration;
+using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Tracking
 {
@@ -12,8 +12,9 @@ namespace MongoDB.Framework.Tracking
     {
         #region Private Fields
 
-        private MongoConfiguration configuration;
+        private MappingStore mappingStore;
         private Dictionary<object, TrackedObject> trackedObjects;
+        private Dictionary<string, TrackedObject> trackedObjectsById;
 
         #endregion
 
@@ -22,14 +23,15 @@ namespace MongoDB.Framework.Tracking
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultChangeTracker"/> class.
         /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        public DefaultChangeTracker(MongoConfiguration configuration)
+        /// <param name="mappingStore">The mapping store.</param>
+        public DefaultChangeTracker(MappingStore mappingStore)
         {
-            if (configuration == null)
-                throw new ArgumentNullException("configuration");
+            if (mappingStore == null)
+                throw new ArgumentNullException("mappingStore");
 
-            this.configuration = configuration;
+            this.mappingStore = mappingStore;
             this.trackedObjects = new Dictionary<object, TrackedObject>();
+            this.trackedObjectsById = new Dictionary<string, TrackedObject>();
         }
 
         #endregion
@@ -85,9 +87,30 @@ namespace MongoDB.Framework.Tracking
         /// <param name="current">The current.</param>
         public override TrackedObject Track(Document original, object current)
         {
-            var trackedObject = new TrackedObject(this.configuration, original, current);
+            var trackedObject = new TrackedObject(this.mappingStore, original, current);
             this.trackedObjects.Add(current, trackedObject);
             return trackedObject;
+        }
+
+        /// <summary>
+        /// Tries to get a tracked object by id.
+        /// </summary>
+        /// <param name="id">The id.</param>
+        /// <param name="entity">The entity.</param>
+        /// <returns></returns>
+        public override bool TryGetTrackedObjectById(string id, out object entity)
+        {
+            entity = null;
+            foreach (var trackedObject in this.trackedObjects.Values)
+            {
+                if (trackedObject.GetId() == id)
+                {
+                    entity = trackedObject.Current;
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         #endregion

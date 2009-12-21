@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Driver;
-using MongoDB.Framework.Cache;
 using MongoDB.Framework.Hydration;
 using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework.Persistence
 {
@@ -16,11 +16,11 @@ namespace MongoDB.Framework.Persistence
         /// Initializes a new instance of the <see cref="FindAction"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
-        /// <param name="sessionLevelCache">The session level cache.</param>
+        /// <param name="changeTracker">The change tracker.</param>
         /// <param name="hydrator">The hydrator.</param>
         /// <param name="mongoCollection">The mongo collection.</param>
-        public FindAction(MappingStore mappingStore, IEntityCache sessionLevelCache, IEntityHydrator hydrator, IMongoCollection mongoCollection)
-            : base(mappingStore, sessionLevelCache, hydrator, mongoCollection)
+        public FindAction(MappingStore mappingStore, ChangeTracker changeTracker, IEntityHydrator hydrator, IMongoCollection mongoCollection)
+            : base(mappingStore, changeTracker, hydrator, mongoCollection)
         { }
 
         /// <summary>

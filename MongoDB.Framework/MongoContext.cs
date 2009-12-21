@@ -5,9 +5,11 @@ using System.Text;
 
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
+using MongoDB.Framework.Hydration;
 using MongoDB.Framework.Linq;
+using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Persistence;
 using MongoDB.Framework.Tracking;
-using MongoDB.Framework.Configuration.Visitors;
 
 namespace MongoDB.Framework
 {
@@ -16,39 +18,44 @@ namespace MongoDB.Framework
         #region Private Fields
 
         private ChangeTracker changeTracker;
+        private Database database;
+        private MappingStore mappingStore;
         private Mongo mongo;
+        private IEntityHydrator entityHydrator;
 
         #endregion
 
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the configuration.
-        /// </summary>
-        /// <value>The configuration.</value>
-        public MongoConfiguration Configuration { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the database.
+        /// Gets the database.
         /// </summary>
         /// <value>The database.</value>
-        public Database Database { get; private set; }
+        public Database Database
+        {
+            get
+            {
+                this.EnsureNotDisposed();
+
+                return this.database;
+            }
+        }
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MongoContext&lt;TEntity&gt;"/> class.
+        /// Initializes a new instance of the <see cref="MongoContext"/> class.
         /// </summary>
-        /// <param name="configuration">The configuration.</param>
+        /// <param name="mappingStore">The mapping store.</param>
         /// <param name="changeTracker">The change tracker.</param>
         /// <param name="mongo">The mongo.</param>
         /// <param name="database">The database.</param>
-        public MongoContext(MongoConfiguration configuration, ChangeTracker changeTracker, Mongo mongo, Database database)
+        public MongoContext(MappingStore mappingStore, ChangeTracker changeTracker, Mongo mongo, Database database)
         {
-            if (configuration == null)
-                throw new ArgumentNullException("configuration");
+            if (mappingStore == null)
+                throw new ArgumentNullException("mappingStore");
             if (changeTracker == null)
                 throw new ArgumentNullException("changeTracker");
             if (mongo == null)
@@ -57,9 +64,10 @@ namespace MongoDB.Framework
                 throw new ArgumentNullException("database");
 
             this.changeTracker = changeTracker;
-            this.Configuration = configuration;
-            this.Database = database;
+            this.database = database;
+            this.mappingStore = mappingStore;
             this.mongo = mongo;
+            this.entityHydrator = new EntityHydrator(mappingStore, changeTracker);
         }
 
         /// <summary>
@@ -91,6 +99,8 @@ namespace MongoDB.Framework
         /// <param name="entity">The entity.</param>
         public void DeleteOnSubmit(object entity)
         {
+            this.EnsureNotDisposed();
+
             this.DeleteAllOnSubmit(new[] { entity });
         }
 
@@ -101,6 +111,8 @@ namespace MongoDB.Framework
         /// <param name="entities">The entities.</param>
         public void DeleteAllOnSubmit(params object[] entities)
         {
+            this.EnsureNotDisposed();
+
             this.DeleteAllOnSubmit((IEnumerable<object>)entities);
         }
 
@@ -111,6 +123,8 @@ namespace MongoDB.Framework
         /// <param name="entities">The entities.</param>
         public void DeleteAllOnSubmit(IEnumerable<object> entities)
         {
+            this.EnsureNotDisposed();
+
             if (entities == null)
                 throw new ArgumentNullException("entities");
 
@@ -125,6 +139,8 @@ namespace MongoDB.Framework
         /// <param name="entity">The entity.</param>
         public void InsertOnSubmit(object entity)
         {
+            this.EnsureNotDisposed();
+
             this.InsertAllOnSubmit(new[] { entity });
         }
 
@@ -135,6 +151,8 @@ namespace MongoDB.Framework
         /// <param name="entities">The entities.</param>
         public void InsertAllOnSubmit(params object[] entities)
         {
+            this.EnsureNotDisposed();
+
             this.InsertAllOnSubmit((IEnumerable<object>)entities);
         }
 
@@ -145,6 +163,8 @@ namespace MongoDB.Framework
         /// <param name="entities">The entities.</param>
         public void InsertAllOnSubmit(IEnumerable<object> entities)
         {
+            this.EnsureNotDisposed();
+
             if (entities == null)
                 throw new ArgumentNullException("entities");
 
@@ -159,27 +179,10 @@ namespace MongoDB.Framework
         /// <returns></returns>
         public IQueryable<TEntity> Query<TEntity>()
         {
-            return new MongoQueryable<TEntity>(this.Database, this.Configuration, this.changeTracker);
-        }
+            this.EnsureNotDisposed();
 
-        /// <summary>
-        /// Sends the command.
-        /// </summary>
-        /// <param name="command">The command.</param>
-        /// <returns></returns>
-        public Document SendCommand(string command)
-        {
-            return this.Database.SendCommand(command);
-        }
-
-        /// <summary>
-        /// Sends the command.
-        /// </summary>
-        /// <param name="command">The command.</param>
-        /// <returns></returns>
-        public Document SendCommand(Document command)
-        {
-            return this.Database.SendCommand(command);
+            throw new NotImplementedException();
+            //return new MongoQueryable<TEntity>(this.Database, this.Configuration, this.changeTracker);
         }
 
         /// <summary>
@@ -187,6 +190,8 @@ namespace MongoDB.Framework
         /// </summary>
         public void SubmitChanges()
         {
+            this.EnsureNotDisposed();
+
             ChangeSet changeSet = this.changeTracker.GetChangeSet();
             this.PerformInserts(changeSet.Inserted);
             this.PerformUpdates(changeSet.Modified);
@@ -206,7 +211,20 @@ namespace MongoDB.Framework
             if (!disposing)
                 return;
 
+            this.changeTracker = null;
+            this.database = null;
+            this.mappingStore = null;
             this.mongo.Disconnect();
+            this.mongo = null;
+        }
+
+        /// <summary>
+        /// Ensures the not disposed.
+        /// </summary>
+        protected void EnsureNotDisposed()
+        {
+            if (this.mongo == null)
+                throw new ObjectDisposedException("MongoContext");
         }
 
         #endregion
@@ -221,16 +239,12 @@ namespace MongoDB.Framework
         {
             foreach (var entityGroup in inserted.GroupBy(a => a.GetType()))
             {
-                var rootEntityMap = this.Configuration.GetRootEntityMapFor(entityGroup.Key);
-                var collection = this.Database.GetCollection(rootEntityMap.CollectionName);
+                var documentMap = this.mappingStore.GetDocumentMapFor(entityGroup.Key);
+                var collection = this.Database.GetCollection(documentMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
-                    var translator = new EntityToDocumentTranslator(entity);
-                    rootEntityMap.Accept(translator);
-                    var document = translator.Document;
-                    collection.Insert(document);
-                    rootEntityMap.IdMap.Setter(entity, rootEntityMap.IdMap.GetValueFromDocument(document));
-                    this.changeTracker.GetTrackedObject(entity).MoveToPossibleModified(document);
+                    new InsertAction(this.mappingStore, this.changeTracker, this.entityHydrator, collection)
+                        .Insert(entity);
                 }
             }
         }
@@ -243,15 +257,12 @@ namespace MongoDB.Framework
         {
             foreach (var entityGroup in updated.GroupBy(a => a.GetType()))
             {
-                var rootEntityMap = this.Configuration.GetRootEntityMapFor(entityGroup.Key);
-                var collection = this.Database.GetCollection(rootEntityMap.CollectionName);
+                var documentMap = this.mappingStore.GetDocumentMapFor(entityGroup.Key);
+                var collection = this.Database.GetCollection(documentMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
-                    var translator = new EntityToDocumentTranslator(entity);
-                    rootEntityMap.Accept(translator);
-                    var document = translator.Document;
-                    collection.Update(document);
-                    this.changeTracker.GetTrackedObject(entity).MoveToPossibleModified(document);
+                    new UpdateAction(this.mappingStore, this.changeTracker, this.entityHydrator, collection)
+                        .Update(entity);
                 }
             }
         }
@@ -264,14 +275,12 @@ namespace MongoDB.Framework
         {
             foreach (var entityGroup in deleted.GroupBy(a => a.GetType()))
             {
-                var rootEntityMap = this.Configuration.GetRootEntityMapFor(entityGroup.Key);
-                var collection = this.Database.GetCollection(rootEntityMap.CollectionName);
+                var documentMap = this.mappingStore.GetDocumentMapFor(entityGroup.Key);
+                var collection = this.Database.GetCollection(documentMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
-                    var document = new Document();
-                    rootEntityMap.IdMap.SetValueOnDocument(rootEntityMap.IdMap.Getter(entity), document);
-                    collection.Delete(document);
-                    this.changeTracker.GetTrackedObject(entity).MoveToDead();
+                    new DeleteAction(this.mappingStore, this.changeTracker, this.entityHydrator, collection)
+                        .Delete(entity);
                 }
             }
         }

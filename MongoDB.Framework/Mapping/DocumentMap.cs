@@ -18,6 +18,12 @@ namespace MongoDB.Framework.Mapping
         #region Public Properties
 
         /// <summary>
+        /// Gets the name of the collection.
+        /// </summary>
+        /// <value>The name of the collection.</value>
+        public abstract string CollectionName { get; set; }
+
+        /// <summary>
         /// Gets or sets the discriminator.
         /// </summary>
         /// <value>The discriminator.</value>

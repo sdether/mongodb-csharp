@@ -2,34 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MongoDB.Framework.Mapping;
+using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration
 {
-    public class MongoConfiguration
+    public class MongoConfiguration : IMongoConfiguration
     {
-        #region Private Fields
-
-        private Dictionary<Type, RootEntityMap> rootEntityMaps;
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the name of the database.
+        /// Gets the name of the database.
         /// </summary>
         /// <value>The name of the database.</value>
-        public string DatabaseName { get; set; }
+        public string DatabaseName { get; private set; }
 
         /// <summary>
-        /// Gets the root entity maps.
+        /// Gets the mapping store.
         /// </summary>
-        /// <value>The root entity maps.</value>
-        public IEnumerable<RootEntityMap> RootEntityMaps
-        {
-            get { return this.rootEntityMaps.Values.Distinct(); }
-        }
- 
+        /// <value>The mapping store.</value>
+        public MappingStore MappingStore { get; private set; }
+
+        /// <summary>
+        /// Gets the mongo factory.
+        /// </summary>
+        /// <value>The mongo factory.</value>
+        public IMongoFactory MongoFactory { get; set; }
+
         #endregion
 
         #region Constructors
@@ -37,9 +36,18 @@ namespace MongoDB.Framework.Configuration
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoConfiguration"/> class.
         /// </summary>
-        public MongoConfiguration()
+        /// <param name="databaseName">Name of the database.</param>
+        /// <param name="mappingStore">The mapping store.</param>
+        public MongoConfiguration(string databaseName, MappingStore mappingStore)
         {
-            this.rootEntityMaps = new Dictionary<Type, RootEntityMap>();
+            if (string.IsNullOrEmpty(databaseName))
+                throw new ArgumentException("Cannot be null or empty.", "databaseName");
+            if (mappingStore == null)
+                throw new ArgumentNullException("mappingStore");
+
+            this.DatabaseName = databaseName;
+            this.MappingStore = mappingStore;
+            this.MongoFactory = new DefaultMongoFactory();
         }
 
         #endregion
@@ -47,54 +55,12 @@ namespace MongoDB.Framework.Configuration
         #region Public Methods
 
         /// <summary>
-        /// Adds the root entity map.
+        /// Creates the context factory.
         /// </summary>
-        /// <param name="rootEntityMap">The root entity map.</param>
-        public void AddRootEntityMap(RootEntityMap rootEntityMap)
-        {
-            this.rootEntityMaps.Add(rootEntityMap.Type, rootEntityMap);
-            foreach(var map in rootEntityMap.DiscriminatedEntityMaps)
-                this.rootEntityMaps.Add(map.Type, rootEntityMap);
-        }
-
-        /// <summary>
-        /// Gets the root entity map for the specified type.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public RootEntityMap GetRootEntityMapFor<T>()
+        public MongoContextFactory CreateContextFactory()
         {
-            return this.GetRootEntityMapFor(typeof(T));
-        }
-
-        /// <summary>
-        /// Gets the root entity map for the specified type.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns></returns>
-        public RootEntityMap GetRootEntityMapFor(Type type)
-        {
-            RootEntityMap rootEntityMap = null;
-            if (!this.rootEntityMaps.TryGetValue(type, out rootEntityMap))
-                throw new UnmappedTypeException(string.Format("No root entity map found for type {0}", type));
-
-            return rootEntityMap;
-        }
-
-        #endregion
-
-        #region Protected Methods
-
-        /// <summary>
-        /// Called when a root entity map could not be found.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="rootEntityMap">The root entity map.</param>
-        /// <returns></returns>
-        protected virtual bool OnMissingEntityMap(Type type, out RootEntityMap rootEntityMap)
-        {
-            rootEntityMap = null;
-            return false;
+            return new MongoContextFactory(this);
         }
 
         #endregion

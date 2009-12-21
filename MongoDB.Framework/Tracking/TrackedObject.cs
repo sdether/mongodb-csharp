@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using MongoDB.Driver;
-using MongoDB.Framework.Configuration;
-using MongoDB.Framework.Configuration.Visitors;
+using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Persistence;
 
 namespace MongoDB.Framework.Tracking
 {
@@ -44,7 +45,7 @@ namespace MongoDB.Framework.Tracking
 
         #region Private Fields
 
-        private MongoConfiguration configuration;
+        private MappingStore mappingStore;
 
         #endregion
 
@@ -78,14 +79,14 @@ namespace MongoDB.Framework.Tracking
         /// <param name="configuration">The configuration.</param>
         /// <param name="original">The original.</param>
         /// <param name="current">The current.</param>
-        public TrackedObject(MongoConfiguration configuration, Document original, object current)
+        public TrackedObject(MappingStore mappingStore, Document original, object current)
         {
-            if (configuration == null)
-                throw new ArgumentNullException("configuration");
+            if (mappingStore == null)
+                throw new ArgumentNullException("mappingStore");
             if (current == null)
                 throw new ArgumentNullException("current");
 
-            this.configuration = configuration;
+            this.mappingStore = mappingStore;
             this.Original = original;
             this.Current = current;
             this.State = TrackedObjectState.PossiblyModified;
@@ -106,22 +107,30 @@ namespace MongoDB.Framework.Tracking
             if (this.State != TrackedObjectState.PossiblyModified)
                 return;
 
-            var rootEntityMap = this.configuration.GetRootEntityMapFor(this.Current.GetType());
+            var documentMap = this.mappingStore.GetDocumentMapFor(this.Current.GetType());
             if (this.Original == null)
             {
-                var value = (string)rootEntityMap.IdMap.Getter(this.Current);
-                if (rootEntityMap.IdMap.TransientValues.Contains(value))
+                var value = (string)this.GetId();
+                if (value == null || string.IsNullOrEmpty(value))
                     this.MoveToInserted();
                 else
                     this.MoveToModified();
                 return;
             }
 
-            var translator = new EntityToDocumentTranslator(this.Current);
-            rootEntityMap.Accept(translator);
-            Document current = translator.Document;
-            if (!AreDocumentsEqual(this.Original, current))
+            var translator = new EntityToDocumentTranslator(this.mappingStore);
+            var document = translator.Translate(this.Current);
+            if (!AreDocumentsEqual(this.Original, document))
                 this.MoveToModified();
+        }
+
+        /// <summary>
+        /// Gets the id.
+        /// </summary>
+        /// <returns></returns>
+        public string GetId()
+        {
+            return (string)this.mappingStore.GetDocumentMapFor(this.Current.GetType()).IdMap.MemberGetter(this.Current);
         }
 
         /// <summary>

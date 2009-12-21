@@ -28,6 +28,18 @@ namespace MongoDB.Framework.Tracking
         /// <param name="current">The current.</param>
         public abstract TrackedObject Track(Document original, object current);
 
+        /// <summary>
+        /// Tries to get a tracked object by id.
+        /// </summary>
+        /// <param name="id">The id.</param>
+        /// <param name="entity">The entity.</param>
+        /// <returns></returns>
+        public abstract bool TryGetTrackedObjectById(string id, out TrackedObject entity);
+
+        /// <summary>
+        /// Releases unmanaged resources and performs other cleanup operations before the
+        /// <see cref="ChangeTracker"/> is reclaimed by garbage collection.
+        /// </summary>
         ~ChangeTracker()
         {
             this.Dispose(false);

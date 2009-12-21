@@ -17,6 +17,16 @@ namespace MongoDB.Framework.Mapping
         #region Public Properties
 
         /// <summary>
+        /// Gets the name of the collection.
+        /// </summary>
+        /// <value>The name of the collection.</value>
+        public override string CollectionName
+        {
+            get { throw new NotSupportedException("Cannot get CollectionName from a RootDocumentMap.  Use the CollectionMap."); }
+            set { throw new NotSupportedException("Cannot set CollectionName on a RootDocumentMap.  Use the CollectionMap."); }
+        }
+
+        /// <summary>
         /// Gets or sets the discriminator key.
         /// </summary>
         /// <value>The discriminator key.</value>
