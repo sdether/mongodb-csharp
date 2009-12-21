@@ -67,6 +67,7 @@
     <Compile Include="Configuration\Visitors\DocumentToEntityTranslator.cs" />
     <Compile Include="Configuration\Visitors\EntityToDocumentTranslator.cs" />
     <Compile Include="Configuration\Visitors\MemberPathToQueryConditionVisitor.cs" />
+    <Compile Include="Extensions\MongoDBDocumentExtensions.cs" />
     <Compile Include="Hydration\EntityHydrator.cs" />
     <Compile Include="Hydration\IEntityHydrator.cs" />
     <Compile Include="Linq\Visitors\ProjectionBuilder.cs" />
@@ -74,6 +75,8 @@
     <Compile Include="Linq\MongoQueryProjection.cs" />
     <Compile Include="Linq\Visitors\ScalarQueryModelVisitor.cs" />
     <Compile Include="Mapping\CollectionMap.cs" />
+    <Compile Include="Mapping\ExtendedPropertiesMap.cs" />
+    <Compile Include="Mapping\Fluent\FluentMappingStore.cs" />
     <Compile Include="Mapping\Fluent\FluentDiscriminatorMap.cs" />
     <Compile Include="Mapping\Fluent\FluentSubDocumentMap.cs" />
     <Compile Include="Mapping\Fluent\FluentDocumentMap.cs" />
@@ -88,6 +91,7 @@
     <Compile Include="Mapping\RootDocumentMap.cs" />
     <Compile Include="Mapping\SimpleValueMap.cs" />
     <Compile Include="Mapping\SubDocumentMap.cs" />
+    <Compile Include="Mapping\UnmappedTypeException.cs" />
     <Compile Include="Mapping\ValueMap.cs" />
     <Compile Include="Tracking\ChangeTracker.cs" />
     <Compile Include="Tracking\DefaultChangeTracker.cs" />

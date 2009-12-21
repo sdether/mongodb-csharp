@@ -7,17 +7,40 @@ namespace MongoDB.Framework.Mapping
 {
     public class SubDocumentMap : DocumentMap
     {
+        #region Public Properties
+
+        public override string DiscriminatorKey
+        {
+            get { return this.RootDocumentMap.DiscriminatorKey; }
+            set { throw new NotSupportedException("Cannot set DiscriminatorKey on a SubDocumentMap.  Use the RootDocumentMap."); }
+        }
+
         /// <summary>
-        /// Gets the root document map.
+        /// Gets the extended properties map.
         /// </summary>
-        /// <value>The root document map.</value>
-        public RootDocumentMap RootDocumentMap { get; private set; }
+        /// <value>The extended properties map.</value>
+        public override ExtendedPropertiesMap ExtendedPropertiesMap
+        {
+            get { return this.RootDocumentMap.ExtendedPropertiesMap; }
+            set { throw new NotSupportedException("Cannot set ExtendedPropertiesMap on a SubDocumentMap.  Use the RootDocumentMap."); }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is polymorhic.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is polymorhic; otherwise, <c>false</c>.
+        /// </value>
+        public override bool IsPolymorphic
+        {
+            get { return true; }
+        }
 
         /// <summary>
         /// Gets the simple value maps.
         /// </summary>
         /// <value>The simple value maps.</value>
-        public virtual IEnumerable<NestedDocumentValueMap> NestedDocumentValueMaps
+        public override IEnumerable<NestedDocumentValueMap> NestedDocumentValueMaps
         {
             get
             {
@@ -30,7 +53,7 @@ namespace MongoDB.Framework.Mapping
         /// Gets the simple value maps.
         /// </summary>
         /// <value>The simple value maps.</value>
-        public virtual IEnumerable<ReferenceValueMap> ReferenceValueMaps
+        public override IEnumerable<ReferenceValueMap> ReferenceValueMaps
         {
             get
             {
@@ -40,10 +63,16 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
+        /// Gets the root document map.
+        /// </summary>
+        /// <value>The root document map.</value>
+        public RootDocumentMap RootDocumentMap { get; private set; }
+
+        /// <summary>
         /// Gets the simple value maps.
         /// </summary>
         /// <value>The simple value maps.</value>
-        public virtual IEnumerable<SimpleValueMap> SimpleValueMaps
+        public override IEnumerable<SimpleValueMap> SimpleValueMaps
         {
             get
             {
@@ -51,6 +80,10 @@ namespace MongoDB.Framework.Mapping
                     .Concat(this.RootDocumentMap.SimpleValueMaps);
             }
         }
+
+        #endregion
+
+        #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SubDocumentMap"/> class.
@@ -66,5 +99,7 @@ namespace MongoDB.Framework.Mapping
 
             this.RootDocumentMap = rootDocumentMap;
         }
+
+        #endregion
     }
 }

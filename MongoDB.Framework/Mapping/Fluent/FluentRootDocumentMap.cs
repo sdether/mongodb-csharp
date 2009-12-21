@@ -39,5 +39,26 @@ namespace MongoDB.Framework.Mapping.Fluent
             this.DiscriminatedBy(key, configure);
             this.Instance.Discriminator = rootDiscriminatorValue;
         }
+
+        public void ExtendedProperties(string memberName)
+        {
+            var memberInfo = this.GetSingleMember(memberName);
+            this.ExtendedProperties(memberInfo);
+        }
+
+        public void ExtendedProperties(MemberInfo memberInfo)
+        {
+            this.Instance.ExtendedPropertiesMap = new ExtendedPropertiesMap(
+                memberInfo.Name,
+                LateBoundReflection.GetMemberValueType(memberInfo),
+                LateBoundReflection.GetGetter(memberInfo),
+                LateBoundReflection.GetSetter(memberInfo));
+        }
+
+        public void ExtendedProperties(Expression<Func<TEntity, IDictionary<string, object>>> member)
+        {
+            var memberInfo = this.GetSingleMember(member);
+            this.ExtendedProperties(memberInfo);
+        }
     }
 }

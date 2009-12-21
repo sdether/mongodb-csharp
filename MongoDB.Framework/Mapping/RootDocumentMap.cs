@@ -9,6 +9,7 @@ namespace MongoDB.Framework.Mapping
     {
         #region Private Fields
 
+        private ExtendedPropertiesMap extendedPropertiesMap;
         private readonly List<SubDocumentMap> subDocumentMaps;
 
         #endregion
@@ -19,7 +20,13 @@ namespace MongoDB.Framework.Mapping
         /// Gets or sets the discriminator key.
         /// </summary>
         /// <value>The discriminator key.</value>
-        public string DiscriminatorKey { get; set; }
+        public override string DiscriminatorKey { get; set; }
+
+        /// <summary>
+        /// Gets the extended properties map.
+        /// </summary>
+        /// <value>The extended properties map.</value>
+        public override ExtendedPropertiesMap ExtendedPropertiesMap { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is polymorphic.
@@ -27,9 +34,19 @@ namespace MongoDB.Framework.Mapping
         /// <value>
         /// 	<c>true</c> if this instance is polymorphic; otherwise, <c>false</c>.
         /// </value>
-        public bool IsPolymorphic
+        ///
+        public override bool IsPolymorphic
         {
             get { return this.subDocumentMaps.Count > 0; }
+        }
+
+        /// <summary>
+        /// Gets the sub document maps.
+        /// </summary>
+        /// <value>The sub document maps.</value>
+        public virtual IEnumerable<SubDocumentMap> SubDocumentMaps
+        {
+            get { return this.subDocumentMaps; }
         }
 
         #endregion

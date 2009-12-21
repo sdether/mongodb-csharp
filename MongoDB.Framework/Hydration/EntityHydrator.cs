@@ -4,15 +4,58 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Driver;
-using MongoDB.Framework.Configuration;
+using MongoDB.Framework.Mapping;
+using System.Text.RegularExpressions;
 
 namespace MongoDB.Framework.Hydration
 {
     public class EntityHydrator : IEntityHydrator
     {
+        #region Private Static Fields
+
+        private readonly static Dictionary<Type, Func<object, object>> mongoTypeConverters = new Dictionary<Type, Func<object, object>>()
+        {
+            { typeof(Oid), x => ConvertFromOid((Oid)x) },
+            { typeof(MongoRegex), x => ConvertFromMongoRegex((MongoRegex)x) }
+        };
+
+        #endregion
+
+        #region Private Static Methods
+
+        private static Regex ConvertFromMongoRegex(MongoRegex regex)
+        {
+            //TODO: handle options...
+            return new Regex(regex.Expression);
+        }
+
+        /// <summary>
+        /// Converts from oid.
+        /// </summary>
+        /// <param name="oid">The oid.</param>
+        /// <returns></returns>
+        private static string ConvertFromOid(Oid oid)
+        {
+            return BitConverter.ToString(oid.Value).Replace("-","").ToLower();
+        }
+
+        private static object ConvertFromMongoType(object value)
+        {
+            if (value == null)
+                return null;
+            if (value == MongoDBNull.Value)
+                return null;
+            Func<object, object> converter = null;
+            if (mongoTypeConverters.TryGetValue(value.GetType(), out converter))
+                value = converter(value);
+            return value;
+        }
+
+	    #endregion
+
         #region Private Fields
 
-        private MongoConfiguration configuration;
+        private MappingStore mappingStore;
 
         #endregion
 
@@ -22,12 +65,12 @@ namespace MongoDB.Framework.Hydration
         /// Initializes a new instance of the <see cref="EntityHydrator"/> class.
         /// </summary>
         /// <param name="mongoConfiguration">The mongo configuration.</param>
-        public EntityHydrator(MongoConfiguration configuration)
+        public EntityHydrator(MappingStore mappingStore)
         {
-            if (configuration == null)
-                throw new ArgumentNullException("configuration");
+            if (mappingStore == null)
+                throw new ArgumentNullException("mappingStore");
 
-            this.configuration = configuration;
+            this.mappingStore = mappingStore;
         }
 
         #endregion
@@ -42,13 +85,13 @@ namespace MongoDB.Framework.Hydration
         /// <returns></returns>
         public TEntity HydrateEntity<TEntity>(Document document)
         {
-            var rootEntityMap = this.configuration.GetRootEntityMapFor<TEntity>();
-            string id = (string)rootEntityMap.IdMap.GetValueFromDocument(document);
-            //Check for cached entity here...
+            var documentMap = this.mappingStore.GetDocumentMapFor<TEntity>();
+            //get collection map here to try and get entity from cache
 
-            var entity = Activator.CreateInstance<TEntity>();
-            rootEntityMap.IdMap.Setter(entity, id);
-            this.Hydrate(rootEntityMap, entity, document);
+            var entity = (TEntity)this.CreateEntityFromDocument(documentMap, document);
+
+            //use collection map here to add entity to cache
+
             return entity;
         }
 
@@ -69,18 +112,101 @@ namespace MongoDB.Framework.Hydration
         #region Private Methods
 
         /// <summary>
+        /// Creates the entity from document.
+        /// </summary>
+        /// <param name="documentMap">The document map.</param>
+        /// <param name="document">The document.</param>
+        /// <returns></returns>
+        private object CreateEntityFromDocument(DocumentMap documentMap, Document document)
+        {
+            var entity = Activator.CreateInstance(documentMap.EntityType);
+            this.Hydrate(documentMap, entity, document);
+            return entity;
+        }
+
+        /// <summary>
         /// Hydrates the specified entity map.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entityMap">The entity map.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="document">The document.</param>
-        private void Hydrate<TEntity>(EntityMap entityMap, TEntity entity, Document document)
+        private void Hydrate(DocumentMap documentMap, object entity, Document document)
         {
+            this.ApplySimpleValueMaps(documentMap.SimpleValueMaps, entity, document);
+            this.ApplyNestedDocumentValueMaps(documentMap.NestedDocumentValueMaps, entity, document);
+            this.ApplyReferenceValueMaps(documentMap.ReferenceValueMaps, entity, document);
 
+            if (documentMap.IsPolymorphic)
+                document.Remove(documentMap.DiscriminatorKey);
+
+            this.ApplyExtendedPropertiesMap(documentMap.ExtendedPropertiesMap, entity, document);
         }
 
+        /// <summary>
+        /// Applies the extended properties map.
+        /// </summary>
+        /// <param name="extendedPropertiesMap">The extended properties map.</param>
+        /// <param name="entity">The entity.</param>
+        /// <param name="document">The document.</param>
+        private void ApplyExtendedPropertiesMap(ExtendedPropertiesMap extendedPropertiesMap, object entity, Document document)
+        {
+            if (extendedPropertiesMap == null)
+                return;
 
+            var dictionary = document.ToDictionary();
+            extendedPropertiesMap.MemberSetter(entity, dictionary);
+        }
+
+        /// <summary>
+        /// Applies the nested document value maps.
+        /// </summary>
+        /// <param name="nestedDocumentValueMaps">The nested document value maps.</param>
+        /// <param name="entity">The entity.</param>
+        /// <param name="document">The document.</param>
+        private void ApplyNestedDocumentValueMaps(IEnumerable<NestedDocumentValueMap> nestedDocumentValueMaps, object entity, Document document)
+        {
+            foreach (var nestedDocumentMap in nestedDocumentValueMaps)
+            {
+                var value = document[nestedDocumentMap.Key] as Document;
+                document.Remove(nestedDocumentMap.Key);
+                if (value == null)
+                    return;
+
+                var nestedEntity = this.CreateEntityFromDocument(nestedDocumentMap.RootDocumentMap, value);
+                nestedDocumentMap.MemberSetter(entity, nestedEntity);
+            }
+        }
+
+        /// <summary>
+        /// Applies the reference value maps.
+        /// </summary>
+        /// <param name="referenceValueMaps">The reference value maps.</param>
+        /// <param name="entity">The entity.</param>
+        /// <param name="document">The document.</param>
+        private void ApplyReferenceValueMaps(IEnumerable<ReferenceValueMap> referenceValueMaps, object entity, Document document)
+        {
+            foreach (var referenceValueMap in referenceValueMaps)
+                throw new NotSupportedException("ReferenceValueMaps are not supported yet.");
+        }
+
+        /// <summary>
+        /// Applies the simple value maps.
+        /// </summary>
+        /// <param name="simpleValueMaps">The simple value maps.</param>
+        /// <param name="entity">The entity.</param>
+        /// <param name="document">The document.</param>
+        private void ApplySimpleValueMaps(IEnumerable<SimpleValueMap> simpleValueMaps, object entity, Document document)
+        {
+            foreach (var simpleValueMap in simpleValueMaps)
+            {
+                var value = document[simpleValueMap.Key];
+                document.Remove(simpleValueMap.Key);
+
+                value = ConvertFromMongoType(value);
+                simpleValueMap.MemberSetter(entity, value);
+            }
+        }
 
         #endregion
     }

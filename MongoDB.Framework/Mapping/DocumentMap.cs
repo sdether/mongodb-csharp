@@ -24,10 +24,41 @@ namespace MongoDB.Framework.Mapping
         public object Discriminator { get; set; }
 
         /// <summary>
+        /// Gets or sets the discriminator key.
+        /// </summary>
+        /// <value>The discriminator key.</value>
+        public abstract string DiscriminatorKey { get; set; }
+
+        /// <summary>
         /// Gets the type of the entity.
         /// </summary>
         /// <value>The type of the entity.</value>
         public Type EntityType { get; private set; }
+
+        /// <summary>
+        /// Gets the extended properties map.
+        /// </summary>
+        /// <value>The extended properties map.</value>
+        public abstract ExtendedPropertiesMap ExtendedPropertiesMap { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance has extended properties.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance has extended properties; otherwise, <c>false</c>.
+        /// </value>
+        public bool HasExtendedProperties
+        {
+            get { return this.ExtendedPropertiesMap != null; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is polymorphic.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is polymorphic; otherwise, <c>false</c>.
+        /// </value>
+        public abstract bool IsPolymorphic { get; }
 
         /// <summary>
         /// Gets the value maps.

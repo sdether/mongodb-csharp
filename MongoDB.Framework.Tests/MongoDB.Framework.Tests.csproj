@@ -71,6 +71,7 @@
     <Compile Include="Configuration\Visitors\DocumentToEntityTranslatorTests.cs" />
     <Compile Include="Configuration\Visitors\EntityToDocumentTranslatorTests.cs" />
     <Compile Include="Domain.cs" />
+    <Compile Include="Hydration\EntityHydratorTests.cs" />
     <Compile Include="IntegrationTestBase.cs" />
     <Compile Include="Mapping\Fluent\FluentCollectionTests.cs" />
     <Compile Include="MongoContextTests.cs" />

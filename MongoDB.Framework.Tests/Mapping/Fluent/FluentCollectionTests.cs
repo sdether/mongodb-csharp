@@ -45,6 +45,8 @@ namespace MongoDB.Framework.Mapping.Fluent
                     sm.Map(x => x.EmployeeCount);
                 });
             });
+
+            ExtendedProperties(x => x.ExtendedProperties);
         }
     }
 }
