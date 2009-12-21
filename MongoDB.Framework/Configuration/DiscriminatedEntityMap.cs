@@ -27,6 +27,15 @@ namespace MongoDB.Framework.Configuration
         public object DiscriminatingValue { get; set; }
 
         /// <summary>
+        /// Gets the component maps.
+        /// </summary>
+        /// <value>The component maps.</value>
+        public IEnumerable<ComponentMemberMap> ComponentMaps
+        {
+            get { return null; }
+        }
+
+        /// <summary>
         /// Gets the member maps.
         /// </summary>
         /// <value>The member maps.</value>

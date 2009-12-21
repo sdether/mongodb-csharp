@@ -67,10 +67,21 @@
     <Compile Include="Configuration\Visitors\DocumentToEntityTranslator.cs" />
     <Compile Include="Configuration\Visitors\EntityToDocumentTranslator.cs" />
     <Compile Include="Configuration\Visitors\MemberPathToQueryConditionVisitor.cs" />
+    <Compile Include="Hydration\EntityHydrator.cs" />
+    <Compile Include="Hydration\IEntityHydrator.cs" />
     <Compile Include="Linq\Visitors\ProjectionBuilder.cs" />
     <Compile Include="Linq\Visitors\MemberMapPathBuilder.cs" />
     <Compile Include="Linq\MongoQueryProjection.cs" />
     <Compile Include="Linq\Visitors\ScalarQueryModelVisitor.cs" />
+    <Compile Include="Mapping\CollectionMap.cs" />
+    <Compile Include="Mapping\NestedDocumentValueMap.cs" />
+    <Compile Include="Mapping\DocumentMap.cs" />
+    <Compile Include="Mapping\Map.cs" />
+    <Compile Include="Mapping\MappingStore.cs" />
+    <Compile Include="Mapping\ReferenceValueMap.cs" />
+    <Compile Include="Mapping\RootDocumentMap.cs" />
+    <Compile Include="Mapping\SubDocumentMap.cs" />
+    <Compile Include="Mapping\ValueMap.cs" />
     <Compile Include="Tracking\ChangeTracker.cs" />
     <Compile Include="Tracking\DefaultChangeTracker.cs" />
     <Compile Include="Configuration\AutoMappingMongoConfiguration.cs" />
@@ -112,6 +123,9 @@
       <Project>{B125BBA6-BFFD-44FA-9254-9B1754CD8AF3}</Project>
       <Name>MongoDB.Driver</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Persistence\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
