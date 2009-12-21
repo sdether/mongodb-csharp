@@ -41,8 +41,8 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="mappingStore">The map store.</param>
         /// <param name="entityType">Type of the entity.</param>
-        public RootDocumentMap(MappingStore mappingStore, Type entityType)
-            : base(mappingStore, entityType)
+        public RootDocumentMap(Type entityType)
+            : base(entityType)
         {
             this.subDocumentMaps = new List<SubDocumentMap>();
         }

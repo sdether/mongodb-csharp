@@ -9,7 +9,9 @@ namespace MongoDB.Framework.Mapping
     {
         #region Private Fields
 
-        private readonly Dictionary<string, ValueMap> valueMaps;
+        private readonly Dictionary<string, NestedDocumentValueMap> nestedDocumentValueMaps;
+        private readonly Dictionary<string, ReferenceValueMap> referenceValueMaps;
+        private readonly Dictionary<string, SimpleValueMap> simpleValueMaps;
 
         #endregion
 
@@ -31,11 +33,37 @@ namespace MongoDB.Framework.Mapping
         /// Gets the value maps.
         /// </summary>
         /// <value>The value maps.</value>
-        public virtual IEnumerable<ValueMap> ValueMaps
+        public virtual IEnumerable<NestedDocumentValueMap> NestedDocumentValueMaps
         {
             get
             {
-                foreach (var valueMap in this.valueMaps.Values)
+                foreach (var valueMap in this.nestedDocumentValueMaps.Values)
+                    yield return valueMap;
+            }
+        }
+
+        /// <summary>
+        /// Gets the value maps.
+        /// </summary>
+        /// <value>The value maps.</value>
+        public virtual IEnumerable<ReferenceValueMap> ReferenceValueMaps
+        {
+            get
+            {
+                foreach (var valueMap in this.referenceValueMaps.Values)
+                    yield return valueMap;
+            }
+        }
+
+        /// <summary>
+        /// Gets the simple value maps.
+        /// </summary>
+        /// <value>The simple value maps.</value>
+        public virtual IEnumerable<SimpleValueMap> SimpleValueMaps
+        {
+            get
+            {
+                foreach (var valueMap in this.simpleValueMaps.Values)
                     yield return valueMap;
             }
         }
@@ -49,14 +77,15 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="metaDataStore">The meta data store.</param>
         /// <param name="entityType">Type of the entity.</param>
-        public DocumentMap(MappingStore metaDataStore, Type entityType)
-            : base(metaDataStore)
+        public DocumentMap(Type entityType)
         {
             if (entityType == null)
                 throw new ArgumentNullException("entityType");
 
             this.EntityType = entityType;
-            this.valueMaps = new Dictionary<string, ValueMap>();
+            this.nestedDocumentValueMaps = new Dictionary<string, NestedDocumentValueMap>();
+            this.referenceValueMaps = new Dictionary<string, ReferenceValueMap>();
+            this.simpleValueMaps = new Dictionary<string, SimpleValueMap>();
         }
 
         #endregion
@@ -67,15 +96,45 @@ namespace MongoDB.Framework.Mapping
         /// Adds the value map.
         /// </summary>
         /// <param name="valueMap">The value map.</param>
-        public void AddValueMap(ValueMap valueMap)
+        public void AddNestedDocumentValueMap(NestedDocumentValueMap nestedDocumentValueMap)
         {
-            if (valueMap == null)
+            if (nestedDocumentValueMap == null)
                 throw new ArgumentNullException("value");
 
-            if (this.ContainsKey(valueMap.Key))
-                throw new InvalidOperationException(string.Format("An item with key {0} has already been added.", valueMap.Key));
+            if (this.ContainsKey(nestedDocumentValueMap.Key))
+                throw new InvalidOperationException(string.Format("An item with key {0} has already been added.", nestedDocumentValueMap.Key));
 
-            this.valueMaps.Add(valueMap.Key, valueMap);
+            this.nestedDocumentValueMaps.Add(nestedDocumentValueMap.Key, nestedDocumentValueMap);
+        }
+
+        /// <summary>
+        /// Adds the value map.
+        /// </summary>
+        /// <param name="valueMap">The value map.</param>
+        public void AddReferenceValueMap(ReferenceValueMap referenceValueMap)
+        {
+            if (referenceValueMap == null)
+                throw new ArgumentNullException("value");
+
+            if (this.ContainsKey(referenceValueMap.Key))
+                throw new InvalidOperationException(string.Format("An item with key {0} has already been added.", referenceValueMap.Key));
+
+            this.referenceValueMaps.Add(referenceValueMap.Key, referenceValueMap);
+        }
+
+        /// <summary>
+        /// Adds the value map.
+        /// </summary>
+        /// <param name="valueMap">The value map.</param>
+        public void AddSimpleValueMap(SimpleValueMap simpleValueMap)
+        {
+            if (simpleValueMap == null)
+                throw new ArgumentNullException("value");
+
+            if (this.ContainsKey(simpleValueMap.Key))
+                throw new InvalidOperationException(string.Format("An item with key {0} has already been added.", simpleValueMap.Key));
+
+            this.simpleValueMaps.Add(simpleValueMap.Key, simpleValueMap);
         }
 
         #endregion
@@ -91,7 +150,9 @@ namespace MongoDB.Framework.Mapping
         /// </returns>
         private bool ContainsKey(string key)
         {
-            return this.valueMaps.ContainsKey(key);
+            return this.nestedDocumentValueMaps.ContainsKey(key)
+                || this.referenceValueMaps.ContainsKey(key)
+                || this.simpleValueMaps.ContainsKey(key);
         }
 
         #endregion

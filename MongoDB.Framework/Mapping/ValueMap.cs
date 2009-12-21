@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping
 {
-    public class ValueMap : Map
+    public abstract class ValueMap : Map
     {
         public string Key { get; private set; }
 
@@ -17,8 +17,7 @@ namespace MongoDB.Framework.Mapping
 
         public Action<object, object> MemberSetter { get; private set; }
 
-        public ValueMap(MappingStore metaDataStore, string key, string memberName, Type memberType, Func<object, object> memberGetter, Action<object, object> memberSetter)
-            : base(metaDataStore)
+        protected ValueMap(string key, string memberName, Type memberType, Func<object, object> memberGetter, Action<object, object> memberSetter)
         {
             if (key == null)
                 throw new ArgumentException("Cannot be null or empty.", "key");

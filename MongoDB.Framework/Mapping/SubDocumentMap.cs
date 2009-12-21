@@ -14,14 +14,41 @@ namespace MongoDB.Framework.Mapping
         public RootDocumentMap RootDocumentMap { get; private set; }
 
         /// <summary>
-        /// Gets the value maps.
+        /// Gets the simple value maps.
         /// </summary>
-        /// <value>The value maps.</value>
-        public virtual IEnumerable<ValueMap> ValueMaps
+        /// <value>The simple value maps.</value>
+        public virtual IEnumerable<NestedDocumentValueMap> NestedDocumentValueMaps
         {
             get
             {
-                return base.ValueMaps.Concat(this.RootDocumentMap.ValueMaps);
+                return base.NestedDocumentValueMaps
+                    .Concat(this.RootDocumentMap.NestedDocumentValueMaps);
+            }
+        }
+
+        /// <summary>
+        /// Gets the simple value maps.
+        /// </summary>
+        /// <value>The simple value maps.</value>
+        public virtual IEnumerable<ReferenceValueMap> ReferenceValueMaps
+        {
+            get
+            {
+                return base.ReferenceValueMaps
+                    .Concat(this.RootDocumentMap.ReferenceValueMaps);
+            }
+        }
+
+        /// <summary>
+        /// Gets the simple value maps.
+        /// </summary>
+        /// <value>The simple value maps.</value>
+        public virtual IEnumerable<SimpleValueMap> SimpleValueMaps
+        {
+            get
+            {
+                return base.SimpleValueMaps
+                    .Concat(this.RootDocumentMap.SimpleValueMaps);
             }
         }
 
@@ -31,8 +58,8 @@ namespace MongoDB.Framework.Mapping
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="entityType">Type of the entity.</param>
         /// <param name="rootDocumentMap">The root document map.</param>
-        public SubDocumentMap(MappingStore mappingStore, Type entityType, RootDocumentMap rootDocumentMap)
-            : base(mappingStore, entityType)
+        public SubDocumentMap(Type entityType, RootDocumentMap rootDocumentMap)
+            : base(entityType)
         {
             if (rootDocumentMap == null)
                 throw new ArgumentNullException("parentDocumentMap");

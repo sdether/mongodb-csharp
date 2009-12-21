@@ -11,5 +11,21 @@ namespace MongoDB.Framework.Mapping
         {
             throw new NotImplementedException();
         }
+
+        public DocumentMap GetDocumentMapFor<TEntity>()
+        {
+            throw new NotImplementedException();
+        }
+
+        public DocumentMap GetDocumentMapFor(Type entityType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public CollectionMap GetCollectionMapFor(Type entityType)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

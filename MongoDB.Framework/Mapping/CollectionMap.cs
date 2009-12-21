@@ -10,26 +10,26 @@ namespace MongoDB.Framework.Mapping
         #region Public Properties
 
         /// <summary>
-        /// Gets the name of the collection.
+        /// Gets or sets the name of the collection.
         /// </summary>
         /// <value>The name of the collection.</value>
-        public string CollectionName { get; private set; }
+        public string CollectionName { get; set; }
 
         /// <summary>
-        /// Gets the id map.
+        /// Gets or sets the id map.
         /// </summary>
         /// <value>The id map.</value>
-        public ValueMap IdMap { get; private set; }
+        public SimpleValueMap IdMap { get; set; }
 
         /// <summary>
         /// Gets the value maps.
         /// </summary>
         /// <value>The value maps.</value>
-        public override IEnumerable<ValueMap> ValueMaps
+        public override IEnumerable<SimpleValueMap> SimpleValueMaps
         {
             get
             {
-                return base.ValueMaps.Concat(new[] { this.IdMap });
+                return base.SimpleValueMaps.Concat(new[] { this.IdMap });
             }
         }
 
@@ -40,21 +40,10 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Initializes a new instance of the <see cref="CollectionMap"/> class.
         /// </summary>
-        /// <param name="mappingStore">The map store.</param>
         /// <param name="entityType">Type of the entity.</param>
-        /// <param name="collectionName">Name of the collection.</param>
-        /// <param name="idMap">The id map.</param>
-        public CollectionMap(MappingStore mappingStore, Type entityType, string collectionName, ValueMap idMap)
-            : base(mappingStore, entityType)
-        {
-            if (collectionName == null)
-                throw new ArgumentException("Cannot be null or empty.", "collectionName");
-            if (idMap == null)
-                throw new ArgumentNullException("idMap");
-
-            this.CollectionName = collectionName;
-            this.IdMap = idMap;
-        }
+        public CollectionMap(Type entityType)
+            : base(entityType)
+        { }
 
         #endregion
     }
