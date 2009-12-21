@@ -26,6 +26,16 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
+        /// Gets the id map.
+        /// </summary>
+        /// <value>The id map.</value>
+        public override IdMap IdMap
+        {
+            get { return this.RootDocumentMap.IdMap; }
+            set { base.IdMap = value; } //should throw...
+        }
+
+        /// <summary>
         /// Gets a value indicating whether this instance is polymorhic.
         /// </summary>
         /// <value>

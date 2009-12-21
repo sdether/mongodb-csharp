@@ -7,6 +7,12 @@ namespace MongoDB.Framework.Mapping
 {
     public class CollectionMap : RootDocumentMap
     {
+        #region Private Fields
+
+        private IdMap idMap;
+
+	    #endregion
+
         #region Public Properties
 
         /// <summary>
@@ -19,7 +25,11 @@ namespace MongoDB.Framework.Mapping
         /// Gets or sets the id map.
         /// </summary>
         /// <value>The id map.</value>
-        public SimpleValueMap IdMap { get; set; }
+        public override IdMap IdMap
+        {
+            get { return this.idMap; }
+            set { this.idMap = value; }
+        }
 
         /// <summary>
         /// Gets the value maps.

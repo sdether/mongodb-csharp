@@ -24,5 +24,26 @@ namespace MongoDB.Framework
             }
             return dictionary;
         }
+
+        /// <summary>
+        /// Converts the dictionary to document.
+        /// </summary>
+        /// <param name="dictionary">The dictionary.</param>
+        /// <param name="document">The document.</param>
+        public static Document ToDocument(this IDictionary<string, object> dictionary)
+        {
+            var document = new Document();
+            foreach (var kvp in dictionary)
+            {
+                if (kvp.Value is IDictionary<string, object>)
+                {
+                    var subDocument = ((IDictionary<string, object>)kvp.Value).ToDocument();
+                    document.Add(kvp.Key, subDocument);
+                }
+                else
+                    document.Add(kvp.Key, kvp.Value);
+            }
+            return document;
+        }
     }
 }

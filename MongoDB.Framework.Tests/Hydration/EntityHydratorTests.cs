@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Driver;
+using MongoDB.Framework.Cache;
 using MongoDB.Framework.Mapping.Fluent;
 
 using NUnit.Framework;
@@ -30,7 +31,7 @@ namespace MongoDB.Framework.Hydration
                 .Append("BirthDate", new DateTime(1900, 1, 1))
                 .Append("not-mapped", true);
 
-            var hydrator = new EntityHydrator(mappingStore);
+            var hydrator = new EntityHydrator(mappingStore, new SessionLevelEntityCache());
 
             var person = hydrator.HydrateEntity<Person>(document);
             Assert.IsNotNull(person);

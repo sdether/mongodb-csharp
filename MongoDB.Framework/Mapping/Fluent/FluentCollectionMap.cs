@@ -32,8 +32,7 @@ namespace MongoDB.Framework.Mapping.Fluent
 
         public void Id(MemberInfo memberInfo)
         {
-            this.instance.IdMap = new SimpleValueMap(
-                "_id",
+            this.instance.IdMap = new IdMap(
                 memberInfo.Name,
                 LateBoundReflection.GetMemberValueType(memberInfo),
                 LateBoundReflection.GetGetter(memberInfo),

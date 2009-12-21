@@ -18,6 +18,7 @@ namespace MongoDB.Framework.Mapping.Fluent
         {
             var fluentSubDocumentMap = new FluentSubDocumentMap<TSubEntity>(this.rootDocumentMap);
             configure(fluentSubDocumentMap);
+            fluentSubDocumentMap.Instance.Discriminator = discriminator;
             this.rootDocumentMap.AddSubDocumentMap(fluentSubDocumentMap.Instance);
         }
     }

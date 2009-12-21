@@ -56,7 +56,6 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Initializes a new instance of the <see cref="RootDocumentMap"/> class.
         /// </summary>
-        /// <param name="mappingStore">The map store.</param>
         /// <param name="entityType">Type of the entity.</param>
         public RootDocumentMap(Type entityType)
             : base(entityType)

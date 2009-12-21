@@ -53,6 +53,25 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
+        /// Gets a value indicating whether this instance has id.
+        /// </summary>
+        /// <value><c>true</c> if this instance has id; otherwise, <c>false</c>.</value>
+        public bool HasId
+        {
+            get { return this.IdMap != null; }
+        }
+
+        /// <summary>
+        /// Gets the id map.
+        /// </summary>
+        /// <value>The id map.</value>
+        public virtual IdMap IdMap
+        {
+            get { return null; }
+            set { throw new NotSupportedException("IdMap can only be set on a CollectionMap."); }
+        }
+
+        /// <summary>
         /// Gets a value indicating whether this instance is polymorphic.
         /// </summary>
         /// <value>

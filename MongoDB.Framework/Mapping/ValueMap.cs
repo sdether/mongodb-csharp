@@ -17,6 +17,8 @@ namespace MongoDB.Framework.Mapping
 
         public Action<object, object> MemberSetter { get; private set; }
 
+        public bool PersistNulls { get; set; }
+
         protected ValueMap(string key, string memberName, Type memberType, Func<object, object> memberGetter, Action<object, object> memberSetter)
         {
             if (key == null)
@@ -35,6 +37,7 @@ namespace MongoDB.Framework.Mapping
             this.MemberType = memberType;
             this.MemberGetter = memberGetter;
             this.MemberSetter = memberSetter;
+            this.PersistNulls = true;
         }
     }
 }

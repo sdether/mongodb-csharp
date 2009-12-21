@@ -6,6 +6,8 @@ using System.Text;
 using MongoDB.Driver;
 using MongoDB.Framework.Mapping;
 using System.Text.RegularExpressions;
+using MongoDB.Framework.Cache;
+using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework.Hydration
 {
@@ -39,6 +41,11 @@ namespace MongoDB.Framework.Hydration
             return BitConverter.ToString(oid.Value).Replace("-","").ToLower();
         }
 
+        /// <summary>
+        /// Converts the type of from mongo.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         private static object ConvertFromMongoType(object value)
         {
             if (value == null)
@@ -55,6 +62,7 @@ namespace MongoDB.Framework.Hydration
 
         #region Private Fields
 
+        private IEntityCache entityCache;
         private MappingStore mappingStore;
 
         #endregion
@@ -65,11 +73,14 @@ namespace MongoDB.Framework.Hydration
         /// Initializes a new instance of the <see cref="EntityHydrator"/> class.
         /// </summary>
         /// <param name="mongoConfiguration">The mongo configuration.</param>
-        public EntityHydrator(MappingStore mappingStore)
+        public EntityHydrator(MappingStore mappingStore, IEntityCache entityCache)
         {
             if (mappingStore == null)
                 throw new ArgumentNullException("mappingStore");
+            if (entityCache == null)
+                throw new ArgumentNullException("entityCache");
 
+            this.entityCache = entityCache;
             this.mappingStore = mappingStore;
         }
 
@@ -86,13 +97,21 @@ namespace MongoDB.Framework.Hydration
         public TEntity HydrateEntity<TEntity>(Document document)
         {
             var documentMap = this.mappingStore.GetDocumentMapFor<TEntity>();
-            //get collection map here to try and get entity from cache
+            object entity = null;
+            string id = null;
+            if (documentMap.HasId)
+            {
+                var value = document[documentMap.IdMap.Key];
+                id = (string)ConvertFromMongoType(value);
+                if (id != null && this.entityCache.TryToFind(id, out entity))
+                    return (TEntity)entity;
+            }
 
-            var entity = (TEntity)this.CreateEntityFromDocument(documentMap, document);
+            entity = this.CreateEntityFromDocument(documentMap, document);
 
-            //use collection map here to add entity to cache
-
-            return entity;
+            if (id != null)
+                this.entityCache.Store(id, entity);
+            return (TEntity)entity;
         }
 
         /// <summary>
@@ -202,7 +221,6 @@ namespace MongoDB.Framework.Hydration
             {
                 var value = document[simpleValueMap.Key];
                 document.Remove(simpleValueMap.Key);
-
                 value = ConvertFromMongoType(value);
                 simpleValueMap.MemberSetter(entity, value);
             }
