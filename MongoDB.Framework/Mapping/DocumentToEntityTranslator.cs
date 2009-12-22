@@ -52,6 +52,11 @@ namespace MongoDB.Framework.Mapping
         /// <returns></returns>
         public virtual object Translate(DocumentMap documentMap, Document document)
         {
+            //this is a destructive process in order to obtain extended properties.
+            //therefore we will work off of a copy in order to preserve the original document.
+            var documentCopy = new Document();
+            document.CopyTo(documentCopy); 
+
             if(documentMap.IsPolymorphic)
             {
                 var discriminator = document[documentMap.DiscriminatorKey];
@@ -60,7 +65,7 @@ namespace MongoDB.Framework.Mapping
             }
 
             var entity = Activator.CreateInstance(documentMap.EntityType);
-            this.Translate(documentMap, entity, document);
+            this.Translate(documentMap, entity, documentCopy);
             return entity;
         }
 

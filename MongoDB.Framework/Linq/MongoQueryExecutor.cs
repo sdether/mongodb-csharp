@@ -47,23 +47,9 @@ namespace MongoDB.Framework.Linq
         {
             var spec = CollectionQueryModelVisitor.CreateMongoQuerySpecification(this.mappingStore, queryModel);
             var documentMap = this.mappingStore.GetDocumentMapFor(queryModel.MainFromClause.ItemType);
-            if (documentMap.IsPolymorphic)
-            {
-                if(spec.Projection.Fields.Count != 0)
-                    spec.Projection.Fields[documentMap.DiscriminatorKey] = 1;
-                if(documentMap.Discriminator != null)
-                    spec.Query[documentMap.DiscriminatorKey] = documentMap.Discriminator;
-            }
-
             var collection = this.database.GetCollection(documentMap.CollectionName);
-            //if (spec.IsFindOne)
-            //{
-            //    entities.Add(new FindOneAction(this.mappingStore, this.changeTracker, collecton)
-            //        .FindOne(documentMap.EntityType, spec.Query));
-            //}
-
             var findAction = new FindAction(this.mappingStore, this.changeTracker, collection);
-            foreach (var entity in findAction.Find(documentMap.EntityType, spec.Query, spec.Limit, spec.Skip, spec.Projection.Fields, spec.OrderBy))
+            foreach (var entity in findAction.Find(documentMap.EntityType, spec.Conditions, spec.Limit, spec.Skip, spec.OrderBy, spec.Projection.Fields))
                 yield return (T)spec.Projection.Projector(new ResultObjectMapping() { { queryModel.MainFromClause, entity } });
         }
 

@@ -102,7 +102,6 @@
     <Compile Include="Mapping\EntityToDocumentTranslator.cs" />
     <Compile Include="Persistence\InsertAction.cs" />
     <Compile Include="Persistence\FindOneAction.cs" />
-    <Compile Include="Persistence\FindAllAction.cs" />
     <Compile Include="Persistence\FindAction.cs" />
     <Compile Include="Persistence\PersistenceAction.cs" />
     <Compile Include="Tracking\ChangeTracker.cs" />

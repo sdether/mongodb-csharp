@@ -24,32 +24,18 @@ namespace MongoDB.Framework.Persistence
         /// <summary>
         /// Finds the specified query.
         /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <param name="query">The query.</param>
+        /// <param name="entityType">Type of the entity.</param>
+        /// <param name="fields">The fields.</param>
+        /// <param name="conditions">The conditions.</param>
         /// <param name="limit">The limit.</param>
         /// <param name="skip">The skip.</param>
-        /// <param name="fields">The fields.</param>
         /// <param name="orderBy">The order by.</param>
         /// <returns></returns>
-        public IEnumerable<object> Find(Type entityType, Document query, int limit, int skip, Document fields, Document orderBy)
+        public IEnumerable<object> Find(Type entityType, Document conditions, int limit, int skip, Document orderBy, Document fields)
         {
-            var cursor = this.Collection.Find(this.CreateFullQuery(query, orderBy), limit, skip, fields);
-            foreach (var document in cursor.Documents)
-                yield return this.CreateEntity(entityType, document);
+            var documentMap = this.MappingStore.GetDocumentMapFor(entityType);
+            return this.Find(documentMap, conditions, limit, skip, orderBy, fields);
         }
 
-        /// <summary>
-        /// Creates the full query.
-        /// </summary>
-        /// <returns></returns>
-        private Document CreateFullQuery(Document query, Document orderBy)
-        {
-            if (orderBy == null || orderBy.Count == 0)
-                return query;
-
-            return new Document()
-                .Append("query", query)
-                .Append("orderby", orderBy);
-        }
     }
 }

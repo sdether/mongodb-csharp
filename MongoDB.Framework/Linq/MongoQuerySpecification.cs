@@ -13,17 +13,17 @@ namespace MongoDB.Framework.Linq
     {
         private Document orderBy;
         private MongoQueryProjection projection;
-        private Document query;
+        private Document conditions;
 
-        public bool IsFindOne
+        public Document Conditions
         {
             get
             {
-                return this.Limit == 1
-                    && this.Skip == 0
-                    && (this.Projection.Fields.Count == 0)
-                    && (this.OrderBy.Count == 0);
+                if (this.conditions == null)
+                    this.conditions = new Document();
+                return this.conditions;
             }
+            set { this.conditions = value; }
         }
 
         public int Limit { get; set; }
@@ -48,17 +48,6 @@ namespace MongoDB.Framework.Linq
                 return this.projection;
             }
             set { this.projection = value; }
-        }
-
-        public Document Query
-        {
-            get
-            {
-                if (this.query == null)
-                    this.query = new Document();
-                return this.query;
-            }
-            set { this.query = value; }
         }
 
         public int Skip { get; set; }

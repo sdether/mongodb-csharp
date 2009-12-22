@@ -26,11 +26,10 @@ namespace MongoDB.Framework.Persistence
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <returns></returns>
-        public object FindOne(Type entityType, Document query)
+        public object FindOne(Type entityType, Document conditions)
         {
-            //TODO: analyze the query to see if it only contains an id key so we can check our change tracking...
-            var document = this.Collection.FindOne(query);
-            return this.CreateEntity(entityType, document);
+            var documentMap = this.MappingStore.GetDocumentMapFor(entityType);
+            return this.Find(documentMap, conditions, 0, 0, new Document(), new Document());
         }
     }
 }

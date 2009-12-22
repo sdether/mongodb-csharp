@@ -8,6 +8,7 @@ using MongoDB.Framework.Configuration;
 using NUnit.Framework;
 using MongoDB.Driver;
 using MongoDB.Framework.Mapping.Fluent;
+using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework
 {
@@ -26,38 +27,41 @@ namespace MongoDB.Framework
 
         protected void SetupEnvironment()
         {
-            using (var context = this.CreateContext())
-            {
-                var person1 = new Person()
-                {
-                    Name = "Bob McBob",
-                    BirthDate = new DateTime(1900, 1, 1),
-                    PhoneNumber = new PhoneNumber() { AreaCode = "123", Prefix = "456", Number = "7890" },
-                    ExtendedProperties = new Dictionary<string, object>
-                    {
-                        { "not-mapped", true }
-                    }
-                };
+            var mongo = contextFactory.Configuration.MongoFactory.CreateMongo();
+            mongo.Connect();
+            Database db = mongo.getDB(contextFactory.Configuration.DatabaseName);
+            string collectionName = contextFactory.Configuration.MappingStore.GetDocumentMapFor<Party>().CollectionName;
+            IMongoCollection collection = db.GetCollection(collectionName);
 
-                var person2 = new Person()
-                {
-                    Name = "Jane McJane",
-                    BirthDate = new DateTime(2000, 2, 2),
-                    PhoneNumber = new PhoneNumber() { AreaCode = "111", Prefix = "222", Number = "3333" }
-                };
+            var party1 = new Document()
+                .Append("Type", "Person")
+                .Append("Name", "Bob McBob")
+                .Append("BirthDate", new DateTime(1900, 1, 1))
+                .Append("PhoneNumber", new Document()
+                    .Append("AreaCode", "123")
+                    .Append("Prefix", "456")
+                    .Append("Number", "7890"))
+                .Append("not-mapped", true);
+            var party2 = new Document()
+                .Append("Type", "Person")
+                .Append("Name", "Jane McJane")
+                .Append("BirthDate", new DateTime(2000, 2, 2))
+                .Append("PhoneNumber", new Document()
+                    .Append("AreaCode", "111")
+                    .Append("Prefix", "222")
+                    .Append("Number", "3333"))
+                .Append("not-mapped", true);
+            var party3 = new Document()
+                .Append("Type", "Organization")
+                .Append("Name", "The Muffler Shop")
+                .Append("EmployeeCount", 23)
+                .Append("PhoneNumber", new Document()
+                    .Append("AreaCode", "111")
+                    .Append("Prefix", "654")
+                    .Append("Number", "3210"));
 
-                var organization = new Organization()
-                {
-                    Name = "The Muffler Shop",
-                    EmployeeCount = 23,
-                    PhoneNumber = new PhoneNumber() { AreaCode = "111", Prefix = "654", Number = "3210" }
-                };
-
-                context.InsertOnSubmit(person1);
-                context.InsertOnSubmit(person2);
-                context.InsertOnSubmit(organization);
-                context.SubmitChanges();
-            }
+            collection.Insert(new[] { party1, party2, party3 });
+            mongo.Disconnect();
         }
 
         protected MongoContext CreateContext()
@@ -67,10 +71,12 @@ namespace MongoDB.Framework
 
         protected void TearDownEnvironment()
         {
-            using (var context = this.CreateContext())
-            {
-                context.Database.SendCommand(new Document().Append("drop", "parties"));
-            }
+            var mongo = contextFactory.Configuration.MongoFactory.CreateMongo();
+            mongo.Connect();
+            Database db = mongo.getDB(contextFactory.Configuration.DatabaseName);
+            string collectionName = contextFactory.Configuration.MappingStore.GetDocumentMapFor<Party>().CollectionName;
+            db.SendCommand(new Document().Append("drop", collectionName));
+            mongo.Disconnect();
         }
     }
 }

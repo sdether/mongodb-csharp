@@ -35,15 +35,10 @@ namespace MongoDB.Framework.Persistence
             if (!documentMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
-            TrackedObject trackedObject = null;
-            if (this.ChangeTracker.TryGetTrackedObjectById(id, out trackedObject))
-                return trackedObject.Current;
+            var conditions = new Document();
+            conditions[documentMap.IdMap.Key] = MongoTypeConverter.ConvertToOid((string)id);
 
-            var document = new Document();
-            document[documentMap.IdMap.Key] = MongoTypeConverter.ConvertToOid((string)id);
-
-            document = this.Collection.FindOne(document);
-            return this.CreateEntity(entityType, document);
+            return this.Find(documentMap, conditions, 1, 0, new Document(), new Document()).Single();
         }
     }
 }

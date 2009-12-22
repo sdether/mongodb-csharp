@@ -150,7 +150,7 @@ namespace MongoDB.Framework.Linq.Visitors
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
             var query = QueryDocumentBuilder.BuildFrom(this.mappingStore, whereClause.Predicate);
-            query.CopyTo(this.querySpec.Query);            
+            query.CopyTo(this.querySpec.Conditions);            
         }
 
         #endregion
