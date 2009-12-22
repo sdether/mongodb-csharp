@@ -12,19 +12,20 @@ namespace MongoDB.Framework.Mapping.Fluent
         private static readonly PropertyInfo instancePropertyInfo = typeof(FluentMap<CollectionMap>).GetProperty("Instance");
 
         /// <summary>
-        /// Gets the maps from assembly containing.
+        /// Adds the maps from assembly containing the specified type.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        public void GetMapsFromAssemblyContaining<T>()
+        public FluentMappingStore AddMapsFromAssemblyContaining<T>()
         {
-            this.GetMapsFromAssembly(typeof(T).Assembly);
+            this.AddMapsFromAssembly(typeof(T).Assembly);
+            return this;
         }
 
         /// <summary>
-        /// Gets the maps from assembly.
+        /// Adds the maps from assembly.
         /// </summary>
         /// <param name="assembly">The assembly.</param>
-        public void GetMapsFromAssembly(Assembly assembly)
+        public FluentMappingStore AddMapsFromAssembly(Assembly assembly)
         {
             foreach (var type in assembly.GetTypes())
             {
@@ -35,6 +36,7 @@ namespace MongoDB.Framework.Mapping.Fluent
                     this.AddCollectionMap((CollectionMap)instancePropertyInfo.GetValue(fluentCollectionMap, null));
                 }
             }
+            return this;
         }
 
         /// <summary>

@@ -98,19 +98,10 @@ namespace MongoDB.Framework.Tracking
         /// <param name="id">The id.</param>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        public override bool TryGetTrackedObjectById(string id, out object entity)
+        public override bool TryGetTrackedObjectById(string id, out TrackedObject trackedObject)
         {
-            entity = null;
-            foreach (var trackedObject in this.trackedObjects.Values)
-            {
-                if (trackedObject.GetId() == id)
-                {
-                    entity = trackedObject.Current;
-                    return true;
-                }
-            }
-
-            return false;
+            trackedObject =  this.trackedObjects.Values.FirstOrDefault(to => to.GetId() == id);
+            return trackedObject != null;
         }
 
         #endregion

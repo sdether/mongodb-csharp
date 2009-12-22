@@ -149,7 +149,7 @@ namespace MongoDB.Framework.Mapping.Fluent
 
         protected MemberInfo GetSingleMember<TMember>(Expression<Func<TEntity, TMember>> member)
         {
-            var members = MemberInfoPathExtractor.ExtractFrom(member);
+            var members = MemberInfoPathBuilder.BuildFrom(member);
             if (members.Count > 1)
                 throw new InvalidOperationException("Only top-level members are supported for ids.");
 

@@ -3,40 +3,41 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using MongoDB.Framework.Configuration.Fluent;
-using MongoDB.Framework.Configuration;
 using MongoDB.Driver;
+using MongoDB.Framework.Mapping.Fluent;
 
 namespace MongoDB.Framework
 {
-    public class PartyMap : FluentRootEntityMap<Party>
+    public class PartyMap : FluentCollectionMap<Party>
     {
         public PartyMap()
         {
-            WithCollectionName("party");
-            Index("phone_area").Ascending("PhoneNumber.area");
+            UseCollection("parties");
 
             Id(x => x.Id);
-            Map("Name");
+            Map(x => x.Name);
 
-            Component<PhoneNumber>(x => x.PhoneNumber, m =>
+            Component(x => x.PhoneNumber, m =>
             {
-                m.Map(x => x.AreaCode, "area");
-                m.Map(x => x.Prefix, "pfx");
-                m.Map(x => x.Number, "num");
+                m.Map(x => x.AreaCode);
+                m.Map(x => x.Prefix);
+                m.Map(x => x.Number);
             });
 
-            DiscriminateBy<string>("Type")
-                .Entity<Organization>(PartyType.Organization.ToString(), m =>
+            DiscriminatedBy<string>("Type", m =>
+            {
+                m.Sub<Person>(PartyType.Person.ToString(), sm =>
                 {
-                    m.Map(x => x.EmployeeCount);
-                })
-                .Entity<Person>(PartyType.Person.ToString(), m =>
-                {
-                    m.Map(x => x.BirthDate);
+                    sm.Map(x => x.BirthDate);
                 });
 
-            UseExtendedProperties(x => x.ExtendedProperties);
+                m.Sub<Organization>(PartyType.Organization.ToString(), sm =>
+                {
+                    sm.Map(x => x.EmployeeCount);
+                });
+            });
+
+            ExtendedProperties(x => x.ExtendedProperties);
         }
     }
 

@@ -7,6 +7,7 @@ using MongoDB.Framework.Configuration;
 
 using NUnit.Framework;
 using MongoDB.Driver;
+using MongoDB.Framework.Mapping.Fluent;
 
 namespace MongoDB.Framework
 {
@@ -16,11 +17,10 @@ namespace MongoDB.Framework
 
         static IntegrationTestBase()
         {
-            var configuration = new MongoConfiguration()
-            {
-                DatabaseName = "tests"
-            };
-            configuration.AddRootEntityMap(new PartyMap().Instance);
+            var mappingStore = new FluentMappingStore()
+                .AddMapsFromAssemblyContaining<PartyMap>();
+
+            var configuration = new MongoConfiguration("tests", mappingStore);
             contextFactory = new MongoContextFactory(configuration);
         }
 

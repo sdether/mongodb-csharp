@@ -181,8 +181,7 @@ namespace MongoDB.Framework
         {
             this.EnsureNotDisposed();
 
-            throw new NotImplementedException();
-            //return new MongoQueryable<TEntity>(this.Database, this.Configuration, this.changeTracker);
+            return new MongoQueryable<TEntity>(this.mappingStore, this.changeTracker, this.entityHydrator, this.database);
         }
 
         /// <summary>

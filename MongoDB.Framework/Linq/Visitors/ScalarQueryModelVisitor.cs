@@ -78,7 +78,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            this.Query = QueryDocumentBuilder.Build(this.configuration, whereClause.Predicate);
+            //this.Query = QueryDocumentBuilder.Build(this.configuration, whereClause.Predicate);
         }
 
         #endregion

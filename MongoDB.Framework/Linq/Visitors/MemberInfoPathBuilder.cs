@@ -8,13 +8,13 @@ using Remotion.Data.Linq.Parsing;
 
 namespace MongoDB.Framework.Linq.Visitors
 {
-    public class MemberInfoPathExtractor : ExpressionTreeVisitor
+    public class MemberInfoPathBuilder : ExpressionTreeVisitor
     {
         #region Public Static Methods
 
-        public static IList<MemberInfo> ExtractFrom(Expression expression)
+        public static IList<MemberInfo> BuildFrom(Expression expression)
         {
-            MemberInfoPathExtractor visitor = new MemberInfoPathExtractor();
+            MemberInfoPathBuilder visitor = new MemberInfoPathBuilder();
             visitor.VisitExpression(expression);
             return visitor.members.ToList();
         }

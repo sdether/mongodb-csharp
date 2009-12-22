@@ -31,18 +31,6 @@ namespace MongoDB.Framework.Mapping
             set { this.idMap = value; }
         }
 
-        /// <summary>
-        /// Gets the value maps.
-        /// </summary>
-        /// <value>The value maps.</value>
-        public override IEnumerable<SimpleValueMap> SimpleValueMaps
-        {
-            get
-            {
-                return base.SimpleValueMaps.Concat(new[] { this.IdMap });
-            }
-        }
-
         #endregion
 
         #region Constructors

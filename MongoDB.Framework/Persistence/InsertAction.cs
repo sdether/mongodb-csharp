@@ -18,9 +18,9 @@ namespace MongoDB.Framework.Persistence
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="changeTracker">The change tracker.</param>
         /// <param name="hydrator">The hydrator.</param>
-        /// <param name="mongoCollection">The mongo collection.</param>
-        public InsertAction(MappingStore mappingStore, ChangeTracker changeTracker, IEntityHydrator hydrator, IMongoCollection mongoCollection)
-            : base(mappingStore, changeTracker, hydrator, mongoCollection)
+        /// <param name="collection">The collection.</param>
+        public InsertAction(MappingStore mappingStore, ChangeTracker changeTracker, IEntityHydrator hydrator, IMongoCollection collection)
+            : base(mappingStore, changeTracker, hydrator, collection)
         { }
 
         /// <summary>

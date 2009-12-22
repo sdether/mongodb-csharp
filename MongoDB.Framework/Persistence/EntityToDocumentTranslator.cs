@@ -92,6 +92,9 @@ namespace MongoDB.Framework.Persistence
         private Document CreateDocument(DocumentMap documentMap, object entity)
         {
             var document = new Document();
+            if (documentMap.HasId)
+                this.ApplyIdMap(documentMap.IdMap, entity, document);
+
             this.ApplySimpleValueMaps(documentMap.SimpleValueMaps, entity, document);
             this.ApplyNestedDocumentValueMaps(documentMap.NestedDocumentValueMaps, entity, document);
             this.ApplyReferenceValueMaps(documentMap.ReferenceValueMaps, entity, document);
@@ -99,7 +102,8 @@ namespace MongoDB.Framework.Persistence
             if (documentMap.IsPolymorphic)
                 document[documentMap.DiscriminatorKey] = documentMap.Discriminator;
 
-            this.ApplyExtendedPropertiesMap(documentMap.ExtendedPropertiesMap, entity, document);
+            if(documentMap.HasExtendedProperties)
+                this.ApplyExtendedPropertiesMap(documentMap.ExtendedPropertiesMap, entity, document);
 
             if (documentMap.IsPolymorphic && documentMap.Discriminator != null)
                 document[documentMap.DiscriminatorKey] = documentMap.Discriminator;
@@ -115,13 +119,24 @@ namespace MongoDB.Framework.Persistence
         /// <param name="document">The document.</param>
         private void ApplyExtendedPropertiesMap(ExtendedPropertiesMap extendedPropertiesMap, object entity, Document document)
         {
-            if (extendedPropertiesMap == null)
-                return;
-
             var extProp = (IDictionary<string, object>)extendedPropertiesMap.MemberGetter(entity);
             extProp
                 .ToDocument()
                 .CopyTo(document);
+        }
+
+        /// <summary>
+        /// Applies the id map.
+        /// </summary>
+        /// <param name="idMap">The id map.</param>
+        /// <param name="document">The document.</param>
+        /// <param name="entity">The entity.</param>
+        private void ApplyIdMap(IdMap idMap, object entity, Document document)
+        {
+            object value = idMap.MemberGetter(entity);
+            value = idMap.ConvertToDocumentValue(value);
+            if(value != MongoDBNull.Value || idMap.PersistNulls)
+                document[idMap.Key] = value;
         }
 
         /// <summary>
@@ -162,13 +177,10 @@ namespace MongoDB.Framework.Persistence
         {
             foreach (var simpleValueMap in simpleValueMaps)
             {
-                object value;
-                value = simpleValueMap.MemberGetter(entity);
-                if (simpleValueMap.Key == "_id" && value != null)
-                    value = new Oid((string)value);
-                else
-                    value = ConvertToMongoType(value);
-                document[simpleValueMap.Key] = value;
+                object value = simpleValueMap.MemberGetter(entity);
+                value = simpleValueMap.ConvertToDocumentValue(value);
+                if(value != MongoDBNull.Value || simpleValueMap.PersistNulls)
+                    document[simpleValueMap.Key] = value;
             }
         }
 

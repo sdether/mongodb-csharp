@@ -17,7 +17,7 @@ namespace MongoDB.Framework.Persistence
         public void Should_translate_entity_to_document()
         {
             FluentMappingStore mappingStore = new FluentMappingStore();
-            mappingStore.GetMapsFromAssemblyContaining<PartyMap>();
+            mappingStore.AddMapsFromAssemblyContaining<PartyMap>();
 
             var person = new Person()
             {

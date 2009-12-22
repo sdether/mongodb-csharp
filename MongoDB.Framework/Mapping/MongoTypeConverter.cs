@@ -41,10 +41,10 @@ namespace MongoDB.Framework.Mapping
             return entityValue;
         }
 
-        public static Oid ConvertToOid(string id)
+        public static object ConvertToOid(string id)
         {
             if (id == null)
-                return null;
+                return MongoDBNull.Value;
 
             return new Oid(id);
         }

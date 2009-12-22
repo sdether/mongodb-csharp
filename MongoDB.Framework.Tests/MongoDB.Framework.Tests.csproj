@@ -65,15 +65,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\Fluent\FluentRootEntityMapTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Configuration\Visitors\DocumentToEntityTranslatorTests.cs" />
-    <Compile Include="Configuration\Visitors\EntityToDocumentTranslatorTests.cs" />
     <Compile Include="Domain.cs" />
     <Compile Include="Hydration\EntityHydratorTests.cs" />
     <Compile Include="IntegrationTestBase.cs" />
-    <Compile Include="Mapping\Fluent\FluentCollectionTests.cs" />
     <Compile Include="MongoContextTests.cs" />
     <Compile Include="Persistence\EntityToDocumentTranslatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -89,6 +83,9 @@
       <Project>{B125BBA6-BFFD-44FA-9254-9B1754CD8AF3}</Project>
       <Name>MongoDB.Driver</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mapping\Fluent\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

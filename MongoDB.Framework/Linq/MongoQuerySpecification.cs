@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using MongoDB.Driver;
 using System.Linq.Expressions;
-using MongoDB.Framework.Configuration;
-using MongoDB.Framework.Configuration.Visitors;
+using System.Text;
+
+using MongoDB.Driver;
 
 namespace MongoDB.Framework.Linq
 {

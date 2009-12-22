@@ -9,16 +9,15 @@ using Remotion.Data.Linq.Parsing;
 using Remotion.Data.Linq.Clauses.ExpressionTreeVisitors;
 
 using MongoDB.Driver;
-using MongoDB.Framework.Configuration;
-using MongoDB.Framework.Configuration.Visitors;
+using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Linq.Visitors
 {
     public class QueryDocumentBuilder : ThrowingExpressionTreeVisitor
     {
-        public static Document Build(MongoConfiguration configuration, Expression expression)
+        public static Document Build(MappingStore mappingStore, Expression expression)
         {
-            var builder = new QueryDocumentBuilder(configuration);
+            var builder = new QueryDocumentBuilder(mappingStore);
             builder.VisitExpression(expression);
             return builder.query;
         }
@@ -26,7 +25,7 @@ namespace MongoDB.Framework.Linq.Visitors
         #region Private Fields
 
         private Dictionary<string, Document> conditions;
-        private MongoConfiguration configuration;
+        private MappingStore mappingStore;
         private List<MemberInfo> memberPathParts;
         private Document query;
 
@@ -38,9 +37,9 @@ namespace MongoDB.Framework.Linq.Visitors
         /// Initializes a new instance of the <see cref="MongoWhereClauseExpressionTreeVisitor"/> class.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        private QueryDocumentBuilder(MongoConfiguration configuration)
+        private QueryDocumentBuilder(MappingStore mappingStore)
         {
-            this.configuration = configuration;
+            this.mappingStore = mappingStore;
             this.query = new Document();
             this.memberPathParts = new List<MemberInfo>();
         }
@@ -100,20 +99,20 @@ namespace MongoDB.Framework.Linq.Visitors
             if (this.memberPathParts.Count == 0)
                 throw new InvalidOperationException("No member path parts exist.");
 
-            var visitor = new MemberPathToQueryConditionVisitor(this.memberPathParts, value);
-            var rootEntityMap = this.configuration.GetRootEntityMapFor(this.memberPathParts[0].DeclaringType);
-            rootEntityMap.Accept(visitor);
+            //var visitor = new MemberPathToQueryConditionVisitor(this.memberPathParts, value);
+            //var rootEntityMap = this.configuration.GetRootEntityMapFor(this.memberPathParts[0].DeclaringType);
+            //rootEntityMap.Accept(visitor);
 
-            if (op == "$eq")
-                this.query[visitor.DocumentKey] = visitor.DocumentValue;
-            else
-            {
-                Document doc = (Document)this.query[visitor.DocumentKey];
-                if (doc == null)
-                    this.query[visitor.DocumentKey] = doc = new Document();
+            //if (op == "$eq")
+            //    this.query[visitor.DocumentKey] = visitor.DocumentValue;
+            //else
+            //{
+            //    Document doc = (Document)this.query[visitor.DocumentKey];
+            //    if (doc == null)
+            //        this.query[visitor.DocumentKey] = doc = new Document();
 
-                doc.Append(op, visitor.DocumentValue);
-            }
+            //    doc.Append(op, visitor.DocumentValue);
+            //}
 
             this.memberPathParts.Clear();
             

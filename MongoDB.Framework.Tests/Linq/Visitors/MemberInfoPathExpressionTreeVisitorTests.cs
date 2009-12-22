@@ -31,8 +31,7 @@ namespace MongoDB.Framework.Linq.Visitors
         public void Should_get_field_member()
         {
             //Act
-            var members = MemberInfoPathExtractor.ExtractFrom((Expression<Func<TestClass, string>>)((TestClass tc) => tc.Field));
-
+            var members = MemberInfoPathBuilder.BuildFrom((Expression<Func<TestClass, string>>)((TestClass tc) => tc.Field));
 
             //Assert
             Assert.AreEqual(MemberTypes.Field, members[0].MemberType);
@@ -42,7 +41,7 @@ namespace MongoDB.Framework.Linq.Visitors
         public void Should_get_property_member()
         {
             //Act
-            var members = MemberInfoPathExtractor.ExtractFrom((Expression<Func<TestClass, string>>)((TestClass tc) => tc.Prop));
+            var members = MemberInfoPathBuilder.BuildFrom((Expression<Func<TestClass, string>>)((TestClass tc) => tc.Prop));
 
             //Assert
             Assert.AreEqual(MemberTypes.Property, members[0].MemberType);
@@ -52,7 +51,7 @@ namespace MongoDB.Framework.Linq.Visitors
         public void Should_get_chain_of_property_members()
         {
             //Act
-           var members = MemberInfoPathExtractor.ExtractFrom((Expression<Func<TestClass, string>>)((TestClass tc) => tc.Nested.NestedProp));
+           var members = MemberInfoPathBuilder.BuildFrom((Expression<Func<TestClass, string>>)((TestClass tc) => tc.Nested.NestedProp));
 
             //Assert
             Assert.AreEqual(2, members.Count);

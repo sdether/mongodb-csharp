@@ -8,57 +8,54 @@ using System.Text;
 using Remotion.Data.Linq.Parsing;
 using Remotion.Data.Linq.Clauses.ExpressionTreeVisitors;
 
-using MongoDB.Driver;
-using MongoDB.Framework.Configuration;
-using MongoDB.Framework.Configuration.Visitors;
+using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Linq.Visitors
 {
-    public class MemberMapPathBuilder : ThrowingExpressionTreeVisitor
+    public class DocumentKeyBuilder : ThrowingExpressionTreeVisitor
     {
-        public static IList<MemberMap> Build(MongoConfiguration configuration, Expression expression)
+        #region Public Static Methods
+
+        public static string BuildFrom(MappingStore mappingStore, Expression expression)
         {
-            var builder = new MemberMapPathBuilder(configuration);
+            DocumentKeyBuilder builder = new DocumentKeyBuilder(mappingStore);
             builder.VisitExpression(expression);
-            var visitor = new MemberPathToMemberMapPathVisitor(builder.memberPath);
-            var rootEntityMap = configuration.GetRootEntityMapFor(builder.memberPath[0].DeclaringType);
-            rootEntityMap.Accept(visitor);
-            return visitor.MemberMapPath;
+            return builder.documentKey;
         }
+
+        #endregion
 
         #region Private Fields
 
-        private MongoConfiguration configuration;
-        private List<MemberInfo> memberPath;
+        private MappingStore mappingStore;
+        private Stack<MemberInfo> members = new Stack<MemberInfo>();
+        private string documentKey;
 
         #endregion
 
         #region Constructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MongoWhereClauseExpressionTreeVisitor"/> class.
-        /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        private MemberMapPathBuilder(MongoConfiguration configuration)
+        private DocumentKeyBuilder(MappingStore mappingStore)
         {
-            this.configuration = configuration;
-            this.memberPath = new List<MemberInfo>();
+            this.mappingStore = mappingStore;
         }
 
         #endregion
 
-        #region Protected Methods
+        #region Public Methods
 
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
+            this.members.Push(expression.Member);
             this.VisitExpression(expression.Expression);
-            this.memberPath.Add(expression.Member);
-
             return expression;
         }
 
         protected override Expression VisitQuerySourceReferenceExpression(Remotion.Data.Linq.Clauses.Expressions.QuerySourceReferenceExpression expression)
         {
+            var documentMap = this.mappingStore.GetDocumentMapFor(expression.ReferencedQuerySource.ItemType);
+            var memberInfo = this.members.Pop();
+            var valueMap = documentMap.GetValueMapFromMemberName(memberInfo.Name);
             return expression;
         }
 

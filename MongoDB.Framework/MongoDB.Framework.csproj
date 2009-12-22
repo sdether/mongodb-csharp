@@ -66,11 +66,12 @@
     <Compile Include="Hydration\IEntityHydrator.cs" />
     <Compile Include="IMongoContextFactory.cs" />
     <Compile Include="IMongoFactory.cs" />
+    <Compile Include="Linq\Visitors\DocumentKeyBuilder.cs" />
     <Compile Include="Linq\Visitors\ProjectionBuilder.cs" />
-    <Compile Include="Linq\Visitors\MemberMapPathBuilder.cs" />
     <Compile Include="Linq\MongoQueryProjection.cs" />
     <Compile Include="Linq\Visitors\ScalarQueryModelVisitor.cs" />
     <Compile Include="Mapping\CollectionMap.cs" />
+    <Compile Include="Mapping\UnmappedMemberException.cs" />
     <Compile Include="Mapping\ExtendedPropertiesMap.cs" />
     <Compile Include="Mapping\Fluent\FluentMappingStore.cs" />
     <Compile Include="Mapping\Fluent\FluentDiscriminatorMap.cs" />
@@ -109,7 +110,7 @@
     <Compile Include="MongoContextFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\LateBoundReflection.cs" />
-    <Compile Include="Linq\Visitors\MemberInfoPathExtractor.cs" />
+    <Compile Include="Linq\Visitors\MemberInfoPathBuilder.cs" />
     <Compile Include="Linq\Visitors\CollectionQueryModelVisitor.cs" />
     <Compile Include="Linq\Visitors\QueryDocumentBuilder.cs" />
     <Compile Include="Tracking\TrackedObject.cs" />

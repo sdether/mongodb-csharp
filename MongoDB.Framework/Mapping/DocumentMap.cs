@@ -193,6 +193,28 @@ namespace MongoDB.Framework.Mapping
             this.simpleValueMaps.Add(simpleValueMap.Key, simpleValueMap);
         }
 
+        /// <summary>
+        /// Gets the name of the value map from member.
+        /// </summary>
+        /// <param name="memberName">Name of the member.</param>
+        /// <returns></returns>
+        public ValueMap GetValueMapFromMemberName(string memberName)
+        {
+            if (this.HasId && this.IdMap.MemberName == memberName)
+                return this.IdMap;
+            ValueMap valueMap = this.SimpleValueMaps.FirstOrDefault(x => x.MemberName == memberName);
+            if (valueMap != null)
+                return valueMap;
+            valueMap = this.NestedDocumentValueMaps.FirstOrDefault(x => x.MemberName == memberName);
+            if (valueMap != null)
+                return valueMap;
+            valueMap = this.ReferenceValueMaps.FirstOrDefault(x => x.MemberName == memberName);
+            if (valueMap != null)
+                return valueMap;
+
+            throw new UnmappedMemberException(string.Format("The member {0} has not been mapped.", memberName));
+        }
+
         #endregion
 
         #region Private Methods

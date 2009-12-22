@@ -23,8 +23,8 @@ namespace MongoDB.Framework.Persistence
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="changeTracker">The change tracker.</param>
         /// <param name="hydrator">The hydrator.</param>
-        /// <param name="mongoCollection">The mongo collection.</param>
-        public PersistenceAction(MappingStore mappingStore, ChangeTracker changeTracker, IEntityHydrator hydrator, IMongoCollection mongoCollection)
+        /// <param name="collection">The collection.</param>
+        public PersistenceAction(MappingStore mappingStore, ChangeTracker changeTracker, IEntityHydrator hydrator, IMongoCollection collection)
         {
             if (mappingStore == null)
                 throw new ArgumentNullException("mappingStore");
@@ -32,11 +32,11 @@ namespace MongoDB.Framework.Persistence
                 throw new ArgumentNullException("changeTracker");
             if (hydrator == null)
                 throw new ArgumentNullException("hydrator");
-            if (mongoCollection == null)
-                throw new ArgumentNullException("mongoCollection");
+            if (collection == null)
+                throw new ArgumentNullException("collection");
 
             this.ChangeTracker = changeTracker;
-            this.Collection = Collection;
+            this.Collection = collection;
             this.Hydrator = hydrator;
             this.MappingStore = mappingStore;
         }

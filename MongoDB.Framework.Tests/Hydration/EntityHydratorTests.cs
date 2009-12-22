@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Driver;
-using MongoDB.Framework.Cache;
 using MongoDB.Framework.Mapping.Fluent;
 
 using NUnit.Framework;
+using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework.Hydration
 {
@@ -18,7 +18,7 @@ namespace MongoDB.Framework.Hydration
         public void Should_hydrate_entity()
         {
             FluentMappingStore mappingStore = new FluentMappingStore();
-            mappingStore.GetMapsFromAssemblyContaining<PartyMap>();
+            mappingStore.AddMapsFromAssemblyContaining<PartyMap>();
 
             var document = new Document()
                 .Append("_id", new Oid("4b27b9f1cf24000000002aa0"))
@@ -31,7 +31,7 @@ namespace MongoDB.Framework.Hydration
                 .Append("BirthDate", new DateTime(1900, 1, 1))
                 .Append("not-mapped", true);
 
-            var hydrator = new EntityHydrator(mappingStore, new SessionLevelEntityCache());
+            var hydrator = new EntityHydrator(mappingStore, new DefaultChangeTracker(mappingStore));
 
             var person = hydrator.HydrateEntity<Person>(document);
             Assert.IsNotNull(person);

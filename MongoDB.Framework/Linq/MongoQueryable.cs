@@ -4,10 +4,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
-using MongoDB.Driver;
 using Remotion.Data.Linq;
+
+using MongoDB.Driver;
+using MongoDB.Framework.Hydration;
+using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Tracking;
-using MongoDB.Framework.Configuration;
 
 namespace MongoDB.Framework.Linq
 {
@@ -16,19 +18,25 @@ namespace MongoDB.Framework.Linq
         /// <summary>
         /// Creates the executor.
         /// </summary>
-        /// <param name="mongo">The mongo.</param>
+        /// <param name="database">The database.</param>
+        /// <param name="mappingStore">The mapping store.</param>
+        /// <param name="changeTracker">The change tracker.</param>
+        /// <param name="hydrator">The hydrator.</param>
         /// <returns></returns>
-        private static IQueryExecutor CreateExecutor(Database database, MongoConfiguration configuration, ChangeTracker changeTracker)
+        private static IQueryExecutor CreateExecutor(MappingStore mappingStore, ChangeTracker changeTracker, IEntityHydrator hydrator, Database database)
         {
-            return new MongoQueryExecutor(database, configuration, changeTracker);
+            return new MongoQueryExecutor(mappingStore, changeTracker, hydrator, database);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoQueryable&lt;TEntity&gt;"/> class.
         /// </summary>
-        /// <param name="mongo">The mongo.</param>
-        public MongoQueryable(Database database, MongoConfiguration configuration, ChangeTracker changeTracker)
-            : base(CreateExecutor(database, configuration, changeTracker))
+        /// <param name="database">The database.</param>
+        /// <param name="mappingStore">The mapping store.</param>
+        /// <param name="changeTracker">The change tracker.</param>
+        /// <param name="hydrator">The hydrator.</param>
+        public MongoQueryable(MappingStore mappingStore, ChangeTracker changeTracker, IEntityHydrator hydrator, Database database)
+            : base(CreateExecutor(mappingStore, changeTracker, hydrator, database))
         { }
 
         /// <summary>
