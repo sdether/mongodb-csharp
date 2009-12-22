@@ -9,6 +9,7 @@ using Remotion.Data.Linq.Clauses;
 using MongoDB.Framework.Configuration;
 using Remotion.Data.Linq.Clauses.ResultOperators;
 using System.Linq.Expressions;
+using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Linq.Visitors
 {
@@ -16,15 +17,23 @@ namespace MongoDB.Framework.Linq.Visitors
     {
         #region Private Fields
 
-        private MongoConfiguration configuration;
+        private MappingStore mappingStore;
 
         #endregion
 
         #region Public Properties
 
-        public bool IsCount { get; set; }
+        /// <summary>
+        /// Gets a value indicating whether this instance is count.
+        /// </summary>
+        /// <value><c>true</c> if this instance is count; otherwise, <c>false</c>.</value>
+        public bool IsCount { get; private set; }
 
-        public Document Query { get; set; }
+        /// <summary>
+        /// Gets the query.
+        /// </summary>
+        /// <value>The query.</value>
+        public Document Query { get; private set; }
 
         #endregion
 
@@ -34,9 +43,9 @@ namespace MongoDB.Framework.Linq.Visitors
         /// Initializes a new instance of the <see cref="MongoQueryModelVisitor"/> class.
         /// </summary>
         /// <param name="entityMapper">The entity mapper.</param>
-        public ScalarQueryModelVisitor(MongoConfiguration configuration)
+        public ScalarQueryModelVisitor(MappingStore mappingStore)
         {
-            this.configuration = configuration;
+            this.mappingStore = mappingStore;
             this.Query = new Document();
         }
 
@@ -78,7 +87,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            //this.Query = QueryDocumentBuilder.Build(this.configuration, whereClause.Predicate);
+            this.Query = QueryDocumentBuilder.BuildFrom(this.mappingStore, whereClause.Predicate);
         }
 
         #endregion

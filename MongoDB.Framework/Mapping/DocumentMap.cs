@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MongoDB.Driver;
 
 namespace MongoDB.Framework.Mapping
 {
@@ -192,6 +193,13 @@ namespace MongoDB.Framework.Mapping
 
             this.simpleValueMaps.Add(simpleValueMap.Key, simpleValueMap);
         }
+
+        /// <summary>
+        /// Gets the document map by discriminator.
+        /// </summary>
+        /// <param name="discriminator">The discriminator.</param>
+        /// <returns></returns>
+        public abstract DocumentMap GetDocumentMapByDiscriminator(object discriminator);
 
         /// <summary>
         /// Gets the name of the value map from member.

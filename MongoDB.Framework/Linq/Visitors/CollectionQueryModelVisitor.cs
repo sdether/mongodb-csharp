@@ -14,24 +14,25 @@ using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Linq.Visitors
 {
-    public class CollectionQueryModelVisitor<T> : QueryModelVisitorBase
+    public class CollectionQueryModelVisitor : QueryModelVisitorBase
     {
         #region Public Static Methods
 
         /// <summary>
         /// Creates the mongo query specification.
         /// </summary>
+        /// <param name="mappingStore">The mapping store.</param>
+        /// <param name="hydrator">The hydrator.</param>
         /// <param name="queryModel">The query model.</param>
-        /// <param name="entityMapper">The entity mapper.</param>
         /// <returns></returns>
-        public static MongoQuerySpecification<T> CreateMongoQuerySpecification(MappingStore mappingStore, QueryModel queryModel)
+        public static MongoQuerySpecification CreateMongoQuerySpecification(MappingStore mappingStore, QueryModel queryModel)
         {
             if (mappingStore == null)
                 throw new ArgumentNullException("mappingStore");
             if (queryModel == null)
                 throw new ArgumentNullException("queryModel");
 
-            var visitor = new CollectionQueryModelVisitor<T>(mappingStore);
+            var visitor = new CollectionQueryModelVisitor(mappingStore);
             visitor.VisitQueryModel(queryModel);
             return visitor.querySpec;
         }
@@ -41,7 +42,7 @@ namespace MongoDB.Framework.Linq.Visitors
         #region Private Fields
 
         private MappingStore mappingStore;
-        private MongoQuerySpecification<T> querySpec;
+        private MongoQuerySpecification querySpec;
 
         #endregion
 
@@ -50,11 +51,12 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoQueryModelVisitor"/> class.
         /// </summary>
-        /// <param name="entityMapper">The entity mapper.</param>
+        /// <param name="mappingStore">The mapping store.</param>
+        /// <param name="hydrator">The hydrator.</param>
         private CollectionQueryModelVisitor(MappingStore mappingStore)
         {
             this.mappingStore = mappingStore;
-            this.querySpec = new MongoQuerySpecification<T>();
+            this.querySpec = new MongoQuerySpecification();
         }
 
         #endregion
@@ -81,8 +83,8 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitOrdering(Ordering ordering, QueryModel queryModel, OrderByClause orderByClause, int index)
         {
-            var key = DocumentKeyBuilder.BuildFrom(this.mappingStore, ordering.Expression);
-            this.querySpec.OrderBy[key] = ordering.OrderingDirection == OrderingDirection.Asc ? 1 : -1;
+            var valueMapPath = ValueMapPathBuilder.BuildFrom(this.mappingStore, ordering.Expression);
+            this.querySpec.OrderBy[valueMapPath.Key] = ordering.OrderingDirection == OrderingDirection.Asc ? 1 : -1;
         }
 
         /// <summary>
@@ -136,13 +138,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="queryModel">The query model.</param>
         public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
         {
-            //if (typeof(T) != queryModel.MainFromClause.ItemType)
-            //{
-            //    var projection = ProjectionBuilder.Build<T>(this.mappingStore, selectClause.Selector);
-
-            //    projection.Fields.CopyTo(this.querySpec.Projection.Fields);
-            //    this.querySpec.Projection.Projector = projection.Projector;
-            //}
+            this.querySpec.Projection = ProjectionBuilder.Build(this.mappingStore, selectClause.Selector);
         }
 
         /// <summary>
@@ -153,8 +149,8 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            //var query = QueryDocumentBuilder.Build(this.configuration, whereClause.Predicate);
-            //query.CopyTo(this.querySpec.Query);            
+            var query = QueryDocumentBuilder.BuildFrom(this.mappingStore, whereClause.Predicate);
+            query.CopyTo(this.querySpec.Query);            
         }
 
         #endregion

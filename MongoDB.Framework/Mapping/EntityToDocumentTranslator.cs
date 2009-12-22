@@ -6,7 +6,7 @@ using MongoDB.Driver;
 using MongoDB.Framework.Mapping;
 using System.Text.RegularExpressions;
 
-namespace MongoDB.Framework.Persistence
+namespace MongoDB.Framework.Mapping
 {
     public class EntityToDocumentTranslator
     {
@@ -75,7 +75,24 @@ namespace MongoDB.Framework.Persistence
         /// <returns></returns>
         public Document Translate(object entity)
         {
+            if (entity == null)
+                throw new ArgumentNullException("entity");
+
             var documentMap = this.mappingStore.GetDocumentMapFor(entity.GetType());
+            return this.Translate(documentMap, entity);
+        }
+
+        /// <summary>
+        /// Translates the specified entity.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <returns></returns>
+        public Document Translate(DocumentMap documentMap, object entity)
+        {
+            if (documentMap == null)
+                throw new ArgumentNullException("documentMap");
+            if (entity == null)
+                throw new ArgumentNullException("entity");
             return this.CreateDocument(documentMap, entity);
         }
 
@@ -99,7 +116,7 @@ namespace MongoDB.Framework.Persistence
             this.ApplyNestedDocumentValueMaps(documentMap.NestedDocumentValueMaps, entity, document);
             this.ApplyReferenceValueMaps(documentMap.ReferenceValueMaps, entity, document);
 
-            if (documentMap.IsPolymorphic)
+            if (documentMap.IsPolymorphic && documentMap.Discriminator != null)
                 document[documentMap.DiscriminatorKey] = documentMap.Discriminator;
 
             if(documentMap.HasExtendedProperties)
@@ -134,7 +151,7 @@ namespace MongoDB.Framework.Persistence
         private void ApplyIdMap(IdMap idMap, object entity, Document document)
         {
             object value = idMap.MemberGetter(entity);
-            value = idMap.ConvertToDocumentValue(value);
+            value = MongoTypeConverter.ConvertToOid((string)value);
             if(value != MongoDBNull.Value || idMap.PersistNulls)
                 document[idMap.Key] = value;
         }
@@ -178,7 +195,7 @@ namespace MongoDB.Framework.Persistence
             foreach (var simpleValueMap in simpleValueMaps)
             {
                 object value = simpleValueMap.MemberGetter(entity);
-                value = simpleValueMap.ConvertToDocumentValue(value);
+                value = MongoTypeConverter.ConvertToDocumentValue(simpleValueMap.MemberType, value);
                 if(value != MongoDBNull.Value || simpleValueMap.PersistNulls)
                     document[simpleValueMap.Key] = value;
             }

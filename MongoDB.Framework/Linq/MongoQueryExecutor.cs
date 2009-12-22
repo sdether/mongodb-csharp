@@ -7,10 +7,11 @@ using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses.ResultOperators;
 
 using MongoDB.Driver;
-using MongoDB.Framework.Hydration;
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Tracking;
 using MongoDB.Framework.Linq.Visitors;
+using System.Collections;
+using MongoDB.Framework.Persistence;
 
 namespace MongoDB.Framework.Linq
 {
@@ -18,7 +19,7 @@ namespace MongoDB.Framework.Linq
     {
         private ChangeTracker changeTracker;
         private Database database;
-        private IEntityHydrator hydrator;
+        private DocumentToEntityTranslator documentToEntityTranslator;
         private MappingStore mappingStore;
 
         /// <summary>
@@ -28,71 +29,60 @@ namespace MongoDB.Framework.Linq
         /// <param name="changeTracker">The change tracker.</param>
         /// <param name="hydrator">The hydrator.</param>
         /// <param name="database">The database.</param>
-        public MongoQueryExecutor(MappingStore mappingStore, ChangeTracker changeTracker, IEntityHydrator hydrator, Database database)
+        public MongoQueryExecutor(MappingStore mappingStore, ChangeTracker changeTracker, Database database)
         {
             if (mappingStore == null)
                 throw new ArgumentNullException("mappingStore");
             if (changeTracker == null)
                 throw new ArgumentNullException("changeTracker");
-            if (hydrator == null)
-                throw new ArgumentNullException("hydrator");
             if (database == null)
                 throw new ArgumentNullException("database");
 
             this.changeTracker = changeTracker;
             this.database = database;
-            this.hydrator = hydrator;
             this.mappingStore = mappingStore;
         }
 
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
-            var spec = CollectionQueryModelVisitor<T>.CreateMongoQuerySpecification(this.mappingStore, queryModel);
+            var spec = CollectionQueryModelVisitor.CreateMongoQuerySpecification(this.mappingStore, queryModel);
+            var documentMap = this.mappingStore.GetDocumentMapFor(queryModel.MainFromClause.ItemType);
+            if (documentMap.IsPolymorphic)
+            {
+                if(spec.Projection.Fields.Count != 0)
+                    spec.Projection.Fields[documentMap.DiscriminatorKey] = 1;
+                if(documentMap.Discriminator != null)
+                    spec.Query[documentMap.DiscriminatorKey] = documentMap.Discriminator;
+            }
 
-            throw new NotImplementedException();
-            //var itemType = queryModel.MainFromClause.ItemType;
-            //var rootEntityMap = this.configuration.GetRootEntityMapFor(itemType);
-            //this.AddDiscriminatingKeyIfNecessary(itemType, rootEntityMap, spec.Query);
-            //var collection = this.database.GetCollection(rootEntityMap.CollectionName);
-            //IEnumerable<Document> documents;
+            var collection = this.database.GetCollection(documentMap.CollectionName);
             //if (spec.IsFindOne)
             //{
-            //    var document = collection.FindOne(spec.Query);
-            //    if (document == null)
-            //        documents = Enumerable.Empty<Document>();
-            //    else
-            //        documents = new[] { document };
-            //}
-            //else
-            //{
-            //    var cursor = collection.Find(spec.GetCompleteQuery(), spec.Limit, spec.Skip, spec.Projection.Fields);
-            //    documents = cursor.Documents;
+            //    entities.Add(new FindOneAction(this.mappingStore, this.changeTracker, collecton)
+            //        .FindOne(documentMap.EntityType, spec.Query));
             //}
 
-            //foreach(var document in documents)
-            //{
-            //    var entity = spec.Projection.Projector(this.configuration, document);
-            //    if (typeof(T) == itemType)
-            //        this.changeTracker.Track(document, entity);
-            //    yield return entity;
-            //}
+            var findAction = new FindAction(this.mappingStore, this.changeTracker, collection);
+            foreach (var entity in findAction.Find(documentMap.EntityType, spec.Query, spec.Limit, spec.Skip, spec.Projection.Fields, spec.OrderBy))
+                yield return (T)spec.Projection.Projector(new ResultObjectMapping() { { queryModel.MainFromClause, entity } });
         }
 
         public T ExecuteScalar<T>(QueryModel queryModel)
         {
-            //var scalarVisitor = new ScalarQueryModelVisitor(this.configuration);
-            //scalarVisitor.VisitQueryModel(queryModel);
+            var scalarVisitor = new ScalarQueryModelVisitor(this.mappingStore);
+            scalarVisitor.VisitQueryModel(queryModel);
 
-            //var entityType = queryModel.MainFromClause.ItemType;
-            //var rootEntityMap = this.configuration.GetRootEntityMapFor(entityType);
-            //this.AddDiscriminatingKeyIfNecessary(entityType, rootEntityMap, scalarVisitor.Query);
+            var itemType = queryModel.MainFromClause.ItemType;
+            var documentMap = this.mappingStore.GetDocumentMapFor(itemType);
+            if (documentMap.IsPolymorphic && documentMap.Discriminator != null)
+                scalarVisitor.Query[documentMap.DiscriminatorKey] = documentMap.Discriminator;
 
-            //var collection = this.database.GetCollection(rootEntityMap.CollectionName);
+            var collection = this.database.GetCollection(documentMap.CollectionName);
 
-            //if (scalarVisitor.IsCount)
-            //{
-            //    return (T)Convert.ChangeType(collection.Count(scalarVisitor.Query), typeof(T));
-            //}
+            if (scalarVisitor.IsCount)
+            {
+                return (T)Convert.ChangeType(collection.Count(scalarVisitor.Query), typeof(T));
+            }
 
             throw new NotSupportedException("Count is the only allowed aggregate operation.");
         }

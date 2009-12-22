@@ -5,7 +5,6 @@ using System.Text;
 
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
-using MongoDB.Framework.Hydration;
 using MongoDB.Framework.Linq;
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Persistence;
@@ -21,7 +20,6 @@ namespace MongoDB.Framework
         private Database database;
         private MappingStore mappingStore;
         private Mongo mongo;
-        private IEntityHydrator entityHydrator;
 
         #endregion
 
@@ -67,7 +65,6 @@ namespace MongoDB.Framework
             this.database = database;
             this.mappingStore = mappingStore;
             this.mongo = mongo;
-            this.entityHydrator = new EntityHydrator(mappingStore, changeTracker);
         }
 
         /// <summary>
@@ -181,7 +178,7 @@ namespace MongoDB.Framework
         {
             this.EnsureNotDisposed();
 
-            return new MongoQueryable<TEntity>(this.mappingStore, this.changeTracker, this.entityHydrator, this.database);
+            return new MongoQueryable<TEntity>(this.mappingStore, this.changeTracker, this.database);
         }
 
         /// <summary>
@@ -242,7 +239,7 @@ namespace MongoDB.Framework
                 var collection = this.Database.GetCollection(documentMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
-                    new InsertAction(this.mappingStore, this.changeTracker, this.entityHydrator, collection)
+                    new InsertAction(this.mappingStore, this.changeTracker, collection)
                         .Insert(entity);
                 }
             }
@@ -260,7 +257,7 @@ namespace MongoDB.Framework
                 var collection = this.Database.GetCollection(documentMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
-                    new UpdateAction(this.mappingStore, this.changeTracker, this.entityHydrator, collection)
+                    new UpdateAction(this.mappingStore, this.changeTracker, collection)
                         .Update(entity);
                 }
             }
@@ -278,7 +275,7 @@ namespace MongoDB.Framework
                 var collection = this.Database.GetCollection(documentMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
-                    new DeleteAction(this.mappingStore, this.changeTracker, this.entityHydrator, collection)
+                    new DeleteAction(this.mappingStore, this.changeTracker, collection)
                         .Delete(entity);
                 }
             }

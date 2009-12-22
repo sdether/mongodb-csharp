@@ -5,7 +5,6 @@ using System.Text;
 
 using MongoDB.Driver;
 using MongoDB.Framework.Mapping;
-using MongoDB.Framework.Hydration;
 using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework.Persistence
@@ -17,10 +16,9 @@ namespace MongoDB.Framework.Persistence
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="changeTracker">The change tracker.</param>
-        /// <param name="hydrator">The hydrator.</param>
         /// <param name="collection">The collection.</param>
-        public UpdateAction(MappingStore mappingStore, ChangeTracker changeTracker, IEntityHydrator hydrator, IMongoCollection collection)
-            : base(mappingStore, changeTracker, hydrator, collection)
+        public UpdateAction(MappingStore mappingStore, ChangeTracker changeTracker, IMongoCollection collection)
+            : base(mappingStore, changeTracker, collection)
         { }
 
         /// <summary>

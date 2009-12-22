@@ -9,11 +9,18 @@ namespace MongoDB.Framework.Mapping
     {
         private Dictionary<Type, DocumentMap> documentMaps;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MappingStore"/> class.
+        /// </summary>
         public MappingStore()
         {
             this.documentMaps = new Dictionary<Type, DocumentMap>();
         }
 
+        /// <summary>
+        /// Adds the collection map.
+        /// </summary>
+        /// <param name="collectionMap">The collection map.</param>
         public void AddCollectionMap(CollectionMap collectionMap)
         {
             if (collectionMap == null)
@@ -24,11 +31,21 @@ namespace MongoDB.Framework.Mapping
                 this.documentMaps.Add(subDocumentMap.EntityType, subDocumentMap);
         }
 
+        /// <summary>
+        /// Gets the document map for.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <returns></returns>
         public DocumentMap GetDocumentMapFor<TEntity>()
         {
             return this.GetDocumentMapFor(typeof(TEntity));
         }
 
+        /// <summary>
+        /// Gets the document map for.
+        /// </summary>
+        /// <param name="entityType">Type of the entity.</param>
+        /// <returns></returns>
         public DocumentMap GetDocumentMapFor(Type entityType)
         {
             DocumentMap documentMap = null;

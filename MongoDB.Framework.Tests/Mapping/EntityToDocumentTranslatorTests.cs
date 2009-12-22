@@ -8,7 +8,7 @@ using MongoDB.Framework.Mapping.Fluent;
 using NUnit.Framework;
 using MongoDB.Driver;
 
-namespace MongoDB.Framework.Persistence
+namespace MongoDB.Framework.Mapping
 {
     [TestFixture]
     public class EntityToDocumentTranslatorTests

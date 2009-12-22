@@ -15,7 +15,7 @@ namespace MongoDB.Framework.Linq.Visitors
 {
     public class QueryDocumentBuilder : ThrowingExpressionTreeVisitor
     {
-        public static Document Build(MappingStore mappingStore, Expression expression)
+        public static Document BuildFrom(MappingStore mappingStore, Expression expression)
         {
             var builder = new QueryDocumentBuilder(mappingStore);
             builder.VisitExpression(expression);
@@ -26,8 +26,8 @@ namespace MongoDB.Framework.Linq.Visitors
 
         private Dictionary<string, Document> conditions;
         private MappingStore mappingStore;
-        private List<MemberInfo> memberPathParts;
         private Document query;
+        private ValueMapPath valueMapPath;
 
         #endregion
 
@@ -41,7 +41,6 @@ namespace MongoDB.Framework.Linq.Visitors
         {
             this.mappingStore = mappingStore;
             this.query = new Document();
-            this.memberPathParts = new List<MemberInfo>();
         }
 
         #endregion
@@ -96,39 +95,24 @@ namespace MongoDB.Framework.Linq.Visitors
             else
                 throw new NotSupportedException();
 
-            if (this.memberPathParts.Count == 0)
-                throw new InvalidOperationException("No member path parts exist.");
+            value = this.valueMapPath.ConvertToDocumentValue(value);
+            if (op == "$eq")
+                this.query[this.valueMapPath.Key] = value;
+            else
+            {
+                Document doc = (Document)this.query[this.valueMapPath.Key];
+                if (doc == null)
+                    this.query[this.valueMapPath.Key] = doc = new Document();
 
-            //var visitor = new MemberPathToQueryConditionVisitor(this.memberPathParts, value);
-            //var rootEntityMap = this.configuration.GetRootEntityMapFor(this.memberPathParts[0].DeclaringType);
-            //rootEntityMap.Accept(visitor);
+                doc.Append(op, value);
+            }
 
-            //if (op == "$eq")
-            //    this.query[visitor.DocumentKey] = visitor.DocumentValue;
-            //else
-            //{
-            //    Document doc = (Document)this.query[visitor.DocumentKey];
-            //    if (doc == null)
-            //        this.query[visitor.DocumentKey] = doc = new Document();
-
-            //    doc.Append(op, visitor.DocumentValue);
-            //}
-
-            this.memberPathParts.Clear();
-            
             return expression;
         }
 
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
-            this.VisitExpression(expression.Expression);
-            this.memberPathParts.Add(expression.Member);
-
-            return expression;
-        }
-
-        protected override Expression VisitQuerySourceReferenceExpression(Remotion.Data.Linq.Clauses.Expressions.QuerySourceReferenceExpression expression)
-        {
+            this.valueMapPath = ValueMapPathBuilder.BuildFrom(this.mappingStore, expression);
             return expression;
         }
 

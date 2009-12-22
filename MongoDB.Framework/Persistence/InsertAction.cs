@@ -5,7 +5,6 @@ using System.Text;
 
 using MongoDB.Driver;
 using MongoDB.Framework.Mapping;
-using MongoDB.Framework.Hydration;
 using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework.Persistence
@@ -17,10 +16,9 @@ namespace MongoDB.Framework.Persistence
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="changeTracker">The change tracker.</param>
-        /// <param name="hydrator">The hydrator.</param>
         /// <param name="collection">The collection.</param>
-        public InsertAction(MappingStore mappingStore, ChangeTracker changeTracker, IEntityHydrator hydrator, IMongoCollection collection)
-            : base(mappingStore, changeTracker, hydrator, collection)
+        public InsertAction(MappingStore mappingStore, ChangeTracker changeTracker, IMongoCollection collection)
+            : base(mappingStore, changeTracker, collection)
         { }
 
         /// <summary>
@@ -41,7 +39,7 @@ namespace MongoDB.Framework.Persistence
                 .Translate(entity);
             this.Collection.Insert(document);
 
-            var value = (string)documentMap.IdMap.ConvertFromDocumentValue(document[documentMap.IdMap.Key]);
+            var value = (string)MongoTypeConverter.ConvertFromDocumentValue(document[documentMap.IdMap.Key]);
             if (value != null)
                 documentMap.IdMap.MemberSetter(entity, value);
 

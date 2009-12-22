@@ -2,18 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using MongoDB.Driver;
-using MongoDB.Framework.Mapping;
-using MongoDB.Framework.Tracking;
 
-namespace MongoDB.Framework.Hydration
+namespace MongoDB.Framework.Mapping
 {
-    public class EntityHydrator : IEntityHydrator
+    public class DocumentToEntityTranslator
     {
         #region Private Fields
 
-        private ChangeTracker changeTracker;
         private MappingStore mappingStore;
 
         #endregion
@@ -21,18 +17,14 @@ namespace MongoDB.Framework.Hydration
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EntityHydrator"/> class.
+        /// Initializes a new instance of the <see cref="DocumentToEntityTranslator"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
-        /// <param name="changeTracker">The change tracker.</param>
-        public EntityHydrator(MappingStore mappingStore, ChangeTracker changeTracker)
+        public DocumentToEntityTranslator(MappingStore mappingStore)
         {
             if (mappingStore == null)
                 throw new ArgumentNullException("mappingStore");
-            if (changeTracker == null)
-                throw new ArgumentNullException("changeTracker");
 
-            this.changeTracker = changeTracker;
             this.mappingStore = mappingStore;
         }
 
@@ -41,60 +33,40 @@ namespace MongoDB.Framework.Hydration
         #region Public Methods
 
         /// <summary>
-        /// Hydrates the entity.
+        /// Translates the specified entity type.
         /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="entityType">Type of the entity.</param>
         /// <param name="document">The document.</param>
         /// <returns></returns>
-        public TEntity HydrateEntity<TEntity>(Document document)
+        public object Translate(Type entityType, Document document)
         {
-            var documentMap = this.mappingStore.GetDocumentMapFor<TEntity>();
-            object entity = null;
-            string id = null;
-            if (documentMap.HasId)
-            {
-                var value = document[documentMap.IdMap.Key];
-                id = (string)documentMap.IdMap.ConvertFromDocumentValue(value);
-                TrackedObject trackedObject;
-                if (id != null && this.changeTracker.TryGetTrackedObjectById(id, out trackedObject))
-                    return (TEntity)trackedObject.Current;
-            }
-
-            entity = this.CreateEntityFromDocument(documentMap, document);
-
-            if (id != null)
-                this.changeTracker.Track(document, entity);
-            return (TEntity)entity;
+            var documentMap = this.mappingStore.GetDocumentMapFor(entityType);
+            return this.Translate(documentMap, document);
         }
 
         /// <summary>
-        /// Hydrates the entities.
+        /// Translates the specified document map.
         /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <param name="documents">The documents.</param>
+        /// <param name="documentMap">The document map.</param>
+        /// <param name="document">The document.</param>
         /// <returns></returns>
-        public IEnumerable<TEntity> HydrateEntities<TEntity>(IEnumerable<Document> documents)
+        public virtual object Translate(DocumentMap documentMap, Document document)
         {
-            foreach (var document in documents)
-                yield return this.HydrateEntity<TEntity>(document);
+            if(documentMap.IsPolymorphic)
+            {
+                var discriminator = document[documentMap.DiscriminatorKey];
+                //TODO: potentially allow for conversion here...
+                documentMap = documentMap.GetDocumentMapByDiscriminator(discriminator);
+            }
+
+            var entity = Activator.CreateInstance(documentMap.EntityType);
+            this.Translate(documentMap, entity, document);
+            return entity;
         }
 
         #endregion
 
         #region Private Methods
-
-        /// <summary>
-        /// Creates the entity from document.
-        /// </summary>
-        /// <param name="documentMap">The document map.</param>
-        /// <param name="document">The document.</param>
-        /// <returns></returns>
-        private object CreateEntityFromDocument(DocumentMap documentMap, Document document)
-        {
-            var entity = Activator.CreateInstance(documentMap.EntityType);
-            this.Hydrate(documentMap, entity, document);
-            return entity;
-        }
 
         /// <summary>
         /// Hydrates the specified entity map.
@@ -103,8 +75,11 @@ namespace MongoDB.Framework.Hydration
         /// <param name="entityMap">The entity map.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="document">The document.</param>
-        private void Hydrate(DocumentMap documentMap, object entity, Document document)
+        private void Translate(DocumentMap documentMap, object entity, Document document)
         {
+            if (documentMap.HasId)
+                this.ApplyIdMap(documentMap.IdMap, entity, document);
+
             this.ApplySimpleValueMaps(documentMap.SimpleValueMaps, entity, document);
             this.ApplyNestedDocumentValueMaps(documentMap.NestedDocumentValueMaps, entity, document);
             this.ApplyReferenceValueMaps(documentMap.ReferenceValueMaps, entity, document);
@@ -112,7 +87,8 @@ namespace MongoDB.Framework.Hydration
             if (documentMap.IsPolymorphic)
                 document.Remove(documentMap.DiscriminatorKey);
 
-            this.ApplyExtendedPropertiesMap(documentMap.ExtendedPropertiesMap, entity, document);
+            if(documentMap.HasExtendedProperties)
+                this.ApplyExtendedPropertiesMap(documentMap.ExtendedPropertiesMap, entity, document);
         }
 
         /// <summary>
@@ -123,11 +99,22 @@ namespace MongoDB.Framework.Hydration
         /// <param name="document">The document.</param>
         private void ApplyExtendedPropertiesMap(ExtendedPropertiesMap extendedPropertiesMap, object entity, Document document)
         {
-            if (extendedPropertiesMap == null)
-                return;
-
             var dictionary = document.ToDictionary();
             extendedPropertiesMap.MemberSetter(entity, dictionary);
+        }
+
+        /// <summary>
+        /// Applies the id map.
+        /// </summary>
+        /// <param name="idMap">The id map.</param>
+        /// <param name="entity">The entity.</param>
+        /// <param name="document">The document.</param>
+        private void ApplyIdMap(IdMap idMap, object entity, Document document)
+        {
+            var value = document[idMap.Key];
+            document.Remove(idMap.Key);
+            value = MongoTypeConverter.ConvertFromDocumentValue(value);
+            idMap.MemberSetter(entity, value);
         }
 
         /// <summary>
@@ -145,7 +132,7 @@ namespace MongoDB.Framework.Hydration
                 if (value == null)
                     return;
 
-                var nestedEntity = this.CreateEntityFromDocument(nestedDocumentMap.RootDocumentMap, value);
+                var nestedEntity = this.Translate(nestedDocumentMap.RootDocumentMap, value);
                 nestedDocumentMap.MemberSetter(entity, nestedEntity);
             }
         }
@@ -174,9 +161,18 @@ namespace MongoDB.Framework.Hydration
             {
                 var value = document[simpleValueMap.Key];
                 document.Remove(simpleValueMap.Key);
-                value = simpleValueMap.ConvertFromDocumentValue(value);
+                value = MongoTypeConverter.ConvertFromDocumentValue(value);
+                if (value == null)
+                    value = GetDefaultValue(simpleValueMap.MemberType);
                 simpleValueMap.MemberSetter(entity, value);
             }
+        }
+
+        private static object GetDefaultValue(Type entityType)
+        {
+            if (entityType.IsValueType)
+                return Activator.CreateInstance(entityType);
+            return null;
         }
 
         #endregion

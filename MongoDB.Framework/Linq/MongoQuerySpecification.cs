@@ -5,13 +5,14 @@ using System.Linq.Expressions;
 using System.Text;
 
 using MongoDB.Driver;
+using Remotion.Data.Linq.Clauses;
 
 namespace MongoDB.Framework.Linq
 {
-    public class MongoQuerySpecification<T>
+    public class MongoQuerySpecification
     {
         private Document orderBy;
-        private MongoQueryProjection<T> projection;
+        private MongoQueryProjection projection;
         private Document query;
 
         public bool IsFindOne
@@ -27,10 +28,6 @@ namespace MongoDB.Framework.Linq
 
         public int Limit { get; set; }
 
-        /// <summary>
-        /// Gets or sets the order by.
-        /// </summary>
-        /// <value>The order by.</value>
         public Document OrderBy
         {
             get
@@ -42,14 +39,15 @@ namespace MongoDB.Framework.Linq
             set { this.orderBy = value; }
         }
 
-        public MongoQueryProjection<T> Projection
+        public MongoQueryProjection Projection
         {
             get
             {
                 if (this.projection == null)
-                    this.projection = new MongoQueryProjection<T>();
+                    this.projection = new MongoQueryProjection();
                 return this.projection;
             }
+            set { this.projection = value; }
         }
 
         public Document Query
@@ -64,16 +62,5 @@ namespace MongoDB.Framework.Linq
         }
 
         public int Skip { get; set; }
-
-        public Document GetCompleteQuery()
-        {
-            Document doc = new Document();
-            doc["query"] = this.Query;
-
-            if (this.OrderBy.Count > 0)
-                doc["orderby"] = this.OrderBy;
-
-            return doc;
-        }
     }
 }

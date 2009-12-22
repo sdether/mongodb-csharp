@@ -125,5 +125,22 @@ namespace MongoDB.Framework.Mapping
         }
 
         #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Gets the document map by discriminator.
+        /// </summary>
+        /// <param name="discriminator">The discriminator.</param>
+        /// <returns></returns>
+        public override DocumentMap GetDocumentMapByDiscriminator(object discriminator)
+        {
+            if (!this.Discriminator.Equals(discriminator))
+                throw new InvalidOperationException(string.Format("The discriminator specified does not belong to the entity {0}.", this.EntityType));
+
+            return this;
+        }
+
+        #endregion
     }
 }

@@ -7,7 +7,6 @@ using System.Text;
 using Remotion.Data.Linq;
 
 using MongoDB.Driver;
-using MongoDB.Framework.Hydration;
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Tracking;
 
@@ -23,9 +22,9 @@ namespace MongoDB.Framework.Linq
         /// <param name="changeTracker">The change tracker.</param>
         /// <param name="hydrator">The hydrator.</param>
         /// <returns></returns>
-        private static IQueryExecutor CreateExecutor(MappingStore mappingStore, ChangeTracker changeTracker, IEntityHydrator hydrator, Database database)
+        private static IQueryExecutor CreateExecutor(MappingStore mappingStore, ChangeTracker changeTracker, Database database)
         {
-            return new MongoQueryExecutor(mappingStore, changeTracker, hydrator, database);
+            return new MongoQueryExecutor(mappingStore, changeTracker, database);
         }
 
         /// <summary>
@@ -35,8 +34,8 @@ namespace MongoDB.Framework.Linq
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="changeTracker">The change tracker.</param>
         /// <param name="hydrator">The hydrator.</param>
-        public MongoQueryable(MappingStore mappingStore, ChangeTracker changeTracker, IEntityHydrator hydrator, Database database)
-            : base(CreateExecutor(mappingStore, changeTracker, hydrator, database))
+        public MongoQueryable(MappingStore mappingStore, ChangeTracker changeTracker, Database database)
+            : base(CreateExecutor(mappingStore, changeTracker, database))
         { }
 
         /// <summary>

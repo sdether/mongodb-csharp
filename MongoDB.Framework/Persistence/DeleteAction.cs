@@ -5,7 +5,6 @@ using System.Text;
 
 using MongoDB.Driver;
 using MongoDB.Framework.Mapping;
-using MongoDB.Framework.Hydration;
 using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework.Persistence
@@ -17,10 +16,9 @@ namespace MongoDB.Framework.Persistence
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="changeTracker">The change tracker.</param>
-        /// <param name="hydrator">The hydrator.</param>
         /// <param name="collection">The collection.</param>
-        public DeleteAction(MappingStore mappingStore, ChangeTracker changeTracker, IEntityHydrator hydrator, IMongoCollection collection)
-            : base(mappingStore, changeTracker, hydrator, collection)
+        public DeleteAction(MappingStore mappingStore, ChangeTracker changeTracker, IMongoCollection collection)
+            : base(mappingStore, changeTracker, collection)
         { }
 
         /// <summary>
@@ -38,7 +36,7 @@ namespace MongoDB.Framework.Persistence
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
             var document = new Document();
-            document[documentMap.IdMap.Key] = documentMap.IdMap.ConvertToDocumentValue(documentMap.IdMap.MemberGetter(entity));
+            document[documentMap.IdMap.Key] = MongoTypeConverter.ConvertToOid((string)documentMap.IdMap.MemberGetter(entity));
             this.Collection.Delete(document);
             this.ChangeTracker.GetTrackedObject(entity).MoveToDead();
         }

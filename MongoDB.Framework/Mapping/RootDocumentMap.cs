@@ -89,6 +89,28 @@ namespace MongoDB.Framework.Mapping
             this.subDocumentMaps.Add(subDocumentMap);
         }
 
+        /// <summary>
+        /// Gets the document map by discriminator.
+        /// </summary>
+        /// <param name="discriminator">The discriminator.</param>
+        /// <returns></returns>
+        public override DocumentMap GetDocumentMapByDiscriminator(object discriminator)
+        {
+            if (this.Discriminator == null)
+            {
+                if (discriminator == null)
+                    return this;
+            }
+            else if (this.Discriminator.Equals(discriminator))
+                return this;
+
+            foreach (var subDocumentMap in this.subDocumentMaps)
+                if (subDocumentMap.Discriminator.Equals(discriminator))
+                    return subDocumentMap;
+
+            throw new UnmappedDiscriminatorException(string.Format("The discriminator {0} has not been mapped.", discriminator));
+        }
+
         #endregion
     }
 }

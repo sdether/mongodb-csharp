@@ -69,7 +69,7 @@ namespace MongoDB.Framework
         {
             using (var context = this.CreateContext())
             {
-                context.Database.SendCommand(new Document().Append("drop", "party"));
+                context.Database.SendCommand(new Document().Append("drop", "parties"));
             }
         }
     }

@@ -12,10 +12,10 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Linq
 {
-    public class MongoQueryProjection<T>
+    public class MongoQueryProjection
     {
         private Document fields;
-        private Func<Document, T> projector;
+        private Func<ResultObjectMapping, object> projector;
 
         public Document Fields
         {
@@ -28,7 +28,7 @@ namespace MongoDB.Framework.Linq
             set { this.fields = value; }
         }
 
-        public Func<Document, T> Projector
+        public Func<ResultObjectMapping, object> Projector
         {
             get { return this.projector; }
             set { this.projector = value; }

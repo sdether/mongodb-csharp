@@ -4,23 +4,21 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Driver;
-using MongoDB.Framework.Hydration;
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework.Persistence
 {
-    public class FindAction : PersistenceAction
+    public class FindAction : FindActionBase
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FindAction"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="changeTracker">The change tracker.</param>
-        /// <param name="hydrator">The hydrator.</param>
         /// <param name="collection">The collection.</param>
-        public FindAction(MappingStore mappingStore, ChangeTracker changeTracker, IEntityHydrator hydrator, IMongoCollection collection)
-            : base(mappingStore, changeTracker, hydrator, collection)
+        public FindAction(MappingStore mappingStore, ChangeTracker changeTracker, IMongoCollection collection)
+            : base(mappingStore, changeTracker, collection)
         { }
 
         /// <summary>
@@ -33,11 +31,11 @@ namespace MongoDB.Framework.Persistence
         /// <param name="fields">The fields.</param>
         /// <param name="orderBy">The order by.</param>
         /// <returns></returns>
-        public IEnumerable<TEntity> Find<TEntity>(Document query, int limit, int skip, Document fields, Document orderBy)
+        public IEnumerable<object> Find(Type entityType, Document query, int limit, int skip, Document fields, Document orderBy)
         {
             var cursor = this.Collection.Find(this.CreateFullQuery(query, orderBy), limit, skip, fields);
             foreach (var document in cursor.Documents)
-                yield return this.Hydrator.HydrateEntity<TEntity>(document);
+                yield return this.CreateEntity(entityType, document);
         }
 
         /// <summary>
@@ -51,7 +49,7 @@ namespace MongoDB.Framework.Persistence
 
             return new Document()
                 .Append("query", query)
-                .Append("orderBy", orderBy);
+                .Append("orderby", orderBy);
         }
     }
 }

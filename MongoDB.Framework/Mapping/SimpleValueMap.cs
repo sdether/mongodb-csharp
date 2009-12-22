@@ -24,29 +24,5 @@ namespace MongoDB.Framework.Mapping
         { }
 
         #endregion
-
-        #region Public Methods
-
-        /// <summary>
-        /// Converts from document value.
-        /// </summary>
-        /// <param name="documentValue">The document value.</param>
-        /// <returns></returns>
-        public virtual object ConvertFromDocumentValue(object documentValue)
-        {
-            return MongoTypeConverter.ConvertFromDocumentValue(documentValue);
-        }
-
-        /// <summary>
-        /// Converts to document value.
-        /// </summary>
-        /// <param name="entityValue">The entity value.</param>
-        /// <returns></returns>
-        public virtual object ConvertToDocumentValue(object entityValue)
-        {
-            return MongoTypeConverter.ConvertToDocumentValue(this.MemberType, entityValue);
-        }
-
-        #endregion
     }
 }

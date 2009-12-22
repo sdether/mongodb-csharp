@@ -13,15 +13,5 @@ namespace MongoDB.Framework.Mapping
         {
             this.PersistNulls = false;
         }
-
-        /// <summary>
-        /// Converts to document value.
-        /// </summary>
-        /// <param name="id">The id.</param>
-        /// <returns></returns>
-        public override object ConvertToDocumentValue(object entityValue)
-        {
-            return MongoTypeConverter.ConvertToOid(entityValue as string);
-        }
     }
 }
