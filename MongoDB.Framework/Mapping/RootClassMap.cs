@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping
 {
-    public class CollectionMap : RootDocumentMap
+    public class RootClassMap : SuperClassMap
     {
         #region Private Fields
 
@@ -36,11 +36,11 @@ namespace MongoDB.Framework.Mapping
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CollectionMap"/> class.
+        /// Initializes a new instance of the <see cref="RootClassMap"/> class.
         /// </summary>
-        /// <param name="entityType">Type of the entity.</param>
-        public CollectionMap(Type entityType)
-            : base(entityType)
+        /// <param name="type">The type.</param>
+        public RootClassMap(Type type)
+            : base(type)
         { }
 
         #endregion

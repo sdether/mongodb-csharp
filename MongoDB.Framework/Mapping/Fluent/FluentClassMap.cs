@@ -10,47 +10,47 @@ using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public abstract class FluentDocumentMap<TMap, TEntity> : FluentMap<TMap> where TMap : DocumentMap
+    public abstract class FluentClassMap<TMap, TEntity> : FluentMap<TMap> where TMap : ClassMap
     {
-        public void Component<TComponent>(string memberName, Action<FluentRootDocumentMap<TComponent>> configure)
+        public void Component<TComponent>(string memberName, Action<FluentComponentClassMap<TComponent>> configure)
         {
             var memberInfo = this.GetSingleMember(memberName);
             this.Component(memberInfo, configure);
         }
 
-        public void Component<TComponent>(string memberName, string key, Action<FluentRootDocumentMap<TComponent>> configure)
+        public void Component<TComponent>(string memberName, string key, Action<FluentComponentClassMap<TComponent>> configure)
         {
             var memberInfo = this.GetSingleMember(memberName);
             this.Component(memberInfo, key, configure);
         }
 
-        public void Component<TComponent>(MemberInfo memberInfo, Action<FluentRootDocumentMap<TComponent>> configure)
+        public void Component<TComponent>(MemberInfo memberInfo, Action<FluentComponentClassMap<TComponent>> configure)
         {
             this.Component(memberInfo, memberInfo.Name, configure);
         }
 
-        public void Component<TComponent>(MemberInfo memberInfo, string key, Action<FluentRootDocumentMap<TComponent>> configure)
+        public void Component<TComponent>(MemberInfo memberInfo, string key, Action<FluentComponentClassMap<TComponent>> configure)
         {
-            var fluentRootDocumentMap = new FluentRootDocumentMap<TComponent>();
-            configure(fluentRootDocumentMap);
-            var nestedDocumentValueMap = new NestedDocumentValueMap(
+            var fluentRootClassMap = new FluentComponentClassMap<TComponent>();
+            configure(fluentRootClassMap);
+            var componentValueMap = new ComponentValueMap(
                 key,
                 memberInfo.Name,
                 LateBoundReflection.GetMemberValueType(memberInfo),
                 LateBoundReflection.GetGetter(memberInfo),
                 LateBoundReflection.GetSetter(memberInfo),
-                fluentRootDocumentMap.Instance);
+                fluentRootClassMap.Instance);
 
-            this.Instance.AddNestedDocumentValueMap(nestedDocumentValueMap);
+            this.Instance.AddComponentValueMap(componentValueMap);
         }
 
-        public void Component<TComponent>(Expression<Func<TEntity, TComponent>> idMember, Action<FluentRootDocumentMap<TComponent>> configure)
+        public void Component<TComponent>(Expression<Func<TEntity, TComponent>> idMember, Action<FluentComponentClassMap<TComponent>> configure)
         {
             var memberInfo = this.GetSingleMember(idMember);
             this.Component(memberInfo, configure);
         }
 
-        public void Component<TComponent>(Expression<Func<TEntity, TComponent>> member, string key, Action<FluentRootDocumentMap<TComponent>> configure)
+        public void Component<TComponent>(Expression<Func<TEntity, TComponent>> member, string key, Action<FluentComponentClassMap<TComponent>> configure)
         {
             var memberInfo = this.GetSingleMember(member);
             this.Component<TComponent>(memberInfo, key, configure);

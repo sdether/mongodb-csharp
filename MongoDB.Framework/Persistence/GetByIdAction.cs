@@ -26,19 +26,19 @@ namespace MongoDB.Framework.Persistence
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <returns></returns>
-        public object GetById(Type entityType, string id)
+        public object GetById(Type type, string id)
         {
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentException("Cannot be null or empty.", "id");
 
-            var documentMap = this.MappingStore.GetDocumentMapFor(entityType);
-            if (!documentMap.HasId)
+            var classMap = this.MappingStore.GetClassMapFor(type);
+            if (!classMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
             var conditions = new Document();
-            conditions[documentMap.IdMap.Key] = MongoTypeConverter.ConvertToOid((string)id);
+            conditions[classMap.IdMap.Key] = MongoTypeConverter.ConvertToOid((string)id);
 
-            return this.Find(documentMap, conditions, 1, 0, new Document(), new Document()).Single();
+            return this.Find(classMap, conditions, 1, 0, new Document(), new Document()).Single();
         }
     }
 }

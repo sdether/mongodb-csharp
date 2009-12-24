@@ -107,7 +107,7 @@ namespace MongoDB.Framework.Tracking
             if (this.State != TrackedObjectState.PossiblyModified)
                 return;
 
-            var documentMap = this.mappingStore.GetDocumentMapFor(this.Current.GetType());
+            var classMap = this.mappingStore.GetClassMapFor(this.Current.GetType());
             if (this.Original == null)
             {
                 var value = (string)this.GetId();
@@ -130,7 +130,7 @@ namespace MongoDB.Framework.Tracking
         /// <returns></returns>
         public string GetId()
         {
-            return (string)this.mappingStore.GetDocumentMapFor(this.Current.GetType()).IdMap.MemberGetter(this.Current);
+            return (string)this.mappingStore.GetClassMapFor(this.Current.GetType()).IdMap.MemberGetter(this.Current);
         }
 
         /// <summary>

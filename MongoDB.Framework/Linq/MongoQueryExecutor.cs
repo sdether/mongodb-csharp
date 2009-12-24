@@ -46,10 +46,10 @@ namespace MongoDB.Framework.Linq
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
             var spec = CollectionQueryModelVisitor.CreateMongoQuerySpecification(this.mappingStore, queryModel);
-            var documentMap = this.mappingStore.GetDocumentMapFor(queryModel.MainFromClause.ItemType);
-            var collection = this.database.GetCollection(documentMap.CollectionName);
+            var classMap = this.mappingStore.GetClassMapFor(queryModel.MainFromClause.ItemType);
+            var collection = this.database.GetCollection(classMap.CollectionName);
             var findAction = new FindAction(this.mappingStore, this.changeTracker, collection);
-            foreach (var entity in findAction.Find(documentMap.EntityType, spec.Conditions, spec.Limit, spec.Skip, spec.OrderBy, spec.Projection.Fields))
+            foreach (var entity in findAction.Find(classMap.Type, spec.Conditions, spec.Limit, spec.Skip, spec.OrderBy, spec.Projection.Fields))
                 yield return (T)spec.Projection.Projector(new ResultObjectMapping() { { queryModel.MainFromClause, entity } });
         }
 
@@ -59,11 +59,11 @@ namespace MongoDB.Framework.Linq
             scalarVisitor.VisitQueryModel(queryModel);
 
             var itemType = queryModel.MainFromClause.ItemType;
-            var documentMap = this.mappingStore.GetDocumentMapFor(itemType);
-            if (documentMap.IsPolymorphic && documentMap.Discriminator != null)
-                scalarVisitor.Query[documentMap.DiscriminatorKey] = documentMap.Discriminator;
+            var classMap = this.mappingStore.GetClassMapFor(itemType);
+            if (classMap.IsPolymorphic && classMap.Discriminator != null)
+                scalarVisitor.Query[classMap.DiscriminatorKey] = classMap.Discriminator;
 
-            var collection = this.database.GetCollection(documentMap.CollectionName);
+            var collection = this.database.GetCollection(classMap.CollectionName);
 
             if (scalarVisitor.IsCount)
             {

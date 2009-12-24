@@ -53,7 +53,7 @@ namespace MongoDB.Framework.Linq.Visitors
 
         protected override Expression VisitQuerySourceReferenceExpression(Remotion.Data.Linq.Clauses.Expressions.QuerySourceReferenceExpression expression)
         {
-            var documentMap = this.mappingStore.GetDocumentMapFor(expression.ReferencedQuerySource.ItemType);
+            var classMap = this.mappingStore.GetClassMapFor(expression.ReferencedQuerySource.ItemType);
             this.valueMapPath = new ValueMapPath(this.mappingStore, expression.ReferencedQuerySource.ItemType, this.members);
             return expression;
         }

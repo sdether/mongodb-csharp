@@ -10,18 +10,18 @@ using System.Reflection;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentCollectionMap<TEntity> : FluentRootDocumentMap<CollectionMap, TEntity>
+    public class FluentRootClassMap<T> : FluentSuperClassMap<RootClassMap, T>
     {
-        private CollectionMap instance;
+        private RootClassMap instance;
 
-        public override CollectionMap Instance
+        public override RootClassMap Instance
         {
             get { return this.instance; }
         }
 
-        public FluentCollectionMap()
+        public FluentRootClassMap()
         {
-            this.instance = new CollectionMap(typeof(TEntity));
+            this.instance = new RootClassMap(typeof(T));
         }
 
         public void Id(string memberName)
@@ -39,7 +39,7 @@ namespace MongoDB.Framework.Mapping.Fluent
                 LateBoundReflection.GetSetter(memberInfo));
         }
 
-        public void Id(Expression<Func<TEntity, string>> idMember)
+        public void Id(Expression<Func<T, string>> idMember)
         {
             var memberInfo = this.GetSingleMember(idMember);
             this.Id(memberInfo);

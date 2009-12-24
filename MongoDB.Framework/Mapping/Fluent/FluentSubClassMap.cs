@@ -10,18 +10,18 @@ using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentSubDocumentMap<TEntity> : FluentDocumentMap<SubDocumentMap, TEntity>
+    public class FluentSubClassMap<TEntity> : FluentClassMap<SubClassMap, TEntity>
     {
-        private SubDocumentMap instance;
+        private SubClassMap instance;
 
-        public override SubDocumentMap Instance
+        public override SubClassMap Instance
         {
             get { return this.instance; }
         }
 
-        public FluentSubDocumentMap(RootDocumentMap rootDocumentMap)
+        public FluentSubClassMap(SuperClassMap rootClassMap)
         {
-            this.instance = new SubDocumentMap(typeof(TEntity), rootDocumentMap);
+            this.instance = new SubClassMap(typeof(TEntity), rootClassMap);
         }
     }
 }

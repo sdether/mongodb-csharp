@@ -10,34 +10,19 @@ using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentRootDocumentMap<TEntity> : FluentRootDocumentMap<RootDocumentMap, TEntity>
+    public abstract class FluentSuperClassMap<TMap, T> : FluentClassMap<TMap, T> where TMap : SuperClassMap 
     {
-        private RootDocumentMap instance;
-
-        public override RootDocumentMap Instance
-        {
-            get { return instance; }
-        }
-
-        public FluentRootDocumentMap()
-        {
-            this.instance = new RootDocumentMap(typeof(TEntity));
-        }
-    }
-
-    public abstract class FluentRootDocumentMap<TMap, TEntity> : FluentDocumentMap<TMap, TEntity> where TMap : RootDocumentMap
-    {
-        public void DiscriminatedBy<TDiscriminator>(string key, Action<FluentDiscriminatorMap<TDiscriminator>> configure)
+        public FluentDiscriminatorMap<TDiscriminator> DiscriminateSubClassesOnKey<TDiscriminator>(string key)
         {
             var fluentDiscriminatorMap = new FluentDiscriminatorMap<TDiscriminator>(this.Instance);
-            configure(fluentDiscriminatorMap);
             this.Instance.DiscriminatorKey = key;
+            return fluentDiscriminatorMap;
         }
 
-        public void DiscriminatedBy<TDiscriminator>(string key, TDiscriminator rootDiscriminatorValue, Action<FluentDiscriminatorMap<TDiscriminator>> configure)
+        public FluentDiscriminatorMap<TDiscriminator> DiscriminateSubClassesOnKey<TDiscriminator>(string key, TDiscriminator rootDiscriminatorValue)
         {
-            this.DiscriminatedBy(key, configure);
             this.Instance.Discriminator = rootDiscriminatorValue;
+            return this.DiscriminateSubClassesOnKey<TDiscriminator>(key);
         }
 
         public void ExtendedProperties(string memberName)
@@ -55,7 +40,7 @@ namespace MongoDB.Framework.Mapping.Fluent
                 LateBoundReflection.GetSetter(memberInfo));
         }
 
-        public void ExtendedProperties(Expression<Func<TEntity, IDictionary<string, object>>> member)
+        public void ExtendedProperties(Expression<Func<T, IDictionary<string, object>>> member)
         {
             var memberInfo = this.GetSingleMember(member);
             this.ExtendedProperties(memberInfo);

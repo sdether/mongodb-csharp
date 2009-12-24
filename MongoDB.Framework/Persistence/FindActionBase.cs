@@ -16,26 +16,26 @@ namespace MongoDB.Framework.Persistence
         /// <summary>
         /// Determines whether the query is an identity query.
         /// </summary>
-        /// <param name="documentMap">The document map.</param>
+        /// <param name="classMap">The class map.</param>
         /// <param name="conditions">The conditions.</param>
         /// <returns>
-        /// 	<c>true</c> if [is find by id] [the specified document map]; otherwise, <c>false</c>.
+        /// 	<c>true</c> if [is find by id] [the specified class map]; otherwise, <c>false</c>.
         /// </returns>
-        private static bool IsFindById(DocumentMap documentMap, Document conditions)
+        private static bool IsFindById(ClassMap classMap, Document conditions)
         {
-            return documentMap.HasId && conditions.Count == 1 && conditions[documentMap.IdMap.Key] != null;
+            return classMap.HasId && conditions.Count == 1 && conditions[classMap.IdMap.Key] != null;
         }
 
         /// <summary>
         /// Determines whether the query can be called without a cursor.
         /// </summary>
-        /// <param name="documentMap">The document map.</param>
+        /// <param name="classMap">The class map.</param>
         /// <param name="conditions">The conditions.</param>
         /// <param name="limit">The limit.</param>
         /// <param name="skip">The skip.</param>
         /// <param name="orderBy">The order by.</param>
         /// <returns>
-        /// 	<c>true</c> if [is find one] [the specified document map]; otherwise, <c>false</c>.
+        /// 	<c>true</c> if [is find one] [the specified class map]; otherwise, <c>false</c>.
         /// </returns>
         private static bool IsFindOne(int limit, int skip, Document orderBy)
         {
@@ -60,10 +60,10 @@ namespace MongoDB.Framework.Persistence
 
         #region Protected Methods
 
-        protected IEnumerable<object> Find(DocumentMap documentMap, Document conditions, int limit, int skip, Document orderBy, Document fields)
+        protected IEnumerable<object> Find(ClassMap classMap, Document conditions, int limit, int skip, Document orderBy, Document fields)
         {
-            if (documentMap == null)
-                throw new ArgumentNullException("documentMap");
+            if (classMap == null)
+                throw new ArgumentNullException("classMap");
             if (conditions == null)
                 throw new ArgumentNullException("conditions");
             if (orderBy == null)
@@ -75,9 +75,9 @@ namespace MongoDB.Framework.Persistence
             conditions = (Document)query["query"] ?? query;
 
             IEnumerable<Document> documents;
-            if (IsFindById(documentMap, conditions))
+            if (IsFindById(classMap, conditions))
             {
-                string id = (string)MongoTypeConverter.ConvertFromDocumentValue(conditions[documentMap.IdMap.Key]);
+                string id = (string)MongoTypeConverter.ConvertFromDocumentValue(conditions[classMap.IdMap.Key]);
                 TrackedObject trackedObject = null;
                 if (this.ChangeTracker.TryGetTrackedObjectById(id, out trackedObject))
                     return new[] { trackedObject.Current };
@@ -86,9 +86,9 @@ namespace MongoDB.Framework.Persistence
             }
             else if (IsFindOne(limit, skip, orderBy))
             {
-                //if the particular entity type we need has a discriminator, we need to filter on it...
-                if (documentMap.IsPolymorphic && documentMap.Discriminator != null)
-                    conditions[documentMap.DiscriminatorKey] = documentMap.Discriminator;
+                //if the particular type we need has a discriminator, we need to filter on it...
+                if (classMap.IsPolymorphic && classMap.Discriminator != null)
+                    conditions[classMap.DiscriminatorKey] = classMap.Discriminator;
                 var document = this.Collection.FindOne(conditions);
                 if (document == null)
                     documents = Enumerable.Empty<Document>();
@@ -97,15 +97,15 @@ namespace MongoDB.Framework.Persistence
             }
             else
             {
-                if (documentMap.IsPolymorphic)
+                if (classMap.IsPolymorphic)
                 {
                     //if we are projecting, we need to make sure we get the discriminator back as well...
                     if (fields.Count != 0)
-                        fields[documentMap.DiscriminatorKey] = 1;
+                        fields[classMap.DiscriminatorKey] = 1;
 
-                    //if the particular entity type we need has a discriminator, we need to filter on it...
-                    if (documentMap.Discriminator != null)
-                        conditions[documentMap.DiscriminatorKey] = documentMap.Discriminator;
+                    //if the particular type we need has a discriminator, we need to filter on it...
+                    if (classMap.Discriminator != null)
+                        conditions[classMap.DiscriminatorKey] = classMap.Discriminator;
                 }
 
                 documents = this.Collection.Find(query, limit, skip, fields).Documents;
@@ -117,7 +117,7 @@ namespace MongoDB.Framework.Persistence
                 translator = new ChangeTrackingDocumentToEntityTranslator(this.MappingStore, this.ChangeTracker);
             else
                 translator = new DocumentToEntityTranslator(this.MappingStore);
-            return this.CreateEntities(translator, documentMap, documents);
+            return this.CreateEntities(translator, classMap, documents);
         }
 
         #endregion
@@ -128,29 +128,29 @@ namespace MongoDB.Framework.Persistence
         /// Creates the entities.
         /// </summary>
         /// <param name="translator">The translator.</param>
-        /// <param name="documentMap">The document map.</param>
+        /// <param name="classMap">The class map.</param>
         /// <param name="documents">The documents.</param>
         /// <returns></returns>
-        private IEnumerable<object> CreateEntities(DocumentToEntityTranslator translator, DocumentMap documentMap, IEnumerable<Document> documents)
+        private IEnumerable<object> CreateEntities(DocumentToEntityTranslator translator, ClassMap classMap, IEnumerable<Document> documents)
         {
             foreach (var document in documents)
             {
                 if (document == null)
                     yield return null;
                 else
-                    yield return this.CreateEntity(translator, documentMap, document);
+                    yield return this.CreateEntity(translator, classMap, document);
             }
         }
 
         /// <summary>
         /// Creates the entity.
         /// </summary>
-        /// <param name="entityType">Type of the entity.</param>
+        /// <param name="type">Type of the entity.</param>
         /// <param name="document">The document.</param>
         /// <returns></returns>
-        private object CreateEntity(DocumentToEntityTranslator translator, DocumentMap documentMap, Document document)
+        private object CreateEntity(DocumentToEntityTranslator translator, ClassMap classMap, Document document)
         {
-            return translator.Translate(documentMap, document);
+            return translator.Translate(classMap, document);
         }
 
         /// <summary>
@@ -187,25 +187,25 @@ namespace MongoDB.Framework.Persistence
             }
 
             /// <summary>
-            /// Translates the specified document map.
+            /// Translates the specified class map.
             /// </summary>
-            /// <param name="documentMap">The document map.</param>
+            /// <param name="classMap">The class map.</param>
             /// <param name="document">The document.</param>
             /// <returns></returns>
-            public override object Translate(DocumentMap documentMap, Document document)
+            public override object Translate(ClassMap classMap, Document document)
             {
-                if (documentMap.HasId)
+                if (classMap.HasId)
                 {
-                    var value = document[documentMap.IdMap.Key];
+                    var value = document[classMap.IdMap.Key];
                     value = MongoTypeConverter.ConvertFromDocumentValue(value);
                     TrackedObject trackedObject;
                     if (this.changeTracker.TryGetTrackedObjectById((string)value, out trackedObject))
                         return trackedObject.Current;
                 }
 
-                var entity = base.Translate(documentMap, document);
+                var entity = base.Translate(classMap, document);
 
-                if (documentMap.HasId)
+                if (classMap.HasId)
                     this.changeTracker.Track(document, entity);
 
                 //TODO: may need to fix up references...

@@ -33,39 +33,39 @@ namespace MongoDB.Framework.Mapping
         #region Public Methods
 
         /// <summary>
-        /// Translates the specified entity type.
+        /// Translates the document into the specified type.
         /// </summary>
-        /// <param name="entityType">Type of the entity.</param>
+        /// <param name="type">The type.</param>
         /// <param name="document">The document.</param>
         /// <returns></returns>
-        public object Translate(Type entityType, Document document)
+        public object Translate(Type type, Document document)
         {
-            var documentMap = this.mappingStore.GetDocumentMapFor(entityType);
-            return this.Translate(documentMap, document);
+            var classMap = this.mappingStore.GetClassMapFor(type);
+            return this.Translate(classMap, document);
         }
 
         /// <summary>
-        /// Translates the specified document map.
+        /// Translates the specified class map.
         /// </summary>
-        /// <param name="documentMap">The document map.</param>
+        /// <param name="classMap">The class map.</param>
         /// <param name="document">The document.</param>
         /// <returns></returns>
-        public virtual object Translate(DocumentMap documentMap, Document document)
+        public virtual object Translate(ClassMap classMap, Document document)
         {
             //this is a destructive process in order to obtain extended properties.
             //therefore we will work off of a copy in order to preserve the original document.
             var documentCopy = new Document();
             document.CopyTo(documentCopy); 
 
-            if(documentMap.IsPolymorphic)
+            if(classMap.IsPolymorphic)
             {
-                var discriminator = document[documentMap.DiscriminatorKey];
+                var discriminator = document[classMap.DiscriminatorKey];
                 //TODO: potentially allow for conversion here...
-                documentMap = documentMap.GetDocumentMapByDiscriminator(discriminator);
+                classMap = classMap.GetClassMapByDiscriminator(discriminator);
             }
 
-            var entity = Activator.CreateInstance(documentMap.EntityType);
-            this.Translate(documentMap, entity, documentCopy);
+            var entity = Activator.CreateInstance(classMap.Type);
+            this.Translate(classMap, entity, documentCopy);
             return entity;
         }
 
@@ -80,20 +80,20 @@ namespace MongoDB.Framework.Mapping
         /// <param name="entityMap">The entity map.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="document">The document.</param>
-        private void Translate(DocumentMap documentMap, object entity, Document document)
+        private void Translate(ClassMap classMap, object entity, Document document)
         {
-            if (documentMap.HasId)
-                this.ApplyIdMap(documentMap.IdMap, entity, document);
+            if (classMap.HasId)
+                this.ApplyIdMap(classMap.IdMap, entity, document);
 
-            this.ApplySimpleValueMaps(documentMap.SimpleValueMaps, entity, document);
-            this.ApplyNestedDocumentValueMaps(documentMap.NestedDocumentValueMaps, entity, document);
-            this.ApplyReferenceValueMaps(documentMap.ReferenceValueMaps, entity, document);
+            this.ApplySimpleValueMaps(classMap.SimpleValueMaps, entity, document);
+            this.ApplyComponentValueMaps(classMap.ComponentValueMaps, entity, document);
+            this.ApplyReferenceValueMaps(classMap.ReferenceValueMaps, entity, document);
 
-            if (documentMap.IsPolymorphic)
-                document.Remove(documentMap.DiscriminatorKey);
+            if (classMap.IsPolymorphic)
+                document.Remove(classMap.DiscriminatorKey);
 
-            if(documentMap.HasExtendedProperties)
-                this.ApplyExtendedPropertiesMap(documentMap.ExtendedPropertiesMap, entity, document);
+            if(classMap.HasExtendedProperties)
+                this.ApplyExtendedPropertiesMap(classMap.ExtendedPropertiesMap, entity, document);
         }
 
         /// <summary>
@@ -125,20 +125,20 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Applies the nested document value maps.
         /// </summary>
-        /// <param name="nestedDocumentValueMaps">The nested document value maps.</param>
+        /// <param name="componentValueMaps">The nested document value maps.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="document">The document.</param>
-        private void ApplyNestedDocumentValueMaps(IEnumerable<NestedDocumentValueMap> nestedDocumentValueMaps, object entity, Document document)
+        private void ApplyComponentValueMaps(IEnumerable<ComponentValueMap> componentValueMaps, object entity, Document document)
         {
-            foreach (var nestedDocumentMap in nestedDocumentValueMaps)
+            foreach (var componentClassMap in componentValueMaps)
             {
-                var value = document[nestedDocumentMap.Key] as Document;
-                document.Remove(nestedDocumentMap.Key);
+                var value = document[componentClassMap.Key] as Document;
+                document.Remove(componentClassMap.Key);
                 if (value == null)
                     return;
 
-                var nestedEntity = this.Translate(nestedDocumentMap.RootDocumentMap, value);
-                nestedDocumentMap.MemberSetter(entity, nestedEntity);
+                var nestedEntity = this.Translate(componentClassMap.ComponentClassMap, value);
+                componentClassMap.MemberSetter(entity, nestedEntity);
             }
         }
 
@@ -173,10 +173,10 @@ namespace MongoDB.Framework.Mapping
             }
         }
 
-        private static object GetDefaultValue(Type entityType)
+        private static object GetDefaultValue(Type type)
         {
-            if (entityType.IsValueType)
-                return Activator.CreateInstance(entityType);
+            if (type.IsValueType)
+                return Activator.CreateInstance(type);
             return null;
         }
 

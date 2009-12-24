@@ -5,26 +5,16 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping
 {
-    public class RootDocumentMap : DocumentMap
+    public abstract class SuperClassMap : ClassMap
     {
         #region Private Fields
 
         private ExtendedPropertiesMap extendedPropertiesMap;
-        private readonly List<SubDocumentMap> subDocumentMaps;
+        private readonly List<SubClassMap> subClassMaps;
 
         #endregion
 
         #region Public Properties
-
-        /// <summary>
-        /// Gets the name of the collection.
-        /// </summary>
-        /// <value>The name of the collection.</value>
-        public override string CollectionName
-        {
-            get { throw new NotSupportedException("Cannot get CollectionName from a RootDocumentMap.  Use the CollectionMap."); }
-            set { throw new NotSupportedException("Cannot set CollectionName on a RootDocumentMap.  Use the CollectionMap."); }
-        }
 
         /// <summary>
         /// Gets or sets the discriminator key.
@@ -47,16 +37,16 @@ namespace MongoDB.Framework.Mapping
         ///
         public override bool IsPolymorphic
         {
-            get { return this.subDocumentMaps.Count > 0; }
+            get { return this.subClassMaps.Count > 0; }
         }
 
         /// <summary>
-        /// Gets the sub document maps.
+        /// Gets the sub class maps.
         /// </summary>
-        /// <value>The sub document maps.</value>
-        public virtual IEnumerable<SubDocumentMap> SubDocumentMaps
+        /// <value>The sub class maps.</value>
+        public virtual IEnumerable<SubClassMap> SubClassMaps
         {
-            get { return this.subDocumentMaps; }
+            get { return this.subClassMaps; }
         }
 
         #endregion
@@ -64,13 +54,13 @@ namespace MongoDB.Framework.Mapping
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RootDocumentMap"/> class.
+        /// Initializes a new instance of the <see cref="SuperClassMap"/> class.
         /// </summary>
-        /// <param name="entityType">Type of the entity.</param>
-        public RootDocumentMap(Type entityType)
-            : base(entityType)
+        /// <param name="type">Type of the entity.</param>
+        public SuperClassMap(Type type)
+            : base(type)
         {
-            this.subDocumentMaps = new List<SubDocumentMap>();
+            this.subClassMaps = new List<SubClassMap>();
         }
 
         #endregion
@@ -78,23 +68,23 @@ namespace MongoDB.Framework.Mapping
         #region Public Methods
 
         /// <summary>
-        /// Adds the sub document map.
+        /// Adds the sub class map.
         /// </summary>
-        /// <param name="subDocumentMap">The sub document map.</param>
-        public void AddSubDocumentMap(SubDocumentMap subDocumentMap)
+        /// <param name="subClassMap">The sub class map.</param>
+        public void AddSubClassMap(SubClassMap subClassMap)
         {
-            if (subDocumentMap == null)
-                throw new ArgumentNullException("subDocumentMap");
+            if (subClassMap == null)
+                throw new ArgumentNullException("subClassMap");
 
-            this.subDocumentMaps.Add(subDocumentMap);
+            this.subClassMaps.Add(subClassMap);
         }
 
         /// <summary>
-        /// Gets the document map by discriminator.
+        /// Gets the class map by discriminator.
         /// </summary>
         /// <param name="discriminator">The discriminator.</param>
         /// <returns></returns>
-        public override DocumentMap GetDocumentMapByDiscriminator(object discriminator)
+        public override ClassMap GetClassMapByDiscriminator(object discriminator)
         {
             if (this.Discriminator == null)
             {
@@ -104,9 +94,9 @@ namespace MongoDB.Framework.Mapping
             else if (this.Discriminator.Equals(discriminator))
                 return this;
 
-            foreach (var subDocumentMap in this.subDocumentMaps)
-                if (subDocumentMap.Discriminator.Equals(discriminator))
-                    return subDocumentMap;
+            foreach (var subClassMap in this.subClassMaps)
+                if (subClassMap.Discriminator.Equals(discriminator))
+                    return subClassMap;
 
             throw new UnmappedDiscriminatorException(string.Format("The discriminator {0} has not been mapped.", discriminator));
         }

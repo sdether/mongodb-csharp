@@ -31,8 +31,8 @@ namespace MongoDB.Framework.Persistence
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
-            var documentMap = this.MappingStore.GetDocumentMapFor(entity.GetType());
-            if (!documentMap.HasId)
+            var classMap = this.MappingStore.GetClassMapFor(entity.GetType());
+            if (!classMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
             var document = new EntityToDocumentTranslator(this.MappingStore)

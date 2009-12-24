@@ -78,8 +78,8 @@ namespace MongoDB.Framework.Mapping
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
-            var documentMap = this.mappingStore.GetDocumentMapFor(entity.GetType());
-            return this.Translate(documentMap, entity);
+            var classMap = this.mappingStore.GetClassMapFor(entity.GetType());
+            return this.Translate(classMap, entity);
         }
 
         /// <summary>
@@ -87,13 +87,13 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        public Document Translate(DocumentMap documentMap, object entity)
+        public Document Translate(ClassMap classMap, object entity)
         {
-            if (documentMap == null)
-                throw new ArgumentNullException("documentMap");
+            if (classMap == null)
+                throw new ArgumentNullException("classMap");
             if (entity == null)
                 throw new ArgumentNullException("entity");
-            return this.CreateDocument(documentMap, entity);
+            return this.CreateDocument(classMap, entity);
         }
 
         #endregion
@@ -103,27 +103,27 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Creates the document.
         /// </summary>
-        /// <param name="documentMap">The document map.</param>
+        /// <param name="classMap">The class map.</param>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        private Document CreateDocument(DocumentMap documentMap, object entity)
+        private Document CreateDocument(ClassMap classMap, object entity)
         {
             var document = new Document();
-            if (documentMap.HasId)
-                this.ApplyIdMap(documentMap.IdMap, entity, document);
+            if (classMap.HasId)
+                this.ApplyIdMap(classMap.IdMap, entity, document);
 
-            this.ApplySimpleValueMaps(documentMap.SimpleValueMaps, entity, document);
-            this.ApplyNestedDocumentValueMaps(documentMap.NestedDocumentValueMaps, entity, document);
-            this.ApplyReferenceValueMaps(documentMap.ReferenceValueMaps, entity, document);
+            this.ApplySimpleValueMaps(classMap.SimpleValueMaps, entity, document);
+            this.ApplyComponentValueMaps(classMap.ComponentValueMaps, entity, document);
+            this.ApplyReferenceValueMaps(classMap.ReferenceValueMaps, entity, document);
 
-            if (documentMap.IsPolymorphic && documentMap.Discriminator != null)
-                document[documentMap.DiscriminatorKey] = documentMap.Discriminator;
+            if (classMap.IsPolymorphic && classMap.Discriminator != null)
+                document[classMap.DiscriminatorKey] = classMap.Discriminator;
 
-            if(documentMap.HasExtendedProperties)
-                this.ApplyExtendedPropertiesMap(documentMap.ExtendedPropertiesMap, entity, document);
+            if(classMap.HasExtendedProperties)
+                this.ApplyExtendedPropertiesMap(classMap.ExtendedPropertiesMap, entity, document);
 
-            if (documentMap.IsPolymorphic && documentMap.Discriminator != null)
-                document[documentMap.DiscriminatorKey] = documentMap.Discriminator;
+            if (classMap.IsPolymorphic && classMap.Discriminator != null)
+                document[classMap.DiscriminatorKey] = classMap.Discriminator;
 
             return document;
         }
@@ -157,25 +157,25 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
-        /// Applies the nested document maps.
+        /// Applies the nested class maps.
         /// </summary>
-        /// <param name="nestedDocumentValueMaps">The nested document value maps.</param>
+        /// <param name="componentValueMaps">The nested document value maps.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="document">The document.</param>
-        private void ApplyNestedDocumentValueMaps(IEnumerable<NestedDocumentValueMap> nestedDocumentValueMaps, object entity, Document document)
+        private void ApplyComponentValueMaps(IEnumerable<ComponentValueMap> componentValueMaps, object entity, Document document)
         {
-            foreach (var nestedDocumentValueMap in nestedDocumentValueMaps)
+            foreach (var componentValueMap in componentValueMaps)
             {
-                var value = nestedDocumentValueMap.MemberGetter(entity);
-                value = this.CreateDocument(nestedDocumentValueMap.RootDocumentMap, value);
-                document[nestedDocumentValueMap.Key] = value;
+                var value = componentValueMap.MemberGetter(entity);
+                value = this.CreateDocument(componentValueMap.ComponentClassMap, value);
+                document[componentValueMap.Key] = value;
             }
         }
 
         /// <summary>
-        /// Applies the nested document maps.
+        /// Applies the nested class maps.
         /// </summary>
-        /// <param name="nestedDocumentValueMaps">The nested document value maps.</param>
+        /// <param name="componentValueMaps">The nested document value maps.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="document">The document.</param>
         private void ApplyReferenceValueMaps(IEnumerable<ReferenceValueMap> referenceValueMaps, object entity, Document document)

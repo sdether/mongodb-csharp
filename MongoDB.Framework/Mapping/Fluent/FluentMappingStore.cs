@@ -9,7 +9,7 @@ namespace MongoDB.Framework.Mapping.Fluent
 {
     public class FluentMappingStore : MappingStore
     {
-        private static readonly PropertyInfo instancePropertyInfo = typeof(FluentMap<CollectionMap>).GetProperty("Instance");
+        private static readonly PropertyInfo instancePropertyInfo = typeof(FluentMap<RootClassMap>).GetProperty("Instance");
 
         /// <summary>
         /// Adds the maps from assembly containing the specified type.
@@ -30,24 +30,24 @@ namespace MongoDB.Framework.Mapping.Fluent
             foreach (var type in assembly.GetTypes())
             {
                 var baseType = type.BaseType;
-                if (baseType.IsGenericType && typeof(FluentCollectionMap<>).IsAssignableFrom(baseType.GetGenericTypeDefinition()))
+                if (baseType.IsGenericType && typeof(FluentRootClassMap<>).IsAssignableFrom(baseType.GetGenericTypeDefinition()))
                 {
                     var fluentCollectionMap = Activator.CreateInstance(type);
-                    this.AddCollectionMap((CollectionMap)instancePropertyInfo.GetValue(fluentCollectionMap, null));
+                    this.AddCollectionMap((RootClassMap)instancePropertyInfo.GetValue(fluentCollectionMap, null));
                 }
             }
             return this;
         }
 
         /// <summary>
-        /// Tries to get the missing document map.
+        /// Tries to get the missing class map.
         /// </summary>
-        /// <param name="entityType">Type of the entity.</param>
-        /// <param name="documentMap">The document map.</param>
+        /// <param name="type">Type of the entity.</param>
+        /// <param name="classMap">The class map.</param>
         /// <returns></returns>
-        protected override bool TryGetMissingDocumentMap(Type entityType, out DocumentMap documentMap)
+        protected override bool TryGetMissingClassMap(Type type, out ClassMap classMap)
         {
-            documentMap = null;
+            classMap = null;
             return false;
         }
     }

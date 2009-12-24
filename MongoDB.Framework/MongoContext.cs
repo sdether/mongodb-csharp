@@ -235,8 +235,8 @@ namespace MongoDB.Framework
         {
             foreach (var entityGroup in inserted.GroupBy(a => a.GetType()))
             {
-                var documentMap = this.mappingStore.GetDocumentMapFor(entityGroup.Key);
-                var collection = this.Database.GetCollection(documentMap.CollectionName);
+                var classMap = this.mappingStore.GetClassMapFor(entityGroup.Key);
+                var collection = this.Database.GetCollection(classMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
                     new InsertAction(this.mappingStore, this.changeTracker, collection)
@@ -253,8 +253,8 @@ namespace MongoDB.Framework
         {
             foreach (var entityGroup in updated.GroupBy(a => a.GetType()))
             {
-                var documentMap = this.mappingStore.GetDocumentMapFor(entityGroup.Key);
-                var collection = this.Database.GetCollection(documentMap.CollectionName);
+                var classMap = this.mappingStore.GetClassMapFor(entityGroup.Key);
+                var collection = this.Database.GetCollection(classMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
                     new UpdateAction(this.mappingStore, this.changeTracker, collection)
@@ -271,8 +271,8 @@ namespace MongoDB.Framework
         {
             foreach (var entityGroup in deleted.GroupBy(a => a.GetType()))
             {
-                var documentMap = this.mappingStore.GetDocumentMapFor(entityGroup.Key);
-                var collection = this.Database.GetCollection(documentMap.CollectionName);
+                var classMap = this.mappingStore.GetClassMapFor(entityGroup.Key);
+                var collection = this.Database.GetCollection(classMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
                     new DeleteAction(this.mappingStore, this.changeTracker, collection)

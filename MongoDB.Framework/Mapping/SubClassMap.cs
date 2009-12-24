@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping
 {
-    public class SubDocumentMap : DocumentMap
+    public class SubClassMap : ClassMap
     {
         #region Public Properties
 
@@ -15,8 +15,8 @@ namespace MongoDB.Framework.Mapping
         /// <value>The name of the collection.</value>
         public override string CollectionName
         {
-            get { return this.RootDocumentMap.CollectionName; }
-            set { throw new NotSupportedException("Cannot set CollectionName on a SubDocumentMap.  Use the CollectionMap."); }
+            get { return this.SuperClassMap.CollectionName; }
+            set { throw new NotSupportedException("Cannot set CollectionName on a SubClassMap.  Use the CollectionMap."); }
         }
 
         /// <summary>
@@ -25,8 +25,8 @@ namespace MongoDB.Framework.Mapping
         /// <value>The discriminator key.</value>
         public override string DiscriminatorKey
         {
-            get { return this.RootDocumentMap.DiscriminatorKey; }
-            set { throw new NotSupportedException("Cannot set DiscriminatorKey on a SubDocumentMap.  Use the RootDocumentMap."); }
+            get { return this.SuperClassMap.DiscriminatorKey; }
+            set { throw new NotSupportedException("Cannot set DiscriminatorKey on a SubClassMap.  Use the RootClassMap."); }
         }
 
         /// <summary>
@@ -35,8 +35,8 @@ namespace MongoDB.Framework.Mapping
         /// <value>The extended properties map.</value>
         public override ExtendedPropertiesMap ExtendedPropertiesMap
         {
-            get { return this.RootDocumentMap.ExtendedPropertiesMap; }
-            set { throw new NotSupportedException("Cannot set ExtendedPropertiesMap on a SubDocumentMap.  Use the RootDocumentMap."); }
+            get { return this.SuperClassMap.ExtendedPropertiesMap; }
+            set { throw new NotSupportedException("Cannot set ExtendedPropertiesMap on a SubClassMap.  Use the RootClassMap."); }
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace MongoDB.Framework.Mapping
         /// <value>The id map.</value>
         public override IdMap IdMap
         {
-            get { return this.RootDocumentMap.IdMap; }
+            get { return this.SuperClassMap.IdMap; }
             set { base.IdMap = value; } //should throw...
         }
 
@@ -64,12 +64,12 @@ namespace MongoDB.Framework.Mapping
         /// Gets the simple value maps.
         /// </summary>
         /// <value>The simple value maps.</value>
-        public override IEnumerable<NestedDocumentValueMap> NestedDocumentValueMaps
+        public override IEnumerable<ComponentValueMap> ComponentValueMaps
         {
             get
             {
-                return base.NestedDocumentValueMaps
-                    .Concat(this.RootDocumentMap.NestedDocumentValueMaps);
+                return base.ComponentValueMaps
+                    .Concat(this.SuperClassMap.ComponentValueMaps);
             }
         }
 
@@ -82,15 +82,9 @@ namespace MongoDB.Framework.Mapping
             get
             {
                 return base.ReferenceValueMaps
-                    .Concat(this.RootDocumentMap.ReferenceValueMaps);
+                    .Concat(this.SuperClassMap.ReferenceValueMaps);
             }
         }
-
-        /// <summary>
-        /// Gets the root document map.
-        /// </summary>
-        /// <value>The root document map.</value>
-        public RootDocumentMap RootDocumentMap { get; private set; }
 
         /// <summary>
         /// Gets the simple value maps.
@@ -101,27 +95,32 @@ namespace MongoDB.Framework.Mapping
             get
             {
                 return base.SimpleValueMaps
-                    .Concat(this.RootDocumentMap.SimpleValueMaps);
+                    .Concat(this.SuperClassMap.SimpleValueMaps);
             }
         }
+
+        /// <summary>
+        /// Gets the super class map.
+        /// </summary>
+        /// <value>The super class map.</value>
+        public SuperClassMap SuperClassMap { get; private set; }
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SubDocumentMap"/> class.
+        /// Initializes a new instance of the <see cref="SubClassMap"/> class.
         /// </summary>
-        /// <param name="mappingStore">The mapping store.</param>
-        /// <param name="entityType">Type of the entity.</param>
-        /// <param name="rootDocumentMap">The root document map.</param>
-        public SubDocumentMap(Type entityType, RootDocumentMap rootDocumentMap)
-            : base(entityType)
+        /// <param name="type">Type of the entity.</param>
+        /// <param name="classMap">The class map.</param>
+        public SubClassMap(Type type, SuperClassMap superClassMap)
+            : base(type)
         {
-            if (rootDocumentMap == null)
-                throw new ArgumentNullException("parentDocumentMap");
+            if (superClassMap == null)
+                throw new ArgumentNullException("superClassMap");
 
-            this.RootDocumentMap = rootDocumentMap;
+            this.SuperClassMap = superClassMap;
         }
 
         #endregion
@@ -129,14 +128,14 @@ namespace MongoDB.Framework.Mapping
         #region Public Methods
 
         /// <summary>
-        /// Gets the document map by discriminator.
+        /// Gets the class map by discriminator.
         /// </summary>
         /// <param name="discriminator">The discriminator.</param>
         /// <returns></returns>
-        public override DocumentMap GetDocumentMapByDiscriminator(object discriminator)
+        public override ClassMap GetClassMapByDiscriminator(object discriminator)
         {
             if (!this.Discriminator.Equals(discriminator))
-                throw new InvalidOperationException(string.Format("The discriminator specified does not belong to the entity {0}.", this.EntityType));
+                throw new InvalidOperationException(string.Format("The discriminator specified does not belong to the entity {0}.", this.Type));
 
             return this;
         }

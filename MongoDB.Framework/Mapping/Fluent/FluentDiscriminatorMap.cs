@@ -7,19 +7,20 @@ namespace MongoDB.Framework.Mapping.Fluent
 {
     public class FluentDiscriminatorMap<TDiscriminator>
     {
-        private RootDocumentMap rootDocumentMap;
+        private SuperClassMap rootClassMap;
 
-        public FluentDiscriminatorMap(RootDocumentMap rootDocumentMap)
+        public FluentDiscriminatorMap(SuperClassMap rootClassMap)
         {
-            this.rootDocumentMap = rootDocumentMap;
+            this.rootClassMap = rootClassMap;
         }
 
-        public void Sub<TSubEntity>(TDiscriminator discriminator, Action<FluentSubDocumentMap<TSubEntity>> configure)
+        public FluentDiscriminatorMap<TDiscriminator> SubClass<T>(TDiscriminator discriminator, Action<FluentSubClassMap<T>> configure)
         {
-            var fluentSubDocumentMap = new FluentSubDocumentMap<TSubEntity>(this.rootDocumentMap);
-            configure(fluentSubDocumentMap);
-            fluentSubDocumentMap.Instance.Discriminator = discriminator;
-            this.rootDocumentMap.AddSubDocumentMap(fluentSubDocumentMap.Instance);
+            var fluentSubClassMap = new FluentSubClassMap<T>(this.rootClassMap);
+            configure(fluentSubClassMap);
+            fluentSubClassMap.Instance.Discriminator = discriminator;
+            this.rootClassMap.AddSubClassMap(fluentSubClassMap.Instance);
+            return this;
         }
     }
 }

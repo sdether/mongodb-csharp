@@ -24,17 +24,17 @@ namespace MongoDB.Framework.Persistence
         /// <summary>
         /// Finds the specified query.
         /// </summary>
-        /// <param name="entityType">Type of the entity.</param>
+        /// <param name="type">Type of the entity.</param>
         /// <param name="fields">The fields.</param>
         /// <param name="conditions">The conditions.</param>
         /// <param name="limit">The limit.</param>
         /// <param name="skip">The skip.</param>
         /// <param name="orderBy">The order by.</param>
         /// <returns></returns>
-        public IEnumerable<object> Find(Type entityType, Document conditions, int limit, int skip, Document orderBy, Document fields)
+        public IEnumerable<object> Find(Type type, Document conditions, int limit, int skip, Document orderBy, Document fields)
         {
-            var documentMap = this.MappingStore.GetDocumentMapFor(entityType);
-            return this.Find(documentMap, conditions, limit, skip, orderBy, fields);
+            var classMap = this.MappingStore.GetClassMapFor(type);
+            return this.Find(classMap, conditions, limit, skip, orderBy, fields);
         }
 
     }

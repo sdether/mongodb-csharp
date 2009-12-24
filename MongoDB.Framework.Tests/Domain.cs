@@ -8,7 +8,7 @@ using MongoDB.Framework.Mapping.Fluent;
 
 namespace MongoDB.Framework
 {
-    public class PartyMap : FluentCollectionMap<Party>
+    public class PartyMap : FluentRootClassMap<Party>
     {
         public PartyMap()
         {
@@ -24,18 +24,15 @@ namespace MongoDB.Framework
                 m.Map(x => x.Number);
             });
 
-            DiscriminatedBy<string>("Type", m =>
-            {
-                m.Sub<Person>(PartyType.Person.ToString(), sm =>
+            DiscriminateSubClassesOnKey<string>("Type")
+                .SubClass<Person>(PartyType.Person.ToString(), m =>
                 {
-                    sm.Map(x => x.BirthDate);
-                });
-
-                m.Sub<Organization>(PartyType.Organization.ToString(), sm =>
+                    m.Map(x => x.BirthDate);
+                })
+                .SubClass<Organization>(PartyType.Organization.ToString(), m =>
                 {
-                    sm.Map(x => x.EmployeeCount);
+                    m.Map(x => x.EmployeeCount);
                 });
-            });
 
             ExtendedProperties(x => x.ExtendedProperties);
         }

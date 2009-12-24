@@ -26,10 +26,10 @@ namespace MongoDB.Framework.Persistence
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <returns></returns>
-        public object FindOne(Type entityType, Document conditions)
+        public object FindOne(Type type, Document conditions)
         {
-            var documentMap = this.MappingStore.GetDocumentMapFor(entityType);
-            return this.Find(documentMap, conditions, 0, 0, new Document(), new Document());
+            var classMap = this.MappingStore.GetClassMapFor(type);
+            return this.Find(classMap, conditions, 0, 0, new Document(), new Document());
         }
     }
 }

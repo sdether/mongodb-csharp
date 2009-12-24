@@ -6,11 +6,11 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Mapping
 {
-    public abstract class DocumentMap : Map
+    public abstract class ClassMap : Map
     {
         #region Private Fields
 
-        private readonly Dictionary<string, NestedDocumentValueMap> nestedDocumentValueMaps;
+        private readonly Dictionary<string, ComponentValueMap> componentValueMaps;
         private readonly Dictionary<string, ReferenceValueMap> referenceValueMaps;
         private readonly Dictionary<string, SimpleValueMap> simpleValueMaps;
 
@@ -35,12 +35,6 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <value>The discriminator key.</value>
         public abstract string DiscriminatorKey { get; set; }
-
-        /// <summary>
-        /// Gets the type of the entity.
-        /// </summary>
-        /// <value>The type of the entity.</value>
-        public Type EntityType { get; private set; }
 
         /// <summary>
         /// Gets the extended properties map.
@@ -87,14 +81,14 @@ namespace MongoDB.Framework.Mapping
         public abstract bool IsPolymorphic { get; }
 
         /// <summary>
-        /// Gets the value maps.
+        /// Gets the component value maps.
         /// </summary>
-        /// <value>The value maps.</value>
-        public virtual IEnumerable<NestedDocumentValueMap> NestedDocumentValueMaps
+        /// <value>The component value maps.</value>
+        public virtual IEnumerable<ComponentValueMap> ComponentValueMaps
         {
             get
             {
-                foreach (var valueMap in this.nestedDocumentValueMaps.Values)
+                foreach (var valueMap in this.componentValueMaps.Values)
                     yield return valueMap;
             }
         }
@@ -125,24 +119,30 @@ namespace MongoDB.Framework.Mapping
             }
         }
 
+        /// <summary>
+        /// Gets the type.
+        /// </summary>
+        /// <value>The type.</value>
+        public Type Type { get; private set; }
+
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DocumentMap"/> class.
+        /// Initializes a new instance of the <see cref="ClassMap"/> class.
         /// </summary>
         /// <param name="metaDataStore">The meta data store.</param>
-        /// <param name="entityType">Type of the entity.</param>
-        public DocumentMap(Type entityType)
+        /// <param name="type">Type of the entity.</param>
+        public ClassMap(Type type)
         {
-            if (entityType == null)
-                throw new ArgumentNullException("entityType");
+            if (type == null)
+                throw new ArgumentNullException("type");
 
-            this.EntityType = entityType;
-            this.nestedDocumentValueMaps = new Dictionary<string, NestedDocumentValueMap>();
+            this.componentValueMaps = new Dictionary<string, ComponentValueMap>();
             this.referenceValueMaps = new Dictionary<string, ReferenceValueMap>();
             this.simpleValueMaps = new Dictionary<string, SimpleValueMap>();
+            this.Type = type;
         }
 
         #endregion
@@ -153,15 +153,15 @@ namespace MongoDB.Framework.Mapping
         /// Adds the value map.
         /// </summary>
         /// <param name="valueMap">The value map.</param>
-        public void AddNestedDocumentValueMap(NestedDocumentValueMap nestedDocumentValueMap)
+        public void AddComponentValueMap(ComponentValueMap componentValueMap)
         {
-            if (nestedDocumentValueMap == null)
+            if (componentValueMap == null)
                 throw new ArgumentNullException("value");
 
-            if (this.ContainsKey(nestedDocumentValueMap.Key))
-                throw new InvalidOperationException(string.Format("An item with key {0} has already been added.", nestedDocumentValueMap.Key));
+            if (this.ContainsKey(componentValueMap.Key))
+                throw new InvalidOperationException(string.Format("An item with key {0} has already been added.", componentValueMap.Key));
 
-            this.nestedDocumentValueMaps.Add(nestedDocumentValueMap.Key, nestedDocumentValueMap);
+            this.componentValueMaps.Add(componentValueMap.Key, componentValueMap);
         }
 
         /// <summary>
@@ -195,11 +195,11 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
-        /// Gets the document map by discriminator.
+        /// Gets the class map by discriminator.
         /// </summary>
         /// <param name="discriminator">The discriminator.</param>
         /// <returns></returns>
-        public abstract DocumentMap GetDocumentMapByDiscriminator(object discriminator);
+        public abstract ClassMap GetClassMapByDiscriminator(object discriminator);
 
         /// <summary>
         /// Gets the name of the value map from member.
@@ -213,7 +213,7 @@ namespace MongoDB.Framework.Mapping
             ValueMap valueMap = this.SimpleValueMaps.FirstOrDefault(x => x.MemberName == memberName);
             if (valueMap != null)
                 return valueMap;
-            valueMap = this.NestedDocumentValueMaps.FirstOrDefault(x => x.MemberName == memberName);
+            valueMap = this.ComponentValueMaps.FirstOrDefault(x => x.MemberName == memberName);
             if (valueMap != null)
                 return valueMap;
             valueMap = this.ReferenceValueMaps.FirstOrDefault(x => x.MemberName == memberName);
@@ -236,7 +236,7 @@ namespace MongoDB.Framework.Mapping
         /// </returns>
         private bool ContainsKey(string key)
         {
-            return this.nestedDocumentValueMaps.ContainsKey(key)
+            return this.componentValueMaps.ContainsKey(key)
                 || this.referenceValueMaps.ContainsKey(key)
                 || this.simpleValueMaps.ContainsKey(key);
         }

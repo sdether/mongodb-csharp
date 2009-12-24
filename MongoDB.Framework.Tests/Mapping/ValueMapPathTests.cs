@@ -35,7 +35,7 @@ namespace MongoDB.Framework.Mapping
         }
 
         [Test]
-        public void Should_create_value_for_NestedDocumentValueMap()
+        public void Should_create_value_for_ComponentValueMap()
         {
             var mappingStore = new FluentMappingStore()
                 .AddMapsFromAssemblyContaining<PartyMap>();

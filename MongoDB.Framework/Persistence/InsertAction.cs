@@ -31,17 +31,17 @@ namespace MongoDB.Framework.Persistence
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
-            var documentMap = this.MappingStore.GetDocumentMapFor(entity.GetType());
-            if (!documentMap.HasId)
+            var classMap = this.MappingStore.GetClassMapFor(entity.GetType());
+            if (!classMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
             var document = new EntityToDocumentTranslator(this.MappingStore)
                 .Translate(entity);
             this.Collection.Insert(document);
 
-            var value = (string)MongoTypeConverter.ConvertFromDocumentValue(document[documentMap.IdMap.Key]);
+            var value = (string)MongoTypeConverter.ConvertFromDocumentValue(document[classMap.IdMap.Key]);
             if (value != null)
-                documentMap.IdMap.MemberSetter(entity, value);
+                classMap.IdMap.MemberSetter(entity, value);
 
             this.ChangeTracker.GetTrackedObject(entity).MoveToPossibleModified(document);
         }
