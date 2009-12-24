@@ -12,130 +12,54 @@ namespace MongoDB.Framework.Mapping.Fluent
 {
     public abstract class FluentClassMap<TMap, TEntity> : FluentMap<TMap> where TMap : ClassMap
     {
-        public void Component<TComponent>(string memberName, Action<FluentComponentClassMap<TComponent>> configure)
+        public FluentComponentValueMap<TComponent> Component<TComponent>(string memberName)
         {
             var memberInfo = this.GetSingleMember(memberName);
-            this.Component(memberInfo, configure);
+            return this.Component<TComponent>(memberInfo);
         }
 
-        public void Component<TComponent>(string memberName, string key, Action<FluentComponentClassMap<TComponent>> configure)
+        public FluentComponentValueMap<TComponent> Component<TComponent>(MemberInfo memberInfo)
         {
-            var memberInfo = this.GetSingleMember(memberName);
-            this.Component(memberInfo, key, configure);
+            var fluentComponentClassMap = new FluentComponentClassMap<TComponent>();
+            var fluentComponentValueMap = new FluentComponentValueMap<TComponent>(fluentComponentClassMap);
+            fluentComponentValueMap.Instance.Key = memberInfo.Name;
+            fluentComponentValueMap.Instance.MemberName = memberInfo.Name;
+            fluentComponentValueMap.Instance.MemberType = LateBoundReflection.GetMemberValueType(memberInfo);
+            fluentComponentValueMap.Instance.MemberGetter = LateBoundReflection.GetGetter(memberInfo);
+            fluentComponentValueMap.Instance.MemberSetter = LateBoundReflection.GetSetter(memberInfo);
+            this.Instance.AddComponentValueMap(fluentComponentValueMap.Instance);
+            return fluentComponentValueMap;
         }
 
-        public void Component<TComponent>(MemberInfo memberInfo, Action<FluentComponentClassMap<TComponent>> configure)
-        {
-            this.Component(memberInfo, memberInfo.Name, configure);
-        }
-
-        public void Component<TComponent>(MemberInfo memberInfo, string key, Action<FluentComponentClassMap<TComponent>> configure)
-        {
-            var fluentRootClassMap = new FluentComponentClassMap<TComponent>();
-            configure(fluentRootClassMap);
-            var componentValueMap = new ComponentValueMap(
-                key,
-                memberInfo.Name,
-                LateBoundReflection.GetMemberValueType(memberInfo),
-                LateBoundReflection.GetGetter(memberInfo),
-                LateBoundReflection.GetSetter(memberInfo),
-                fluentRootClassMap.Instance);
-
-            this.Instance.AddComponentValueMap(componentValueMap);
-        }
-
-        public void Component<TComponent>(Expression<Func<TEntity, TComponent>> idMember, Action<FluentComponentClassMap<TComponent>> configure)
-        {
-            var memberInfo = this.GetSingleMember(idMember);
-            this.Component(memberInfo, configure);
-        }
-
-        public void Component<TComponent>(Expression<Func<TEntity, TComponent>> member, string key, Action<FluentComponentClassMap<TComponent>> configure)
+        public FluentComponentValueMap<TComponent> Component<TComponent>(Expression<Func<TEntity, TComponent>> member)
         {
             var memberInfo = this.GetSingleMember(member);
-            this.Component<TComponent>(memberInfo, key, configure);
+            return this.Component<TComponent>(memberInfo);
         }
 
-        public void Map(string memberName)
+        public FluentSimpleValueMap Map(string memberName)
         {
             var memberInfo = this.GetSingleMember(memberName);
-            this.Map(memberInfo);
+            return this.Map(memberInfo);
         }
 
-        public void Map(string memberName, string key)
+        public FluentSimpleValueMap Map(MemberInfo memberInfo)
         {
-            var memberInfo = this.GetSingleMember(memberName);
-            this.Map(memberInfo, key);
+            var fluentSimpleValueMap = new FluentSimpleValueMap();
+            fluentSimpleValueMap.Instance.Key = memberInfo.Name;
+            fluentSimpleValueMap.Instance.MemberName = memberInfo.Name;
+            fluentSimpleValueMap.Instance.MemberType = LateBoundReflection.GetMemberValueType(memberInfo);
+            fluentSimpleValueMap.Instance.MemberGetter = LateBoundReflection.GetGetter(memberInfo);
+            fluentSimpleValueMap.Instance.MemberSetter = LateBoundReflection.GetSetter(memberInfo);
+
+            this.Instance.AddSimpleValueMap(fluentSimpleValueMap.Instance);
+            return fluentSimpleValueMap;
         }
 
-        public void Map(MemberInfo memberInfo)
-        {
-            this.Map(memberInfo, memberInfo.Name);
-        }
-
-        public void Map(MemberInfo memberInfo, string key)
-        {
-            var simpleValueMap = new SimpleValueMap(
-                key,
-                memberInfo.Name,
-                LateBoundReflection.GetMemberValueType(memberInfo),
-                LateBoundReflection.GetGetter(memberInfo),
-                LateBoundReflection.GetSetter(memberInfo));
-
-            this.Instance.AddSimpleValueMap(simpleValueMap);
-        }
-
-        public void Map(Expression<Func<TEntity, object>> member)
+        public FluentSimpleValueMap Map(Expression<Func<TEntity, object>> member)
         {
             var memberInfo = this.GetSingleMember(member);
-            this.Map(memberInfo);
-        }
-
-        public void Map(Expression<Func<TEntity, object>> member, string key)
-        {
-            var memberInfo = this.GetSingleMember(member);
-            this.Map(memberInfo, key);
-        }
-
-        public void References(string memberName)
-        {
-            var memberInfo = this.GetSingleMember(memberName);
-            this.References(memberInfo);
-        }
-
-        public void References(string memberName, string key)
-        {
-            var memberInfo = this.GetSingleMember(memberName);
-            this.References(memberInfo, key);
-        }
-
-        public void References(MemberInfo memberInfo)
-        {
-            this.References(memberInfo, memberInfo.Name);
-        }
-
-        public void References(MemberInfo memberInfo, string key)
-        {
-            var referenceValueMap = new ReferenceValueMap(
-                key,
-                memberInfo.Name,
-                LateBoundReflection.GetMemberValueType(memberInfo),
-                LateBoundReflection.GetGetter(memberInfo),
-                LateBoundReflection.GetSetter(memberInfo));
-
-            this.Instance.AddReferenceValueMap(referenceValueMap);
-        }
-
-        public void References(Expression<Func<TEntity, object>> member)
-        {
-            var memberInfo = this.GetSingleMember(member);
-            this.References(memberInfo);
-        }
-
-        public void References(Expression<Func<TEntity, object>> member, string key)
-        {
-            var memberInfo = this.GetSingleMember(member);
-            this.References(memberInfo, key);
+            return this.Map(memberInfo);
         }
 
         protected MemberInfo GetSingleMember(string memberName)

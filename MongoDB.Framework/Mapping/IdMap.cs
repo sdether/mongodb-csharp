@@ -8,9 +8,9 @@ namespace MongoDB.Framework.Mapping
 {
     public class IdMap : SimpleValueMap
     {
-        public IdMap(string memberName, Type memberType, Func<object, object> memberGetter, Action<object, object> memberSetter)
-            : base("_id", memberName, memberType, memberGetter, memberSetter)
+        public IdMap()
         {
+            this.Key = "_id";
             this.PersistNulls = false;
         }
     }

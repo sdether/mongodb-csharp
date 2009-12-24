@@ -7,37 +7,16 @@ namespace MongoDB.Framework.Mapping
 {
     public abstract class ValueMap : Map
     {
-        public string Key { get; private set; }
+        public string Key { get; set; }
 
-        public string MemberName { get; private set; }
+        public string MemberName { get; set; }
 
-        public Type MemberType { get; private set; }
+        public Type MemberType { get; set; }
 
-        public Func<object, object> MemberGetter { get; private set; }
+        public Func<object, object> MemberGetter { get; set; }
 
-        public Action<object, object> MemberSetter { get; private set; }
+        public Action<object, object> MemberSetter { get; set; }
 
         public bool PersistNulls { get; set; }
-
-        protected ValueMap(string key, string memberName, Type memberType, Func<object, object> memberGetter, Action<object, object> memberSetter)
-        {
-            if (key == null)
-                throw new ArgumentException("Cannot be null or empty.", "key");
-            if (memberName == null)
-                throw new ArgumentException("Cannot be null or empty.", "memberName");
-            if (memberType == null)
-                throw new ArgumentNullException("memberType");
-            if (memberGetter == null)
-                throw new ArgumentNullException("memberGetter");
-            if (memberSetter == null)
-                throw new ArgumentNullException("memberSetter");
-
-            this.Key = key;
-            this.MemberName = memberName;
-            this.MemberType = memberType;
-            this.MemberGetter = memberGetter;
-            this.MemberSetter = memberSetter;
-            this.PersistNulls = true;
-        }
     }
 }

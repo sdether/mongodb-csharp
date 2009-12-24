@@ -134,12 +134,7 @@ namespace MongoDB.Framework.Persistence
         private IEnumerable<object> CreateEntities(DocumentToEntityTranslator translator, ClassMap classMap, IEnumerable<Document> documents)
         {
             foreach (var document in documents)
-            {
-                if (document == null)
-                    yield return null;
-                else
-                    yield return this.CreateEntity(translator, classMap, document);
-            }
+                yield return this.CreateEntity(translator, classMap, document);
         }
 
         /// <summary>
