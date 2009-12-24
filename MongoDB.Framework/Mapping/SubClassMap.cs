@@ -64,12 +64,12 @@ namespace MongoDB.Framework.Mapping
         /// Gets the simple value maps.
         /// </summary>
         /// <value>The simple value maps.</value>
-        public override IEnumerable<ComponentValueMap> ComponentValueMaps
+        public override IEnumerable<NestedClassValueMap> NestedClassValueMaps
         {
             get
             {
-                return base.ComponentValueMaps
-                    .Concat(this.SuperClassMap.ComponentValueMaps);
+                return base.NestedClassValueMaps
+                    .Concat(this.SuperClassMap.NestedClassValueMaps);
             }
         }
 

@@ -12,29 +12,29 @@ namespace MongoDB.Framework.Mapping.Fluent
 {
     public abstract class FluentClassMap<TMap, TEntity> : FluentMap<TMap> where TMap : ClassMap
     {
-        public FluentComponentValueMap<TComponent> Component<TComponent>(string memberName)
+        public FluentNestedValueMap<TNestedClass> NestedClass<TNestedClass>(string memberName)
         {
             var memberInfo = this.GetSingleMember(memberName);
-            return this.Component<TComponent>(memberInfo);
+            return this.NestedClass<TNestedClass>(memberInfo);
         }
 
-        public FluentComponentValueMap<TComponent> Component<TComponent>(MemberInfo memberInfo)
+        public FluentNestedValueMap<TNestedClass> NestedClass<TNestedClass>(MemberInfo memberInfo)
         {
-            var fluentComponentClassMap = new FluentComponentClassMap<TComponent>();
-            var fluentComponentValueMap = new FluentComponentValueMap<TComponent>(fluentComponentClassMap);
-            fluentComponentValueMap.Instance.Key = memberInfo.Name;
-            fluentComponentValueMap.Instance.MemberName = memberInfo.Name;
-            fluentComponentValueMap.Instance.MemberType = LateBoundReflection.GetMemberValueType(memberInfo);
-            fluentComponentValueMap.Instance.MemberGetter = LateBoundReflection.GetGetter(memberInfo);
-            fluentComponentValueMap.Instance.MemberSetter = LateBoundReflection.GetSetter(memberInfo);
-            this.Instance.AddComponentValueMap(fluentComponentValueMap.Instance);
-            return fluentComponentValueMap;
+            var fluentNestedClassMap = new FluentNestedClassMap<TNestedClass>();
+            var fluentNestedClassValueMap = new FluentNestedValueMap<TNestedClass>(fluentNestedClassMap);
+            fluentNestedClassValueMap.Instance.Key = memberInfo.Name;
+            fluentNestedClassValueMap.Instance.MemberName = memberInfo.Name;
+            fluentNestedClassValueMap.Instance.MemberType = LateBoundReflection.GetMemberValueType(memberInfo);
+            fluentNestedClassValueMap.Instance.MemberGetter = LateBoundReflection.GetGetter(memberInfo);
+            fluentNestedClassValueMap.Instance.MemberSetter = LateBoundReflection.GetSetter(memberInfo);
+            this.Instance.AddNestedClassValueMap(fluentNestedClassValueMap.Instance);
+            return fluentNestedClassValueMap;
         }
 
-        public FluentComponentValueMap<TComponent> Component<TComponent>(Expression<Func<TEntity, TComponent>> member)
+        public FluentNestedValueMap<TNestedClass> NestedClass<TNestedClass>(Expression<Func<TEntity, TNestedClass>> member)
         {
             var memberInfo = this.GetSingleMember(member);
-            return this.Component<TComponent>(memberInfo);
+            return this.NestedClass<TNestedClass>(memberInfo);
         }
 
         public FluentSimpleValueMap Map(string memberName)

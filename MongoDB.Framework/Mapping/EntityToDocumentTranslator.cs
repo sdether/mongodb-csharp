@@ -113,7 +113,7 @@ namespace MongoDB.Framework.Mapping
                 this.ApplyIdMap(classMap.IdMap, entity, document);
 
             this.ApplySimpleValueMaps(classMap.SimpleValueMaps, entity, document);
-            this.ApplyComponentValueMaps(classMap.ComponentValueMaps, entity, document);
+            this.ApplyNestedClassValueMaps(classMap.NestedClassValueMaps, entity, document);
             this.ApplyReferenceValueMaps(classMap.ReferenceValueMaps, entity, document);
 
             if (classMap.IsPolymorphic && classMap.Discriminator != null)
@@ -159,23 +159,23 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Applies the nested class maps.
         /// </summary>
-        /// <param name="componentValueMaps">The nested document value maps.</param>
+        /// <param name="nestedClassValueMaps">The nested document value maps.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="document">The document.</param>
-        private void ApplyComponentValueMaps(IEnumerable<ComponentValueMap> componentValueMaps, object entity, Document document)
+        private void ApplyNestedClassValueMaps(IEnumerable<NestedClassValueMap> nestedClassValueMaps, object entity, Document document)
         {
-            foreach (var componentValueMap in componentValueMaps)
+            foreach (var nestedClassValueMap in nestedClassValueMaps)
             {
-                var value = componentValueMap.MemberGetter(entity);
-                value = this.CreateDocument(componentValueMap.ComponentClassMap, value);
-                document[componentValueMap.Key] = value;
+                var value = nestedClassValueMap.MemberGetter(entity);
+                value = this.CreateDocument(nestedClassValueMap.NestedClassMap, value);
+                document[nestedClassValueMap.Key] = value;
             }
         }
 
         /// <summary>
         /// Applies the nested class maps.
         /// </summary>
-        /// <param name="componentValueMaps">The nested document value maps.</param>
+        /// <param name="nestedClassValueMaps">The nested document value maps.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="document">The document.</param>
         private void ApplyReferenceValueMaps(IEnumerable<ReferenceValueMap> referenceValueMaps, object entity, Document document)

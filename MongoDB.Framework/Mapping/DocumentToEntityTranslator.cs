@@ -86,7 +86,7 @@ namespace MongoDB.Framework.Mapping
                 this.ApplyIdMap(classMap.IdMap, entity, document);
 
             this.ApplySimpleValueMaps(classMap.SimpleValueMaps, entity, document);
-            this.ApplyComponentValueMaps(classMap.ComponentValueMaps, entity, document);
+            this.ApplyNestedClassValueMaps(classMap.NestedClassValueMaps, entity, document);
             this.ApplyReferenceValueMaps(classMap.ReferenceValueMaps, entity, document);
 
             if (classMap.IsPolymorphic)
@@ -125,20 +125,20 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Applies the nested document value maps.
         /// </summary>
-        /// <param name="componentValueMaps">The nested document value maps.</param>
+        /// <param name="nestedClassValueMaps">The nested document value maps.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="document">The document.</param>
-        private void ApplyComponentValueMaps(IEnumerable<ComponentValueMap> componentValueMaps, object entity, Document document)
+        private void ApplyNestedClassValueMaps(IEnumerable<NestedClassValueMap> nestedClassValueMaps, object entity, Document document)
         {
-            foreach (var componentClassMap in componentValueMaps)
+            foreach (var nestedClassMap in nestedClassValueMaps)
             {
-                var value = document[componentClassMap.Key] as Document;
-                document.Remove(componentClassMap.Key);
+                var value = document[nestedClassMap.Key] as Document;
+                document.Remove(nestedClassMap.Key);
                 if (value == null)
                     return;
 
-                var nestedEntity = this.Translate(componentClassMap.ComponentClassMap, value);
-                componentClassMap.MemberSetter(entity, nestedEntity);
+                var nestedEntity = this.Translate(nestedClassMap.NestedClassMap, value);
+                nestedClassMap.MemberSetter(entity, nestedEntity);
             }
         }
 

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping
 {
-    public class ComponentClassMap : SuperClassMap
+    public class NestedClassMap : SuperClassMap
     {
         #region Public Properties
 
@@ -15,8 +15,8 @@ namespace MongoDB.Framework.Mapping
         /// <value>The name of the collection.</value>
         public override string CollectionName
         {
-            get { throw new NotSupportedException("Cannot get CollectionName from a ComponentClassMap.  Use the RootClassMap."); }
-            set { throw new NotSupportedException("Cannot set CollectionName on a ComponentClassMap.  Use the RootClassMap."); }
+            get { throw new NotSupportedException("Cannot get CollectionName from a NestedClassMap.  Use the RootClassMap."); }
+            set { throw new NotSupportedException("Cannot set CollectionName on a NestedClassMap.  Use the RootClassMap."); }
         }
 
         #endregion
@@ -24,10 +24,10 @@ namespace MongoDB.Framework.Mapping
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ComponentClassMap"/> class.
+        /// Initializes a new instance of the <see cref="NestedClassMap"/> class.
         /// </summary>
         /// <param name="type">Type of the entity.</param>
-        public ComponentClassMap(Type type)
+        public NestedClassMap(Type type)
             : base(type)
         { }
 

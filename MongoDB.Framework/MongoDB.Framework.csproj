@@ -70,8 +70,8 @@
     <Compile Include="Linq\Visitors\ProjectionBuilder.cs" />
     <Compile Include="Linq\MongoQueryProjection.cs" />
     <Compile Include="Linq\Visitors\ScalarQueryModelVisitor.cs" />
-    <Compile Include="Mapping\ComponentClassMap.cs" />
-    <Compile Include="Mapping\Fluent\FluentComponentValueMap.cs" />
+    <Compile Include="Mapping\NestedClassMap.cs" />
+    <Compile Include="Mapping\Fluent\FluentNestedValueMap.cs" />
     <Compile Include="Mapping\Fluent\FluentSimpleValueMap.cs" />
     <Compile Include="Mapping\Fluent\FluentSuperClassMap.cs" />
     <Compile Include="Mapping\Fluent\FluentValueMap.cs" />
@@ -86,10 +86,10 @@
     <Compile Include="Mapping\Fluent\FluentClassMap.cs" />
     <Compile Include="Mapping\Fluent\FluentRootClassMap.cs" />
     <Compile Include="Mapping\Fluent\FluentMap.cs" />
-    <Compile Include="Mapping\Fluent\FluentComponentClassMap.cs" />
+    <Compile Include="Mapping\Fluent\FluentNestedClassMap.cs" />
     <Compile Include="Mapping\IdMap.cs" />
     <Compile Include="Mapping\MongoTypeConverter.cs" />
-    <Compile Include="Mapping\ComponentValueMap.cs" />
+    <Compile Include="Mapping\NestedClassValueMap.cs" />
     <Compile Include="Mapping\ClassMap.cs" />
     <Compile Include="Mapping\Map.cs" />
     <Compile Include="Mapping\MappingStore.cs" />

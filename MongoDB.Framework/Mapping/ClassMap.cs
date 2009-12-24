@@ -10,7 +10,7 @@ namespace MongoDB.Framework.Mapping
     {
         #region Private Fields
 
-        private readonly Dictionary<string, ComponentValueMap> componentValueMaps;
+        private readonly Dictionary<string, NestedClassValueMap> nestedClassValueMaps;
         private readonly Dictionary<string, ReferenceValueMap> referenceValueMaps;
         private readonly Dictionary<string, SimpleValueMap> simpleValueMaps;
 
@@ -81,14 +81,14 @@ namespace MongoDB.Framework.Mapping
         public abstract bool IsPolymorphic { get; }
 
         /// <summary>
-        /// Gets the component value maps.
+        /// Gets the nestedClass value maps.
         /// </summary>
-        /// <value>The component value maps.</value>
-        public virtual IEnumerable<ComponentValueMap> ComponentValueMaps
+        /// <value>The nestedClass value maps.</value>
+        public virtual IEnumerable<NestedClassValueMap> NestedClassValueMaps
         {
             get
             {
-                foreach (var valueMap in this.componentValueMaps.Values)
+                foreach (var valueMap in this.nestedClassValueMaps.Values)
                     yield return valueMap;
             }
         }
@@ -139,7 +139,7 @@ namespace MongoDB.Framework.Mapping
             if (type == null)
                 throw new ArgumentNullException("type");
 
-            this.componentValueMaps = new Dictionary<string, ComponentValueMap>();
+            this.nestedClassValueMaps = new Dictionary<string, NestedClassValueMap>();
             this.referenceValueMaps = new Dictionary<string, ReferenceValueMap>();
             this.simpleValueMaps = new Dictionary<string, SimpleValueMap>();
             this.Type = type;
@@ -153,15 +153,15 @@ namespace MongoDB.Framework.Mapping
         /// Adds the value map.
         /// </summary>
         /// <param name="valueMap">The value map.</param>
-        public void AddComponentValueMap(ComponentValueMap componentValueMap)
+        public void AddNestedClassValueMap(NestedClassValueMap nestedClassValueMap)
         {
-            if (componentValueMap == null)
+            if (nestedClassValueMap == null)
                 throw new ArgumentNullException("value");
 
-            if (this.ContainsKey(componentValueMap.Key))
-                throw new InvalidOperationException(string.Format("An item with key {0} has already been added.", componentValueMap.Key));
+            if (this.ContainsKey(nestedClassValueMap.Key))
+                throw new InvalidOperationException(string.Format("An item with key {0} has already been added.", nestedClassValueMap.Key));
 
-            this.componentValueMaps.Add(componentValueMap.Key, componentValueMap);
+            this.nestedClassValueMaps.Add(nestedClassValueMap.Key, nestedClassValueMap);
         }
 
         /// <summary>
@@ -213,7 +213,7 @@ namespace MongoDB.Framework.Mapping
             ValueMap valueMap = this.SimpleValueMaps.FirstOrDefault(x => x.MemberName == memberName);
             if (valueMap != null)
                 return valueMap;
-            valueMap = this.ComponentValueMaps.FirstOrDefault(x => x.MemberName == memberName);
+            valueMap = this.NestedClassValueMaps.FirstOrDefault(x => x.MemberName == memberName);
             if (valueMap != null)
                 return valueMap;
             valueMap = this.ReferenceValueMaps.FirstOrDefault(x => x.MemberName == memberName);
@@ -236,7 +236,7 @@ namespace MongoDB.Framework.Mapping
         /// </returns>
         private bool ContainsKey(string key)
         {
-            return this.componentValueMaps.ContainsKey(key)
+            return this.nestedClassValueMaps.ContainsKey(key)
                 || this.referenceValueMaps.ContainsKey(key)
                 || this.simpleValueMaps.ContainsKey(key);
         }

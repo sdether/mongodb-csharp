@@ -17,7 +17,7 @@ namespace MongoDB.Framework
             Id(x => x.Id);
             Map(x => x.Name);
 
-            Component(x => x.PhoneNumber).Configure(m => 
+            NestedClass(x => x.PhoneNumber).Configure(m => 
             {
                 m.Map(x => x.AreaCode);
                 m.Map(x => x.Prefix);

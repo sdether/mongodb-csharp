@@ -99,11 +99,11 @@ namespace MongoDB.Framework.Mapping
                 return MongoTypeConverter.ConvertToDocumentValue(((SimpleValueMap)lastValueMap).MemberType, entityValue);
             else if (lastValueMap is IdMap)
                 return MongoTypeConverter.ConvertToOid((string)entityValue);
-            else if (lastValueMap is ComponentValueMap)
+            else if (lastValueMap is NestedClassValueMap)
             {
-                var componentValueMap = (ComponentValueMap)lastValueMap;
+                var nestedClassValueMap = (NestedClassValueMap)lastValueMap;
                 return new EntityToDocumentTranslator(this.mappingStore)
-                    .Translate(componentValueMap.ComponentClassMap, entityValue);
+                    .Translate(nestedClassValueMap.NestedClassMap, entityValue);
             }
 
             throw new NotSupportedException();
@@ -145,10 +145,10 @@ namespace MongoDB.Framework.Mapping
         /// <returns></returns>
         private ValueMap GetNextValueMap(ValueMap currentValueMap, string nextMemberName)
         {
-            if (currentValueMap is ComponentValueMap)
+            if (currentValueMap is NestedClassValueMap)
             {
-                var componentValueMap = (ComponentValueMap)currentValueMap;
-                return componentValueMap.ComponentClassMap.GetValueMapFromMemberName(nextMemberName);
+                var nestedClassValueMap = (NestedClassValueMap)currentValueMap;
+                return nestedClassValueMap.NestedClassMap.GetValueMapFromMemberName(nextMemberName);
             }
             else if (currentValueMap is ReferenceValueMap)
             {

@@ -29,7 +29,7 @@ namespace MongoDB.Framework
         }
 
         [Test]
-        public void Test_root_entity_query_with_a_component_condition()
+        public void Test_root_entity_query_with_a_nestedClass_condition()
         {
             var parties = (from p in context.Query<Party>()
                            where p.PhoneNumber == new PhoneNumber() { AreaCode = "111", Prefix = "222", Number = "3333" }
