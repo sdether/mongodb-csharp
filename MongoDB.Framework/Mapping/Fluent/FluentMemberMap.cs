@@ -5,9 +5,9 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public abstract class FluentValueMap<TMap> : FluentMap<TMap> where TMap : ValueMap
+    public abstract class FluentMemberMap<TMap> : FluentMap<TMap> where TMap : MemberMap
     {
-        public FluentValueMap<TMap> Key(string key)
+        public FluentMemberMap<TMap> Key(string key)
         {
             this.Instance.Key = key;
             return this;

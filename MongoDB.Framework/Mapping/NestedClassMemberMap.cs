@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping
 {
-    public class NestedClassValueMap : ValueMap
+    public class NestedClassMemberMap : MemberMap
     {
         /// <summary>
         /// Gets or sets the nestedClass class map.
@@ -14,10 +14,10 @@ namespace MongoDB.Framework.Mapping
         public NestedClassMap NestedClassMap { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NestedClassValueMap"/> class.
+        /// Initializes a new instance of the <see cref="NestedClassMemberMap"/> class.
         /// </summary>
         /// <param name="nestedClassMap">The nestedClass class map.</param>
-        public NestedClassValueMap(NestedClassMap nestedClassMap)
+        public NestedClassMemberMap(NestedClassMap nestedClassMap)
         {
             if (nestedClassMap == null)
                 throw new ArgumentNullException("nestedClassMap");

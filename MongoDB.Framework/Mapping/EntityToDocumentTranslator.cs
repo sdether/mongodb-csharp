@@ -112,9 +112,9 @@ namespace MongoDB.Framework.Mapping
             if (classMap.HasId)
                 this.ApplyIdMap(classMap.IdMap, entity, document);
 
-            this.ApplySimpleValueMaps(classMap.SimpleValueMaps, entity, document);
-            this.ApplyNestedClassValueMaps(classMap.NestedClassValueMaps, entity, document);
-            this.ApplyReferenceValueMaps(classMap.ReferenceValueMaps, entity, document);
+            this.ApplySimpleMemberMaps(classMap.SimpleMemberMaps, entity, document);
+            this.ApplyNestedClassMemberMaps(classMap.NestedClassMemberMaps, entity, document);
+            this.ApplyReferenceMemberMaps(classMap.ReferenceMemberMaps, entity, document);
 
             if (classMap.IsPolymorphic && classMap.Discriminator != null)
                 document[classMap.DiscriminatorKey] = classMap.Discriminator;
@@ -159,45 +159,45 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Applies the nested class maps.
         /// </summary>
-        /// <param name="nestedClassValueMaps">The nested document value maps.</param>
+        /// <param name="nestedClassMemberMaps">The nested document member maps.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="document">The document.</param>
-        private void ApplyNestedClassValueMaps(IEnumerable<NestedClassValueMap> nestedClassValueMaps, object entity, Document document)
+        private void ApplyNestedClassMemberMaps(IEnumerable<NestedClassMemberMap> nestedClassMemberMaps, object entity, Document document)
         {
-            foreach (var nestedClassValueMap in nestedClassValueMaps)
+            foreach (var nestedClassMemberMap in nestedClassMemberMaps)
             {
-                var value = nestedClassValueMap.MemberGetter(entity);
-                value = this.CreateDocument(nestedClassValueMap.NestedClassMap, value);
-                document[nestedClassValueMap.Key] = value;
+                var value = nestedClassMemberMap.MemberGetter(entity);
+                value = this.CreateDocument(nestedClassMemberMap.NestedClassMap, value);
+                document[nestedClassMemberMap.Key] = value;
             }
         }
 
         /// <summary>
         /// Applies the nested class maps.
         /// </summary>
-        /// <param name="nestedClassValueMaps">The nested document value maps.</param>
+        /// <param name="nestedClassMemberMaps">The nested document member maps.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="document">The document.</param>
-        private void ApplyReferenceValueMaps(IEnumerable<ReferenceValueMap> referenceValueMaps, object entity, Document document)
+        private void ApplyReferenceMemberMaps(IEnumerable<ReferenceMemberMap> referenceMemberMaps, object entity, Document document)
         {
-            foreach (var referenceValueMap in referenceValueMaps)
-                throw new NotSupportedException("ReferenceValueMaps are not supported.");
+            foreach (var referenceMemberMap in referenceMemberMaps)
+                throw new NotSupportedException("ReferenceMemberMaps are not supported.");
         }
 
         /// <summary>
-        /// Applies the simple value maps.
+        /// Applies the simple member maps.
         /// </summary>
-        /// <param name="simpleValueMaps">The simple value maps.</param>
+        /// <param name="simpleMemberMaps">The simple member maps.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="document">The document.</param>
-        private void ApplySimpleValueMaps(IEnumerable<SimpleValueMap> simpleValueMaps, object entity, Document document)
+        private void ApplySimpleMemberMaps(IEnumerable<SimpleMemberMap> simpleMemberMaps, object entity, Document document)
         {
-            foreach (var simpleValueMap in simpleValueMaps)
+            foreach (var simpleMemberMap in simpleMemberMaps)
             {
-                object value = simpleValueMap.MemberGetter(entity);
-                value = MongoTypeConverter.ConvertToDocumentValue(simpleValueMap.MemberType, value);
-                if(value != MongoDBNull.Value || simpleValueMap.PersistNulls)
-                    document[simpleValueMap.Key] = value;
+                object value = simpleMemberMap.MemberGetter(entity);
+                value = MongoTypeConverter.ConvertToDocumentValue(simpleMemberMap.MemberType, value);
+                if(value != MongoDBNull.Value || simpleMemberMap.PersistNulls)
+                    document[simpleMemberMap.Key] = value;
             }
         }
 

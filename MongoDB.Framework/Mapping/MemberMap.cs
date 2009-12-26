@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping
 {
-    public abstract class ValueMap : Map
+    public abstract class MemberMap : Map
     {
         public string Key { get; set; }
 

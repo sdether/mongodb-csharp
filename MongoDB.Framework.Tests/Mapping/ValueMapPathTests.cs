@@ -10,7 +10,7 @@ using MongoDB.Driver;
 namespace MongoDB.Framework.Mapping
 {
     [TestFixture]
-    public class ValueMapPathTests
+    public class MemberMapPathTests
     {
         [Test]
         public void Should_create_document_key()
@@ -18,30 +18,30 @@ namespace MongoDB.Framework.Mapping
             var mappingStore = new FluentMappingStore()
                 .AddMapsFromAssemblyContaining<PartyMap>();
 
-            var valueMapPath = new ValueMapPath<Person>(mappingStore, "PhoneNumber", "AreaCode");
+            var memberMapPath = new MemberMapPath<Person>(mappingStore, "PhoneNumber", "AreaCode");
 
-            Assert.AreEqual("PhoneNumber.AreaCode", valueMapPath.Key);
+            Assert.AreEqual("PhoneNumber.AreaCode", memberMapPath.Key);
         }
 
         [Test]
-        public void Should_create_value_for_SimpleValueMap()
+        public void Should_create_value_for_SimpleMemberMap()
         {
             var mappingStore = new FluentMappingStore()
                 .AddMapsFromAssemblyContaining<PartyMap>();
 
-            var valueMapPath = new ValueMapPath<Person>(mappingStore, "PhoneNumber", "AreaCode");
-            var value = valueMapPath.ConvertToDocumentValue("143");
+            var memberMapPath = new MemberMapPath<Person>(mappingStore, "PhoneNumber", "AreaCode");
+            var value = memberMapPath.ConvertToDocumentValue("143");
             Assert.AreEqual("143", value);
         }
 
         [Test]
-        public void Should_create_value_for_NestedClassValueMap()
+        public void Should_create_value_for_NestedClassMemberMap()
         {
             var mappingStore = new FluentMappingStore()
                 .AddMapsFromAssemblyContaining<PartyMap>();
 
-            var valueMapPath = new ValueMapPath<Person>(mappingStore, "PhoneNumber");
-            Document value = (Document)valueMapPath.ConvertToDocumentValue(new PhoneNumber() { AreaCode = "111", Prefix = "222", Number = "3333" });
+            var memberMapPath = new MemberMapPath<Person>(mappingStore, "PhoneNumber");
+            Document value = (Document)memberMapPath.ConvertToDocumentValue(new PhoneNumber() { AreaCode = "111", Prefix = "222", Number = "3333" });
 
             Assert.AreEqual("111", value["AreaCode"]);
             Assert.AreEqual("222", value["Prefix"]);

@@ -61,41 +61,41 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
-        /// Gets the simple value maps.
+        /// Gets the simple member maps.
         /// </summary>
-        /// <value>The simple value maps.</value>
-        public override IEnumerable<NestedClassValueMap> NestedClassValueMaps
+        /// <value>The simple member maps.</value>
+        public override IEnumerable<NestedClassMemberMap> NestedClassMemberMaps
         {
             get
             {
-                return base.NestedClassValueMaps
-                    .Concat(this.SuperClassMap.NestedClassValueMaps);
+                return base.NestedClassMemberMaps
+                    .Concat(this.SuperClassMap.NestedClassMemberMaps);
             }
         }
 
         /// <summary>
-        /// Gets the simple value maps.
+        /// Gets the simple member maps.
         /// </summary>
-        /// <value>The simple value maps.</value>
-        public override IEnumerable<ReferenceValueMap> ReferenceValueMaps
+        /// <value>The simple member maps.</value>
+        public override IEnumerable<ReferenceMemberMap> ReferenceMemberMaps
         {
             get
             {
-                return base.ReferenceValueMaps
-                    .Concat(this.SuperClassMap.ReferenceValueMaps);
+                return base.ReferenceMemberMaps
+                    .Concat(this.SuperClassMap.ReferenceMemberMaps);
             }
         }
 
         /// <summary>
-        /// Gets the simple value maps.
+        /// Gets the simple member maps.
         /// </summary>
-        /// <value>The simple value maps.</value>
-        public override IEnumerable<SimpleValueMap> SimpleValueMaps
+        /// <value>The simple member maps.</value>
+        public override IEnumerable<SimpleMemberMap> SimpleMemberMaps
         {
             get
             {
-                return base.SimpleValueMaps
-                    .Concat(this.SuperClassMap.SimpleValueMaps);
+                return base.SimpleMemberMaps
+                    .Concat(this.SuperClassMap.SimpleMemberMaps);
             }
         }
 

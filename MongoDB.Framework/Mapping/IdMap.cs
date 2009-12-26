@@ -6,7 +6,7 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Mapping
 {
-    public class IdMap : SimpleValueMap
+    public class IdMap : SimpleMemberMap
     {
         public IdMap()
         {

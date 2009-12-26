@@ -83,8 +83,8 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitOrdering(Ordering ordering, QueryModel queryModel, OrderByClause orderByClause, int index)
         {
-            var valueMapPath = ValueMapPathBuilder.BuildFrom(this.mappingStore, ordering.Expression);
-            this.querySpec.OrderBy[valueMapPath.Key] = ordering.OrderingDirection == OrderingDirection.Asc ? 1 : -1;
+            var memberMapPath = MemberMapPathBuilder.BuildFrom(this.mappingStore, ordering.Expression);
+            this.querySpec.OrderBy[memberMapPath.Key] = ordering.OrderingDirection == OrderingDirection.Asc ? 1 : -1;
         }
 
         /// <summary>

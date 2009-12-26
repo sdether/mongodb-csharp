@@ -10,9 +10,9 @@ namespace MongoDB.Framework.Mapping
     {
         #region Private Fields
 
-        private readonly Dictionary<string, NestedClassValueMap> nestedClassValueMaps;
-        private readonly Dictionary<string, ReferenceValueMap> referenceValueMaps;
-        private readonly Dictionary<string, SimpleValueMap> simpleValueMaps;
+        private readonly Dictionary<string, NestedClassMemberMap> nestedClassMemberMaps;
+        private readonly Dictionary<string, ReferenceMemberMap> referenceMemberMaps;
+        private readonly Dictionary<string, SimpleMemberMap> simpleMemberMaps;
 
         #endregion
 
@@ -81,41 +81,41 @@ namespace MongoDB.Framework.Mapping
         public abstract bool IsPolymorphic { get; }
 
         /// <summary>
-        /// Gets the nestedClass value maps.
+        /// Gets the nestedClass member maps.
         /// </summary>
-        /// <value>The nestedClass value maps.</value>
-        public virtual IEnumerable<NestedClassValueMap> NestedClassValueMaps
+        /// <value>The nestedClass member maps.</value>
+        public virtual IEnumerable<NestedClassMemberMap> NestedClassMemberMaps
         {
             get
             {
-                foreach (var valueMap in this.nestedClassValueMaps.Values)
-                    yield return valueMap;
+                foreach (var memberMap in this.nestedClassMemberMaps.Values)
+                    yield return memberMap;
             }
         }
 
         /// <summary>
-        /// Gets the value maps.
+        /// Gets the member maps.
         /// </summary>
-        /// <value>The value maps.</value>
-        public virtual IEnumerable<ReferenceValueMap> ReferenceValueMaps
+        /// <value>The member maps.</value>
+        public virtual IEnumerable<ReferenceMemberMap> ReferenceMemberMaps
         {
             get
             {
-                foreach (var valueMap in this.referenceValueMaps.Values)
-                    yield return valueMap;
+                foreach (var memberMap in this.referenceMemberMaps.Values)
+                    yield return memberMap;
             }
         }
 
         /// <summary>
-        /// Gets the simple value maps.
+        /// Gets the simple member maps.
         /// </summary>
-        /// <value>The simple value maps.</value>
-        public virtual IEnumerable<SimpleValueMap> SimpleValueMaps
+        /// <value>The simple member maps.</value>
+        public virtual IEnumerable<SimpleMemberMap> SimpleMemberMaps
         {
             get
             {
-                foreach (var valueMap in this.simpleValueMaps.Values)
-                    yield return valueMap;
+                foreach (var memberMap in this.simpleMemberMaps.Values)
+                    yield return memberMap;
             }
         }
 
@@ -139,9 +139,9 @@ namespace MongoDB.Framework.Mapping
             if (type == null)
                 throw new ArgumentNullException("type");
 
-            this.nestedClassValueMaps = new Dictionary<string, NestedClassValueMap>();
-            this.referenceValueMaps = new Dictionary<string, ReferenceValueMap>();
-            this.simpleValueMaps = new Dictionary<string, SimpleValueMap>();
+            this.nestedClassMemberMaps = new Dictionary<string, NestedClassMemberMap>();
+            this.referenceMemberMaps = new Dictionary<string, ReferenceMemberMap>();
+            this.simpleMemberMaps = new Dictionary<string, SimpleMemberMap>();
             this.Type = type;
         }
 
@@ -150,48 +150,48 @@ namespace MongoDB.Framework.Mapping
         #region Public Methods
 
         /// <summary>
-        /// Adds the value map.
+        /// Adds the member map.
         /// </summary>
-        /// <param name="valueMap">The value map.</param>
-        public void AddNestedClassValueMap(NestedClassValueMap nestedClassValueMap)
+        /// <param name="memberMap">The member map.</param>
+        public void AddNestedClassMemberMap(NestedClassMemberMap nestedClassMemberMap)
         {
-            if (nestedClassValueMap == null)
+            if (nestedClassMemberMap == null)
                 throw new ArgumentNullException("value");
 
-            if (this.ContainsKey(nestedClassValueMap.Key))
-                throw new InvalidOperationException(string.Format("An item with key {0} has already been added.", nestedClassValueMap.Key));
+            if (this.ContainsKey(nestedClassMemberMap.Key))
+                throw new InvalidOperationException(string.Format("An item with key {0} has already been added.", nestedClassMemberMap.Key));
 
-            this.nestedClassValueMaps.Add(nestedClassValueMap.Key, nestedClassValueMap);
+            this.nestedClassMemberMaps.Add(nestedClassMemberMap.Key, nestedClassMemberMap);
         }
 
         /// <summary>
-        /// Adds the value map.
+        /// Adds the member map.
         /// </summary>
-        /// <param name="valueMap">The value map.</param>
-        public void AddReferenceValueMap(ReferenceValueMap referenceValueMap)
+        /// <param name="memberMap">The member map.</param>
+        public void AddReferenceMemberMap(ReferenceMemberMap referenceMemberMap)
         {
-            if (referenceValueMap == null)
+            if (referenceMemberMap == null)
                 throw new ArgumentNullException("value");
 
-            if (this.ContainsKey(referenceValueMap.Key))
-                throw new InvalidOperationException(string.Format("An item with key {0} has already been added.", referenceValueMap.Key));
+            if (this.ContainsKey(referenceMemberMap.Key))
+                throw new InvalidOperationException(string.Format("An item with key {0} has already been added.", referenceMemberMap.Key));
 
-            this.referenceValueMaps.Add(referenceValueMap.Key, referenceValueMap);
+            this.referenceMemberMaps.Add(referenceMemberMap.Key, referenceMemberMap);
         }
 
         /// <summary>
-        /// Adds the value map.
+        /// Adds the member map.
         /// </summary>
-        /// <param name="valueMap">The value map.</param>
-        public void AddSimpleValueMap(SimpleValueMap simpleValueMap)
+        /// <param name="memberMap">The member map.</param>
+        public void AddSimpleMemberMap(SimpleMemberMap simpleMemberMap)
         {
-            if (simpleValueMap == null)
+            if (simpleMemberMap == null)
                 throw new ArgumentNullException("value");
 
-            if (this.ContainsKey(simpleValueMap.Key))
-                throw new InvalidOperationException(string.Format("An item with key {0} has already been added.", simpleValueMap.Key));
+            if (this.ContainsKey(simpleMemberMap.Key))
+                throw new InvalidOperationException(string.Format("An item with key {0} has already been added.", simpleMemberMap.Key));
 
-            this.simpleValueMaps.Add(simpleValueMap.Key, simpleValueMap);
+            this.simpleMemberMaps.Add(simpleMemberMap.Key, simpleMemberMap);
         }
 
         /// <summary>
@@ -202,23 +202,23 @@ namespace MongoDB.Framework.Mapping
         public abstract ClassMap GetClassMapByDiscriminator(object discriminator);
 
         /// <summary>
-        /// Gets the name of the value map from member.
+        /// Gets the name of the member map from member.
         /// </summary>
         /// <param name="memberName">Name of the member.</param>
         /// <returns></returns>
-        public ValueMap GetValueMapFromMemberName(string memberName)
+        public MemberMap GetMemberMapFromMemberName(string memberName)
         {
             if (this.HasId && this.IdMap.MemberName == memberName)
                 return this.IdMap;
-            ValueMap valueMap = this.SimpleValueMaps.FirstOrDefault(x => x.MemberName == memberName);
-            if (valueMap != null)
-                return valueMap;
-            valueMap = this.NestedClassValueMaps.FirstOrDefault(x => x.MemberName == memberName);
-            if (valueMap != null)
-                return valueMap;
-            valueMap = this.ReferenceValueMaps.FirstOrDefault(x => x.MemberName == memberName);
-            if (valueMap != null)
-                return valueMap;
+            MemberMap memberMap = this.SimpleMemberMaps.FirstOrDefault(x => x.MemberName == memberName);
+            if (memberMap != null)
+                return memberMap;
+            memberMap = this.NestedClassMemberMaps.FirstOrDefault(x => x.MemberName == memberName);
+            if (memberMap != null)
+                return memberMap;
+            memberMap = this.ReferenceMemberMaps.FirstOrDefault(x => x.MemberName == memberName);
+            if (memberMap != null)
+                return memberMap;
 
             throw new UnmappedMemberException(string.Format("The member {0} has not been mapped.", memberName));
         }
@@ -236,9 +236,9 @@ namespace MongoDB.Framework.Mapping
         /// </returns>
         private bool ContainsKey(string key)
         {
-            return this.nestedClassValueMaps.ContainsKey(key)
-                || this.referenceValueMaps.ContainsKey(key)
-                || this.simpleValueMaps.ContainsKey(key);
+            return this.nestedClassMemberMaps.ContainsKey(key)
+                || this.referenceMemberMaps.ContainsKey(key)
+                || this.simpleMemberMaps.ContainsKey(key);
         }
 
         #endregion

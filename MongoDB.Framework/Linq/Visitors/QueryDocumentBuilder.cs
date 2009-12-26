@@ -27,7 +27,7 @@ namespace MongoDB.Framework.Linq.Visitors
         private Dictionary<string, Document> conditions;
         private MappingStore mappingStore;
         private Document query;
-        private ValueMapPath valueMapPath;
+        private MemberMapPath memberMapPath;
 
         #endregion
 
@@ -95,14 +95,14 @@ namespace MongoDB.Framework.Linq.Visitors
             else
                 throw new NotSupportedException();
 
-            value = this.valueMapPath.ConvertToDocumentValue(value);
+            value = this.memberMapPath.ConvertToDocumentValue(value);
             if (op == "$eq")
-                this.query[this.valueMapPath.Key] = value;
+                this.query[this.memberMapPath.Key] = value;
             else
             {
-                Document doc = (Document)this.query[this.valueMapPath.Key];
+                Document doc = (Document)this.query[this.memberMapPath.Key];
                 if (doc == null)
-                    this.query[this.valueMapPath.Key] = doc = new Document();
+                    this.query[this.memberMapPath.Key] = doc = new Document();
 
                 doc.Append(op, value);
             }
@@ -112,7 +112,7 @@ namespace MongoDB.Framework.Linq.Visitors
 
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
-            this.valueMapPath = ValueMapPathBuilder.BuildFrom(this.mappingStore, expression);
+            this.memberMapPath = MemberMapPathBuilder.BuildFrom(this.mappingStore, expression);
             return expression;
         }
 

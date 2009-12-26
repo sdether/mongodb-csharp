@@ -5,23 +5,23 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentNestedValueMap<T> : FluentValueMap<NestedClassValueMap>
+    public class FluentNestedMemberMap<T> : FluentMemberMap<NestedClassMemberMap>
     {
-        private readonly NestedClassValueMap instance;
+        private readonly NestedClassMemberMap instance;
         private readonly FluentNestedClassMap<T> fluentNestedClassMap;
 
-        public override NestedClassValueMap Instance
+        public override NestedClassMemberMap Instance
         {
             get { return this.instance; }
         }
 
-        public FluentNestedValueMap(FluentNestedClassMap<T> fluentNestedClassMap)
+        public FluentNestedMemberMap(FluentNestedClassMap<T> fluentNestedClassMap)
         {
             this.fluentNestedClassMap = fluentNestedClassMap;
-            this.instance = new NestedClassValueMap(fluentNestedClassMap.Instance);
+            this.instance = new NestedClassMemberMap(fluentNestedClassMap.Instance);
         }
 
-        public FluentNestedValueMap<T> Configure(Action<FluentNestedClassMap<T>> configure)
+        public FluentNestedMemberMap<T> Configure(Action<FluentNestedClassMap<T>> configure)
         {
             configure(this.fluentNestedClassMap);
             return this;

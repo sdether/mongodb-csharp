@@ -85,9 +85,9 @@ namespace MongoDB.Framework.Mapping
             if (classMap.HasId)
                 this.ApplyIdMap(classMap.IdMap, entity, document);
 
-            this.ApplySimpleValueMaps(classMap.SimpleValueMaps, entity, document);
-            this.ApplyNestedClassValueMaps(classMap.NestedClassValueMaps, entity, document);
-            this.ApplyReferenceValueMaps(classMap.ReferenceValueMaps, entity, document);
+            this.ApplySimpleMemberMaps(classMap.SimpleMemberMaps, entity, document);
+            this.ApplyNestedClassMemberMaps(classMap.NestedClassMemberMaps, entity, document);
+            this.ApplyReferenceMemberMaps(classMap.ReferenceMemberMaps, entity, document);
 
             if (classMap.IsPolymorphic)
                 document.Remove(classMap.DiscriminatorKey);
@@ -123,14 +123,14 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
-        /// Applies the nested document value maps.
+        /// Applies the nested document member maps.
         /// </summary>
-        /// <param name="nestedClassValueMaps">The nested document value maps.</param>
+        /// <param name="nestedClassMemberMaps">The nested document member maps.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="document">The document.</param>
-        private void ApplyNestedClassValueMaps(IEnumerable<NestedClassValueMap> nestedClassValueMaps, object entity, Document document)
+        private void ApplyNestedClassMemberMaps(IEnumerable<NestedClassMemberMap> nestedClassMemberMaps, object entity, Document document)
         {
-            foreach (var nestedClassMap in nestedClassValueMaps)
+            foreach (var nestedClassMap in nestedClassMemberMaps)
             {
                 var value = document[nestedClassMap.Key] as Document;
                 document.Remove(nestedClassMap.Key);
@@ -143,33 +143,33 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
-        /// Applies the reference value maps.
+        /// Applies the reference member maps.
         /// </summary>
-        /// <param name="referenceValueMaps">The reference value maps.</param>
+        /// <param name="referenceMemberMaps">The reference member maps.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="document">The document.</param>
-        private void ApplyReferenceValueMaps(IEnumerable<ReferenceValueMap> referenceValueMaps, object entity, Document document)
+        private void ApplyReferenceMemberMaps(IEnumerable<ReferenceMemberMap> referenceMemberMaps, object entity, Document document)
         {
-            foreach (var referenceValueMap in referenceValueMaps)
-                throw new NotSupportedException("ReferenceValueMaps are not supported yet.");
+            foreach (var referenceMemberMap in referenceMemberMaps)
+                throw new NotSupportedException("ReferenceMemberMaps are not supported yet.");
         }
 
         /// <summary>
-        /// Applies the simple value maps.
+        /// Applies the simple member maps.
         /// </summary>
-        /// <param name="simpleValueMaps">The simple value maps.</param>
+        /// <param name="simpleMemberMaps">The simple member maps.</param>
         /// <param name="entity">The entity.</param>
         /// <param name="document">The document.</param>
-        private void ApplySimpleValueMaps(IEnumerable<SimpleValueMap> simpleValueMaps, object entity, Document document)
+        private void ApplySimpleMemberMaps(IEnumerable<SimpleMemberMap> simpleMemberMaps, object entity, Document document)
         {
-            foreach (var simpleValueMap in simpleValueMaps)
+            foreach (var simpleMemberMap in simpleMemberMaps)
             {
-                var value = document[simpleValueMap.Key];
-                document.Remove(simpleValueMap.Key);
+                var value = document[simpleMemberMap.Key];
+                document.Remove(simpleMemberMap.Key);
                 value = MongoTypeConverter.ConvertFromDocumentValue(value);
                 if (value == null)
-                    value = GetDefaultValue(simpleValueMap.MemberType);
-                simpleValueMap.MemberSetter(entity, value);
+                    value = GetDefaultValue(simpleMemberMap.MemberType);
+                simpleMemberMap.MemberSetter(entity, value);
             }
         }
 

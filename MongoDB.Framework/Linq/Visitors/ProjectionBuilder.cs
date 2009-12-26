@@ -76,9 +76,9 @@ namespace MongoDB.Framework.Linq.Visitors
         {
             if (this.memberNames.Count != 0)
             {
-                var valueMapPath = new ValueMapPath(this.mappingStore, expression.ReferencedQuerySource.ItemType, this.memberNames);
+                var memberMapPath = new MemberMapPath(this.mappingStore, expression.ReferencedQuerySource.ItemType, this.memberNames);
                 this.memberNames.Clear();
-                this.fields[valueMapPath.Key] = 1;
+                this.fields[memberMapPath.Key] = 1;
             }
             var method = getObjectMethod.MakeGenericMethod(expression.Type);
             return Expression.Call(

@@ -8,7 +8,7 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Mapping
 {
-    public class ValueMapPath
+    public class MemberMapPath
     {
         #region Private Fields
 
@@ -16,7 +16,7 @@ namespace MongoDB.Framework.Mapping
         private MappingStore mappingStore;
         private IEnumerable<string> memberNames;
 
-        private List<ValueMap> valueMaps;
+        private List<MemberMap> memberMaps;
 
         #endregion
 
@@ -33,22 +33,22 @@ namespace MongoDB.Framework.Mapping
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValueMapPath"/> class.
+        /// Initializes a new instance of the <see cref="MemberMapPath"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="type">Type of the entity.</param>
         /// <param name="memberNames">The member names.</param>
-        public ValueMapPath(MappingStore mappingStore, Type type, params string[] memberNames)
+        public MemberMapPath(MappingStore mappingStore, Type type, params string[] memberNames)
             : this(mappingStore, type, (IEnumerable<string>)memberNames)
         { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValueMapPath"/> class.
+        /// Initializes a new instance of the <see cref="MemberMapPath"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="type">Type of the entity.</param>
         /// <param name="memberNames">The member names.</param>
-        public ValueMapPath(MappingStore mappingStore, Type type, IEnumerable<string> memberNames)
+        public MemberMapPath(MappingStore mappingStore, Type type, IEnumerable<string> memberNames)
         {
             if (mappingStore == null)
                 throw new ArgumentNullException("mappingStore");
@@ -63,22 +63,22 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValueMapPath"/> class.
+        /// Initializes a new instance of the <see cref="MemberMapPath"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="type">Type of the entity.</param>
         /// <param name="memberInfos">The member infos.</param>
-        public ValueMapPath(MappingStore mappingStore, Type type, params MemberInfo[] memberInfos)
+        public MemberMapPath(MappingStore mappingStore, Type type, params MemberInfo[] memberInfos)
             : this(mappingStore, type, (IEnumerable<MemberInfo>)memberInfos)
         { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValueMapPath"/> class.
+        /// Initializes a new instance of the <see cref="MemberMapPath"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="type">Type of the entity.</param>
         /// <param name="memberInfos">The member infos.</param>
-        public ValueMapPath(MappingStore mappingStore, Type type, IEnumerable<MemberInfo> memberInfos)
+        public MemberMapPath(MappingStore mappingStore, Type type, IEnumerable<MemberInfo> memberInfos)
             : this(mappingStore, type, memberInfos.Select(mi => mi.Name))
         { }
 
@@ -93,17 +93,17 @@ namespace MongoDB.Framework.Mapping
         /// <returns></returns>
         public object ConvertToDocumentValue(object entityValue)
         {
-            var lastValueMap = this.valueMaps[this.valueMaps.Count - 1];
+            var lastMemberMap = this.memberMaps[this.memberMaps.Count - 1];
 
-            if (lastValueMap is SimpleValueMap)
-                return MongoTypeConverter.ConvertToDocumentValue(((SimpleValueMap)lastValueMap).MemberType, entityValue);
-            else if (lastValueMap is IdMap)
+            if (lastMemberMap is SimpleMemberMap)
+                return MongoTypeConverter.ConvertToDocumentValue(((SimpleMemberMap)lastMemberMap).MemberType, entityValue);
+            else if (lastMemberMap is IdMap)
                 return MongoTypeConverter.ConvertToOid((string)entityValue);
-            else if (lastValueMap is NestedClassValueMap)
+            else if (lastMemberMap is NestedClassMemberMap)
             {
-                var nestedClassValueMap = (NestedClassValueMap)lastValueMap;
+                var nestedClassMemberMap = (NestedClassMemberMap)lastMemberMap;
                 return new EntityToDocumentTranslator(this.mappingStore)
-                    .Translate(nestedClassValueMap.NestedClassMap, entityValue);
+                    .Translate(nestedClassMemberMap.NestedClassMap, entityValue);
             }
 
             throw new NotSupportedException();
@@ -119,93 +119,93 @@ namespace MongoDB.Framework.Mapping
         /// <param name="memberNames">The member names.</param>
         private void Initialize(IEnumerable<string> memberNames)
         {
-            this.valueMaps = new List<ValueMap>();
+            this.memberMaps = new List<MemberMap>();
             var classMap = this.mappingStore.GetClassMapFor(this.type);
 
             var memberNamesEnumerator = memberNames.GetEnumerator();
             memberNamesEnumerator.MoveNext();
-            var currentValueMap = classMap.GetValueMapFromMemberName(memberNamesEnumerator.Current);
-            this.Key = currentValueMap.Key;
-            this.valueMaps.Add(currentValueMap);
+            var currentMemberMap = classMap.GetMemberMapFromMemberName(memberNamesEnumerator.Current);
+            this.Key = currentMemberMap.Key;
+            this.memberMaps.Add(currentMemberMap);
 
             while (memberNamesEnumerator.MoveNext())
             {
-                currentValueMap = this.GetNextValueMap(currentValueMap, memberNamesEnumerator.Current);
-                this.Key += "." + currentValueMap.Key;
-                this.valueMaps.Add(currentValueMap);
+                currentMemberMap = this.GetNextMemberMap(currentMemberMap, memberNamesEnumerator.Current);
+                this.Key += "." + currentMemberMap.Key;
+                this.memberMaps.Add(currentMemberMap);
             }
         }
 
 
         /// <summary>
-        /// Gets the next value map.
+        /// Gets the next member map.
         /// </summary>
-        /// <param name="currentValueMap">The current value map.</param>
+        /// <param name="currentMemberMap">The current member map.</param>
         /// <param name="nextMemberName">Name of the next member.</param>
         /// <returns></returns>
-        private ValueMap GetNextValueMap(ValueMap currentValueMap, string nextMemberName)
+        private MemberMap GetNextMemberMap(MemberMap currentMemberMap, string nextMemberName)
         {
-            if (currentValueMap is NestedClassValueMap)
+            if (currentMemberMap is NestedClassMemberMap)
             {
-                var nestedClassValueMap = (NestedClassValueMap)currentValueMap;
-                return nestedClassValueMap.NestedClassMap.GetValueMapFromMemberName(nextMemberName);
+                var nestedClassMemberMap = (NestedClassMemberMap)currentMemberMap;
+                return nestedClassMemberMap.NestedClassMap.GetMemberMapFromMemberName(nextMemberName);
             }
-            else if (currentValueMap is ReferenceValueMap)
+            else if (currentMemberMap is ReferenceMemberMap)
             {
-                throw new InvalidOperationException("Cannot create a ValueMapPath using a ReferenceValueMap.");
+                throw new InvalidOperationException("Cannot create a MemberMapPath using a ReferenceMemberMap.");
             }
-            else if (currentValueMap is SimpleValueMap)
+            else if (currentMemberMap is SimpleMemberMap)
             {
-                throw new InvalidOperationException("SimpleValueMaps can only occur at the end of a path.");
+                throw new InvalidOperationException("SimpleMemberMaps can only occur at the end of a path.");
             }
-            else if (currentValueMap is IdMap)
+            else if (currentMemberMap is IdMap)
             {
-                throw new InvalidOperationException("SimpleValueMaps can only occur at the end of a path.");
+                throw new InvalidOperationException("SimpleMemberMaps can only occur at the end of a path.");
             }
 
-            throw new NotSupportedException(string.Format("Unknown ValueMap type {0}.", currentValueMap.GetType()));
+            throw new NotSupportedException(string.Format("Unknown MemberMap type {0}.", currentMemberMap.GetType()));
         }
 
         #endregion
     }
 
-    public class ValueMapPath<TEntity> : ValueMapPath
+    public class MemberMapPath<TEntity> : MemberMapPath
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValueMapPath&lt;TEntity&gt;"/> class.
+        /// Initializes a new instance of the <see cref="MemberMapPath&lt;TEntity&gt;"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="memberNames">The member names.</param>
-        public ValueMapPath(MappingStore mappingStore, params string[] memberNames)
+        public MemberMapPath(MappingStore mappingStore, params string[] memberNames)
             : base(mappingStore, typeof(TEntity), memberNames)
         { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValueMapPath&lt;TEntity&gt;"/> class.
+        /// Initializes a new instance of the <see cref="MemberMapPath&lt;TEntity&gt;"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="memberNames">The member names.</param>
-        public ValueMapPath(MappingStore mappingStore, IEnumerable<string> memberNames)
+        public MemberMapPath(MappingStore mappingStore, IEnumerable<string> memberNames)
             : base(mappingStore, typeof(TEntity), memberNames)
         { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValueMapPath&lt;TEntity&gt;"/> class.
+        /// Initializes a new instance of the <see cref="MemberMapPath&lt;TEntity&gt;"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="memberInfos">The member infos.</param>
-        public ValueMapPath(MappingStore mappingStore, params MemberInfo[] memberInfos)
+        public MemberMapPath(MappingStore mappingStore, params MemberInfo[] memberInfos)
             : base(mappingStore, typeof(TEntity), memberInfos)
         { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValueMapPath&lt;TEntity&gt;"/> class.
+        /// Initializes a new instance of the <see cref="MemberMapPath&lt;TEntity&gt;"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="memberInfos">The member infos.</param>
-        public ValueMapPath(MappingStore mappingStore, IEnumerable<MemberInfo> memberInfos)
+        public MemberMapPath(MappingStore mappingStore, IEnumerable<MemberInfo> memberInfos)
             : base(mappingStore, typeof(TEntity), memberInfos)
         { }
 

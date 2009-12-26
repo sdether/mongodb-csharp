@@ -12,15 +12,15 @@ using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Linq.Visitors
 {
-    public class ValueMapPathBuilder : ThrowingExpressionTreeVisitor
+    public class MemberMapPathBuilder : ThrowingExpressionTreeVisitor
     {
         #region Public Static Methods
 
-        public static ValueMapPath BuildFrom(MappingStore mappingStore, Expression expression)
+        public static MemberMapPath BuildFrom(MappingStore mappingStore, Expression expression)
         {
-            ValueMapPathBuilder builder = new ValueMapPathBuilder(mappingStore);
+            MemberMapPathBuilder builder = new MemberMapPathBuilder(mappingStore);
             builder.VisitExpression(expression);
-            return builder.valueMapPath;
+            return builder.memberMapPath;
         }
 
         #endregion
@@ -29,13 +29,13 @@ namespace MongoDB.Framework.Linq.Visitors
 
         private MappingStore mappingStore;
         private Stack<MemberInfo> members = new Stack<MemberInfo>();
-        private ValueMapPath valueMapPath;
+        private MemberMapPath memberMapPath;
 
         #endregion
 
         #region Constructors
 
-        private ValueMapPathBuilder(MappingStore mappingStore)
+        private MemberMapPathBuilder(MappingStore mappingStore)
         {
             this.mappingStore = mappingStore;
         }
@@ -54,7 +54,7 @@ namespace MongoDB.Framework.Linq.Visitors
         protected override Expression VisitQuerySourceReferenceExpression(Remotion.Data.Linq.Clauses.Expressions.QuerySourceReferenceExpression expression)
         {
             var classMap = this.mappingStore.GetClassMapFor(expression.ReferencedQuerySource.ItemType);
-            this.valueMapPath = new ValueMapPath(this.mappingStore, expression.ReferencedQuerySource.ItemType, this.members);
+            this.memberMapPath = new MemberMapPath(this.mappingStore, expression.ReferencedQuerySource.ItemType, this.members);
             return expression;
         }
 
