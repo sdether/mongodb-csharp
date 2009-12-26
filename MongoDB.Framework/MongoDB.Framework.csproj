@@ -70,32 +70,48 @@
     <Compile Include="Linq\Visitors\ProjectionBuilder.cs" />
     <Compile Include="Linq\MongoQueryProjection.cs" />
     <Compile Include="Linq\Visitors\ScalarQueryModelVisitor.cs" />
+    <Compile Include="Mapping\Fluent\FluentClassMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mapping\Fluent\FluentDiscriminatorMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mapping\Fluent\FluentMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mapping\Fluent\FluentMappingStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mapping\Fluent\FluentMemberMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mapping\Fluent\FluentNestedClassMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mapping\Fluent\FluentRootClassMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mapping\Fluent\FluentSubClassMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mapping\Fluent\FluentSuperClassMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mapping\IValueType.cs" />
     <Compile Include="Mapping\NestedClassMap.cs" />
-    <Compile Include="Mapping\Fluent\FluentNestedMemberMap.cs" />
-    <Compile Include="Mapping\Fluent\FluentSimpleMemberMap.cs" />
-    <Compile Include="Mapping\Fluent\FluentSuperClassMap.cs" />
-    <Compile Include="Mapping\Fluent\FluentMemberMap.cs" />
     <Compile Include="Mapping\RootClassMap.cs" />
+    <Compile Include="Mapping\TranslationContext.cs" />
+    <Compile Include="Mapping\Types\IdValueType.cs" />
+    <Compile Include="Mapping\Types\NestedClassValueType.cs" />
+    <Compile Include="Mapping\Types\NullSafeValueType.cs" />
     <Compile Include="Mapping\UnmappedDiscriminiatorException.cs" />
-    <Compile Include="Mapping\DocumentToEntityTranslator.cs" />
     <Compile Include="Mapping\UnmappedMemberException.cs" />
     <Compile Include="Mapping\ExtendedPropertiesMap.cs" />
-    <Compile Include="Mapping\Fluent\FluentMappingStore.cs" />
-    <Compile Include="Mapping\Fluent\FluentDiscriminatorMap.cs" />
-    <Compile Include="Mapping\Fluent\FluentSubClassMap.cs" />
-    <Compile Include="Mapping\Fluent\FluentClassMap.cs" />
-    <Compile Include="Mapping\Fluent\FluentRootClassMap.cs" />
-    <Compile Include="Mapping\Fluent\FluentMap.cs" />
-    <Compile Include="Mapping\Fluent\FluentNestedClassMap.cs" />
     <Compile Include="Mapping\IdMap.cs" />
-    <Compile Include="Mapping\MongoTypeConverter.cs" />
-    <Compile Include="Mapping\NestedClassMemberMap.cs" />
     <Compile Include="Mapping\ClassMap.cs" />
     <Compile Include="Mapping\Map.cs" />
     <Compile Include="Mapping\MappingStore.cs" />
-    <Compile Include="Mapping\ReferenceMemberMap.cs" />
     <Compile Include="Mapping\SuperClassMap.cs" />
-    <Compile Include="Mapping\SimpleMemberMap.cs" />
     <Compile Include="Mapping\SubClassMap.cs" />
     <Compile Include="Mapping\UnmappedTypeException.cs" />
     <Compile Include="Mapping\MemberMap.cs" />
@@ -104,7 +120,6 @@
     <Compile Include="Persistence\GetByIdAction.cs" />
     <Compile Include="Persistence\DeleteAction.cs" />
     <Compile Include="Persistence\UpdateAction.cs" />
-    <Compile Include="Mapping\EntityToDocumentTranslator.cs" />
     <Compile Include="Persistence\InsertAction.cs" />
     <Compile Include="Persistence\FindOneAction.cs" />
     <Compile Include="Persistence\FindAction.cs" />

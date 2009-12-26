@@ -17,14 +17,14 @@ namespace MongoDB.Framework
             Id(x => x.Id);
             Map(x => x.Name);
 
-            NestedClass(x => x.PhoneNumber).Configure(m => 
+            NestedClass(x => x.PhoneNumber, m =>
             {
                 m.Map(x => x.AreaCode);
                 m.Map(x => x.Prefix);
                 m.Map(x => x.Number);
             });
 
-            DiscriminateSubClassesOnKey<string>("Type")
+            DiscriminateSubClassesOnKey<string>("ValueType")
                 .SubClass<Person>(PartyType.Person.ToString(), m =>
                 {
                     m.Map(x => x.BirthDate);

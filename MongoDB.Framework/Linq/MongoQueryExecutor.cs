@@ -19,7 +19,6 @@ namespace MongoDB.Framework.Linq
     {
         private ChangeTracker changeTracker;
         private Database database;
-        private DocumentToEntityTranslator documentToEntityTranslator;
         private MappingStore mappingStore;
 
         /// <summary>

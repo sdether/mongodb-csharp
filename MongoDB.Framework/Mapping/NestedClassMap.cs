@@ -26,7 +26,7 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Initializes a new instance of the <see cref="NestedClassMap"/> class.
         /// </summary>
-        /// <param name="type">Type of the entity.</param>
+        /// <param name="type">ValueType of the entity.</param>
         public NestedClassMap(Type type)
             : base(type)
         { }

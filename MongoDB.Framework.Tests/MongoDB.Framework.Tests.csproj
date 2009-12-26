@@ -65,12 +65,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Domain.cs" />
-    <Compile Include="IntegrationTestBase.cs" />
-    <Compile Include="Mapping\DocumentToEntityTranslatorTests.cs" />
-    <Compile Include="Mapping\ValueMapPathTests.cs" />
-    <Compile Include="MongoContextTests.cs" />
-    <Compile Include="Mapping\EntityToDocumentTranslatorTests.cs" />
+    <Compile Include="Domain.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\LateBoundReflectionTests.cs" />
     <Compile Include="Linq\Visitors\MemberInfoPathExpressionTreeVisitorTests.cs" />

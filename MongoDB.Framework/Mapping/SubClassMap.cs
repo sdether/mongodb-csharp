@@ -61,41 +61,15 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
-        /// Gets the simple member maps.
+        /// Gets the member maps.
         /// </summary>
         /// <value>The simple member maps.</value>
-        public override IEnumerable<NestedClassMemberMap> NestedClassMemberMaps
+        public override IEnumerable<MemberMap> MemberMaps
         {
             get
             {
-                return base.NestedClassMemberMaps
-                    .Concat(this.SuperClassMap.NestedClassMemberMaps);
-            }
-        }
-
-        /// <summary>
-        /// Gets the simple member maps.
-        /// </summary>
-        /// <value>The simple member maps.</value>
-        public override IEnumerable<ReferenceMemberMap> ReferenceMemberMaps
-        {
-            get
-            {
-                return base.ReferenceMemberMaps
-                    .Concat(this.SuperClassMap.ReferenceMemberMaps);
-            }
-        }
-
-        /// <summary>
-        /// Gets the simple member maps.
-        /// </summary>
-        /// <value>The simple member maps.</value>
-        public override IEnumerable<SimpleMemberMap> SimpleMemberMaps
-        {
-            get
-            {
-                return base.SimpleMemberMaps
-                    .Concat(this.SuperClassMap.SimpleMemberMaps);
+                return base.MemberMaps
+                    .Concat(this.SuperClassMap.MemberMaps);
             }
         }
 
@@ -112,7 +86,7 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Initializes a new instance of the <see cref="SubClassMap"/> class.
         /// </summary>
-        /// <param name="type">Type of the entity.</param>
+        /// <param name="type">ValueType of the entity.</param>
         /// <param name="classMap">The class map.</param>
         public SubClassMap(Type type, SuperClassMap superClassMap)
             : base(type)
@@ -138,6 +112,20 @@ namespace MongoDB.Framework.Mapping
                 throw new InvalidOperationException(string.Format("The discriminator specified does not belong to the entity {0}.", this.Type));
 
             return this;
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        /// <summary>
+        /// Creates the owner.
+        /// </summary>
+        /// <param name="document">The document.</param>
+        /// <returns></returns>
+        protected override Type GetConcreteType(MongoDB.Driver.Document document)
+        {
+            return this.Type;
         }
 
         #endregion

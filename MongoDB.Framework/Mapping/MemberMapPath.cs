@@ -36,7 +36,7 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="MemberMapPath"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
-        /// <param name="type">Type of the entity.</param>
+        /// <param name="type">ValueType of the entity.</param>
         /// <param name="memberNames">The member names.</param>
         public MemberMapPath(MappingStore mappingStore, Type type, params string[] memberNames)
             : this(mappingStore, type, (IEnumerable<string>)memberNames)
@@ -46,7 +46,7 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="MemberMapPath"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
-        /// <param name="type">Type of the entity.</param>
+        /// <param name="type">ValueType of the entity.</param>
         /// <param name="memberNames">The member names.</param>
         public MemberMapPath(MappingStore mappingStore, Type type, IEnumerable<string> memberNames)
         {
@@ -66,7 +66,7 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="MemberMapPath"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
-        /// <param name="type">Type of the entity.</param>
+        /// <param name="type">ValueType of the entity.</param>
         /// <param name="memberInfos">The member infos.</param>
         public MemberMapPath(MappingStore mappingStore, Type type, params MemberInfo[] memberInfos)
             : this(mappingStore, type, (IEnumerable<MemberInfo>)memberInfos)
@@ -76,7 +76,7 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="MemberMapPath"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
-        /// <param name="type">Type of the entity.</param>
+        /// <param name="type">ValueType of the entity.</param>
         /// <param name="memberInfos">The member infos.</param>
         public MemberMapPath(MappingStore mappingStore, Type type, IEnumerable<MemberInfo> memberInfos)
             : this(mappingStore, type, memberInfos.Select(mi => mi.Name))
@@ -94,19 +94,7 @@ namespace MongoDB.Framework.Mapping
         public object ConvertToDocumentValue(object entityValue)
         {
             var lastMemberMap = this.memberMaps[this.memberMaps.Count - 1];
-
-            if (lastMemberMap is SimpleMemberMap)
-                return MongoTypeConverter.ConvertToDocumentValue(((SimpleMemberMap)lastMemberMap).MemberType, entityValue);
-            else if (lastMemberMap is IdMap)
-                return MongoTypeConverter.ConvertToOid((string)entityValue);
-            else if (lastMemberMap is NestedClassMemberMap)
-            {
-                var nestedClassMemberMap = (NestedClassMemberMap)lastMemberMap;
-                return new EntityToDocumentTranslator(this.mappingStore)
-                    .Translate(nestedClassMemberMap.NestedClassMap, entityValue);
-            }
-
-            throw new NotSupportedException();
+            return lastMemberMap.ValueType.ConvertToDocumentValue(entityValue, null);
         }
 
         #endregion
@@ -145,24 +133,6 @@ namespace MongoDB.Framework.Mapping
         /// <returns></returns>
         private MemberMap GetNextMemberMap(MemberMap currentMemberMap, string nextMemberName)
         {
-            if (currentMemberMap is NestedClassMemberMap)
-            {
-                var nestedClassMemberMap = (NestedClassMemberMap)currentMemberMap;
-                return nestedClassMemberMap.NestedClassMap.GetMemberMapFromMemberName(nextMemberName);
-            }
-            else if (currentMemberMap is ReferenceMemberMap)
-            {
-                throw new InvalidOperationException("Cannot create a MemberMapPath using a ReferenceMemberMap.");
-            }
-            else if (currentMemberMap is SimpleMemberMap)
-            {
-                throw new InvalidOperationException("SimpleMemberMaps can only occur at the end of a path.");
-            }
-            else if (currentMemberMap is IdMap)
-            {
-                throw new InvalidOperationException("SimpleMemberMaps can only occur at the end of a path.");
-            }
-
             throw new NotSupportedException(string.Format("Unknown MemberMap type {0}.", currentMemberMap.GetType()));
         }
 

@@ -7,6 +7,7 @@ using System.Text;
 using MongoDB.Framework.Linq.Visitors;
 using MongoDB.Framework.Reflection;
 using System.Reflection;
+using MongoDB.Framework.Mapping.Types;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
@@ -34,7 +35,7 @@ namespace MongoDB.Framework.Mapping.Fluent
         {
             this.instance.IdMap = new IdMap();
             this.instance.IdMap.MemberName = memberInfo.Name;
-            this.instance.IdMap.MemberType = LateBoundReflection.GetMemberValueType(memberInfo);
+            this.instance.IdMap.ValueType = new IdValueType();
             this.instance.IdMap.MemberGetter = LateBoundReflection.GetGetter(memberInfo);
             this.instance.IdMap.MemberSetter = LateBoundReflection.GetSetter(memberInfo);
         }

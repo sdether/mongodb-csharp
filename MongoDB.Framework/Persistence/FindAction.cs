@@ -24,7 +24,7 @@ namespace MongoDB.Framework.Persistence
         /// <summary>
         /// Finds the specified query.
         /// </summary>
-        /// <param name="type">Type of the entity.</param>
+        /// <param name="type">ValueType of the entity.</param>
         /// <param name="fields">The fields.</param>
         /// <param name="conditions">The conditions.</param>
         /// <param name="limit">The limit.</param>

@@ -34,7 +34,7 @@ namespace MongoDB.Framework
             IMongoCollection collection = db.GetCollection(collectionName);
 
             var party1 = new Document()
-                .Append("Type", "Person")
+                .Append("ValueType", "Person")
                 .Append("Name", "Bob McBob")
                 .Append("BirthDate", new DateTime(1900, 1, 1))
                 .Append("PhoneNumber", new Document()
@@ -43,7 +43,7 @@ namespace MongoDB.Framework
                     .Append("Number", "7890"))
                 .Append("not-mapped", true);
             var party2 = new Document()
-                .Append("Type", "Person")
+                .Append("ValueType", "Person")
                 .Append("Name", "Jane McJane")
                 .Append("BirthDate", new DateTime(2000, 2, 2))
                 .Append("PhoneNumber", new Document()
@@ -52,7 +52,7 @@ namespace MongoDB.Framework
                     .Append("Number", "3333"))
                 .Append("not-mapped", true);
             var party3 = new Document()
-                .Append("Type", "Organization")
+                .Append("ValueType", "Organization")
                 .Append("Name", "The Muffler Shop")
                 .Append("EmployeeCount", 23)
                 .Append("PhoneNumber", new Document()

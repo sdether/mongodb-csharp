@@ -77,7 +77,7 @@ namespace MongoDB.Framework.Persistence
             IEnumerable<Document> documents;
             if (IsFindById(classMap, conditions))
             {
-                string id = (string)MongoTypeConverter.ConvertFromDocumentValue(conditions[classMap.IdMap.Key]);
+                string id = (string)classMap.IdMap.ValueType.ConvertFromDocumentValue(conditions[classMap.IdMap.Key], null);
                 TrackedObject trackedObject = null;
                 if (this.ChangeTracker.TryGetTrackedObjectById(id, out trackedObject))
                     return new[] { trackedObject.Current };
@@ -111,42 +111,21 @@ namespace MongoDB.Framework.Persistence
                 documents = this.Collection.Find(query, limit, skip, fields).Documents;
             }
 
+            throw new NotImplementedException();
+
             //don't track entities returned from a projection
-            DocumentToEntityTranslator translator;
-            if (fields.Count == 0)
-                translator = new ChangeTrackingDocumentToEntityTranslator(this.MappingStore, this.ChangeTracker);
-            else
-                translator = new DocumentToEntityTranslator(this.MappingStore);
-            return this.CreateEntities(translator, classMap, documents);
+            //DocumentToEntityTranslator translator;
+            //if (fields.Count == 0)
+            //    translator = new ChangeTrackingDocumentToEntityTranslator(this.MappingStore, this.ChangeTracker);
+            //else
+            //    translator = new DocumentToEntityTranslator(this.MappingStore);
+            //return this.CreateEntities(translator, classMap, documents);
         }
 
         #endregion
 
         #region Private Methods
 
-        /// <summary>
-        /// Creates the entities.
-        /// </summary>
-        /// <param name="translator">The translator.</param>
-        /// <param name="classMap">The class map.</param>
-        /// <param name="documents">The documents.</param>
-        /// <returns></returns>
-        private IEnumerable<object> CreateEntities(DocumentToEntityTranslator translator, ClassMap classMap, IEnumerable<Document> documents)
-        {
-            foreach (var document in documents)
-                yield return this.CreateEntity(translator, classMap, document);
-        }
-
-        /// <summary>
-        /// Creates the entity.
-        /// </summary>
-        /// <param name="type">Type of the entity.</param>
-        /// <param name="document">The document.</param>
-        /// <returns></returns>
-        private object CreateEntity(DocumentToEntityTranslator translator, ClassMap classMap, Document document)
-        {
-            return translator.Translate(classMap, document);
-        }
 
         /// <summary>
         /// Creates the full query.
@@ -160,52 +139,6 @@ namespace MongoDB.Framework.Persistence
             return new Document()
                 .Append("query", conditions)
                 .Append("orderby", orderBy);
-        }
-
-        #endregion
-
-        #region Private Class : ChangeTrackingDocumentToEntityTranslator
-
-        private class ChangeTrackingDocumentToEntityTranslator : DocumentToEntityTranslator
-        {
-            private ChangeTracker changeTracker;
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="ChangeTrackingDocumentToEntityTranslator"/> class.
-            /// </summary>
-            /// <param name="mappingStore">The mapping store.</param>
-            /// <param name="changeTracker">The change tracker.</param>
-            public ChangeTrackingDocumentToEntityTranslator(MappingStore mappingStore, ChangeTracker changeTracker)
-                : base(mappingStore)
-            {
-                this.changeTracker = changeTracker;
-            }
-
-            /// <summary>
-            /// Translates the specified class map.
-            /// </summary>
-            /// <param name="classMap">The class map.</param>
-            /// <param name="document">The document.</param>
-            /// <returns></returns>
-            public override object Translate(ClassMap classMap, Document document)
-            {
-                if (classMap.HasId)
-                {
-                    var value = document[classMap.IdMap.Key];
-                    value = MongoTypeConverter.ConvertFromDocumentValue(value);
-                    TrackedObject trackedObject;
-                    if (this.changeTracker.TryGetTrackedObjectById((string)value, out trackedObject))
-                        return trackedObject.Current;
-                }
-
-                var entity = base.Translate(classMap, document);
-
-                if (classMap.HasId)
-                    this.changeTracker.Track(document, entity);
-
-                //TODO: may need to fix up references...
-                return entity;
-            }
         }
 
         #endregion

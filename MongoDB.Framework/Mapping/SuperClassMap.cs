@@ -56,7 +56,7 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Initializes a new instance of the <see cref="SuperClassMap"/> class.
         /// </summary>
-        /// <param name="type">Type of the entity.</param>
+        /// <param name="type">ValueType of the entity.</param>
         public SuperClassMap(Type type)
             : base(type)
         {
@@ -99,6 +99,27 @@ namespace MongoDB.Framework.Mapping
                     return subClassMap;
 
             throw new UnmappedDiscriminatorException(string.Format("The discriminator {0} has not been mapped.", discriminator));
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        /// <summary>
+        /// Creates the owner.
+        /// </summary>
+        /// <param name="document">The document.</param>
+        /// <returns></returns>
+        protected override Type GetConcreteType(MongoDB.Driver.Document document)
+        {
+            if(this.IsPolymorphic)
+            {
+                var discriminator = document[this.DiscriminatorKey];
+                var classMap = this.GetClassMapByDiscriminator(discriminator);
+                return classMap.Type;
+            }
+
+            return this.Type;
         }
 
         #endregion

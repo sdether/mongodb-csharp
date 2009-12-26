@@ -7,71 +7,72 @@ using System.Text;
 
 using MongoDB.Framework.Linq.Visitors;
 using MongoDB.Framework.Reflection;
+using MongoDB.Framework.Mapping.Types;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public abstract class FluentClassMap<TMap, TEntity> : FluentMap<TMap> where TMap : ClassMap
+    public abstract class FluentClassMap<TMap, T> : FluentMap<TMap> where TMap : ClassMap
     {
-        public FluentNestedMemberMap<TNestedClass> NestedClass<TNestedClass>(string memberName)
+        public FluentMemberMap<T> Map(string memberName)
         {
             var memberInfo = this.GetSingleMember(memberName);
-            return this.NestedClass<TNestedClass>(memberInfo);
+            return this.Map(memberInfo);
         }
 
-        public FluentNestedMemberMap<TNestedClass> NestedClass<TNestedClass>(MemberInfo memberInfo)
+        public FluentMemberMap<T> Map(MemberInfo memberInfo)
+        {
+            var fluentMemberMap = new FluentMemberMap<T>(LateBoundReflection.GetMemberValueType(memberInfo));
+            fluentMemberMap.Instance.Key = memberInfo.Name;
+            fluentMemberMap.Instance.MemberName = memberInfo.Name;
+            fluentMemberMap.Instance.MemberGetter = LateBoundReflection.GetGetter(memberInfo);
+            fluentMemberMap.Instance.MemberSetter = LateBoundReflection.GetSetter(memberInfo);
+
+            this.Instance.AddMemberMap(fluentMemberMap.Instance);
+            return fluentMemberMap;
+        }
+
+        public FluentMemberMap<T> Map(Expression<Func<T, object>> member)
+        {
+            var memberInfo = this.GetSingleMember(member);
+            return this.Map(memberInfo);
+        }
+
+        public FluentMemberMap<T> NestedClass<TNestedClass>(string memberName, Action<FluentNestedClassMap<TNestedClass>> configure)
+        {
+            var memberInfo = this.GetSingleMember(memberName);
+            return this.NestedClass<TNestedClass>(memberInfo, configure);
+        }
+
+        public FluentMemberMap<T> NestedClass<TNestedClass>(MemberInfo memberInfo, Action<FluentNestedClassMap<TNestedClass>> configure)
         {
             var fluentNestedClassMap = new FluentNestedClassMap<TNestedClass>();
-            var fluentNestedClassMemberMap = new FluentNestedMemberMap<TNestedClass>(fluentNestedClassMap);
-            fluentNestedClassMemberMap.Instance.Key = memberInfo.Name;
-            fluentNestedClassMemberMap.Instance.MemberName = memberInfo.Name;
-            fluentNestedClassMemberMap.Instance.MemberType = LateBoundReflection.GetMemberValueType(memberInfo);
-            fluentNestedClassMemberMap.Instance.MemberGetter = LateBoundReflection.GetGetter(memberInfo);
-            fluentNestedClassMemberMap.Instance.MemberSetter = LateBoundReflection.GetSetter(memberInfo);
-            this.Instance.AddNestedClassMemberMap(fluentNestedClassMemberMap.Instance);
-            return fluentNestedClassMemberMap;
+            var fluentMemberMap = new FluentMemberMap<T>(typeof(TNestedClass));
+            fluentMemberMap.Instance.Key = memberInfo.Name;
+            fluentMemberMap.Instance.MemberName = memberInfo.Name;
+            fluentMemberMap.Instance.ValueType = new NestedClassValueType(fluentNestedClassMap.Instance);
+            fluentMemberMap.Instance.MemberGetter = LateBoundReflection.GetGetter(memberInfo);
+            fluentMemberMap.Instance.MemberSetter = LateBoundReflection.GetSetter(memberInfo);
+            this.Instance.AddMemberMap(fluentMemberMap.Instance);
+            configure(fluentNestedClassMap);
+            return fluentMemberMap;
         }
 
-        public FluentNestedMemberMap<TNestedClass> NestedClass<TNestedClass>(Expression<Func<TEntity, TNestedClass>> member)
+        public FluentMemberMap<T> NestedClass<TNestedClass>(Expression<Func<T, TNestedClass>> member, Action<FluentNestedClassMap<TNestedClass>> configure)
         {
             var memberInfo = this.GetSingleMember(member);
-            return this.NestedClass<TNestedClass>(memberInfo);
-        }
-
-        public FluentSimpleMemberMap Map(string memberName)
-        {
-            var memberInfo = this.GetSingleMember(memberName);
-            return this.Map(memberInfo);
-        }
-
-        public FluentSimpleMemberMap Map(MemberInfo memberInfo)
-        {
-            var fluentSimpleMemberMap = new FluentSimpleMemberMap();
-            fluentSimpleMemberMap.Instance.Key = memberInfo.Name;
-            fluentSimpleMemberMap.Instance.MemberName = memberInfo.Name;
-            fluentSimpleMemberMap.Instance.MemberType = LateBoundReflection.GetMemberValueType(memberInfo);
-            fluentSimpleMemberMap.Instance.MemberGetter = LateBoundReflection.GetGetter(memberInfo);
-            fluentSimpleMemberMap.Instance.MemberSetter = LateBoundReflection.GetSetter(memberInfo);
-
-            this.Instance.AddSimpleMemberMap(fluentSimpleMemberMap.Instance);
-            return fluentSimpleMemberMap;
-        }
-
-        public FluentSimpleMemberMap Map(Expression<Func<TEntity, object>> member)
-        {
-            var memberInfo = this.GetSingleMember(member);
-            return this.Map(memberInfo);
+            return this.NestedClass<TNestedClass>(memberInfo, configure);
         }
 
         protected MemberInfo GetSingleMember(string memberName)
         {
-            var members = typeof(TEntity).GetMember(memberName);
+            var members = typeof(T).GetMember(memberName);
             if (members.Length > 1)
                 throw new InvalidOperationException(string.Format("More than one member found with memberName {0}.", memberName));
 
             return members[0];
         }
 
-        protected MemberInfo GetSingleMember<TMember>(Expression<Func<TEntity, TMember>> member)
+        protected MemberInfo GetSingleMember<TMember>(Expression<Func<T, TMember>> member)
         {
             var members = MemberInfoPathBuilder.BuildFrom(member);
             if (members.Count > 1)

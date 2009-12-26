@@ -35,15 +35,12 @@ namespace MongoDB.Framework.Persistence
             if (!classMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
-            var document = new EntityToDocumentTranslator(this.MappingStore)
-                .Translate(entity);
-            this.Collection.Insert(document);
+            var translationContext = new TranslationContext() { Document = new Document(), Owner = entity };
+            throw new NotSupportedException();
 
-            var value = (string)MongoTypeConverter.ConvertFromDocumentValue(document[classMap.IdMap.Key]);
-            if (value != null)
-                classMap.IdMap.MemberSetter(entity, value);
+            //classMap.IdMap.TranslateFromDocument(document, entity);
 
-            this.ChangeTracker.GetTrackedObject(entity).MoveToPossibleModified(document);
+            //this.ChangeTracker.GetTrackedObject(entity).MoveToPossibleModified(document);
         }
     }
 }

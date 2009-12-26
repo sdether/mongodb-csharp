@@ -44,7 +44,7 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Gets the class map for.
         /// </summary>
-        /// <param name="type">Type of the entity.</param>
+        /// <param name="type">ValueType of the entity.</param>
         /// <returns></returns>
         public ClassMap GetClassMapFor(Type type)
         {
@@ -61,7 +61,7 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Tries to get the missing class map.
         /// </summary>
-        /// <param name="type">Type of the entity.</param>
+        /// <param name="type">ValueType of the entity.</param>
         /// <param name="classMap">The class map.</param>
         /// <returns></returns>
         protected abstract bool TryGetMissingClassMap(Type type, out ClassMap classMap);
