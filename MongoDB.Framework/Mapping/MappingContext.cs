@@ -33,6 +33,12 @@ namespace MongoDB.Framework.Mapping
         public object Entity { get; private set; }
 
         /// <summary>
+        /// Gets or sets the mapping store.
+        /// </summary>
+        /// <value>The mapping store.</value>
+        public MappingStore MappingStore { get; private set; }
+
+        /// <summary>
         /// Gets the parent.
         /// </summary>
         /// <value>The parent.</value>
@@ -41,10 +47,18 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Initializes a new instance of the <see cref="MappingContext"/> class.
         /// </summary>
+        /// <param name="mappingStore">The mapping store.</param>
         /// <param name="document">The document.</param>
-        /// <param name="owner">The owner.</param>
-        public MappingContext(Document document, Type entityType)
+        /// <param name="entityType">Type of the entity.</param>
+        public MappingContext(MappingStore mappingStore, Document document, Type entityType)
         {
+            if (mappingStore == null)
+                throw new ArgumentNullException("mappingStore");
+            if (document == null)
+                throw new ArgumentNullException("document");
+            if (entityType == null)
+                throw new ArgumentNullException("entityType");
+
             this.Direction = MappingDirection.DocumentToEntity;
             this.Document = document;
             this.Entity = this.CreateEntity(entityType);
@@ -53,9 +67,15 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Initializes a new instance of the <see cref="MappingContext"/> class.
         /// </summary>
+        /// <param name="mappingStore">The mapping store.</param>
         /// <param name="entity">The entity.</param>
-        public MappingContext(object entity)
+        public MappingContext(MappingStore mappingStore, object entity)
         {
+            if (mappingStore == null)
+                throw new ArgumentNullException("mappingStore");
+            if (entity == null)
+                throw new ArgumentNullException("entity");
+
             this.Direction = MappingDirection.EntityToDocument;
             this.Document = new Document();
             this.Entity = entity;
@@ -68,7 +88,7 @@ namespace MongoDB.Framework.Mapping
         /// <returns></returns>
         public MappingContext CreateChildMappingContext(Document document, Type entityType)
         {
-            return new MappingContext(document, entityType) { Parent = this };
+            return new MappingContext(this.MappingStore, document, entityType) { Parent = this };
         }
 
         /// <summary>
@@ -78,7 +98,7 @@ namespace MongoDB.Framework.Mapping
         /// <returns></returns>
         public MappingContext CreateChildMappingContext(object entity)
         {
-            return new MappingContext(entity) { Parent = this };
+            return new MappingContext(this.MappingStore, entity) { Parent = this };
         }
 
         /// <summary>

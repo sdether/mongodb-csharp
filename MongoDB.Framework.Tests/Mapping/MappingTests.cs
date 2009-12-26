@@ -31,7 +31,7 @@ namespace MongoDB.Framework.Mapping
 
             var classMap = mappingStore.GetClassMapFor<Person>();
 
-            var mappingContext = new MappingContext(document, typeof(Person));
+            var mappingContext = new MappingContext(mappingStore, document, typeof(Person));
             classMap.Map(mappingContext);
             var person = mappingContext.Entity as Person;
             Assert.IsNotNull(person);
@@ -67,7 +67,7 @@ namespace MongoDB.Framework.Mapping
                 }
             };
 
-            var mappingContext = new MappingContext(person);
+            var mappingContext = new MappingContext(mappingStore, person);
             var classMap = mappingStore.GetClassMapFor<Person>();
             classMap.Map(mappingContext);
             var document = mappingContext.Document;

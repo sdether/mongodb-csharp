@@ -22,9 +22,8 @@ namespace MongoDB.Framework.Persistence
         { }
 
         /// <summary>
-        /// Inserts the specified entity.
+        /// Deletes the specified entity.
         /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity.</param>
         public void Delete(object entity)
         {
@@ -35,11 +34,10 @@ namespace MongoDB.Framework.Persistence
             if (!classMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
-            throw new NotImplementedException();
-            //var mappingContext = new MappingContext() { Document = new Document(), Entity = entity };
-            //classMap.IdMap.TranslateToDocument(mappingContext);
-            //this.Collection.Delete(mappingContext.Document);
-            //this.ChangeTracker.GetTrackedObject(entity).MoveToDead();
+            var mappingContext = new MappingContext(MappingStore, entity);
+            classMap.IdMap.TranslateToDocument(mappingContext);
+            this.Collection.Delete(mappingContext.Document);
+            this.ChangeTracker.GetTrackedObject(entity).MoveToDead();
         }
     }
 }

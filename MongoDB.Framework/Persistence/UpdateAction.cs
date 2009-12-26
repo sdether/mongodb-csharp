@@ -35,9 +35,10 @@ namespace MongoDB.Framework.Persistence
             if (!classMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
-            throw new NotImplementedException();
-            //this.Collection.Update(document);
-            //this.ChangeTracker.GetTrackedObject(entity).MoveToPossibleModified(document);
+            var mappingContext = new MappingContext(this.MappingStore, entity);
+            classMap.Map(mappingContext);
+            this.Collection.Update(mappingContext.Document);
+            this.ChangeTracker.GetTrackedObject(entity).MoveToPossibleModified(mappingContext.Document);
         }
     }
 }
