@@ -158,50 +158,22 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
-        /// Translates from document.
+        /// Runs a mapping according to the specfied mappingContext;
         /// </summary>
-        /// <param name="document">The document.</param>
-        /// <returns></returns>
-        public virtual object TranslateFromDocument(Document document)
+        /// <param name="mappingContext">The mapping context.</param>
+        public virtual void Map(MappingContext mappingContext)
         {
-            var translationContext = new TranslationContext() { Document = document };
-            this.TranslateFromDocument(translationContext);
-            return translationContext.Owner;
-        }
+            if (mappingContext == null)
+                throw new ArgumentNullException("mappingContext");
 
-        /// <summary>
-        /// Translates from document.
-        /// </summary>
-        /// <param name="document">The document.</param>
-        /// <param name="owner">The owner.</param>
-        /// <returns></returns>
-        public virtual void TranslateFromDocument(TranslationContext translationContext)
-        {
-            if (translationContext.Owner == null)
+            switch (mappingContext.Direction)
             {
-                var concreteType = this.GetConcreteType(translationContext.Document);
-                translationContext.CreateOwner(concreteType);
-            }
-
-            if (this.HasId)
-            {
-                this.IdMap.TranslateFromDocument(translationContext);
-                translationContext.Document.Remove(this.IdMap.Key);
-            }
-
-            foreach (var memberMap in this.MemberMaps)
-            {
-                memberMap.TranslateFromDocument(translationContext);
-                translationContext.Document.Remove(memberMap.Key);
-            }
-
-            if (this.IsPolymorphic)
-                translationContext.Document.Remove(this.DiscriminatorKey);
-
-            if (this.HasExtendedProperties)
-            {
-                var dictionary = translationContext.Document.ToDictionary();
-                this.ExtendedPropertiesMap.MemberSetter(translationContext.Owner, dictionary);
+                case MappingDirection.DocumentToEntity:
+                    this.MapFromDocument(mappingContext);
+                    break;
+                case MappingDirection.EntityToDocument:
+                    this.MapToDocument(mappingContext);
+                    break;
             }
         }
 
@@ -231,6 +203,50 @@ namespace MongoDB.Framework.Mapping
         {
             return (key == "_id" && this.HasId)
                 || this.memberMaps.ContainsKey(key);
+        }
+
+        private void MapFromDocument(MappingContext mappingContext)
+        {
+            if (this.HasId)
+            {
+                this.IdMap.TranslateFromDocument(mappingContext);
+                mappingContext.Document.Remove(this.IdMap.Key);
+            }
+
+            foreach (var memberMap in this.MemberMaps)
+            {
+                memberMap.TranslateFromDocument(mappingContext);
+                mappingContext.Document.Remove(memberMap.Key);
+            }
+
+            if (this.IsPolymorphic)
+                mappingContext.Document.Remove(this.DiscriminatorKey);
+
+            if (this.HasExtendedProperties)
+            {
+                var dictionary = mappingContext.Document.ToDictionary();
+                this.ExtendedPropertiesMap.MemberSetter(mappingContext.Entity, dictionary);
+            }
+        }
+
+        private void MapToDocument(MappingContext mappingContext)
+        {
+            if (this.HasId)
+                this.IdMap.TranslateToDocument(mappingContext);
+
+            foreach (var memberMap in this.MemberMaps)
+                memberMap.TranslateToDocument(mappingContext);
+
+            if (this.IsPolymorphic)
+                mappingContext.Document.Add(this.DiscriminatorKey, this.Discriminator);
+
+            if (this.HasExtendedProperties)
+            {
+                var dictionary = (IDictionary<string, object>)this.ExtendedPropertiesMap.MemberGetter(mappingContext.Entity);
+
+                dictionary.ToDocument()
+                    .CopyTo(mappingContext.Document);
+            }
         }
 
         #endregion

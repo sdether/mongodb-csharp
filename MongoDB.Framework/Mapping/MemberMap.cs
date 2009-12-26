@@ -21,23 +21,23 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Translates from document.
         /// </summary>
-        /// <param name="translationContext">The translation context.</param>
-        public virtual void TranslateFromDocument(TranslationContext translationContext)
+        /// <param name="mappingContext">The mapping context.</param>
+        public virtual void TranslateFromDocument(MappingContext mappingContext)
         {
-            var value = translationContext.Document[this.Key];
-            value = this.ValueType.ConvertFromDocumentValue(value, translationContext);
-            this.MemberSetter(translationContext.Owner, value);
+            var value = mappingContext.Document[this.Key];
+            value = this.ValueType.ConvertFromDocumentValue(value, mappingContext);
+            this.MemberSetter(mappingContext.Entity, value);
         }
 
         /// <summary>
         /// Translates to document.
         /// </summary>
-        /// <param name="translationContext">The translation context.</param>
-        public virtual void TranslateToDocument(TranslationContext translationContext)
+        /// <param name="mappingContext">The mapping context.</param>
+        public virtual void TranslateToDocument(MappingContext mappingContext)
         {
-            var value = this.MemberGetter(translationContext.Owner);
-            value = this.ValueType.ConvertToDocumentValue(value, translationContext);
-            translationContext.Document[this.Key] = value;
+            var value = this.MemberGetter(mappingContext.Entity);
+            value = this.ValueType.ConvertToDocumentValue(value, mappingContext);
+            mappingContext.Document[this.Key] = value;
         }
     }
 }

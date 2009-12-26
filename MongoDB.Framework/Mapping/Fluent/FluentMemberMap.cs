@@ -21,6 +21,7 @@ namespace MongoDB.Framework.Mapping.Fluent
 
         public FluentMemberMap(Type type)
         {
+            this.memberMap = new MemberMap();
             this.memberMap.ValueType = new NullSafeValueType(type);
         }
 

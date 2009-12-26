@@ -29,9 +29,9 @@ namespace MongoDB.Framework.Mapping.Types
         /// Converts from document value.
         /// </summary>
         /// <param name="documentValue">The document value.</param>
-        /// <param name="translationContext">The translation context.</param>
+        /// <param name="mappingContext">The mapping context.</param>
         /// <returns></returns>
-        public virtual object ConvertFromDocumentValue(object documentValue, TranslationContext translationContext)
+        public virtual object ConvertFromDocumentValue(object documentValue, MappingContext mappingContext)
         {
             if (documentValue == MongoDBNull.Value)
                 return this.Type.IsValueType ? Activator.CreateInstance(this.Type) : null;
@@ -43,9 +43,9 @@ namespace MongoDB.Framework.Mapping.Types
         /// Converts to document value.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <param name="translationContext">The translation context.</param>
+        /// <param name="mappingContext">The mapping context.</param>
         /// <returns></returns>
-        public virtual object ConvertToDocumentValue(object value, TranslationContext translationContext)
+        public virtual object ConvertToDocumentValue(object value, MappingContext mappingContext)
         {
             if (value == null)
                 return MongoDBNull.Value;

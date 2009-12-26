@@ -35,10 +35,11 @@ namespace MongoDB.Framework.Persistence
             if (!classMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
-            var translationContext = new TranslationContext() { Document = new Document() };
-            translationContext.Document[classMap.IdMap.Key] = classMap.IdMap.ValueType.ConvertToDocumentValue(id, translationContext);
+            //var mappingContext = new MappingContext(Document, type);
+            //mappingContext.Document[classMap.IdMap.Key] = classMap.IdMap.ValueType.ConvertToDocumentValue(id, mappingContext);
 
-            return this.Find(classMap, translationContext.Document, 1, 0, new Document(), new Document()).Single();
+            throw new NotImplementedException();
+            //return this.Find(classMap, mappingContext.Document, 1, 0, new Document(), new Document()).Single();
         }
     }
 }

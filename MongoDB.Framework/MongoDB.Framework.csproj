@@ -100,7 +100,7 @@
     <Compile Include="Mapping\IValueType.cs" />
     <Compile Include="Mapping\NestedClassMap.cs" />
     <Compile Include="Mapping\RootClassMap.cs" />
-    <Compile Include="Mapping\TranslationContext.cs" />
+    <Compile Include="Mapping\MappingContext.cs" />
     <Compile Include="Mapping\Types\IdValueType.cs" />
     <Compile Include="Mapping\Types\NestedClassValueType.cs" />
     <Compile Include="Mapping\Types\NullSafeValueType.cs" />

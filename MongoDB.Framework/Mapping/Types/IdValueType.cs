@@ -17,9 +17,9 @@ namespace MongoDB.Framework.Mapping.Types
         /// </summary>
         /// <param name="documentValue">The document value.</param>
         /// <returns></returns>
-        public override object ConvertFromDocumentValue(object documentValue, TranslationContext translationContext)
+        public override object ConvertFromDocumentValue(object documentValue, MappingContext mappingContext)
         {
-            documentValue = base.ConvertFromDocumentValue(documentValue, translationContext);
+            documentValue = base.ConvertFromDocumentValue(documentValue, mappingContext);
             var oid = documentValue as Oid;
             if (oid == null)
                 return null;
@@ -33,9 +33,9 @@ namespace MongoDB.Framework.Mapping.Types
         /// <param name="value">The value.</param>
         /// <param name="owner">The owner.</param>
         /// <returns></returns>
-        public override object ConvertToDocumentValue(object value, TranslationContext translationContext)
+        public override object ConvertToDocumentValue(object value, MappingContext mappingContext)
         {
-            value = base.ConvertToDocumentValue(value, translationContext);
+            value = base.ConvertToDocumentValue(value, mappingContext);
             if (value == MongoDBNull.Value)
                 return value;
 

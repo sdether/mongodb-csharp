@@ -20,30 +20,37 @@ namespace MongoDB.Framework.Mapping.Types
         /// <param name="nestedClassMap">The nested class map.</param>
         public NestedClassValueType(NestedClassMap nestedClassMap)
             : base(nestedClassMap.Type)
-        { }
+        {
+            this.NestedClassMap = nestedClassMap;
+        }
 
         /// <summary>
         /// Converts from document value.
         /// </summary>
         /// <param name="documentValue">The document value.</param>
-        /// <param name="translationContext">The translation context.</param>
+        /// <param name="mappingContext">The mapping context.</param>
         /// <returns></returns>
-        public override object ConvertFromDocumentValue(object documentValue, TranslationContext translationContext)
+        public override object ConvertFromDocumentValue(object documentValue, MappingContext mappingContext)
         {
-            documentValue = base.ConvertFromDocumentValue(documentValue, translationContext);
+            documentValue = base.ConvertFromDocumentValue(documentValue, mappingContext);
             var document = documentValue as Document;
             if(document == null)
                 return null;
 
-            var childContext = translationContext.CreateChild();
-            childContext.Document = document;
-            this.NestedClassMap.TranslateFromDocument(childContext);
-            return childContext.Owner;
+            var childContext = mappingContext.CreateChildMappingContext(document, this.NestedClassMap.Type);
+            this.NestedClassMap.Map(childContext);
+            return childContext.Entity;
         }
 
-        public override object ConvertToDocumentValue(object value, TranslationContext translationContext)
+        public override object ConvertToDocumentValue(object value, MappingContext mappingContext)
         {
-            throw new NotImplementedException();
+            value = base.ConvertToDocumentValue(value, mappingContext);
+            if (value == MongoDBNull.Value)
+                return value;
+
+            var childContext = mappingContext.CreateChildMappingContext(value);
+            this.NestedClassMap.Map(childContext);
+            return childContext.Document;
         }
     }
 }

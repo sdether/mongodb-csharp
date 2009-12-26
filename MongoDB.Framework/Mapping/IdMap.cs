@@ -15,11 +15,11 @@ namespace MongoDB.Framework.Mapping
             this.ValueType = new IdValueType();
         }
 
-        public override void TranslateToDocument(TranslationContext translationContext)
+        public override void TranslateToDocument(MappingContext mappingContext)
         {
-            base.TranslateToDocument(translationContext);
-            if (translationContext.Document[this.Key] == MongoDBNull.Value)
-                translationContext.Document.Remove(this.Key);
+            base.TranslateToDocument(mappingContext);
+            if (mappingContext.Document[this.Key] == MongoDBNull.Value)
+                mappingContext.Document.Remove(this.Key);
         }
     }
 }

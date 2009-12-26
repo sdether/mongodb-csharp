@@ -35,7 +35,6 @@ namespace MongoDB.Framework.Persistence
             if (!classMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
-            var translationContext = new TranslationContext() { Document = new Document(), Owner = entity };
             throw new NotImplementedException();
             //this.Collection.Update(document);
             //this.ChangeTracker.GetTrackedObject(entity).MoveToPossibleModified(document);
