@@ -147,6 +147,23 @@ namespace MongoDB.Framework
         }
 
         [Test]
+        public void Test_inserted()
+        {
+            var org = new Organization()
+            {
+                Name = "Body by Jane",
+                EmployeeCount = 2
+            };
+            context.InsertOnSubmit(org);
+            context.SubmitChanges();
+
+            using (var context2 = this.CreateContext())
+            {
+                Assert.IsNotNull(context.Query<Party>().First(p => p.Name == "Body by Jane"));
+            }
+        }
+
+        [Test]
         public void Test_updating()
         {
             var party = context.Query<Party>().First(p => p.Name == "Bob McBob");

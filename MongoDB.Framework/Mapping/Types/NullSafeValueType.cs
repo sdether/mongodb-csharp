@@ -33,7 +33,7 @@ namespace MongoDB.Framework.Mapping.Types
         /// <returns></returns>
         public virtual object ConvertFromDocumentValue(object documentValue, MappingContext mappingContext)
         {
-            if (documentValue == MongoDBNull.Value)
+            if (documentValue == null || documentValue == MongoDBNull.Value)
                 return this.Type.IsValueType ? Activator.CreateInstance(this.Type) : null;
 
             return documentValue;

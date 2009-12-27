@@ -179,17 +179,6 @@ namespace MongoDB.Framework.Mapping
 
         #endregion
 
-        #region Protected Methods
-
-        /// <summary>
-        /// Creates the owner.
-        /// </summary>
-        /// <param name="document">The document.</param>
-        /// <returns></returns>
-        protected abstract Type GetConcreteType(Document document);
-
-        #endregion
-
         #region Private Methods
 
         /// <summary>
@@ -205,6 +194,10 @@ namespace MongoDB.Framework.Mapping
                 || this.memberMaps.ContainsKey(key);
         }
 
+        /// <summary>
+        /// Maps from document.
+        /// </summary>
+        /// <param name="mappingContext">The mapping context.</param>
         private void MapFromDocument(MappingContext mappingContext)
         {
             if (this.HasId)
@@ -229,6 +222,10 @@ namespace MongoDB.Framework.Mapping
             }
         }
 
+        /// <summary>
+        /// Maps to document.
+        /// </summary>
+        /// <param name="mappingContext">The mapping context.</param>
         private void MapToDocument(MappingContext mappingContext)
         {
             if (this.HasId)

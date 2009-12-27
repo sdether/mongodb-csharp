@@ -68,7 +68,13 @@
     <Compile Include="Domain.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="IntegrationTestBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Mapping\MappingTests.cs" />
+    <Compile Include="MongoContextTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\LateBoundReflectionTests.cs" />
     <Compile Include="Linq\Visitors\MemberInfoPathExpressionTreeVisitorTests.cs" />

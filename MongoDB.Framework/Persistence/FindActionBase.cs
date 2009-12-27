@@ -64,12 +64,9 @@ namespace MongoDB.Framework.Persistence
         {
             if (classMap == null)
                 throw new ArgumentNullException("classMap");
-            if (conditions == null)
-                throw new ArgumentNullException("conditions");
-            if (orderBy == null)
-                throw new ArgumentNullException("orderBy");
-            if (fields == null)
-                throw new ArgumentNullException("fields");
+            conditions = conditions ?? new Document();
+            orderBy = orderBy ?? new Document();
+            fields = fields ?? new Document();
 
             var query = this.CreateQuery(conditions, orderBy);
             conditions = (Document)query["query"] ?? query;
@@ -111,21 +108,39 @@ namespace MongoDB.Framework.Persistence
                 documents = this.Collection.Find(query, limit, skip, fields).Documents;
             }
 
-            throw new NotImplementedException();
-
-            //don't track entities returned from a projection
-            //DocumentToEntityTranslator translator;
-            //if (fields.Count == 0)
-            //    translator = new ChangeTrackingDocumentToEntityTranslator(this.MappingStore, this.ChangeTracker);
-            //else
-            //    translator = new DocumentToEntityTranslator(this.MappingStore);
-            //return this.CreateEntities(translator, classMap, documents);
+            //if we are fetching everything and want to track the entities... (0 means everything).
+            bool trackEntities = fields.Count == 0;
+            return this.CreateEntities(classMap, documents, trackEntities);
         }
 
         #endregion
 
         #region Private Methods
 
+        /// <summary>
+        /// Creates the entities.
+        /// </summary>
+        /// <param name="classMap">The class map.</param>
+        /// <param name="documents">The documents.</param>
+        /// <returns></returns>
+        private IEnumerable<object> CreateEntities(ClassMap classMap, IEnumerable<Document> documents, bool trackEntities)
+        {
+            foreach (var document in documents)
+            {
+                ClassMap concreteClassMap = classMap;
+                if (classMap.IsPolymorphic)
+                {
+                    object discriminator = document[classMap.DiscriminatorKey];
+                    concreteClassMap = classMap.GetClassMapByDiscriminator(discriminator);
+                }
+                var mappingContext = new MappingContext(this.MappingStore, document, concreteClassMap.Type);
+                classMap.Map(mappingContext);
+                if (trackEntities)
+                    this.ChangeTracker.GetTrackedObject(mappingContext.Entity).MoveToPossibleModified(document);
+
+                yield return mappingContext.Entity;
+            }
+        }
 
         /// <summary>
         /// Creates the full query.

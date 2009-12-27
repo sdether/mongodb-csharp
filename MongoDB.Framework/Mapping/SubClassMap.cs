@@ -115,19 +115,5 @@ namespace MongoDB.Framework.Mapping
         }
 
         #endregion
-
-        #region Protected Methods
-
-        /// <summary>
-        /// Creates the owner.
-        /// </summary>
-        /// <param name="document">The document.</param>
-        /// <returns></returns>
-        protected override Type GetConcreteType(MongoDB.Driver.Document document)
-        {
-            return this.Type;
-        }
-
-        #endregion
     }
 }

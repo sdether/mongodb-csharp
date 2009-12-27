@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 using MongoDB.Framework.Persistence;
 using MongoDB.Driver;
+using MongoDB.Framework.Mapping.Types;
 
 namespace MongoDB.Framework.Mapping
 {
@@ -91,10 +92,10 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public object ConvertToDocumentValue(object entityValue)
+        public object ConvertToDocumentValue(object value, MappingContext mappingContext)
         {
             var lastMemberMap = this.memberMaps[this.memberMaps.Count - 1];
-            return lastMemberMap.ValueType.ConvertToDocumentValue(entityValue, null);
+            return lastMemberMap.ValueType.ConvertToDocumentValue(value, mappingContext);
         }
 
         #endregion
@@ -133,7 +134,13 @@ namespace MongoDB.Framework.Mapping
         /// <returns></returns>
         private MemberMap GetNextMemberMap(MemberMap currentMemberMap, string nextMemberName)
         {
-            throw new NotSupportedException(string.Format("Unknown MemberMap type {0}.", currentMemberMap.GetType()));
+            if (currentMemberMap.ValueType is NestedClassValueType)
+            {
+                var nestedClassMAp = ((NestedClassValueType)currentMemberMap.ValueType).NestedClassMap;
+                return nestedClassMAp.GetMemberMapFromMemberName(nextMemberName);
+            }
+
+            throw new NotSupportedException(string.Format("The value type {0} must occur last.", currentMemberMap.ValueType.GetType()));
         }
 
         #endregion

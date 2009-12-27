@@ -95,7 +95,8 @@ namespace MongoDB.Framework.Linq.Visitors
             else
                 throw new NotSupportedException();
 
-            value = this.memberMapPath.ConvertToDocumentValue(value);
+            
+            value = this.memberMapPath.ConvertToDocumentValue(value, null);
             if (op == "$eq")
                 this.query[this.memberMapPath.Key] = value;
             else

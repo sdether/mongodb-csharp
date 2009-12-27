@@ -118,11 +118,10 @@ namespace MongoDB.Framework.Tracking
                 return;
             }
 
-            throw new NotImplementedException();
-            //var translator = new EntityToDocumentTranslator(this.mappingStore);
-            //var document = translator.Translate(this.Current);
-            //if (!AreDocumentsEqual(this.Original, document))
-            //    this.MoveToModified();
+            var mappingContext = new MappingContext(this.mappingStore, this.Current);
+            classMap.Map(mappingContext);
+            if (!AreDocumentsEqual(this.Original, mappingContext.Document))
+                this.MoveToModified();
         }
 
         /// <summary>

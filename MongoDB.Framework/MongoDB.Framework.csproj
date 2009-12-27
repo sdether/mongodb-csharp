@@ -117,7 +117,6 @@
     <Compile Include="Mapping\MemberMap.cs" />
     <Compile Include="Mapping\MemberMapPath.cs" />
     <Compile Include="Persistence\FindActionBase.cs" />
-    <Compile Include="Persistence\GetByIdAction.cs" />
     <Compile Include="Persistence\DeleteAction.cs" />
     <Compile Include="Persistence\UpdateAction.cs" />
     <Compile Include="Persistence\InsertAction.cs" />

@@ -14,7 +14,6 @@ namespace MongoDB.Framework.Mapping
 
     public class MappingContext
     {
-        /// <summary>
         /// Gets the direction of the mapping.
         /// </summary>
         /// <value>The direction.</value>
@@ -60,8 +59,13 @@ namespace MongoDB.Framework.Mapping
                 throw new ArgumentNullException("entityType");
 
             this.Direction = MappingDirection.DocumentToEntity;
-            this.Document = document;
+            
+            //use a copy of the document because reading is destructive in order to get the extended properties...
+            this.Document = new Document();
+            document.CopyTo(this.Document); 
+
             this.Entity = this.CreateEntity(entityType);
+            this.MappingStore = mappingStore;
         }
 
         /// <summary>
@@ -79,6 +83,7 @@ namespace MongoDB.Framework.Mapping
             this.Direction = MappingDirection.EntityToDocument;
             this.Document = new Document();
             this.Entity = entity;
+            this.MappingStore = mappingStore;
         }
 
         /// <summary>
