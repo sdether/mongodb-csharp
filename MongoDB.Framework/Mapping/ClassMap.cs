@@ -161,19 +161,55 @@ namespace MongoDB.Framework.Mapping
         /// Runs a mapping according to the specfied mappingContext;
         /// </summary>
         /// <param name="mappingContext">The mapping context.</param>
-        public virtual void Map(MappingContext mappingContext)
+        public virtual void MapFromDocument(MappingContext mappingContext)
         {
             if (mappingContext == null)
                 throw new ArgumentNullException("mappingContext");
 
-            switch (mappingContext.Direction)
+            if (this.HasId)
             {
-                case MappingDirection.DocumentToEntity:
-                    this.MapFromDocument(mappingContext);
-                    break;
-                case MappingDirection.EntityToDocument:
-                    this.MapToDocument(mappingContext);
-                    break;
+                this.IdMap.MapFromDocument(mappingContext);
+                mappingContext.Document.Remove(this.IdMap.Key);
+            }
+
+            foreach (var memberMap in this.MemberMaps)
+            {
+                memberMap.MapFromDocument(mappingContext);
+                mappingContext.Document.Remove(memberMap.Key);
+            }
+
+            if (this.IsPolymorphic)
+                mappingContext.Document.Remove(this.DiscriminatorKey);
+
+            if (this.HasExtendedProperties)
+            {
+                var dictionary = mappingContext.Document.ToDictionary();
+                this.ExtendedPropertiesMap.MemberSetter(mappingContext.Entity, dictionary);
+            }
+        }
+
+        /// <summary>
+        /// Maps to document.
+        /// </summary>
+        /// <param name="mappingContext">The mapping context.</param>
+        public virtual void MapToDocument(object entity, Document document)
+        {
+            if (this.HasId)
+                this.IdMap.MapToDocument(entity, document);
+
+            foreach (var memberMap in this.MemberMaps)
+                memberMap.MapToDocument(entity, document);
+
+            //We are making the assumption that "null" is not a valid discriminator for an entity...
+            if (this.IsPolymorphic && this.Discriminator != null)
+                document.Add(this.DiscriminatorKey, this.Discriminator);
+
+            if (this.HasExtendedProperties)
+            {
+                var dictionary = (IDictionary<string, object>)this.ExtendedPropertiesMap.MemberGetter(entity);
+
+                dictionary.ToDocument()
+                    .CopyTo(document);
             }
         }
 
@@ -192,58 +228,6 @@ namespace MongoDB.Framework.Mapping
         {
             return (key == "_id" && this.HasId)
                 || this.memberMaps.ContainsKey(key);
-        }
-
-        /// <summary>
-        /// Maps from document.
-        /// </summary>
-        /// <param name="mappingContext">The mapping context.</param>
-        private void MapFromDocument(MappingContext mappingContext)
-        {
-            if (this.HasId)
-            {
-                this.IdMap.TranslateFromDocument(mappingContext);
-                mappingContext.Document.Remove(this.IdMap.Key);
-            }
-
-            foreach (var memberMap in this.MemberMaps)
-            {
-                memberMap.TranslateFromDocument(mappingContext);
-                mappingContext.Document.Remove(memberMap.Key);
-            }
-
-            if (this.IsPolymorphic)
-                mappingContext.Document.Remove(this.DiscriminatorKey);
-
-            if (this.HasExtendedProperties)
-            {
-                var dictionary = mappingContext.Document.ToDictionary();
-                this.ExtendedPropertiesMap.MemberSetter(mappingContext.Entity, dictionary);
-            }
-        }
-
-        /// <summary>
-        /// Maps to document.
-        /// </summary>
-        /// <param name="mappingContext">The mapping context.</param>
-        private void MapToDocument(MappingContext mappingContext)
-        {
-            if (this.HasId)
-                this.IdMap.TranslateToDocument(mappingContext);
-
-            foreach (var memberMap in this.MemberMaps)
-                memberMap.TranslateToDocument(mappingContext);
-
-            if (this.IsPolymorphic)
-                mappingContext.Document.Add(this.DiscriminatorKey, this.Discriminator);
-
-            if (this.HasExtendedProperties)
-            {
-                var dictionary = (IDictionary<string, object>)this.ExtendedPropertiesMap.MemberGetter(mappingContext.Entity);
-
-                dictionary.ToDocument()
-                    .CopyTo(mappingContext.Document);
-            }
         }
 
         #endregion

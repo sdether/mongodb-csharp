@@ -38,19 +38,19 @@ namespace MongoDB.Framework.Mapping.Types
                 return null;
 
             var childContext = mappingContext.CreateChildMappingContext(document, this.NestedClassMap.Type);
-            this.NestedClassMap.Map(childContext);
+            this.NestedClassMap.MapFromDocument(childContext);
             return childContext.Entity;
         }
 
-        public override object ConvertToDocumentValue(object value, MappingContext mappingContext)
+        public override object ConvertToDocumentValue(object value)
         {
-            value = base.ConvertToDocumentValue(value, mappingContext);
+            value = base.ConvertToDocumentValue(value);
             if (value == MongoDBNull.Value)
                 return value;
 
-            var childContext = mappingContext.CreateChildMappingContext(value);
-            this.NestedClassMap.Map(childContext);
-            return childContext.Document;
+            var document = new Document();
+            this.NestedClassMap.MapToDocument(value, document);
+            return document;
         }
     }
 }

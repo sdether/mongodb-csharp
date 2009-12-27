@@ -118,9 +118,9 @@ namespace MongoDB.Framework.Tracking
                 return;
             }
 
-            var mappingContext = new MappingContext(this.mappingStore, this.Current);
-            classMap.Map(mappingContext);
-            if (!AreDocumentsEqual(this.Original, mappingContext.Document))
+            var document = new Document();
+            classMap.MapToDocument(this.Current, document);
+            if (!AreDocumentsEqual(this.Original, document))
                 this.MoveToModified();
         }
 

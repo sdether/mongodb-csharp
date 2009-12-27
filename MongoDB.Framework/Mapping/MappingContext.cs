@@ -6,19 +6,8 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Mapping
 {
-    public enum MappingDirection
-    {
-        DocumentToEntity,
-        EntityToDocument
-    }
-
     public class MappingContext
     {
-        /// Gets the direction of the mapping.
-        /// </summary>
-        /// <value>The direction.</value>
-        public MappingDirection Direction { get; private set; }
-
         /// <summary>
         /// Gets the document.
         /// </summary>
@@ -58,31 +47,11 @@ namespace MongoDB.Framework.Mapping
             if (entityType == null)
                 throw new ArgumentNullException("entityType");
 
-            this.Direction = MappingDirection.DocumentToEntity;
-            
             //use a copy of the document because reading is destructive in order to get the extended properties...
             this.Document = new Document();
             document.CopyTo(this.Document); 
 
             this.Entity = this.CreateEntity(entityType);
-            this.MappingStore = mappingStore;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MappingContext"/> class.
-        /// </summary>
-        /// <param name="mappingStore">The mapping store.</param>
-        /// <param name="entity">The entity.</param>
-        public MappingContext(MappingStore mappingStore, object entity)
-        {
-            if (mappingStore == null)
-                throw new ArgumentNullException("mappingStore");
-            if (entity == null)
-                throw new ArgumentNullException("entity");
-
-            this.Direction = MappingDirection.EntityToDocument;
-            this.Document = new Document();
-            this.Entity = entity;
             this.MappingStore = mappingStore;
         }
 
@@ -94,16 +63,6 @@ namespace MongoDB.Framework.Mapping
         public MappingContext CreateChildMappingContext(Document document, Type entityType)
         {
             return new MappingContext(this.MappingStore, document, entityType) { Parent = this };
-        }
-
-        /// <summary>
-        /// Creates a child mapping context.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <returns></returns>
-        public MappingContext CreateChildMappingContext(object entity)
-        {
-            return new MappingContext(this.MappingStore, entity) { Parent = this };
         }
 
         /// <summary>

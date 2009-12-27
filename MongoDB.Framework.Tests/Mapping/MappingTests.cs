@@ -32,7 +32,7 @@ namespace MongoDB.Framework.Mapping
             var classMap = mappingStore.GetClassMapFor<Person>();
 
             var mappingContext = new MappingContext(mappingStore, document, typeof(Person));
-            classMap.Map(mappingContext);
+            classMap.MapFromDocument(mappingContext);
             var person = mappingContext.Entity as Person;
             Assert.IsNotNull(person);
             Assert.AreEqual("Bob McBob", person.Name);
@@ -67,10 +67,9 @@ namespace MongoDB.Framework.Mapping
                 }
             };
 
-            var mappingContext = new MappingContext(mappingStore, person);
+            var document = new Document();
             var classMap = mappingStore.GetClassMapFor<Person>();
-            classMap.Map(mappingContext);
-            var document = mappingContext.Document;
+            classMap.MapToDocument(person, document);
 
             Assert.AreEqual(new Oid("4b27b9f1cf24000000002aa0"), document["_id"]);
             Assert.AreEqual("Bob McBob", document["Name"]);

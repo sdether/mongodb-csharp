@@ -134,7 +134,7 @@ namespace MongoDB.Framework.Persistence
                     concreteClassMap = classMap.GetClassMapByDiscriminator(discriminator);
                 }
                 var mappingContext = new MappingContext(this.MappingStore, document, concreteClassMap.Type);
-                classMap.Map(mappingContext);
+                classMap.MapFromDocument(mappingContext);
                 if (trackEntities)
                     this.ChangeTracker.GetTrackedObject(mappingContext.Entity).MoveToPossibleModified(document);
 

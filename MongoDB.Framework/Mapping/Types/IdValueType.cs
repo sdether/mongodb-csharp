@@ -33,9 +33,9 @@ namespace MongoDB.Framework.Mapping.Types
         /// <param name="value">The value.</param>
         /// <param name="owner">The owner.</param>
         /// <returns></returns>
-        public override object ConvertToDocumentValue(object value, MappingContext mappingContext)
+        public override object ConvertToDocumentValue(object value)
         {
-            value = base.ConvertToDocumentValue(value, mappingContext);
+            value = base.ConvertToDocumentValue(value);
             if (value == MongoDBNull.Value)
                 return value;
 

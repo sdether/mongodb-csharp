@@ -19,25 +19,32 @@ namespace MongoDB.Framework.Mapping
         public IValueType ValueType { get; set; }
 
         /// <summary>
-        /// Translates from document.
+        /// Maps the member from a document.
         /// </summary>
         /// <param name="mappingContext">The mapping context.</param>
-        public virtual void TranslateFromDocument(MappingContext mappingContext)
+        public virtual void MapFromDocument(MappingContext mappingContext)
         {
+            if (mappingContext == null)
+                throw new ArgumentNullException("mappingContext");
             var value = mappingContext.Document[this.Key];
             value = this.ValueType.ConvertFromDocumentValue(value, mappingContext);
             this.MemberSetter(mappingContext.Entity, value);
         }
 
         /// <summary>
-        /// Translates to document.
+        /// Maps the member to the document.
         /// </summary>
-        /// <param name="mappingContext">The mapping context.</param>
-        public virtual void TranslateToDocument(MappingContext mappingContext)
+        /// <param name="entity">The entity.</param>
+        /// <param name="document">The document.</param>
+        public virtual void MapToDocument(object entity, Document document)
         {
-            var value = this.MemberGetter(mappingContext.Entity);
-            value = this.ValueType.ConvertToDocumentValue(value, mappingContext);
-            mappingContext.Document[this.Key] = value;
+            if (entity == null)
+                throw new ArgumentNullException("entity");
+            if (document == null)
+                throw new ArgumentNullException("document");
+            var value = this.MemberGetter(entity);
+            value = this.ValueType.ConvertToDocumentValue(value);
+            document[this.Key] = value;
         }
     }
 }
