@@ -33,11 +33,13 @@ namespace MongoDB.Framework.Mapping.Fluent
 
         public void Id(MemberInfo memberInfo)
         {
-            this.instance.IdMap = new IdMap();
-            this.instance.IdMap.MemberName = memberInfo.Name;
-            this.instance.IdMap.ValueType = new IdValueType();
-            this.instance.IdMap.MemberGetter = LateBoundReflection.GetGetter(memberInfo);
-            this.instance.IdMap.MemberSetter = LateBoundReflection.GetSetter(memberInfo);
+            this.instance.IdMap = new IdMap()
+            {
+                MemberName = memberInfo.Name,
+                MemberGetter = LateBoundReflection.GetGetter(memberInfo),
+                MemberSetter = LateBoundReflection.GetSetter(memberInfo),
+                ValueType = new IdValueType()
+            };
         }
 
         public void Id(Expression<Func<T, string>> idMember)

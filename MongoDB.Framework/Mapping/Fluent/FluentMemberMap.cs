@@ -10,7 +10,7 @@ using System.Linq.Expressions;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentMemberMap<TMember> : FluentMap<MemberMap>
+    public class FluentMemberMap : FluentMap<MemberMap>
     {
         private MemberMap memberMap;
 
@@ -19,23 +19,14 @@ namespace MongoDB.Framework.Mapping.Fluent
             get { return this.memberMap; }
         }
 
-        public FluentMemberMap(Type type)
+        public FluentMemberMap()
         {
             this.memberMap = new MemberMap();
-            this.memberMap.ValueType = new NullSafeValueType(type);
         }
 
-        public FluentMemberMap<TMember> Key(string key)
+        public FluentMemberMap Key(string key)
         {
             this.memberMap.Key = key;
-            return this;
-        }
-
-        public FluentMemberMap<TMember> NestedClass(Action<FluentNestedClassMap<TMember>> configure)
-        {
-            var fluentNestedClassMap = new FluentNestedClassMap<TMember>();
-            this.memberMap.ValueType = new NestedClassValueType(fluentNestedClassMap.Instance);
-            configure(fluentNestedClassMap);
             return this;
         }
     }

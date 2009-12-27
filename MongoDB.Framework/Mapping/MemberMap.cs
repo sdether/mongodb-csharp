@@ -16,6 +16,8 @@ namespace MongoDB.Framework.Mapping
 
         public Action<object, object> MemberSetter { get; set; }
 
+        public Type MemberType { get; set; }
+
         public IValueType ValueType { get; set; }
 
         /// <summary>

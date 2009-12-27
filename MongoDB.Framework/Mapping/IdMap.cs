@@ -12,6 +12,7 @@ namespace MongoDB.Framework.Mapping
         public IdMap()
         {
             this.Key = "_id";
+            this.MemberType = typeof(string);
             this.ValueType = new IdValueType();
         }
 

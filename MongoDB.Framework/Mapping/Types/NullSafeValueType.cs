@@ -22,6 +22,7 @@ namespace MongoDB.Framework.Mapping.Types
         {
             if (type == null)
                 throw new ArgumentNullException("type");
+
             this.Type = type;
         }
 
