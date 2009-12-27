@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Driver;
+using MongoDB.Framework.Configuration;
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Tracking;
 
@@ -14,11 +15,11 @@ namespace MongoDB.Framework.Persistence
         /// <summary>
         /// Initializes a new instance of the <see cref="DeleteAction"/> class.
         /// </summary>
-        /// <param name="mappingStore">The mapping store.</param>
+        /// <param name="mongoContext">The mongoContext.</param>
         /// <param name="changeTracker">The change tracker.</param>
         /// <param name="collection">The collection.</param>
-        public DeleteAction(MappingStore mappingStore, ChangeTracker changeTracker, IMongoCollection collection)
-            : base(mappingStore, changeTracker, collection)
+        public DeleteAction(IMongoContext mongoContext, ChangeTracker changeTracker)
+            : base(mongoContext, changeTracker)
         { }
 
         /// <summary>
@@ -30,13 +31,13 @@ namespace MongoDB.Framework.Persistence
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
-            var classMap = this.MappingStore.GetClassMapFor(entity.GetType());
+            var classMap = this.MongoContext.Configuration.MappingStore.GetClassMapFor(entity.GetType());
             if (!classMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
             var document = new Document();
             classMap.IdMap.MapToDocument(entity, document);
-            this.Collection.Delete(document);
+            this.GetCollectionForClassMap(classMap).Delete(document);
             this.ChangeTracker.GetTrackedObject(entity).MoveToDead();
         }
     }

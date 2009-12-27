@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Driver;
+using MongoDB.Framework.Configuration;
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Tracking;
 
@@ -49,11 +50,11 @@ namespace MongoDB.Framework.Persistence
         /// <summary>
         /// Initializes a new instance of the <see cref="FindAction"/> class.
         /// </summary>
-        /// <param name="mappingStore">The mapping store.</param>
+        /// <param name="mongoContext">The mongoContext.</param>
         /// <param name="changeTracker">The change tracker.</param>
         /// <param name="collection">The collection.</param>
-        public FindActionBase(MappingStore mappingStore, ChangeTracker changeTracker, IMongoCollection collection)
-            : base(mappingStore, changeTracker, collection)
+        public FindActionBase(IMongoContext mongoContext, ChangeTracker changeTracker)
+            : base(mongoContext, changeTracker)
         {  }
 
         #endregion
@@ -71,6 +72,7 @@ namespace MongoDB.Framework.Persistence
             var query = this.CreateQuery(conditions, orderBy);
             conditions = (Document)query["query"] ?? query;
 
+            var collection = this.GetCollectionForClassMap(classMap);
             IEnumerable<Document> documents;
             if (IsFindById(classMap, conditions))
             {
@@ -79,14 +81,14 @@ namespace MongoDB.Framework.Persistence
                 if (this.ChangeTracker.TryGetTrackedObjectById(id, out trackedObject))
                     return new[] { trackedObject.Current };
 
-                documents = new[] { this.Collection.FindOne(conditions) };
+                documents = new[] { collection.FindOne(conditions) };
             }
             else if (IsFindOne(limit, skip, orderBy))
             {
                 //if the particular type we need has a discriminator, we need to filter on it...
                 if (classMap.IsPolymorphic && classMap.Discriminator != null)
                     conditions[classMap.DiscriminatorKey] = classMap.Discriminator;
-                var document = this.Collection.FindOne(conditions);
+                var document = collection.FindOne(conditions);
                 if (document == null)
                     documents = Enumerable.Empty<Document>();
                 else
@@ -105,7 +107,7 @@ namespace MongoDB.Framework.Persistence
                         conditions[classMap.DiscriminatorKey] = classMap.Discriminator;
                 }
 
-                documents = this.Collection.Find(query, limit, skip, fields).Documents;
+                documents = collection.Find(query, limit, skip, fields).Documents;
             }
 
             //if we are fetching everything and want to track the entities... (0 means everything).
@@ -133,7 +135,7 @@ namespace MongoDB.Framework.Persistence
                     object discriminator = document[classMap.DiscriminatorKey];
                     concreteClassMap = classMap.GetClassMapByDiscriminator(discriminator);
                 }
-                var mappingContext = new MappingContext(this.MappingStore, document, concreteClassMap.Type);
+                var mappingContext = new MappingContext(this.MongoContext, document, concreteClassMap.Type);
                 classMap.MapFromDocument(mappingContext);
                 if (trackEntities)
                     this.ChangeTracker.GetTrackedObject(mappingContext.Entity).MoveToPossibleModified(document);

@@ -6,6 +6,7 @@ using System.Text;
 using NUnit.Framework;
 using MongoDB.Framework.Mapping.Fluent;
 using MongoDB.Driver;
+using MongoDB.Framework.Configuration;
 
 namespace MongoDB.Framework.Mapping
 {
@@ -17,6 +18,7 @@ namespace MongoDB.Framework.Mapping
         {
             var mappingStore = new FluentMappingStore()
                 .AddMapsFromAssemblyContaining<PartyMap>();
+            var configuration = new MongoConfiguration("tests", mappingStore);
 
             var document = new Document()
                 .Append("_id", new Oid("4b27b9f1cf24000000002aa0"))
@@ -29,9 +31,9 @@ namespace MongoDB.Framework.Mapping
                 .Append("BirthDate", new DateTime(1900, 1, 1))
                 .Append("not-mapped", true);
 
+            var mongoContext = configuration.CreateContextFactory().CreateContext();
             var classMap = mappingStore.GetClassMapFor<Person>();
-
-            var mappingContext = new MappingContext(mappingStore, document, typeof(Person));
+            var mappingContext = new MappingContext(mongoContext, document, typeof(Person));
             classMap.MapFromDocument(mappingContext);
             var person = mappingContext.Entity as Person;
             Assert.IsNotNull(person);

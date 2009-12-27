@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MongoDB.Driver;
+using MongoDB.Framework.Configuration;
 
 namespace MongoDB.Framework.Mapping
 {
@@ -21,10 +22,10 @@ namespace MongoDB.Framework.Mapping
         public object Entity { get; private set; }
 
         /// <summary>
-        /// Gets or sets the mapping store.
+        /// Gets the mongo context.
         /// </summary>
-        /// <value>The mapping store.</value>
-        public MappingStore MappingStore { get; private set; }
+        /// <value>The mongo context.</value>
+        public IMongoContext MongoContext { get; private set; }
 
         /// <summary>
         /// Gets the parent.
@@ -35,13 +36,13 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Initializes a new instance of the <see cref="MappingContext"/> class.
         /// </summary>
-        /// <param name="mappingStore">The mapping store.</param>
+        /// <param name="mongoContext">The mongo context.</param>
         /// <param name="document">The document.</param>
         /// <param name="entityType">Type of the entity.</param>
-        public MappingContext(MappingStore mappingStore, Document document, Type entityType)
+        public MappingContext(IMongoContext mongoContext, Document document, Type entityType)
         {
-            if (mappingStore == null)
-                throw new ArgumentNullException("mappingStore");
+            if (mongoContext == null)
+                throw new ArgumentNullException("mongoContext");
             if (document == null)
                 throw new ArgumentNullException("document");
             if (entityType == null)
@@ -52,7 +53,7 @@ namespace MongoDB.Framework.Mapping
             document.CopyTo(this.Document); 
 
             this.Entity = this.CreateEntity(entityType);
-            this.MappingStore = mappingStore;
+            this.MongoContext = mongoContext;
         }
 
         /// <summary>
@@ -62,7 +63,7 @@ namespace MongoDB.Framework.Mapping
         /// <returns></returns>
         public MappingContext CreateChildMappingContext(Document document, Type entityType)
         {
-            return new MappingContext(this.MappingStore, document, entityType) { Parent = this };
+            return new MappingContext(this.MongoContext, document, entityType) { Parent = this };
         }
 
         /// <summary>

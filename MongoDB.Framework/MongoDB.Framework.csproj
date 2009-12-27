@@ -63,6 +63,7 @@
     <Compile Include="DefaultMongoFactory.cs" />
     <Compile Include="EntityMapper.cs" />
     <Compile Include="Extensions\MongoDBDocumentExtensions.cs" />
+    <Compile Include="IMongoContext.cs" />
     <Compile Include="IMongoContextFactory.cs" />
     <Compile Include="IMongoFactory.cs" />
     <Compile Include="Linq\ResultObjectMapping.cs" />

@@ -68,7 +68,7 @@ namespace MongoDB.Framework
                     }
                 }
             }
-            return new MongoContext(this.Configuration.MappingStore, new DefaultChangeTracker(this.Configuration.MappingStore), mongo, database);
+            return new MongoContext(this.Configuration, new DefaultChangeTracker(this.Configuration.MappingStore), mongo, database);
         }
 
         #endregion

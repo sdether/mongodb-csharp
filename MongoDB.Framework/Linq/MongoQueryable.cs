@@ -22,9 +22,9 @@ namespace MongoDB.Framework.Linq
         /// <param name="changeTracker">The change tracker.</param>
         /// <param name="hydrator">The hydrator.</param>
         /// <returns></returns>
-        private static IQueryExecutor CreateExecutor(MappingStore mappingStore, ChangeTracker changeTracker, Database database)
+        private static IQueryExecutor CreateExecutor(IMongoContext mongoContext, ChangeTracker changeTracker)
         {
-            return new MongoQueryExecutor(mappingStore, changeTracker, database);
+            return new MongoQueryExecutor(mongoContext, changeTracker);
         }
 
         /// <summary>
@@ -34,8 +34,8 @@ namespace MongoDB.Framework.Linq
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="changeTracker">The change tracker.</param>
         /// <param name="hydrator">The hydrator.</param>
-        public MongoQueryable(MappingStore mappingStore, ChangeTracker changeTracker, Database database)
-            : base(CreateExecutor(mappingStore, changeTracker, database))
+        public MongoQueryable(IMongoContext mongoContext, ChangeTracker changeTracker)
+            : base(CreateExecutor(mongoContext, changeTracker))
         { }
 
         /// <summary>

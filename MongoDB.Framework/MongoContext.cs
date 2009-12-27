@@ -12,18 +12,32 @@ using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework
 {
-    public class MongoContext : IDisposable
+    public class MongoContext : IDisposable, IMongoContext
     {
         #region Private Fields
 
         private ChangeTracker changeTracker;
+        private IMongoConfiguration configuration;
         private Database database;
-        private MappingStore mappingStore;
         private Mongo mongo;
 
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Gets the configuration.
+        /// </summary>
+        /// <value>The configuration.</value>
+        public IMongoConfiguration Configuration
+        {
+            get
+            {
+                this.EnsureNotDisposed();
+
+                return this.configuration;
+            }
+        }
 
         /// <summary>
         /// Gets the database.
@@ -46,14 +60,14 @@ namespace MongoDB.Framework
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoContext"/> class.
         /// </summary>
-        /// <param name="mappingStore">The mapping store.</param>
+        /// <param name="configuration">The configuration.</param>
         /// <param name="changeTracker">The change tracker.</param>
         /// <param name="mongo">The mongo.</param>
         /// <param name="database">The database.</param>
-        public MongoContext(MappingStore mappingStore, ChangeTracker changeTracker, Mongo mongo, Database database)
+        public MongoContext(IMongoConfiguration configuration, ChangeTracker changeTracker, Mongo mongo, Database database)
         {
-            if (mappingStore == null)
-                throw new ArgumentNullException("mappingStore");
+            if (configuration == null)
+                throw new ArgumentNullException("configuration");
             if (changeTracker == null)
                 throw new ArgumentNullException("changeTracker");
             if (mongo == null)
@@ -62,8 +76,8 @@ namespace MongoDB.Framework
                 throw new ArgumentNullException("database");
 
             this.changeTracker = changeTracker;
+            this.configuration = configuration;
             this.database = database;
-            this.mappingStore = mappingStore;
             this.mongo = mongo;
         }
 
@@ -90,9 +104,8 @@ namespace MongoDB.Framework
         }
 
         /// <summary>
-        /// Deletes the on submit.
+        /// Deletes the entity on submit.
         /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity.</param>
         public void DeleteOnSubmit(object entity)
         {
@@ -102,9 +115,8 @@ namespace MongoDB.Framework
         }
 
         /// <summary>
-        /// Deletes all on submit.
+        /// Deletes all the entities on submit.
         /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The entities.</param>
         public void DeleteAllOnSubmit(params object[] entities)
         {
@@ -114,9 +126,8 @@ namespace MongoDB.Framework
         }
 
         /// <summary>
-        /// Deletes all on submit.
+        /// Deletes all the entities on submit.
         /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The entities.</param>
         public void DeleteAllOnSubmit(IEnumerable<object> entities)
         {
@@ -130,9 +141,8 @@ namespace MongoDB.Framework
         }
 
         /// <summary>
-        /// Inserts the entity.
+        /// Inserts the entity on submit.
         /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity.</param>
         public void InsertOnSubmit(object entity)
         {
@@ -142,9 +152,8 @@ namespace MongoDB.Framework
         }
 
         /// <summary>
-        /// Inserts all the entities.
+        /// Inserts all the entities on submit.
         /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The entities.</param>
         public void InsertAllOnSubmit(params object[] entities)
         {
@@ -154,9 +163,8 @@ namespace MongoDB.Framework
         }
 
         /// <summary>
-        /// Inserts all the entities.
+        /// Inserts all the entities on submit.
         /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entities">The entities.</param>
         public void InsertAllOnSubmit(IEnumerable<object> entities)
         {
@@ -170,7 +178,7 @@ namespace MongoDB.Framework
         }
 
         /// <summary>
-        /// Queries this instance.
+        /// Creates a queryable for the entity.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <returns></returns>
@@ -178,11 +186,11 @@ namespace MongoDB.Framework
         {
             this.EnsureNotDisposed();
 
-            return new MongoQueryable<TEntity>(this.mappingStore, this.changeTracker, this.database);
+            return new MongoQueryable<TEntity>(this, this.changeTracker);
         }
 
         /// <summary>
-        /// Submits the changes.
+        /// Submits the changes to the database.
         /// </summary>
         public void SubmitChanges()
         {
@@ -208,8 +216,8 @@ namespace MongoDB.Framework
                 return;
 
             this.changeTracker = null;
+            this.configuration = null;
             this.database = null;
-            this.mappingStore = null;
             this.mongo.Disconnect();
             this.mongo = null;
         }
@@ -235,11 +243,11 @@ namespace MongoDB.Framework
         {
             foreach (var entityGroup in inserted.GroupBy(a => a.GetType()))
             {
-                var classMap = this.mappingStore.GetClassMapFor(entityGroup.Key);
+                var classMap = this.configuration.MappingStore.GetClassMapFor(entityGroup.Key);
                 var collection = this.Database.GetCollection(classMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
-                    new InsertAction(this.mappingStore, this.changeTracker, collection)
+                    new InsertAction(this, this.changeTracker)
                         .Insert(entity);
                 }
             }
@@ -253,11 +261,11 @@ namespace MongoDB.Framework
         {
             foreach (var entityGroup in updated.GroupBy(a => a.GetType()))
             {
-                var classMap = this.mappingStore.GetClassMapFor(entityGroup.Key);
+                var classMap = this.configuration.MappingStore.GetClassMapFor(entityGroup.Key);
                 var collection = this.Database.GetCollection(classMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
-                    new UpdateAction(this.mappingStore, this.changeTracker, collection)
+                    new UpdateAction(this, this.changeTracker)
                         .Update(entity);
                 }
             }
@@ -271,11 +279,11 @@ namespace MongoDB.Framework
         {
             foreach (var entityGroup in deleted.GroupBy(a => a.GetType()))
             {
-                var classMap = this.mappingStore.GetClassMapFor(entityGroup.Key);
+                var classMap = this.configuration.MappingStore.GetClassMapFor(entityGroup.Key);
                 var collection = this.Database.GetCollection(classMap.CollectionName);
                 foreach (var entity in entityGroup)
                 {
-                    new DeleteAction(this.mappingStore, this.changeTracker, collection)
+                    new DeleteAction(this, this.changeTracker)
                         .Delete(entity);
                 }
             }

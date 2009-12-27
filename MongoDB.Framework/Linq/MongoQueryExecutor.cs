@@ -18,8 +18,7 @@ namespace MongoDB.Framework.Linq
     public class MongoQueryExecutor : IQueryExecutor
     {
         private ChangeTracker changeTracker;
-        private Database database;
-        private MappingStore mappingStore;
+        private IMongoContext mongoContext;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoQueryExecutor"/> class.
@@ -28,41 +27,38 @@ namespace MongoDB.Framework.Linq
         /// <param name="changeTracker">The change tracker.</param>
         /// <param name="hydrator">The hydrator.</param>
         /// <param name="database">The database.</param>
-        public MongoQueryExecutor(MappingStore mappingStore, ChangeTracker changeTracker, Database database)
+        public MongoQueryExecutor(IMongoContext mongoContext, ChangeTracker changeTracker)
         {
-            if (mappingStore == null)
-                throw new ArgumentNullException("mappingStore");
+            if (mongoContext == null)
+                throw new ArgumentNullException("mongoContext");
             if (changeTracker == null)
                 throw new ArgumentNullException("changeTracker");
-            if (database == null)
-                throw new ArgumentNullException("database");
 
             this.changeTracker = changeTracker;
-            this.database = database;
-            this.mappingStore = mappingStore;
+            this.mongoContext = mongoContext;
         }
 
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
-            var spec = CollectionQueryModelVisitor.CreateMongoQuerySpecification(this.mappingStore, queryModel);
-            var classMap = this.mappingStore.GetClassMapFor(queryModel.MainFromClause.ItemType);
-            var collection = this.database.GetCollection(classMap.CollectionName);
-            var findAction = new FindAction(this.mappingStore, this.changeTracker, collection);
+            var spec = CollectionQueryModelVisitor.CreateMongoQuerySpecification(this.mongoContext.Configuration.MappingStore, queryModel);
+            var classMap = this.mongoContext.Configuration.MappingStore.GetClassMapFor(queryModel.MainFromClause.ItemType);
+            var findAction = new FindAction(this.mongoContext, this.changeTracker);
             foreach (var entity in findAction.Find(classMap.Type, spec.Conditions, spec.Limit, spec.Skip, spec.OrderBy, spec.Projection.Fields))
                 yield return (T)spec.Projection.Projector(new ResultObjectMapping() { { queryModel.MainFromClause, entity } });
         }
 
         public T ExecuteScalar<T>(QueryModel queryModel)
         {
-            var scalarVisitor = new ScalarQueryModelVisitor(this.mappingStore);
+            var scalarVisitor = new ScalarQueryModelVisitor(this.mongoContext.Configuration.MappingStore);
             scalarVisitor.VisitQueryModel(queryModel);
 
             var itemType = queryModel.MainFromClause.ItemType;
-            var classMap = this.mappingStore.GetClassMapFor(itemType);
+            var classMap = this.mongoContext.Configuration.MappingStore.GetClassMapFor(itemType);
             if (classMap.IsPolymorphic && classMap.Discriminator != null)
                 scalarVisitor.Query[classMap.DiscriminatorKey] = classMap.Discriminator;
 
-            var collection = this.database.GetCollection(classMap.CollectionName);
+            //TODO: Convert to PersistenceAction
+            var collection = this.mongoContext.Database.GetCollection(classMap.CollectionName);
 
             if (scalarVisitor.IsCount)
             {
