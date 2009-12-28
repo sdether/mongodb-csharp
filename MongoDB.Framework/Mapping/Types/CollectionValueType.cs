@@ -6,46 +6,61 @@ using System.Collections;
 
 namespace MongoDB.Framework.Mapping.Types
 {
-    public abstract class CollectionValueType : IValueType
+    public class CollectionValueType : IValueType
     {
-        public abstract Type CollectionType { get; }
+        private ICollectionType collectionType;
 
-        public Type[] GenericArguments { get; set; }
+        /// <summary>
+        /// Gets the type.
+        /// </summary>
+        /// <value>The type.</value>
+        public Type Type
+        {
+            get { return collectionType.CollectionType; }
+        }
 
-        public IValueType ElementValueType { get; set; }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CollectionValueType"/> class.
+        /// </summary>
+        /// <param name="collectionType">Type of the collection.</param>
+        public CollectionValueType(ICollectionType collectionType)
+        {
+            if (collectionType == null)
+                throw new ArgumentNullException("collectionType");
 
-        public CollectionValueType()
-        { }
+            this.collectionType = collectionType;
+        }
 
+        /// <summary>
+        /// Converts from document value.
+        /// </summary>
+        /// <param name="documentValue">The document value.</param>
+        /// <param name="mappingContext">The mapping context.</param>
+        /// <returns></returns>
         public object ConvertFromDocumentValue(object documentValue, MappingContext mappingContext)
         {
             Array array = documentValue as Array;
             if (array == null)
                 return null;
 
-            var collection = this.CreateCollection();
-            var addMethod = this.CollectionType.GetMethod("Add");
+            var elements = new List<object>();
             foreach (var element in array)
-                addMethod.Invoke(collection, new [] { this.ElementValueType.ConvertFromDocumentValue(element, mappingContext) });
+                elements.Add(this.collectionType.ElementValueType.ConvertFromDocumentValue(element, mappingContext));
 
-            return collection;
+            return this.collectionType.CreateCollection(elements);
         }
 
+        /// <summary>
+        /// Converts to document value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public object ConvertToDocumentValue(object value)
         {
             var enumerableValue = value as IEnumerable;
             return enumerableValue.OfType<object>()
-                .Select(e => this.ElementValueType.ConvertToDocumentValue(e))
+                .Select(e => this.collectionType.ElementValueType.ConvertToDocumentValue(e))
                 .ToArray();
-        }
-
-        private object CreateCollection()
-        {
-            Type type = this.CollectionType;
-            if (type.IsGenericTypeDefinition)
-                type = this.CollectionType.MakeGenericType(this.GenericArguments);
-
-            return Activator.CreateInstance(type);
         }
     }
 }

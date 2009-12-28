@@ -12,6 +12,14 @@ namespace MongoDB.Framework.Mapping.Model
     {
         #region Private Fields
 
+        private Dictionary<Type, Func<Type, Type>> elementTypeFactories = new Dictionary<Type, Func<Type, Type>>()
+        {
+            { typeof(ICollection<>), mt => mt.GetGenericArguments()[0] },
+            { typeof(IList<>), mt => mt.GetGenericArguments()[0] },
+            { typeof(List<>), mt => mt.GetGenericArguments()[0] },
+            { typeof(HashSet<>), mt => mt.GetGenericArguments()[0] },
+        };
+
         private Dictionary<Type, RootClassMapModel> rootClassMapModels;
         private Dictionary<Type, NestedClassMapModel> nestedClassMapModels;
 
@@ -162,12 +170,26 @@ namespace MongoDB.Framework.Mapping.Model
 
             if(model is KeyValueMemberMapModel)
             {
+                var kvModel = (KeyValueMemberMapModel)model;
+                var valueType = kvModel.CustomValueType ?? this.GetValueTypeFromType(LateBoundReflection.GetMemberValueType(model.Getter));
                 return new MemberMap(
                     key,
                     name,
                     getter,
                     setter,
-                    this.GetValueTypeFromType(LateBoundReflection.GetMemberValueType(model.Getter)));
+                    valueType);
+            }
+            else if (model is HasManyMemberMapModel)
+            {
+                var hmModel = (HasManyMemberMapModel)model;
+                var valueType = this.GetCollectionValueType(LateBoundReflection.GetMemberValueType(model.Getter), hmModel.CollectionType, hmModel.ElementType, hmModel.ElementValueType);
+
+                return new MemberMap(
+                    key,
+                    name,
+                    getter,
+                    setter,
+                    valueType);
             }
 
             throw new NotSupportedException();
@@ -202,6 +224,50 @@ namespace MongoDB.Framework.Mapping.Model
 
             return new NullSafeValueType(type);
         }
+
+        private IValueType GetCollectionValueType(Type memberType, ICollectionType collectionType, Type elementType, IValueType elementValueType)
+        {
+            if (collectionType == null)
+            {
+                if (elementValueType == null)
+                {
+                    if (elementType == null)
+                        elementType = this.DiscoverElementType(memberType);
+                    elementValueType = this.GetValueTypeFromType(elementType);
+                }
+                collectionType = this.GetCollectionType(memberType, elementValueType);
+            }
+
+            return new CollectionValueType(collectionType);
+        }
+
+        private Type DiscoverElementType(Type memberType)
+        {
+            Type elementType;
+            if (memberType.IsGenericType)
+            {
+                Func<Type, Type> elementTypeFactory;
+                if(this.elementTypeFactories.TryGetValue(memberType.GetGenericTypeDefinition(), out elementTypeFactory))
+                    return elementTypeFactory(memberType);
+            }
+
+            throw new NotSupportedException(string.Format("Could not discover element type from {0}.", memberType));
+        }
+
+        private ICollectionType GetCollectionType(Type memberType, IValueType elementValueType)
+        {
+            if (memberType.IsGenericType)
+            {
+                var genType = memberType.GetGenericTypeDefinition();
+                if (genType == typeof(IList<>) || genType == typeof(List<>) || genType == typeof(ICollection<>))
+                    return new ListCollectionType(elementValueType);
+                if (genType == typeof(HashSet<>))
+                    return new SetCollectionType(elementValueType);
+            }
+
+            throw new NotSupportedException(string.Format("Could not create collection type from {0}.", memberType));
+        }
+
 
         #endregion
     }

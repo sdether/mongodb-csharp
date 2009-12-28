@@ -8,6 +8,9 @@ namespace MongoDB.Framework.Mapping.Types
 {
     public class IdValueType : NullSafeValueType
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IdValueType"/> class.
+        /// </summary>
         public IdValueType()
             : base(typeof(string))
         { }

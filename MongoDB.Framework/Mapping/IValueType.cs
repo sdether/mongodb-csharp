@@ -9,6 +9,12 @@ namespace MongoDB.Framework.Mapping
     public interface IValueType
     {
         /// <summary>
+        /// Gets the type.
+        /// </summary>
+        /// <value>The type.</value>
+        Type Type { get; }
+
+        /// <summary>
         /// Converts from document value.
         /// </summary>
         /// <param name="documentValue">The document value.</param>

@@ -41,6 +41,29 @@ namespace MongoDB.Framework.Mapping.Fluent
             return this.Map(memberInfo);
         }
 
+        public FluentHasManyMemberMap HasMany(string memberName)
+        {
+            var memberInfo = this.GetSingleMember(memberName);
+            return this.HasMany(memberInfo);
+        }
+
+        public FluentHasManyMemberMap HasMany(MemberInfo memberInfo)
+        {
+            var memberType = LateBoundReflection.GetMemberValueType(memberInfo);
+            var memberMap = new FluentHasManyMemberMap();
+            memberMap.Model.Getter = memberInfo;
+            memberMap.Model.Setter = memberInfo;
+
+            this.Model.MemberMaps.Add(memberMap.Model);
+            return memberMap;
+        }
+
+        public FluentHasManyMemberMap HasMany(Expression<Func<TEntity, object>> member)
+        {
+            var memberInfo = this.GetSingleMember(member);
+            return this.HasMany(memberInfo);
+        }
+
         protected MemberInfo GetSingleMember(string memberName)
         {
             var members = typeof(TEntity).GetMember(memberName);

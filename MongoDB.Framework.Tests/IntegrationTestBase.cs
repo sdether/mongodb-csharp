@@ -42,6 +42,7 @@ namespace MongoDB.Framework
                     .Append("AreaCode", "123")
                     .Append("Prefix", "456")
                     .Append("Number", "7890"))
+                .Append("Aliases", new [] { "Grumpy", "Dopey", "Sleepy" })
                 .Append("not-mapped", true);
             var party2 = new Document()
                 .Append("ValueType", "Person")

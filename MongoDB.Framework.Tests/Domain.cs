@@ -18,6 +18,8 @@ namespace MongoDB.Framework
             Map(x => x.Name);
             Map(x => x.PhoneNumber);
 
+            HasMany(x => x.Aliases);
+
             DiscriminateSubClassesOnKey<string>("ValueType")
                 .SubClass<Person>(PartyType.Person.ToString(), m =>
                 {
@@ -55,6 +57,7 @@ namespace MongoDB.Framework
         public string Number { get; set; }
     }
 
+
     public abstract class Party
     {
         public string Id { get; set; }
@@ -63,12 +66,15 @@ namespace MongoDB.Framework
 
         public PhoneNumber PhoneNumber { get; set; }
 
+        public IList<string> Aliases { get; private set; }
+
         public abstract PartyType Type { get; }
 
         public IDictionary<string, object> ExtendedProperties { get; set; }
 
         public Party()
         {
+            this.Aliases = new List<string>();
             this.ExtendedProperties = new Dictionary<string, object>();
         }
     }

@@ -29,6 +29,7 @@ namespace MongoDB.Framework.Mapping
                     .Append("AreaCode", "123")
                     .Append("Prefix", "456")
                     .Append("Number", "7890"))
+                .Append("Aliases", new [] { "Grumpy", "Dopey", "Sleepy" })
                 .Append("ValueType", "Person")
                 .Append("BirthDate", new DateTime(1900, 1, 1))
                 .Append("not-mapped", true);
@@ -43,6 +44,7 @@ namespace MongoDB.Framework.Mapping
             Assert.AreEqual("123", person.PhoneNumber.AreaCode);
             Assert.AreEqual("456", person.PhoneNumber.Prefix);
             Assert.AreEqual("7890", person.PhoneNumber.Number);
+            Assert.AreEqual(3, person.Aliases.Count);
             Assert.AreEqual(new DateTime(1900, 1, 1), person.BirthDate);
             Assert.AreEqual(1, person.ExtendedProperties.Count);
             Assert.AreEqual(true, person.ExtendedProperties["not-mapped"]);
@@ -71,6 +73,9 @@ namespace MongoDB.Framework.Mapping
                     { "not-mapped", true }
                 }
             };
+            person.Aliases.Add("Grumpy");
+            person.Aliases.Add("Dopey");
+            person.Aliases.Add("Sleepy");
 
             var document = new Document();
             var classMap = mappingStore.GetClassMapFor<Person>();
@@ -83,6 +88,7 @@ namespace MongoDB.Framework.Mapping
             Assert.AreEqual("123", ((Document)document["PhoneNumber"])["AreaCode"]);
             Assert.AreEqual("456", ((Document)document["PhoneNumber"])["Prefix"]);
             Assert.AreEqual("7890", ((Document)document["PhoneNumber"])["Number"]);
+            Assert.AreEqual(new[] { "Grumpy", "Dopey", "Sleepy" }, document["Aliases"]);
             Assert.AreEqual(true, document["not-mapped"]);
         }
 

@@ -63,6 +63,7 @@
     <Compile Include="DefaultMongoFactory.cs" />
     <Compile Include="EntityMapper.cs" />
     <Compile Include="Extensions\MongoDBDocumentExtensions.cs" />
+    <Compile Include="Extensions\ReflectionExtensions.cs" />
     <Compile Include="IMongoContext.cs" />
     <Compile Include="IMongoContextFactory.cs" />
     <Compile Include="IMongoFactory.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Linq\Visitors\ProjectionBuilder.cs" />
     <Compile Include="Linq\MongoQueryProjection.cs" />
     <Compile Include="Linq\Visitors\ScalarQueryModelVisitor.cs" />
+    <Compile Include="Mapping\Fluent\FluentHasManyMemberMap.cs" />
     <Compile Include="Mapping\Fluent\FluentMemberMap.cs" />
     <Compile Include="Mapping\Fluent\FluentClassMap.cs">
       <SubType>Code</SubType>
@@ -101,6 +103,9 @@
     </Compile>
     <Compile Include="Mapping\IMapProvider.cs" />
     <Compile Include="Mapping\Model\ClassMapModel.cs" />
+    <Compile Include="Mapping\Model\HasManyMemberMapModel.cs" />
+    <Compile Include="Mapping\Types\SetCollectionType.cs" />
+    <Compile Include="Mapping\Types\ICollectionType.cs" />
     <Compile Include="Mapping\Model\KeyMemberMapModel.cs" />
     <Compile Include="Mapping\Model\KeyValueMemberMapModel.cs" />
     <Compile Include="Mapping\Model\MapModel.cs" />
@@ -114,7 +119,9 @@
     <Compile Include="Mapping\NestedClassMap.cs" />
     <Compile Include="Mapping\RootClassMap.cs" />
     <Compile Include="Mapping\MappingContext.cs" />
+    <Compile Include="Mapping\Types\CollectionValueType.cs" />
     <Compile Include="Mapping\Types\IdValueType.cs" />
+    <Compile Include="Mapping\Types\ListCollectionType.cs" />
     <Compile Include="Mapping\Types\NestedClassValueType.cs" />
     <Compile Include="Mapping\Types\NullSafeValueType.cs" />
     <Compile Include="Mapping\UnmappedDiscriminiatorException.cs" />
