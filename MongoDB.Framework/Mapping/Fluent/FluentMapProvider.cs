@@ -11,7 +11,8 @@ namespace MongoDB.Framework.Mapping.Fluent
 {
     public class FluentMapProvider : ModelledMapProvider
     {
-        private static readonly PropertyInfo modelPropertyInfo = typeof(FluentMap<RootClassMapModel>).GetProperty("Model");
+        private static readonly PropertyInfo rootModelPropertyInfo = typeof(FluentMap<RootClassMapModel>).GetProperty("Model");
+        private static readonly PropertyInfo nestedModelPropertyInfo = typeof(FluentMap<NestedClassMapModel>).GetProperty("Model");
 
         /// <summary>
         /// Adds the maps from assembly containing the specified type.
@@ -32,10 +33,20 @@ namespace MongoDB.Framework.Mapping.Fluent
             foreach (var type in assembly.GetTypes())
             {
                 var baseType = type.BaseType;
-                if (baseType.IsGenericType && typeof(FluentRootClassMap<>).IsAssignableFrom(baseType.GetGenericTypeDefinition()))
+                if (!baseType.IsGenericType)
+                    continue;
+
+                if(typeof(FluentRootClassMap<>).IsAssignableFrom(baseType.GetGenericTypeDefinition()))
                 {
                     var fluentRootClassMap = Activator.CreateInstance(type);
-                    this.AddRootClassMapModel((RootClassMapModel)modelPropertyInfo.GetValue(fluentRootClassMap, null));
+                    this.AddRootClassMapModel((RootClassMapModel)rootModelPropertyInfo.GetValue(fluentRootClassMap, null));
+                    continue;
+                }
+                else if (typeof(FluentNestedClassMap<>).IsAssignableFrom(baseType.GetGenericTypeDefinition()))
+                {
+                    var fluentNestedClassMap = Activator.CreateInstance(type);
+                    this.AddNestedClassMapModel((NestedClassMapModel)nestedModelPropertyInfo.GetValue(fluentNestedClassMap, null));
+                    continue;
                 }
             }
             return this;

@@ -41,31 +41,6 @@ namespace MongoDB.Framework.Mapping.Fluent
             return this.Map(memberInfo);
         }
 
-        public FluentNestedClassMemberMapModel NestedClass<TNestedClass>(string memberName, Action<FluentNestedClassMap<TNestedClass>> configure)
-        {
-            var memberInfo = this.GetSingleMember(memberName);
-            return this.NestedClass<TNestedClass>(memberInfo, configure);
-        }
-
-        public FluentNestedClassMemberMapModel NestedClass<TNestedClass>(MemberInfo memberInfo, Action<FluentNestedClassMap<TNestedClass>> configure)
-        {
-            var memberMap = new FluentNestedClassMemberMapModel();
-            memberMap.Model.Getter = memberInfo;
-            memberMap.Model.Setter = memberInfo;
-
-            var nestedClassMap = new FluentNestedClassMap<TNestedClass>();
-            configure(nestedClassMap);
-            memberMap.Model.NestedClassMapModel = nestedClassMap.Model;
-            this.Model.MemberMaps.Add(memberMap.Model);
-            return memberMap;
-        }
-
-        public FluentNestedClassMemberMapModel NestedClass<TNestedClass>(Expression<Func<TEntity, TNestedClass>> member, Action<FluentNestedClassMap<TNestedClass>> configure)
-        {
-            var memberInfo = this.GetSingleMember(member);
-            return this.NestedClass<TNestedClass>(memberInfo, configure);
-        }
-
         protected MemberInfo GetSingleMember(string memberName)
         {
             var members = typeof(TEntity).GetMember(memberName);

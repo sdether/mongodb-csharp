@@ -90,7 +90,6 @@
     <Compile Include="Mapping\Fluent\FluentNestedClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentNestedClassMemberMapModel.cs" />
     <Compile Include="Mapping\Fluent\FluentRootClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -108,7 +107,6 @@
     <Compile Include="Mapping\Model\ModelledMapProvider.cs" />
     <Compile Include="Mapping\Model\NestedClassMapModel.cs" />
     <Compile Include="Mapping\Model\MemberMapModel.cs" />
-    <Compile Include="Mapping\Model\NestedClassMemberMapModel.cs" />
     <Compile Include="Mapping\Model\RootClassMapModel.cs" />
     <Compile Include="Mapping\Model\SubClassMapModel.cs" />
     <Compile Include="Mapping\Model\SuperClassMapModel.cs" />

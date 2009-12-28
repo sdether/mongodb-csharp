@@ -16,13 +16,7 @@ namespace MongoDB.Framework
 
             Id(x => x.Id);
             Map(x => x.Name);
-
-            NestedClass(x => x.PhoneNumber, m =>
-            {
-                m.Map(x => x.AreaCode);
-                m.Map(x => x.Prefix);
-                m.Map(x => x.Number);
-            });
+            Map(x => x.PhoneNumber);
 
             DiscriminateSubClassesOnKey<string>("ValueType")
                 .SubClass<Person>(PartyType.Person.ToString(), m =>
@@ -35,6 +29,16 @@ namespace MongoDB.Framework
                 });
 
             ExtendedProperties(x => x.ExtendedProperties);
+        }
+    }
+
+    public class PhoneNumberMap : FluentNestedClassMap<PhoneNumber>
+    {
+        public PhoneNumberMap()
+        {
+            Map(x => x.AreaCode);
+            Map(x => x.Prefix);
+            Map(x => x.Number);
         }
     }
 

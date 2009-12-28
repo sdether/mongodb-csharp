@@ -13,6 +13,7 @@ namespace MongoDB.Framework.Mapping.Model
         #region Private Fields
 
         private Dictionary<Type, RootClassMapModel> rootClassMapModels;
+        private Dictionary<Type, NestedClassMapModel> nestedClassMapModels;
 
         #endregion
 
@@ -24,6 +25,7 @@ namespace MongoDB.Framework.Mapping.Model
         public ModelledMapProvider()
         {
             this.rootClassMapModels = new Dictionary<Type, RootClassMapModel>();
+            this.nestedClassMapModels = new Dictionary<Type, NestedClassMapModel>();
         }
 
         #endregion
@@ -42,6 +44,18 @@ namespace MongoDB.Framework.Mapping.Model
             this.rootClassMapModels.Add(rootClassMapModel.Type, rootClassMapModel);
             foreach (var subClassMapModel in rootClassMapModel.SubClassMaps)
                 this.rootClassMapModels.Add(subClassMapModel.Type, rootClassMapModel);
+        }
+
+        /// <summary>
+        /// Adds the nested class map model.
+        /// </summary>
+        /// <param name="nestedClassMapModel">The nested class map model.</param>
+        public void AddNestedClassMapModel(NestedClassMapModel nestedClassMapModel)
+        {
+            if (nestedClassMapModel == null)
+                throw new ArgumentNullException("nestedClassMapModel");
+
+            this.nestedClassMapModels.Add(nestedClassMapModel.Type, nestedClassMapModel);
         }
 
         /// <summary>
@@ -155,16 +169,6 @@ namespace MongoDB.Framework.Mapping.Model
                     setter,
                     this.GetValueTypeFromType(LateBoundReflection.GetMemberValueType(model.Getter)));
             }
-            else if(model is NestedClassMemberMapModel)
-            {
-                return new MemberMap(
-                    key,
-                    name,
-                    getter,
-                    setter,
-                    new NestedClassValueType(
-                        this.BuildNestedClassMap(((NestedClassMemberMapModel)model).NestedClassMapModel)));
-            }
 
             throw new NotSupportedException();
         }
@@ -184,6 +188,13 @@ namespace MongoDB.Framework.Mapping.Model
 
         private IValueType GetValueTypeFromType(Type type)
         {
+            NestedClassMapModel nestedClassMapModel;
+            if (this.nestedClassMapModels.TryGetValue(type, out nestedClassMapModel))
+            {
+                return new NestedClassValueType(
+                    this.BuildNestedClassMap(nestedClassMapModel));
+            }
+
             if (type == typeof(Regex))
             {
                 //TODO: create a regex value type
