@@ -7,19 +7,23 @@ namespace MongoDB.Framework.Mapping
 {
     public class NestedClassMap : SuperClassMap
     {
-        #region Public Properties
-
         /// <summary>
         /// Gets the name of the collection.
         /// </summary>
         /// <value>The name of the collection.</value>
         public override string CollectionName
         {
-            get { throw new NotSupportedException("Cannot get CollectionName from a NestedClassMap.  Use the RootClassMap."); }
-            set { throw new NotSupportedException("Cannot set CollectionName on a NestedClassMap.  Use the RootClassMap."); }
+            get { return null; }
         }
 
-        #endregion
+        /// <summary>
+        /// Gets the id map.
+        /// </summary>
+        /// <value>The id map.</value>
+        public override MemberMap IdMap
+        {
+            get { return null; }
+        }
 
         #region Constructors
 
@@ -27,8 +31,8 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="NestedClassMap"/> class.
         /// </summary>
         /// <param name="type">ValueType of the entity.</param>
-        public NestedClassMap(Type type)
-            : base(type)
+        public NestedClassMap(Type type, IEnumerable<MemberMap> memberMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap)
+            : base(type, memberMaps, discriminatorKey, discriminator, subClassMaps, extendedPropertiesMap)
         { }
 
         #endregion

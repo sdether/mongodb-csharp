@@ -20,25 +20,25 @@ namespace MongoDB.Framework.Mapping
         /// Gets the name of the collection.
         /// </summary>
         /// <value>The name of the collection.</value>
-        public abstract string CollectionName { get; set; }
+        public abstract string CollectionName { get; }
 
         /// <summary>
         /// Gets or sets the discriminator.
         /// </summary>
         /// <value>The discriminator.</value>
-        public object Discriminator { get; set; }
+        public object Discriminator { get; private set; }
 
         /// <summary>
         /// Gets or sets the discriminator key.
         /// </summary>
         /// <value>The discriminator key.</value>
-        public abstract string DiscriminatorKey { get; set; }
+        public abstract string DiscriminatorKey { get; }
 
         /// <summary>
         /// Gets the extended properties map.
         /// </summary>
         /// <value>The extended properties map.</value>
-        public abstract ExtendedPropertiesMap ExtendedPropertiesMap { get; set; }
+        public abstract ExtendedPropertiesMap ExtendedPropertiesMap { get; }
 
         /// <summary>
         /// Gets a value indicating whether this instance has extended properties.
@@ -64,11 +64,7 @@ namespace MongoDB.Framework.Mapping
         /// Gets the id map.
         /// </summary>
         /// <value>The id map.</value>
-        public virtual IdMap IdMap
-        {
-            get { return null; }
-            set { throw new NotSupportedException("IdMap can only be set on a CollectionMap."); }
-        }
+        public abstract MemberMap IdMap { get; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is polymorphic.
@@ -82,13 +78,9 @@ namespace MongoDB.Framework.Mapping
         /// Gets the member maps.
         /// </summary>
         /// <value>The simple member maps.</value>
-        public virtual IEnumerable<MemberMap> MemberMaps
+        public IEnumerable<MemberMap> MemberMaps
         {
-            get
-            {
-                foreach (var memberMap in this.memberMaps.Values)
-                    yield return memberMap;
-            }
+            get { return this.memberMaps.Values; }
         }
 
         /// <summary>
@@ -106,33 +98,24 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="metaDataStore">The meta data store.</param>
         /// <param name="type">ValueType of the entity.</param>
-        public ClassMap(Type type)
+        protected ClassMap(Type type, IEnumerable<MemberMap> memberMaps, object discriminator)
         {
             if (type == null)
                 throw new ArgumentNullException("type");
+            if (memberMaps == null)
+                throw new ArgumentNullException("memberMaps");
 
+            this.Discriminator = discriminator;
             this.memberMaps = new Dictionary<string, MemberMap>();
+            foreach (var memberMap in memberMaps)
+                this.memberMaps.Add(memberMap.Key, memberMap);
+
             this.Type = type;
         }
 
         #endregion
 
         #region Public Methods
-
-        /// <summary>
-        /// Adds the member map.
-        /// </summary>
-        /// <param name="memberMap">The member map.</param>
-        public void AddMemberMap(MemberMap memberMap)
-        {
-            if (memberMap == null)
-                throw new ArgumentNullException("value");
-
-            if (this.ContainsKey(memberMap.Key))
-                throw new InvalidOperationException(string.Format("An item with key {0} has already been added.", memberMap.Key));
-
-            this.memberMaps.Add(memberMap.Key, memberMap);
-        }
 
         /// <summary>
         /// Gets the class map by discriminator.

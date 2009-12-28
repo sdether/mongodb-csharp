@@ -5,30 +5,46 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping
 {
-    public abstract class MappingStore
+    public class MappingStore
     {
         private Dictionary<Type, ClassMap> classMaps;
+        private List<IMapProvider> mapProviders;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MappingStore"/> class.
         /// </summary>
         public MappingStore()
+            : this(null)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MappingStore"/> class.
+        /// </summary>
+        /// <param name="mapProviders">The map providers.</param>
+        public MappingStore(params IMapProvider[] mapProviders)
+            : this((IEnumerable<IMapProvider>)mapProviders)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MappingStore"/> class.
+        /// </summary>
+        /// <param name="mapProviders">The map providers.</param>
+        public MappingStore(IEnumerable<IMapProvider> mapProviders)
         {
             this.classMaps = new Dictionary<Type, ClassMap>();
+            this.mapProviders = new List<IMapProvider>(mapProviders ?? Enumerable.Empty<IMapProvider>());
         }
 
         /// <summary>
-        /// Adds the collection map.
+        /// Adds the map provider.
         /// </summary>
-        /// <param name="collectionMap">The collection map.</param>
-        public void AddCollectionMap(RootClassMap collectionMap)
+        /// <param name="mapProvider">The map provider.</param>
+        public void AddMapProvider(IMapProvider mapProvider)
         {
-            if (collectionMap == null)
-                throw new ArgumentNullException("collectionMap");
+            if (mapProviders == null)
+                throw new ArgumentNullException("mapProviders");
 
-            this.classMaps.Add(collectionMap.Type, collectionMap);
-            foreach (var subClassMap in collectionMap.SubClassMaps)
-                this.classMaps.Add(subClassMap.Type, subClassMap);
+            this.mapProviders.Add(mapProvider);
         }
 
         /// <summary>
@@ -49,21 +65,29 @@ namespace MongoDB.Framework.Mapping
         public ClassMap GetClassMapFor(Type type)
         {
             ClassMap classMap = null;
-            if(!this.classMaps.TryGetValue(type, out classMap))
-            {
-                if (!this.TryGetMissingClassMap(type, out classMap))
-                    throw new UnmappedTypeException(string.Format("The type {0} is unmapped.", type));
-            }
+            if(!this.TryGetClassMap(type, out classMap))
+                throw new UnmappedTypeException(string.Format("The type {0} is unmapped.", type));
 
             return classMap;
         }
 
-        /// <summary>
-        /// Tries to get the missing class map.
-        /// </summary>
-        /// <param name="type">ValueType of the entity.</param>
-        /// <param name="classMap">The class map.</param>
-        /// <returns></returns>
-        protected abstract bool TryGetMissingClassMap(Type type, out ClassMap classMap);
+        private bool TryGetClassMap(Type type, out ClassMap classMap)
+        {
+            if (this.classMaps.TryGetValue(type, out classMap))
+                return true;
+
+            foreach (var mapProvider in this.mapProviders)
+            {
+                var rootClassMap = mapProvider.GetRootClassMapFor(type);
+                if (rootClassMap != null)
+                {
+                    this.classMaps.Add(rootClassMap.Type, rootClassMap);
+                    foreach (var subClassMap in rootClassMap.SubClassMaps)
+                        this.classMaps.Add(subClassMap.Type, subClassMap);
+                }
+            }
+
+            return this.classMaps.TryGetValue(type, out classMap);
+        }
     }
 }

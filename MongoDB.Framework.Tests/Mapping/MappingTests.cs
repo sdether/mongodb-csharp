@@ -16,8 +16,10 @@ namespace MongoDB.Framework.Mapping
         [Test]
         public void Should_map_from_document_to_entity()
         {
-            var mappingStore = new FluentMappingStore()
+            var fluentMapProvider = new FluentMapProvider()
                 .AddMapsFromAssemblyContaining<PartyMap>();
+            var mappingStore = new MappingStore(fluentMapProvider);
+
             var configuration = new MongoConfiguration("tests", mappingStore);
 
             var document = new Document()
@@ -49,8 +51,9 @@ namespace MongoDB.Framework.Mapping
         [Test]
         public void Should_map_from_entity_to_document()
         {
-            FluentMappingStore mappingStore = new FluentMappingStore()
+            var fluentMapProvider = new FluentMapProvider()
                 .AddMapsFromAssemblyContaining<PartyMap>();
+            var mappingStore = new MappingStore(fluentMapProvider);
 
             var person = new Person()
             {

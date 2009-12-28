@@ -8,17 +8,63 @@ namespace MongoDB.Framework.Mapping
 {
     public class MemberMap : Map
     {
-        public string Key { get; set; }
+        /// <summary>
+        /// Gets the key.
+        /// </summary>
+        /// <value>The key.</value>
+        public string Key { get; private set; }
 
-        public string MemberName { get; set; }
+        /// <summary>
+        /// Gets the name of the member.
+        /// </summary>
+        /// <value>The name of the member.</value>
+        public string MemberName { get; private set; }
 
-        public Func<object, object> MemberGetter { get; set; }
+        /// <summary>
+        /// Gets the member getter.
+        /// </summary>
+        /// <value>The member getter.</value>
+        public Func<object, object> MemberGetter { get; private set; }
 
-        public Action<object, object> MemberSetter { get; set; }
+        /// <summary>
+        /// Gets the member setter.
+        /// </summary>
+        /// <value>The member setter.</value>
+        public Action<object, object> MemberSetter { get; private set; }
 
-        public Type MemberType { get; set; }
+        /// <summary>
+        /// Gets the type of the value.
+        /// </summary>
+        /// <value>The type of the value.</value>
+        public IValueType ValueType { get; private set; }
 
-        public IValueType ValueType { get; set; }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MemberMap"/> class.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="memberName">Name of the member.</param>
+        /// <param name="memberGetter">The member getter.</param>
+        /// <param name="memberSetter">The member setter.</param>
+        /// <param name="valueType">Type of the value.</param>
+        public MemberMap(string key, string memberName, Func<object, object> memberGetter, Action<object, object> memberSetter, IValueType valueType)
+        {
+            if (key == null)
+                throw new ArgumentException("Cannot be null or empty.", "key");
+            if (memberName == null)
+                throw new ArgumentException("Cannot be null or empty.", "memberName");
+            if (memberGetter == null)
+                throw new ArgumentNullException("memberGetter");
+            if (memberSetter == null)
+                throw new ArgumentNullException("memberSetter");
+            if (valueType == null)
+                throw new ArgumentNullException("valueType");
+
+            this.Key = key;
+            this.MemberName = memberName;
+            this.MemberGetter = memberGetter;
+            this.MemberSetter = memberSetter;
+            this.ValueType = valueType;
+        }
 
         /// <summary>
         /// Maps the member from a document.

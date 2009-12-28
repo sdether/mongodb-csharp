@@ -18,8 +18,9 @@ namespace MongoDB.Framework
 
         static IntegrationTestBase()
         {
-            var mappingStore = new FluentMappingStore()
+            var fluentMapProvider = new FluentMapProvider()
                 .AddMapsFromAssemblyContaining<PartyMap>();
+            var mappingStore = new MappingStore(fluentMapProvider);
 
             var configuration = new MongoConfiguration("tests", mappingStore);
             contextFactory = new MongoContextFactory(configuration);

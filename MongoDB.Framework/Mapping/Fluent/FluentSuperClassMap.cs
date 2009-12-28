@@ -7,21 +7,26 @@ using System.Text;
 
 using MongoDB.Framework.Linq.Visitors;
 using MongoDB.Framework.Reflection;
+using MongoDB.Framework.Mapping.Model;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public abstract class FluentSuperClassMap<TMap, T> : FluentClassMap<TMap, T> where TMap : SuperClassMap 
+    public abstract class FluentSuperClassMap<TModel, TClass> : FluentClassMap<TModel, TClass> where TModel : SuperClassMapModel
     {
+        public FluentSuperClassMap(TModel model)
+            : base(model)
+        { }
+
         public FluentDiscriminatorMap<TDiscriminator> DiscriminateSubClassesOnKey<TDiscriminator>(string key)
         {
-            var fluentDiscriminatorMap = new FluentDiscriminatorMap<TDiscriminator>(this.Instance);
-            this.Instance.DiscriminatorKey = key;
+            var fluentDiscriminatorMap = new FluentDiscriminatorMap<TDiscriminator>(this.Model);
+            this.Model.DiscriminatorKey = key;
             return fluentDiscriminatorMap;
         }
 
         public FluentDiscriminatorMap<TDiscriminator> DiscriminateSubClassesOnKey<TDiscriminator>(string key, TDiscriminator rootDiscriminatorValue)
         {
-            this.Instance.Discriminator = rootDiscriminatorValue;
+            this.Model.Discriminator = rootDiscriminatorValue;
             return this.DiscriminateSubClassesOnKey<TDiscriminator>(key);
         }
 
@@ -33,14 +38,14 @@ namespace MongoDB.Framework.Mapping.Fluent
 
         public void ExtendedProperties(MemberInfo memberInfo)
         {
-            this.Instance.ExtendedPropertiesMap = new ExtendedPropertiesMap(
-                memberInfo.Name,
-                LateBoundReflection.GetMemberValueType(memberInfo),
-                LateBoundReflection.GetGetter(memberInfo),
-                LateBoundReflection.GetSetter(memberInfo));
+            this.Model.ExtendedPropertiesMap = new MemberMapModel()
+            {
+                Getter = memberInfo,
+                Setter = memberInfo
+            };
         }
 
-        public void ExtendedProperties(Expression<Func<T, IDictionary<string, object>>> member)
+        public void ExtendedProperties(Expression<Func<TClass, IDictionary<string, object>>> member)
         {
             var memberInfo = this.GetSingleMember(member);
             this.ExtendedProperties(memberInfo);

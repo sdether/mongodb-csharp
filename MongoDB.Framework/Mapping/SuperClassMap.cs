@@ -9,6 +9,8 @@ namespace MongoDB.Framework.Mapping
     {
         #region Private Fields
 
+        private string discriminatorKey;
+        private object discriminator;
         private ExtendedPropertiesMap extendedPropertiesMap;
         private readonly List<SubClassMap> subClassMaps;
 
@@ -20,13 +22,19 @@ namespace MongoDB.Framework.Mapping
         /// Gets or sets the discriminator key.
         /// </summary>
         /// <value>The discriminator key.</value>
-        public override string DiscriminatorKey { get; set; }
+        public override string DiscriminatorKey
+        {
+            get { return this.discriminatorKey; }
+        }
 
         /// <summary>
         /// Gets the extended properties map.
         /// </summary>
         /// <value>The extended properties map.</value>
-        public override ExtendedPropertiesMap ExtendedPropertiesMap { get; set; }
+        public override ExtendedPropertiesMap ExtendedPropertiesMap
+        {
+            get { return this.extendedPropertiesMap; }
+        }
 
         /// <summary>
         /// Gets a value indicating whether this instance is polymorphic.
@@ -44,7 +52,7 @@ namespace MongoDB.Framework.Mapping
         /// Gets the sub class maps.
         /// </summary>
         /// <value>The sub class maps.</value>
-        public virtual IEnumerable<SubClassMap> SubClassMaps
+        public IEnumerable<SubClassMap> SubClassMaps
         {
             get { return this.subClassMaps; }
         }
@@ -57,27 +65,22 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="SuperClassMap"/> class.
         /// </summary>
         /// <param name="type">ValueType of the entity.</param>
-        public SuperClassMap(Type type)
-            : base(type)
+        /// <param name="memberMaps">The member maps.</param>
+        /// <param name="discriminatorKey">The discriminator key.</param>
+        /// <param name="discriminator">The discriminator.</param>
+        /// <param name="subClassMaps">The sub class maps.</param>
+        /// <param name="extendedPropertiesMap">The extended properties map.</param>
+        protected SuperClassMap(Type type, IEnumerable<MemberMap> memberMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap)
+            : base(type, memberMaps, discriminator)
         {
-            this.subClassMaps = new List<SubClassMap>();
+            this.discriminatorKey = discriminatorKey;
+            this.extendedPropertiesMap = extendedPropertiesMap;
+            this.subClassMaps = new List<SubClassMap>(subClassMaps ?? new SubClassMap[0]);
         }
 
         #endregion
 
         #region Public Methods
-
-        /// <summary>
-        /// Adds the sub class map.
-        /// </summary>
-        /// <param name="subClassMap">The sub class map.</param>
-        public void AddSubClassMap(SubClassMap subClassMap)
-        {
-            if (subClassMap == null)
-                throw new ArgumentNullException("subClassMap");
-
-            this.subClassMaps.Add(subClassMap);
-        }
 
         /// <summary>
         /// Gets the class map by discriminator.

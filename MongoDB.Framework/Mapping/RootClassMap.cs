@@ -9,7 +9,8 @@ namespace MongoDB.Framework.Mapping
     {
         #region Private Fields
 
-        private IdMap idMap;
+        private string collectionName;
+        private MemberMap idMap;
 
 	    #endregion
 
@@ -19,16 +20,18 @@ namespace MongoDB.Framework.Mapping
         /// Gets the name of the collection.
         /// </summary>
         /// <value>The name of the collection.</value>
-        public override string CollectionName { get; set; }
+        public override string CollectionName
+        {
+            get { return this.collectionName; }
+        }
 
         /// <summary>
         /// Gets or sets the id map.
         /// </summary>
         /// <value>The id map.</value>
-        public override IdMap IdMap
+        public override MemberMap IdMap
         {
             get { return this.idMap; }
-            set { this.idMap = value; }
         }
 
         #endregion
@@ -39,9 +42,17 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="RootClassMap"/> class.
         /// </summary>
         /// <param name="type">The type.</param>
-        public RootClassMap(Type type)
-            : base(type)
-        { }
+        public RootClassMap(Type type, string collectionName, MemberMap idMap, IEnumerable<MemberMap> memberMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap)
+            : base(type, memberMaps, discriminatorKey, discriminator, subClassMaps, extendedPropertiesMap)
+        {
+            if (collectionName == null)
+                throw new ArgumentException("Cannot be null or empty.", "collectionName");
+            if (idMap == null)
+                throw new ArgumentNullException("idMap");
+
+            this.collectionName = collectionName;
+            this.idMap = idMap;
+        }
 
         #endregion
     }

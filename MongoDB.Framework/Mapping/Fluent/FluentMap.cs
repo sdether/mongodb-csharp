@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MongoDB.Framework.Mapping.Model;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public abstract class FluentMap<TMap> where TMap : Map
+    public abstract class FluentMap<TModel> where TModel : MapModel
     {
-        /// <summary>
-        /// Gets the map instance.
-        /// </summary>
-        /// <value>The map instance.</value>
-        public abstract TMap Instance { get; }
+        public TModel Model { get; private set; }
+
+        public FluentMap(TModel model)
+        {
+            this.Model = model;
+        }
     }
 }

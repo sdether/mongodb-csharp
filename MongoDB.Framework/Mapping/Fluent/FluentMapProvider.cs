@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
+
+using MongoDB.Framework.Mapping.Model;
 using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentMappingStore : MappingStore
+    public class FluentMapProvider : ModelledMapProvider
     {
-        private static readonly PropertyInfo instancePropertyInfo = typeof(FluentMap<RootClassMap>).GetProperty("Instance");
+        private static readonly PropertyInfo modelPropertyInfo = typeof(FluentMap<RootClassMapModel>).GetProperty("Model");
 
         /// <summary>
         /// Adds the maps from assembly containing the specified type.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        public FluentMappingStore AddMapsFromAssemblyContaining<T>()
+        public FluentMapProvider AddMapsFromAssemblyContaining<T>()
         {
             this.AddMapsFromAssembly(typeof(T).Assembly);
             return this;
@@ -25,30 +27,18 @@ namespace MongoDB.Framework.Mapping.Fluent
         /// Adds the maps from assembly.
         /// </summary>
         /// <param name="assembly">The assembly.</param>
-        public FluentMappingStore AddMapsFromAssembly(Assembly assembly)
+        public FluentMapProvider AddMapsFromAssembly(Assembly assembly)
         {
             foreach (var type in assembly.GetTypes())
             {
                 var baseType = type.BaseType;
                 if (baseType.IsGenericType && typeof(FluentRootClassMap<>).IsAssignableFrom(baseType.GetGenericTypeDefinition()))
                 {
-                    var fluentCollectionMap = Activator.CreateInstance(type);
-                    this.AddCollectionMap((RootClassMap)instancePropertyInfo.GetValue(fluentCollectionMap, null));
+                    var fluentRootClassMap = Activator.CreateInstance(type);
+                    this.AddRootClassMapModel((RootClassMapModel)modelPropertyInfo.GetValue(fluentRootClassMap, null));
                 }
             }
             return this;
-        }
-
-        /// <summary>
-        /// Tries to get the missing class map.
-        /// </summary>
-        /// <param name="type">Type of the entity.</param>
-        /// <param name="classMap">The class map.</param>
-        /// <returns></returns>
-        protected override bool TryGetMissingClassMap(Type type, out ClassMap classMap)
-        {
-            classMap = null;
-            return false;
         }
     }
 }

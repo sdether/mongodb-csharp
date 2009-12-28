@@ -2,28 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 
 using MongoDB.Framework.Linq.Visitors;
-using MongoDB.Framework.Reflection;
-using System.Reflection;
+using MongoDB.Framework.Mapping.Model;
 using MongoDB.Framework.Mapping.Types;
+using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentRootClassMap<T> : FluentSuperClassMap<RootClassMap, T>
+    public class FluentRootClassMap<TRootClass> : FluentSuperClassMap<RootClassMapModel, TRootClass>
     {
-        private RootClassMap instance;
-
-        public override RootClassMap Instance
-        {
-            get { return this.instance; }
-        }
-
         public FluentRootClassMap()
-        {
-            this.instance = new RootClassMap(typeof(T));
-        }
+            : base(new RootClassMapModel(typeof(TRootClass)))
+        { }
 
         public void Id(string memberName)
         {
@@ -33,16 +26,14 @@ namespace MongoDB.Framework.Mapping.Fluent
 
         public void Id(MemberInfo memberInfo)
         {
-            this.instance.IdMap = new IdMap()
+            this.Model.IdMap = new MemberMapModel()
             {
-                MemberName = memberInfo.Name,
-                MemberGetter = LateBoundReflection.GetGetter(memberInfo),
-                MemberSetter = LateBoundReflection.GetSetter(memberInfo),
-                ValueType = new IdValueType()
+                Getter = memberInfo,
+                Setter = memberInfo
             };
         }
 
-        public void Id(Expression<Func<T, string>> idMember)
+        public void Id(Expression<Func<TRootClass, string>> idMember)
         {
             var memberInfo = this.GetSingleMember(idMember);
             this.Id(memberInfo);
@@ -50,7 +41,7 @@ namespace MongoDB.Framework.Mapping.Fluent
 
         public void UseCollection(string collectionName)
         {
-            this.instance.CollectionName = collectionName;
+            this.Model.CollectionName = collectionName;
         }
     }
 }

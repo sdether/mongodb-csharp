@@ -7,6 +7,15 @@ namespace MongoDB.Framework.Mapping
 {
     public class SubClassMap : ClassMap
     {
+        #region Private Fields
+
+        private string collectionName;
+        private string discriminatorKey;
+        private ExtendedPropertiesMap extendedPropertiesMap;
+        private MemberMap idMap;
+
+        #endregion
+
         #region Public Properties
 
         /// <summary>
@@ -15,8 +24,7 @@ namespace MongoDB.Framework.Mapping
         /// <value>The name of the collection.</value>
         public override string CollectionName
         {
-            get { return this.SuperClassMap.CollectionName; }
-            set { throw new NotSupportedException("Cannot set CollectionName on a SubClassMap.  Use the CollectionMap."); }
+            get { return this.collectionName; }
         }
 
         /// <summary>
@@ -25,8 +33,7 @@ namespace MongoDB.Framework.Mapping
         /// <value>The discriminator key.</value>
         public override string DiscriminatorKey
         {
-            get { return this.SuperClassMap.DiscriminatorKey; }
-            set { throw new NotSupportedException("Cannot set DiscriminatorKey on a SubClassMap.  Use the RootClassMap."); }
+            get { return this.discriminatorKey; }
         }
 
         /// <summary>
@@ -35,18 +42,16 @@ namespace MongoDB.Framework.Mapping
         /// <value>The extended properties map.</value>
         public override ExtendedPropertiesMap ExtendedPropertiesMap
         {
-            get { return this.SuperClassMap.ExtendedPropertiesMap; }
-            set { throw new NotSupportedException("Cannot set ExtendedPropertiesMap on a SubClassMap.  Use the RootClassMap."); }
+            get { return this.extendedPropertiesMap; }
         }
 
         /// <summary>
         /// Gets the id map.
         /// </summary>
         /// <value>The id map.</value>
-        public override IdMap IdMap
+        public override MemberMap IdMap
         {
-            get { return this.SuperClassMap.IdMap; }
-            set { base.IdMap = value; } //should throw...
+            get { return this.idMap; }
         }
 
         /// <summary>
@@ -60,25 +65,6 @@ namespace MongoDB.Framework.Mapping
             get { return true; }
         }
 
-        /// <summary>
-        /// Gets the member maps.
-        /// </summary>
-        /// <value>The simple member maps.</value>
-        public override IEnumerable<MemberMap> MemberMaps
-        {
-            get
-            {
-                return base.MemberMaps
-                    .Concat(this.SuperClassMap.MemberMaps);
-            }
-        }
-
-        /// <summary>
-        /// Gets the super class map.
-        /// </summary>
-        /// <value>The super class map.</value>
-        public SuperClassMap SuperClassMap { get; private set; }
-
         #endregion
 
         #region Constructors
@@ -87,14 +73,19 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="SubClassMap"/> class.
         /// </summary>
         /// <param name="type">ValueType of the entity.</param>
-        /// <param name="classMap">The class map.</param>
-        public SubClassMap(Type type, SuperClassMap superClassMap)
-            : base(type)
+        /// <param name="collectionName">Name of the collection.</param>
+        /// <param name="idMap">The id map.</param>
+        /// <param name="memberMaps">The member maps.</param>
+        /// <param name="discriminatorKey">The discriminator key.</param>
+        /// <param name="discriminator">The discriminator.</param>
+        /// <param name="extendedPropertiesMap">The extended properties map.</param>
+        public SubClassMap(Type type, string collectionName, MemberMap idMap, IEnumerable<MemberMap> memberMaps, string discriminatorKey, object discriminator, ExtendedPropertiesMap extendedPropertiesMap)
+            : base(type, memberMaps, discriminator)
         {
-            if (superClassMap == null)
-                throw new ArgumentNullException("superClassMap");
-
-            this.SuperClassMap = superClassMap;
+            this.collectionName = collectionName;
+            this.idMap = idMap;
+            this.discriminatorKey = discriminatorKey;
+            this.extendedPropertiesMap = extendedPropertiesMap;
         }
 
         #endregion

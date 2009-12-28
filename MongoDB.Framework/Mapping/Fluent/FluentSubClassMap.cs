@@ -6,22 +6,15 @@ using System.Reflection;
 using System.Text;
 
 using MongoDB.Framework.Linq.Visitors;
+using MongoDB.Framework.Mapping.Model;
 using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentSubClassMap<TEntity> : FluentClassMap<SubClassMap, TEntity>
+    public class FluentSubClassMap<TSubClass> : FluentClassMap<SubClassMapModel, TSubClass>
     {
-        private SubClassMap instance;
-
-        public override SubClassMap Instance
-        {
-            get { return this.instance; }
-        }
-
-        public FluentSubClassMap(SuperClassMap rootClassMap)
-        {
-            this.instance = new SubClassMap(typeof(TEntity), rootClassMap);
-        }
+        public FluentSubClassMap()
+            : base(new SubClassMapModel(typeof(TSubClass)))
+        { }
     }
 }
