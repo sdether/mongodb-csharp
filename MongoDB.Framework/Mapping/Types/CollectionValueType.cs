@@ -44,15 +44,7 @@ namespace MongoDB.Framework.Mapping.Types
         /// <returns></returns>
         public object ConvertFromDocumentValue(object documentValue, MappingContext mappingContext)
         {
-            Array array = documentValue as Array;
-            if (array == null)
-                return null;
-
-            var elements = new List<object>();
-            foreach (var element in array)
-                elements.Add(this.elementValueType.ConvertFromDocumentValue(element, mappingContext));
-
-            return this.collectionType.CreateCollection(this.elementValueType, elements);
+            return this.collectionType.ConvertFromDocumentValue(this.elementValueType, documentValue, mappingContext);
         }
 
         /// <summary>
@@ -62,10 +54,7 @@ namespace MongoDB.Framework.Mapping.Types
         /// <returns></returns>
         public object ConvertToDocumentValue(object value)
         {
-            var enumerableValue = value as IEnumerable;
-            return enumerableValue.OfType<object>()
-                .Select(e => this.elementValueType.ConvertToDocumentValue(e))
-                .ToArray();
+            return this.collectionType.ConvertToDocumentValue(this.elementValueType, value);
         }
     }
 }

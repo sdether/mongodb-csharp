@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using System.Collections;
 
 namespace MongoDB.Framework.Mapping.Types
 {
@@ -19,21 +20,38 @@ namespace MongoDB.Framework.Mapping.Types
         }
 
         /// <summary>
-        /// Creates the collection.
+        /// Converts from document value.
         /// </summary>
-        /// <param name="elementValueType"></param>
-        /// <param name="elements">The elements.</param>
+        /// <param name="elementValueType">Type of the element value.</param>
+        /// <param name="documentValue">The document value.</param>
+        /// <param name="mappingContext">The mapping context.</param>
         /// <returns></returns>
-        public object CreateCollection(IValueType elementValueType, IList<object> elements)
+        public object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, MappingContext mappingContext)
         {
-            var set = Activator.CreateInstance(this.GetCollectionType(elementValueType));
-            if (elements.Count == 0)
-                return set;
+            Array array = documentValue as Array;
+            if (array == null)
+                return null;
 
-            var addMethod = set.GetType().GetMethod("Add", new[] { elementValueType.Type });
-            foreach (var element in elements)
-                addMethod.Invoke(set, new[] { element });
-            return set;
+            var list = Activator.CreateInstance(this.GetCollectionType(elementValueType));
+            var addMethod = list.GetType().GetMethod("Add", new[] { elementValueType.Type });
+            foreach (var element in array)
+                addMethod.Invoke(list, new[] { elementValueType.ConvertFromDocumentValue(element, mappingContext) });
+
+            return list;
+        }
+
+        /// <summary>
+        /// Converts to document value.
+        /// </summary>
+        /// <param name="elementValueType">Type of the element value.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public object ConvertToDocumentValue(IValueType elementValueType, object value)
+        {
+            var enumerableValue = value as IEnumerable;
+            return enumerableValue.OfType<object>()
+                .Select(e => elementValueType.ConvertToDocumentValue(e))
+                .ToArray();
         }
     }
 }

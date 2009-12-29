@@ -16,10 +16,20 @@ namespace MongoDB.Framework.Mapping
         Type GetCollectionType(IValueType elementValueType);
 
         /// <summary>
-        /// Creates the collection.
+        /// Converts from document value.
         /// </summary>
-        /// <param name="elements">The elements.</param>
+        /// <param name="elementValueType">Type of the element value.</param>
+        /// <param name="documentValue">The document value.</param>
+        /// <param name="mappingContext">The mapping context.</param>
         /// <returns></returns>
-        object CreateCollection(IValueType elementValueType, IList<object> elements);
+        object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, MappingContext mappingContext);
+
+        /// <summary>
+        /// Converts to document value.
+        /// </summary>
+        /// <param name="elementValueType">Type of the element value.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        object ConvertToDocumentValue(IValueType elementValueType, object value);
     }
 }
