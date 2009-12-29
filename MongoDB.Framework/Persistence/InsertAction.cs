@@ -38,11 +38,14 @@ namespace MongoDB.Framework.Persistence
 
             var document = new Document();
             classMap.MapToDocument(entity, document);
-            this.GetCollectionForClassMap(classMap).Insert(document);
+            object id = classMap.IdMap.Generate(entity, this.MongoContext);
+            document[classMap.IdMap.Key] = classMap.IdMap.ValueType.ConvertToDocumentValue(id);
+            this.GetCollectionForClassMap(classMap)
+                .Insert(document);
             
-            var mappingContext = new MappingContext(this.MongoContext, document, classMap.Type);
+            var mappingContext = new MappingContext(this.MongoContext, document, entity);
             classMap.IdMap.MapFromDocument(mappingContext);
-            this.ChangeTracker.GetTrackedObject(entity).MoveToPossibleModified(mappingContext.Document);
+            this.ChangeTracker.GetTrackedObject(entity).MoveToPossiblyModified(mappingContext.Document);
         }
     }
 }

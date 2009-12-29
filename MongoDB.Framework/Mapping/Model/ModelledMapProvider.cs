@@ -5,6 +5,7 @@ using System.Text;
 using MongoDB.Framework.Reflection;
 using MongoDB.Framework.Mapping.Types;
 using System.Text.RegularExpressions;
+using MongoDB.Framework.Mapping.IdGenerators;
 
 namespace MongoDB.Framework.Mapping.Model
 {
@@ -156,11 +157,34 @@ namespace MongoDB.Framework.Mapping.Model
                 setter);
         }
 
-        private MemberMap BuildIdMap(MemberMapModel model)
+        private IdMap BuildIdMap(IdMapModel model)
         {
             var getter = LateBoundReflection.GetGetter(model.Getter);
             var setter = LateBoundReflection.GetSetter(model.Setter);
-            return new MemberMap("_id", model.Getter.Name, getter, setter, new IdValueType());
+            IValueType valueType = model.CustomValueType;
+            IIdGenerator generator = model.Generator;
+            object unsavedValue = model.UnsavedValue;
+
+            var memberType = LateBoundReflection.GetMemberValueType(model.Getter);
+            if (memberType == typeof(string) && generator == null)
+            {
+                if (generator == null)
+                {
+                    generator = new OidGenerator();
+                    if (valueType == null)
+                        valueType = new OidValueType();
+                }
+            }
+            else if (memberType == typeof(Guid) && generator == null)
+                generator = new GuidGenerator();
+
+            if (valueType == null)
+                valueType = this.GetValueTypeFromType(memberType);
+
+            if (unsavedValue == null)
+                unsavedValue = memberType.IsValueType ? Activator.CreateInstance(memberType) : null;
+                        
+            return new IdMap(model.Getter.Name, getter, setter, valueType, generator, unsavedValue);
         }
 
         private MemberMap BuildMemberMap(KeyMemberMapModel model)
@@ -197,7 +221,7 @@ namespace MongoDB.Framework.Mapping.Model
             throw new NotSupportedException();
         }
 
-        private SubClassMap BuildSubClassMap(SubClassMapModel model, MemberMap idMap, string collectionName, string discriminatorKey, IEnumerable<MemberMap> superClassMemberMaps, ExtendedPropertiesMap extendedPropertiesMap)
+        private SubClassMap BuildSubClassMap(SubClassMapModel model, IdMap idMap, string collectionName, string discriminatorKey, IEnumerable<MemberMap> superClassMemberMaps, ExtendedPropertiesMap extendedPropertiesMap)
         {
             var subClassMemberMaps = model.MemberMaps.Select(mm => this.BuildMemberMap(mm));
             return new SubClassMap(
@@ -218,6 +242,9 @@ namespace MongoDB.Framework.Mapping.Model
                 return new NestedClassValueType(
                     this.BuildNestedClassMap(nestedClassMapModel));
             }
+
+            if (type == typeof(Guid))
+                return new GuidValueType();
 
             if (type == typeof(Regex))
             {

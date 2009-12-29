@@ -20,7 +20,7 @@ namespace MongoDB.Framework.Mapping
         /// Gets the id map.
         /// </summary>
         /// <value>The id map.</value>
-        public override MemberMap IdMap
+        public override IdMap IdMap
         {
             get { return null; }
         }

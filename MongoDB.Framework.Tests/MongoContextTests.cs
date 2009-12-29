@@ -159,7 +159,7 @@ namespace MongoDB.Framework
 
             using (var context2 = this.CreateContext())
             {
-                Assert.IsNotNull(context.Query<Party>().First(p => p.Name == "Body by Jane"));
+                Assert.IsNotNull(context2.Query<Party>().First(p => p.Name == "Body by Jane"));
             }
         }
 

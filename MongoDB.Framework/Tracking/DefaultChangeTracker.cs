@@ -98,9 +98,9 @@ namespace MongoDB.Framework.Tracking
         /// <param name="id">The id.</param>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        public override bool TryGetTrackedObjectById(string id, out TrackedObject trackedObject)
+        public override bool TryGetTrackedObjectById(object id, out TrackedObject trackedObject)
         {
-            trackedObject =  this.trackedObjects.Values.FirstOrDefault(to => to.GetId() == id);
+            trackedObject =  this.trackedObjects.Values.FirstOrDefault(to => Object.Equals(to.GetId(), id));
             return trackedObject != null;
         }
 

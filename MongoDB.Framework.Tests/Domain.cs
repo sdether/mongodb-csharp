@@ -21,7 +21,7 @@ namespace MongoDB.Framework
             HasMany(x => x.AlternatePhoneNumbers);
             HasMany(x => x.Aliases);
 
-            DiscriminateSubClassesOnKey<string>("ValueType")
+            DiscriminateSubClassesOnKey<string>("Type")
                 .SubClass<Person>(PartyType.Person.ToString(), m =>
                 {
                     m.Map(x => x.BirthDate);
@@ -78,6 +78,7 @@ namespace MongoDB.Framework
         public Party()
         {
             this.Aliases = new List<string>();
+            this.AlternatePhoneNumbers = new Dictionary<string, PhoneNumber>();
             this.ExtendedProperties = new Dictionary<string, object>();
         }
     }

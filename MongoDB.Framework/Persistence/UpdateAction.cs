@@ -39,7 +39,7 @@ namespace MongoDB.Framework.Persistence
             var document = new Document();
             classMap.MapToDocument(entity, document);
             this.GetCollectionForClassMap(classMap).Update(document);
-            this.ChangeTracker.GetTrackedObject(entity).MoveToPossibleModified(document);
+            this.ChangeTracker.GetTrackedObject(entity).MoveToPossiblyModified(document);
         }
     }
 }

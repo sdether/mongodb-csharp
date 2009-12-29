@@ -34,7 +34,7 @@ namespace MongoDB.Framework.Tracking
         /// <param name="id">The id.</param>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        public abstract bool TryGetTrackedObjectById(string id, out TrackedObject entity);
+        public abstract bool TryGetTrackedObjectById(object id, out TrackedObject entity);
 
         /// <summary>
         /// Releases unmanaged resources and performs other cleanup operations before the

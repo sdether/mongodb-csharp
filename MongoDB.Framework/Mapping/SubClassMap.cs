@@ -12,7 +12,7 @@ namespace MongoDB.Framework.Mapping
         private string collectionName;
         private string discriminatorKey;
         private ExtendedPropertiesMap extendedPropertiesMap;
-        private MemberMap idMap;
+        private IdMap idMap;
 
         #endregion
 
@@ -49,7 +49,7 @@ namespace MongoDB.Framework.Mapping
         /// Gets the id map.
         /// </summary>
         /// <value>The id map.</value>
-        public override MemberMap IdMap
+        public override IdMap IdMap
         {
             get { return this.idMap; }
         }
@@ -79,7 +79,7 @@ namespace MongoDB.Framework.Mapping
         /// <param name="discriminatorKey">The discriminator key.</param>
         /// <param name="discriminator">The discriminator.</param>
         /// <param name="extendedPropertiesMap">The extended properties map.</param>
-        public SubClassMap(Type type, string collectionName, MemberMap idMap, IEnumerable<MemberMap> memberMaps, string discriminatorKey, object discriminator, ExtendedPropertiesMap extendedPropertiesMap)
+        public SubClassMap(Type type, string collectionName, IdMap idMap, IEnumerable<MemberMap> memberMaps, string discriminatorKey, object discriminator, ExtendedPropertiesMap extendedPropertiesMap)
             : base(type, memberMaps, discriminator)
         {
             this.collectionName = collectionName;

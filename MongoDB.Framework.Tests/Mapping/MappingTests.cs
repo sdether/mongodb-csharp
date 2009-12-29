@@ -21,7 +21,6 @@ namespace MongoDB.Framework.Mapping
             var mappingStore = new MappingStore(fluentMapProvider);
 
             var configuration = new MongoConfiguration("tests", mappingStore);
-
             var document = new Document()
                 .Append("_id", new Oid("4b27b9f1cf24000000002aa0"))
                 .Append("Name", "Bob McBob")
@@ -39,7 +38,7 @@ namespace MongoDB.Framework.Mapping
                         .Append("Prefix", "555")
                         .Append("Number", "6666")))
                 .Append("Aliases", new [] { "Grumpy", "Dopey", "Sleepy" })
-                .Append("ValueType", "Person")
+                .Append("Type", "Person")
                 .Append("BirthDate", new DateTime(1900, 1, 1))
                 .Append("not-mapped", true);
 
@@ -49,6 +48,7 @@ namespace MongoDB.Framework.Mapping
             classMap.MapFromDocument(mappingContext);
             var person = mappingContext.Entity as Person;
             Assert.IsNotNull(person);
+            Assert.AreEqual(person.Id, "4b27b9f1cf24000000002aa0");
             Assert.AreEqual("Bob McBob", person.Name);
             Assert.AreEqual("123", person.PhoneNumber.AreaCode);
             Assert.AreEqual("456", person.PhoneNumber.Prefix);
@@ -66,7 +66,6 @@ namespace MongoDB.Framework.Mapping
             var fluentMapProvider = new FluentMapProvider()
                 .AddMapsFromAssemblyContaining<PartyMap>();
             var mappingStore = new MappingStore(fluentMapProvider);
-
             var person = new Person()
             {
                 Id = "4b27b9f1cf24000000002aa0",
@@ -98,7 +97,7 @@ namespace MongoDB.Framework.Mapping
 
             Assert.AreEqual(new Oid("4b27b9f1cf24000000002aa0"), document["_id"]);
             Assert.AreEqual("Bob McBob", document["Name"]);
-            Assert.AreEqual("Person", document["ValueType"]);
+            Assert.AreEqual("Person", document["Type"]);
             Assert.AreEqual(new DateTime(1900, 1, 1), document["BirthDate"]);
             Assert.AreEqual("123", ((Document)document["PhoneNumber"])["AreaCode"]);
             Assert.AreEqual("456", ((Document)document["PhoneNumber"])["Prefix"]);

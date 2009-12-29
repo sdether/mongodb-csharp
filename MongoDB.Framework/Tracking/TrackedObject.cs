@@ -128,7 +128,7 @@ namespace MongoDB.Framework.Tracking
         /// Gets the id.
         /// </summary>
         /// <returns></returns>
-        public string GetId()
+        public object GetId()
         {
             return (string)this.mappingStore.GetClassMapFor(this.Current.GetType()).IdMap.MemberGetter(this.Current);
         }
@@ -164,7 +164,7 @@ namespace MongoDB.Framework.Tracking
         /// Moves to possible modified.
         /// </summary>
         /// <param name="original">The original.</param>
-        public void MoveToPossibleModified(Document original)
+        public void MoveToPossiblyModified(Document original)
         {
             this.Original = original;
             this.State = TrackedObjectState.PossiblyModified;

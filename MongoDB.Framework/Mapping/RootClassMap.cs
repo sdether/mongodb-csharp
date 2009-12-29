@@ -10,7 +10,7 @@ namespace MongoDB.Framework.Mapping
         #region Private Fields
 
         private string collectionName;
-        private MemberMap idMap;
+        private IdMap idMap;
 
 	    #endregion
 
@@ -26,10 +26,10 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
-        /// Gets or sets the id map.
+        /// Gets the id map.
         /// </summary>
         /// <value>The id map.</value>
-        public override MemberMap IdMap
+        public override IdMap IdMap
         {
             get { return this.idMap; }
         }
@@ -42,7 +42,7 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="RootClassMap"/> class.
         /// </summary>
         /// <param name="type">The type.</param>
-        public RootClassMap(Type type, string collectionName, MemberMap idMap, IEnumerable<MemberMap> memberMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap)
+        public RootClassMap(Type type, string collectionName, IdMap idMap, IEnumerable<MemberMap> memberMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap)
             : base(type, memberMaps, discriminatorKey, discriminator, subClassMaps, extendedPropertiesMap)
         {
             if (collectionName == null)

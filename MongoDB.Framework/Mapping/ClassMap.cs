@@ -64,7 +64,7 @@ namespace MongoDB.Framework.Mapping
         /// Gets the id map.
         /// </summary>
         /// <value>The id map.</value>
-        public abstract MemberMap IdMap { get; }
+        public abstract IdMap IdMap { get; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is polymorphic.

@@ -6,13 +6,13 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Mapping.Types
 {
-    public class IdValueType : NullSafeValueType
+    public class GuidValueType : NullSafeValueType
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="IdValueType"/> class.
+        /// Initializes a new instance of the <see cref="GuidValueType"/> class.
         /// </summary>
-        public IdValueType()
-            : base(typeof(string))
+        public GuidValueType()
+            : base(typeof(Guid))
         { }
 
         /// <summary>
@@ -23,11 +23,11 @@ namespace MongoDB.Framework.Mapping.Types
         public override object ConvertFromDocumentValue(object documentValue, MappingContext mappingContext)
         {
             documentValue = base.ConvertFromDocumentValue(documentValue, mappingContext);
-            var oid = documentValue as Oid;
-            if (oid == null)
+            var guid = documentValue as string;
+            if (guid == null)
                 return null;
 
-            return BitConverter.ToString(oid.Value).Replace("-", "").ToLower();
+            return new Guid(guid);
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace MongoDB.Framework.Mapping.Types
             if (value == MongoDBNull.Value)
                 return value;
 
-            return new Oid((string)value);
+            return ((Guid)value).ToString();
         }
     }
 }

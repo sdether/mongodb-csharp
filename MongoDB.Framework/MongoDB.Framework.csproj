@@ -72,7 +72,9 @@
     <Compile Include="Linq\Visitors\ProjectionBuilder.cs" />
     <Compile Include="Linq\MongoQueryProjection.cs" />
     <Compile Include="Linq\Visitors\ScalarQueryModelVisitor.cs" />
+    <Compile Include="Mapping\Fluent\FluentGeneratedBy.cs" />
     <Compile Include="Mapping\Fluent\FluentHasManyMemberMap.cs" />
+    <Compile Include="Mapping\Fluent\FluentIdMap.cs" />
     <Compile Include="Mapping\Fluent\FluentMemberMap.cs" />
     <Compile Include="Mapping\Fluent\FluentClassMap.cs">
       <SubType>Code</SubType>
@@ -101,9 +103,17 @@
     <Compile Include="Mapping\Fluent\FluentSuperClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Mapping\IdGenerators\AssignedGenerator.cs" />
+    <Compile Include="Mapping\IdGenerators\GuidGenerator.cs" />
+    <Compile Include="Mapping\IdGenerators\IdGenerationException.cs" />
+    <Compile Include="Mapping\IdGenerators\OidGenerator.cs" />
+    <Compile Include="Mapping\IIdGenerator.cs" />
+    <Compile Include="Mapping\IdMap.cs" />
     <Compile Include="Mapping\IMapProvider.cs" />
     <Compile Include="Mapping\Model\ClassMapModel.cs" />
     <Compile Include="Mapping\Model\HasManyMemberMapModel.cs" />
+    <Compile Include="Mapping\Model\IdMapModel.cs" />
+    <Compile Include="Mapping\Types\GuidValueType.cs" />
     <Compile Include="Mapping\Types\DictionaryCollectionType.cs" />
     <Compile Include="Mapping\Types\SetCollectionType.cs" />
     <Compile Include="Mapping\Types\ICollectionType.cs" />
@@ -121,7 +131,7 @@
     <Compile Include="Mapping\RootClassMap.cs" />
     <Compile Include="Mapping\MappingContext.cs" />
     <Compile Include="Mapping\Types\CollectionValueType.cs" />
-    <Compile Include="Mapping\Types\IdValueType.cs" />
+    <Compile Include="Mapping\Types\OidValueType.cs" />
     <Compile Include="Mapping\Types\ListCollectionType.cs" />
     <Compile Include="Mapping\Types\NestedClassValueType.cs" />
     <Compile Include="Mapping\Types\NullSafeValueType.cs" />

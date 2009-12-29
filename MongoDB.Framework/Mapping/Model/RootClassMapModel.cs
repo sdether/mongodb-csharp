@@ -9,7 +9,7 @@ namespace MongoDB.Framework.Mapping.Model
     {
         public string CollectionName { get; set; }
 
-        public MemberMapModel IdMap { get; set; }
+        public IdMapModel IdMap { get; set; }
 
         public RootClassMapModel(Type type)
             : base(type)

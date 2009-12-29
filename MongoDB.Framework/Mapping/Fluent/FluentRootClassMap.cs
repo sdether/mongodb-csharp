@@ -18,25 +18,25 @@ namespace MongoDB.Framework.Mapping.Fluent
             : base(new RootClassMapModel(typeof(TRootClass)))
         { }
 
-        public void Id(string memberName)
+        public FluentIdMap Id(string memberName)
         {
             var memberInfo = this.GetSingleMember(memberName);
-            this.Id(memberInfo);
+            return this.Id(memberInfo);
         }
 
-        public void Id(MemberInfo memberInfo)
+        public FluentIdMap Id(MemberInfo memberInfo)
         {
-            this.Model.IdMap = new MemberMapModel()
-            {
-                Getter = memberInfo,
-                Setter = memberInfo
-            };
+            var fluentIdMap = new FluentIdMap();
+            fluentIdMap.Model.Getter = memberInfo;
+            fluentIdMap.Model.Setter = memberInfo;
+            this.Model.IdMap = fluentIdMap.Model;
+            return fluentIdMap;
         }
 
-        public void Id(Expression<Func<TRootClass, string>> idMember)
+        public FluentIdMap Id(Expression<Func<TRootClass, object>> idMember)
         {
             var memberInfo = this.GetSingleMember(idMember);
-            this.Id(memberInfo);
+            return this.Id(memberInfo);
         }
 
         public void UseCollection(string collectionName)
