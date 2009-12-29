@@ -104,6 +104,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\IdGenerators\AssignedGenerator.cs" />
+    <Compile Include="Mapping\IdGenerators\GuidCombGenerator.cs" />
     <Compile Include="Mapping\IdGenerators\GuidGenerator.cs" />
     <Compile Include="Mapping\IdGenerators\IdGenerationException.cs" />
     <Compile Include="Mapping\IdGenerators\OidGenerator.cs" />
