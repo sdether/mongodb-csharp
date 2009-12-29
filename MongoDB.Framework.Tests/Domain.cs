@@ -18,6 +18,7 @@ namespace MongoDB.Framework
             Map(x => x.Name);
             Map(x => x.PhoneNumber);
 
+            HasMany(x => x.AlternatePhoneNumbers);
             HasMany(x => x.Aliases);
 
             DiscriminateSubClassesOnKey<string>("ValueType")
@@ -65,6 +66,8 @@ namespace MongoDB.Framework
         public string Name { get; set; }
 
         public PhoneNumber PhoneNumber { get; set; }
+
+        public IDictionary<string, PhoneNumber> AlternatePhoneNumbers { get; set; }
 
         public IList<string> Aliases { get; private set; }
 

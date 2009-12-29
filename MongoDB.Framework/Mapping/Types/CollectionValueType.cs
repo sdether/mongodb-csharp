@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections;
+using MongoDB.Driver;
 
 namespace MongoDB.Framework.Mapping.Types
 {
-    public class CollectionValueType : IValueType
+    public class CollectionValueType : NullSafeValueType
     {
         private ICollectionType collectionType;
         private IValueType elementValueType;
@@ -26,6 +27,7 @@ namespace MongoDB.Framework.Mapping.Types
         /// <param name="collectionType">Type of the collection.</param>
         /// <param name="elementValueType">Type of the element value.</param>
         public CollectionValueType(ICollectionType collectionType, IValueType elementValueType)
+            : base(collectionType.GetCollectionType(elementValueType))
         {
             if (collectionType == null)
                 throw new ArgumentNullException("collectionType");
@@ -42,8 +44,12 @@ namespace MongoDB.Framework.Mapping.Types
         /// <param name="documentValue">The document value.</param>
         /// <param name="mappingContext">The mapping context.</param>
         /// <returns></returns>
-        public object ConvertFromDocumentValue(object documentValue, MappingContext mappingContext)
+        public override object ConvertFromDocumentValue(object documentValue, MappingContext mappingContext)
         {
+            documentValue = base.ConvertFromDocumentValue(documentValue, mappingContext);
+            if (documentValue == null)
+                return documentValue;
+
             return this.collectionType.ConvertFromDocumentValue(this.elementValueType, documentValue, mappingContext);
         }
 
@@ -52,8 +58,12 @@ namespace MongoDB.Framework.Mapping.Types
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public object ConvertToDocumentValue(object value)
+        public override object ConvertToDocumentValue(object value)
         {
+            value = base.ConvertToDocumentValue(value);
+            if (value == MongoDBNull.Value)
+                return value;
+
             return this.collectionType.ConvertToDocumentValue(this.elementValueType, value);
         }
     }

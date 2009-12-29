@@ -104,6 +104,7 @@
     <Compile Include="Mapping\IMapProvider.cs" />
     <Compile Include="Mapping\Model\ClassMapModel.cs" />
     <Compile Include="Mapping\Model\HasManyMemberMapModel.cs" />
+    <Compile Include="Mapping\Types\DictionaryCollectionType.cs" />
     <Compile Include="Mapping\Types\SetCollectionType.cs" />
     <Compile Include="Mapping\Types\ICollectionType.cs" />
     <Compile Include="Mapping\Model\KeyMemberMapModel.cs" />

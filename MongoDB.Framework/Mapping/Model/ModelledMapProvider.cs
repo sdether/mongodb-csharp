@@ -18,6 +18,8 @@ namespace MongoDB.Framework.Mapping.Model
             { typeof(IList<>), mt => mt.GetGenericArguments()[0] },
             { typeof(List<>), mt => mt.GetGenericArguments()[0] },
             { typeof(HashSet<>), mt => mt.GetGenericArguments()[0] },
+            { typeof(IDictionary<,>), mt => mt.GetGenericArguments()[1] },
+            { typeof(Dictionary<,>), mt => mt.GetGenericArguments()[1] },
         };
 
         private Dictionary<Type, RootClassMapModel> rootClassMapModels;
@@ -261,6 +263,8 @@ namespace MongoDB.Framework.Mapping.Model
                     return new ListCollectionType();
                 if (genType == typeof(HashSet<>))
                     return new SetCollectionType();
+                if (genType == typeof(IDictionary<,>) || genType == typeof(Dictionary<,>))
+                    return new DictionaryCollectionType();
             }
 
             throw new NotSupportedException(string.Format("Could not create collection type from {0}.", memberType));

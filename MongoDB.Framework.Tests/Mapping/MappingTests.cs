@@ -29,6 +29,15 @@ namespace MongoDB.Framework.Mapping
                     .Append("AreaCode", "123")
                     .Append("Prefix", "456")
                     .Append("Number", "7890"))
+                .Append("AlternatePhoneNumbers", new Document()
+                    .Append("Home", new Document()
+                        .Append("AreaCode", "111")
+                        .Append("Prefix", "222")
+                        .Append("Number", "3333"))
+                    .Append("Work", new Document()
+                        .Append("AreaCode", "444")
+                        .Append("Prefix", "555")
+                        .Append("Number", "6666")))
                 .Append("Aliases", new [] { "Grumpy", "Dopey", "Sleepy" })
                 .Append("ValueType", "Person")
                 .Append("BirthDate", new DateTime(1900, 1, 1))
@@ -44,6 +53,7 @@ namespace MongoDB.Framework.Mapping
             Assert.AreEqual("123", person.PhoneNumber.AreaCode);
             Assert.AreEqual("456", person.PhoneNumber.Prefix);
             Assert.AreEqual("7890", person.PhoneNumber.Number);
+            Assert.AreEqual(2, person.AlternatePhoneNumbers.Count);
             Assert.AreEqual(3, person.Aliases.Count);
             Assert.AreEqual(new DateTime(1900, 1, 1), person.BirthDate);
             Assert.AreEqual(1, person.ExtendedProperties.Count);
@@ -67,6 +77,11 @@ namespace MongoDB.Framework.Mapping
                     AreaCode = "123",
                     Prefix = "456",
                     Number = "7890"
+                },
+                AlternatePhoneNumbers = new Dictionary<string, PhoneNumber>
+                {
+                    { "Home", new PhoneNumber() { AreaCode = "111", Prefix = "222", Number = "3333" } },
+                    { "Work", new PhoneNumber() { AreaCode = "444", Prefix = "555", Number = "6666" } },
                 },
                 ExtendedProperties = new Dictionary<string, object>
                 {
