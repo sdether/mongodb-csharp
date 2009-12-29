@@ -27,6 +27,12 @@ namespace MongoDB.Framework.Mapping.Fluent
             return this.idMap;
         }
 
+        public FluentIdMap GuidComb()
+        {
+            this.idMap.Model.Generator = new GuidCombGenerator();
+            return this.idMap;
+        }
+
         public FluentIdMap Oid()
         {
             this.idMap.Model.Generator = new OidGenerator();
