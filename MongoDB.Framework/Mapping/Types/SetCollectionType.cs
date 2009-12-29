@@ -8,41 +8,32 @@ namespace MongoDB.Framework.Mapping.Types
 {
     public class SetCollectionType : ICollectionType
     {
-        private readonly MethodInfo addMethod;
-
         /// <summary>
         /// Gets the type of the collection.
         /// </summary>
-        /// <value>The type of the collection.</value>
-        public Type CollectionType { get; private set; }
-
-        /// <summary>
-        /// Gets the type of the element value.
-        /// </summary>
-        /// <value>The type of the element value.</value>
-        public IValueType ElementValueType { get; private set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SetCollectionType"/> class.
-        /// </summary>
         /// <param name="elementValueType">Type of the element value.</param>
-        public SetCollectionType(IValueType elementValueType)
+        /// <returns></returns>
+        public Type GetCollectionType(IValueType elementValueType)
         {
-            if (elementValueType == null)
-                throw new ArgumentNullException("elementValueType");
-
-            this.ElementValueType = elementValueType;
-
-            this.CollectionType = typeof(HashSet<>).MakeGenericType(this.ElementValueType.Type);
-            this.addMethod = this.CollectionType.GetMethod("Add", new [] { this.ElementValueType.Type });
+            return typeof(HashSet<>).MakeGenericType(elementValueType.Type);
         }
 
-        public object CreateCollection(IEnumerable<object> elements)
+        /// <summary>
+        /// Creates the collection.
+        /// </summary>
+        /// <param name="elementValueType"></param>
+        /// <param name="elements">The elements.</param>
+        /// <returns></returns>
+        public object CreateCollection(IValueType elementValueType, IList<object> elements)
         {
-            var list = Activator.CreateInstance(this.CollectionType);
+            var set = Activator.CreateInstance(this.GetCollectionType(elementValueType));
+            if (elements.Count == 0)
+                return set;
+
+            var addMethod = set.GetType().GetMethod("Add", new[] { elementValueType.Type });
             foreach (var element in elements)
-                addMethod.Invoke(list, new [] { element });
-            return list;
+                addMethod.Invoke(set, new[] { element });
+            return set;
         }
     }
 }

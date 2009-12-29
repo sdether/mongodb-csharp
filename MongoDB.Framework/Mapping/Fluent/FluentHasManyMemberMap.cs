@@ -14,21 +14,32 @@ namespace MongoDB.Framework.Mapping.Fluent
             : base(new HasManyMemberMapModel())
         { }
 
-        public FluentHasManyMemberMap As<TCollection>() where TCollection : ICollectionType, new()
+        public FluentHasManyMemberMap CollectionType<TCollection>() where TCollection : ICollectionType, new()
         {
             this.Model.CollectionType = new TCollection();
             return this;
         }
 
-        public FluentHasManyMemberMap As(ICollectionType collectionType)
+        public FluentHasManyMemberMap CollectionType(ICollectionType collectionType)
         {
             this.Model.CollectionType = collectionType;
             return this;
         }
 
-        public FluentHasManyMemberMap Of<TElement>()
+        public FluentHasManyMemberMap ElementType<TElement>()
         {
             this.Model.ElementType = typeof(TElement);
+            return this;
+        }
+
+        public FluentHasManyMemberMap ElementValueType<TElementValueType>() where TElementValueType : IValueType, new()
+        {
+            return this.ElementValueType(new TElementValueType());
+        }
+
+        public FluentHasManyMemberMap ElementValueType(IValueType elementValueType)
+        {
+            this.Model.ElementValueType = elementValueType;
             return this;
         }
     }

@@ -11,20 +11,15 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Gets the type of the collection.
         /// </summary>
-        /// <value>The type of the collection.</value>
-        Type CollectionType { get; }
-
-        /// <summary>
-        /// Gets the type of the element value.
-        /// </summary>
-        /// <value>The type of the element value.</value>
-        IValueType ElementValueType { get; }
+        /// <param name="elementValueType">Type of the element value.</param>
+        /// <returns></returns>
+        Type GetCollectionType(IValueType elementValueType);
 
         /// <summary>
         /// Creates the collection.
         /// </summary>
         /// <param name="elements">The elements.</param>
         /// <returns></returns>
-        object CreateCollection(IEnumerable<object> elements);
+        object CreateCollection(IValueType elementValueType, IList<object> elements);
     }
 }

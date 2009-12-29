@@ -228,22 +228,20 @@ namespace MongoDB.Framework.Mapping.Model
         private IValueType GetCollectionValueType(Type memberType, ICollectionType collectionType, Type elementType, IValueType elementValueType)
         {
             if (collectionType == null)
+                collectionType = this.GetCollectionType(memberType);
+
+            if (elementValueType == null)
             {
-                if (elementValueType == null)
-                {
-                    if (elementType == null)
-                        elementType = this.DiscoverElementType(memberType);
-                    elementValueType = this.GetValueTypeFromType(elementType);
-                }
-                collectionType = this.GetCollectionType(memberType, elementValueType);
+                if (elementType == null)
+                    elementType = this.DiscoverElementType(memberType);
+                elementValueType = this.GetValueTypeFromType(elementType);
             }
 
-            return new CollectionValueType(collectionType);
+            return new CollectionValueType(collectionType, elementValueType);
         }
 
         private Type DiscoverElementType(Type memberType)
         {
-            Type elementType;
             if (memberType.IsGenericType)
             {
                 Func<Type, Type> elementTypeFactory;
@@ -254,15 +252,15 @@ namespace MongoDB.Framework.Mapping.Model
             throw new NotSupportedException(string.Format("Could not discover element type from {0}.", memberType));
         }
 
-        private ICollectionType GetCollectionType(Type memberType, IValueType elementValueType)
+        private ICollectionType GetCollectionType(Type memberType)
         {
             if (memberType.IsGenericType)
             {
                 var genType = memberType.GetGenericTypeDefinition();
                 if (genType == typeof(IList<>) || genType == typeof(List<>) || genType == typeof(ICollection<>))
-                    return new ListCollectionType(elementValueType);
+                    return new ListCollectionType();
                 if (genType == typeof(HashSet<>))
-                    return new SetCollectionType(elementValueType);
+                    return new SetCollectionType();
             }
 
             throw new NotSupportedException(string.Format("Could not create collection type from {0}.", memberType));

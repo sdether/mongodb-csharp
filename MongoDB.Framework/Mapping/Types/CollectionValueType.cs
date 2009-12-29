@@ -9,6 +9,7 @@ namespace MongoDB.Framework.Mapping.Types
     public class CollectionValueType : IValueType
     {
         private ICollectionType collectionType;
+        private IValueType elementValueType;
 
         /// <summary>
         /// Gets the type.
@@ -16,19 +17,23 @@ namespace MongoDB.Framework.Mapping.Types
         /// <value>The type.</value>
         public Type Type
         {
-            get { return collectionType.CollectionType; }
+            get { return collectionType.GetCollectionType(this.elementValueType); }
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CollectionValueType"/> class.
         /// </summary>
         /// <param name="collectionType">Type of the collection.</param>
-        public CollectionValueType(ICollectionType collectionType)
+        /// <param name="elementValueType">Type of the element value.</param>
+        public CollectionValueType(ICollectionType collectionType, IValueType elementValueType)
         {
             if (collectionType == null)
                 throw new ArgumentNullException("collectionType");
+            if (elementValueType == null)
+                throw new ArgumentNullException("elementValueType");
 
             this.collectionType = collectionType;
+            this.elementValueType = elementValueType;
         }
 
         /// <summary>
@@ -45,9 +50,9 @@ namespace MongoDB.Framework.Mapping.Types
 
             var elements = new List<object>();
             foreach (var element in array)
-                elements.Add(this.collectionType.ElementValueType.ConvertFromDocumentValue(element, mappingContext));
+                elements.Add(this.elementValueType.ConvertFromDocumentValue(element, mappingContext));
 
-            return this.collectionType.CreateCollection(elements);
+            return this.collectionType.CreateCollection(this.elementValueType, elements);
         }
 
         /// <summary>
@@ -59,7 +64,7 @@ namespace MongoDB.Framework.Mapping.Types
         {
             var enumerableValue = value as IEnumerable;
             return enumerableValue.OfType<object>()
-                .Select(e => this.collectionType.ElementValueType.ConvertToDocumentValue(e))
+                .Select(e => this.elementValueType.ConvertToDocumentValue(e))
                 .ToArray();
         }
     }
