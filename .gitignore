@@ -1,4 +1,3 @@
-#*.csproj
 *~
 *.dll
 *.*~
@@ -12,16 +11,8 @@
 
 *.userprefs
 *.usertasks
+*.test-cache
 
-test-results/*.xml
-MongoDB.Net-Tests/bin/*
-MongoDB.Net-Tests/test-results/MongoDB.Driver.Tests.csproj.test-cache
-MongoDB.Linq.Tests/test-results/MongoDB.Linq.Tests.csproj.test-cache
-
-*.suo
-/_UpgradeReport_Files/*
-obj/*
-MongoDB.Linq/obj/*
-MongoDB.Linq.Tests/bin/*
-MongoDB.Linq.Tests/obj/*
-MongoDB.Linq.Tests/test-results/*
+bin
+obj
+test-results
