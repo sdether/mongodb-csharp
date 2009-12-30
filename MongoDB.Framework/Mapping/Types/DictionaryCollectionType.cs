@@ -14,7 +14,7 @@ namespace MongoDB.Framework.Mapping.Types
             return typeof(Dictionary<,>).MakeGenericType(new[] { typeof(string), elementValueType.Type });
         }
 
-        public object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, MappingContext mappingContext)
+        public object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMappingContext mappingContext)
         {
             Document document = documentValue as Document;
             if (document == null)

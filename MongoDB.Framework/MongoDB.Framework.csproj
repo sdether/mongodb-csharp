@@ -110,6 +110,7 @@
     <Compile Include="Mapping\IdGenerators\OidGenerator.cs" />
     <Compile Include="Mapping\IIdGenerator.cs" />
     <Compile Include="Mapping\IdMap.cs" />
+    <Compile Include="Mapping\IMappingContext.cs" />
     <Compile Include="Mapping\IMapProvider.cs" />
     <Compile Include="Mapping\Model\ClassMapModel.cs" />
     <Compile Include="Mapping\Model\HasManyMemberMapModel.cs" />

@@ -22,7 +22,7 @@ namespace MongoDB.Framework.Mapping
         /// <param name="documentValue">The document value.</param>
         /// <param name="mappingContext">The mapping context.</param>
         /// <returns></returns>
-        object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, MappingContext mappingContext);
+        object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMappingContext mappingContext);
 
         /// <summary>
         /// Converts to document value.

@@ -70,7 +70,7 @@ namespace MongoDB.Framework.Mapping
         /// Maps the member from a document.
         /// </summary>
         /// <param name="mappingContext">The mapping context.</param>
-        public virtual void MapFromDocument(MappingContext mappingContext)
+        public virtual void MapFromDocument(IMappingContext mappingContext)
         {
             if (mappingContext == null)
                 throw new ArgumentNullException("mappingContext");

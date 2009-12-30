@@ -144,7 +144,7 @@ namespace MongoDB.Framework.Mapping
         /// Runs a mapping according to the specfied mappingContext;
         /// </summary>
         /// <param name="mappingContext">The mapping context.</param>
-        public virtual void MapFromDocument(MappingContext mappingContext)
+        public virtual void MapFromDocument(IMappingContext mappingContext)
         {
             if (mappingContext == null)
                 throw new ArgumentNullException("mappingContext");

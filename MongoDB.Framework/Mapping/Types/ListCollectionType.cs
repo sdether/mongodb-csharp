@@ -26,7 +26,7 @@ namespace MongoDB.Framework.Mapping.Types
         /// <param name="documentValue">The document value.</param>
         /// <param name="mappingContext">The mapping context.</param>
         /// <returns></returns>
-        public object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, MappingContext mappingContext)
+        public object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMappingContext mappingContext)
         {
             Array array = documentValue as Array;
             if (array == null)

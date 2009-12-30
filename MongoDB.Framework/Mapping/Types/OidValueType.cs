@@ -20,7 +20,7 @@ namespace MongoDB.Framework.Mapping.Types
         /// </summary>
         /// <param name="documentValue">The document value.</param>
         /// <returns></returns>
-        public override object ConvertFromDocumentValue(object documentValue, MappingContext mappingContext)
+        public override object ConvertFromDocumentValue(object documentValue, IMappingContext mappingContext)
         {
             documentValue = base.ConvertFromDocumentValue(documentValue, mappingContext);
             var oid = documentValue as Oid;

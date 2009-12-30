@@ -32,7 +32,7 @@ namespace MongoDB.Framework.Mapping.Types
         /// <param name="documentValue">The document value.</param>
         /// <param name="mappingContext">The mapping context.</param>
         /// <returns></returns>
-        public virtual object ConvertFromDocumentValue(object documentValue, MappingContext mappingContext)
+        public virtual object ConvertFromDocumentValue(object documentValue, IMappingContext mappingContext)
         {
             if (documentValue == null || documentValue == MongoDBNull.Value)
                 return this.Type.IsValueType ? Activator.CreateInstance(this.Type) : null;

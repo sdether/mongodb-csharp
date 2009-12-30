@@ -7,7 +7,7 @@ using MongoDB.Framework.Configuration;
 
 namespace MongoDB.Framework.Mapping
 {
-    public class MappingContext
+    public class MappingContext : IMappingContext
     {
         /// <summary>
         /// Gets the document.
@@ -31,7 +31,7 @@ namespace MongoDB.Framework.Mapping
         /// Gets the parent.
         /// </summary>
         /// <value>The parent.</value>
-        public MappingContext Parent { get; private set; }
+        public IMappingContext Parent { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MappingContext"/> class.
@@ -84,7 +84,7 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="document">The document.</param>
         /// <returns></returns>
-        public MappingContext CreateChildMappingContext(Document document, Type entityType)
+        public IMappingContext CreateChildMappingContext(Document document, Type entityType)
         {
             return new MappingContext(this.MongoContext, document, entityType) { Parent = this };
         }
