@@ -85,6 +85,20 @@ namespace MongoDB.Framework.Mapping.Model
             return this.BuildRootClassMap(rootClassMapModel);
         }
 
+        /// <summary>
+        /// Gets the nested class map for.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
+        public NestedClassMap GetNestedClassMapFor(Type type)
+        {
+            NestedClassMapModel nestedClassMapModel;
+            if (!this.nestedClassMapModels.TryGetValue(type, out nestedClassMapModel))
+                return null;
+
+            return this.BuildNestedClassMap(nestedClassMapModel);
+        }
+
         #endregion
 
         #region Private Methods
