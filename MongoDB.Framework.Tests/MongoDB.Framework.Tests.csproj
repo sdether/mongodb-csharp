@@ -71,6 +71,10 @@
     <Compile Include="IntegrationTestBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Mapping\IdGenerators\AssignedGeneratorTests.cs" />
+    <Compile Include="Mapping\IdGenerators\OidGeneratorTests.cs" />
+    <Compile Include="Mapping\IdGenerators\GuidCombGeneratorTests.cs" />
+    <Compile Include="Mapping\IdGenerators\GuidGeneratorTests.cs" />
     <Compile Include="Mapping\IdMapTests.cs" />
     <Compile Include="Mapping\MappingTests.cs" />
     <Compile Include="Mapping\Types\CollectionValueTypeTests.cs" />
