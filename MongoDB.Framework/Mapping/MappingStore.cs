@@ -62,7 +62,7 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="type">ValueType of the entity.</param>
         /// <returns></returns>
-        public ClassMap GetClassMapFor(Type type)
+        public virtual ClassMap GetClassMapFor(Type type)
         {
             ClassMap classMap = null;
             if(!this.TryGetClassMap(type, out classMap))
