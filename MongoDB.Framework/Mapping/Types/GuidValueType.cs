@@ -25,7 +25,7 @@ namespace MongoDB.Framework.Mapping.Types
             documentValue = base.ConvertFromDocumentValue(documentValue, mappingContext);
             var guid = documentValue as string;
             if (guid == null)
-                return null;
+                return Guid.Empty;
 
             return new Guid(guid);
         }

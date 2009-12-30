@@ -49,6 +49,9 @@ namespace MongoDB.Framework.Mapping.Types
         public object ConvertToDocumentValue(IValueType elementValueType, object value)
         {
             var enumerableValue = value as IEnumerable;
+            if (enumerableValue == null)
+                return null;
+
             return enumerableValue.OfType<object>()
                 .Select(e => elementValueType.ConvertToDocumentValue(e))
                 .ToArray();

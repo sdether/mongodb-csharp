@@ -71,7 +71,16 @@
     <Compile Include="IntegrationTestBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Mapping\IdMapTests.cs" />
     <Compile Include="Mapping\MappingTests.cs" />
+    <Compile Include="Mapping\Types\CollectionValueTypeTests.cs" />
+    <Compile Include="Mapping\Types\NestedClassValueTypeTests.cs" />
+    <Compile Include="Mapping\Types\DictionaryCollectionTypeTests.cs" />
+    <Compile Include="Mapping\Types\SetCollectionTypeTests.cs" />
+    <Compile Include="Mapping\Types\ListCollectionTypeTests.cs" />
+    <Compile Include="Mapping\Types\OidValueTypeTests.cs" />
+    <Compile Include="Mapping\Types\GuidValueTypeTests.cs" />
+    <Compile Include="Mapping\Types\NullSafeValueTypeTests.cs" />
     <Compile Include="MongoContextTests.cs">
       <SubType>Code</SubType>
     </Compile>
