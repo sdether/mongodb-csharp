@@ -8,6 +8,10 @@ namespace MongoDB.Framework.Mapping
 {
     public abstract class Map
     {
-
+        /// <summary>
+        /// Accepts the specified visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
+        public abstract void Accept(IMapVisitor visitor);
     }
 }

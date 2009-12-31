@@ -26,5 +26,10 @@ namespace MongoDB.Framework.Mapping
             this.MemberGetter = memberGetter;
             this.MemberSetter = memberSetter;
         }
+
+        public override void Accept(IMapVisitor visitor)
+        {
+            visitor.ProcessExtendedProperties(this);
+        }
     }
 }

@@ -67,6 +67,15 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
+        /// Accepts the specified visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
+        public override void Accept(IMapVisitor visitor)
+        {
+            visitor.ProcessMember(this);
+        }
+
+        /// <summary>
         /// Maps the member from a document.
         /// </summary>
         /// <param name="mappingContext">The mapping context.</param>

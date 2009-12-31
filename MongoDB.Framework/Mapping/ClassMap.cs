@@ -118,6 +118,24 @@ namespace MongoDB.Framework.Mapping
         #region Public Methods
 
         /// <summary>
+        /// Accepts the specified visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
+        public override void Accept(IMapVisitor visitor)
+        {
+            visitor.ProcessClass(this);
+
+            if (this.HasId)
+                visitor.Visit(this.IdMap);
+
+            foreach (var memberMap in this.MemberMaps)
+                visitor.Visit(memberMap);
+
+            if (this.HasExtendedProperties)
+                visitor.Visit(this.ExtendedPropertiesMap);
+        }
+
+        /// <summary>
         /// Gets the class map by discriminator.
         /// </summary>
         /// <param name="discriminator">The discriminator.</param>

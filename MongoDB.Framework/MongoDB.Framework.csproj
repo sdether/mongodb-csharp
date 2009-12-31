@@ -57,6 +57,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mapping\IMapVisitor.cs" />
+    <Compile Include="Mapping\Visitors\DefaultMapVisitor.cs" />
+    <Compile Include="Mapping\Visitors\NullMapVisitor.cs" />
+    <Compile Include="Mapping\Visitors\ReferenceFinder.cs" />
     <Compile Include="EntityNotFoundException.cs" />
     <Compile Include="Mapping\Cascade.cs" />
     <Compile Include="Mapping\Fluent\FluentReferenceMemberMap.cs" />
