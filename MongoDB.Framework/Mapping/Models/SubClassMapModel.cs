@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MongoDB.Framework.Mapping.Model
+namespace MongoDB.Framework.Mapping.Models
 {
     public class SubClassMapModel : ClassMapModel
     {

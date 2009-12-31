@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
-using MongoDB.Framework.Mapping.Model;
+using MongoDB.Framework.Mapping.Models;
 using MongoDB.Framework.Mapping.Types;
 using MongoDB.Framework.Reflection;
 

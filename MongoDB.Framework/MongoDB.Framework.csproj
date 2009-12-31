@@ -57,11 +57,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChangeSet.cs" />
+    <Compile Include="Tracking\ChangeSet.cs" />
     <Compile Include="Configuration\IMongoConfiguration.cs" />
     <Compile Include="Configuration\MongoConfiguration.cs" />
     <Compile Include="DefaultMongoFactory.cs" />
-    <Compile Include="EntityMapper.cs" />
     <Compile Include="Extensions\MongoDBDocumentExtensions.cs" />
     <Compile Include="Extensions\ReflectionExtensions.cs" />
     <Compile Include="IMongoContext.cs" />
@@ -112,22 +111,22 @@
     <Compile Include="Mapping\IdMap.cs" />
     <Compile Include="Mapping\IMappingContext.cs" />
     <Compile Include="Mapping\IMapProvider.cs" />
-    <Compile Include="Mapping\Model\ClassMapModel.cs" />
-    <Compile Include="Mapping\Model\HasManyMemberMapModel.cs" />
-    <Compile Include="Mapping\Model\IdMapModel.cs" />
+    <Compile Include="Mapping\Models\ClassMapModel.cs" />
+    <Compile Include="Mapping\Models\HasManyMemberMapModel.cs" />
+    <Compile Include="Mapping\Models\IdMapModel.cs" />
     <Compile Include="Mapping\Types\GuidValueType.cs" />
     <Compile Include="Mapping\Types\DictionaryCollectionType.cs" />
     <Compile Include="Mapping\Types\SetCollectionType.cs" />
     <Compile Include="Mapping\Types\ICollectionType.cs" />
-    <Compile Include="Mapping\Model\KeyMemberMapModel.cs" />
-    <Compile Include="Mapping\Model\KeyValueMemberMapModel.cs" />
-    <Compile Include="Mapping\Model\MapModel.cs" />
-    <Compile Include="Mapping\Model\ModelledMapProvider.cs" />
-    <Compile Include="Mapping\Model\NestedClassMapModel.cs" />
-    <Compile Include="Mapping\Model\MemberMapModel.cs" />
-    <Compile Include="Mapping\Model\RootClassMapModel.cs" />
-    <Compile Include="Mapping\Model\SubClassMapModel.cs" />
-    <Compile Include="Mapping\Model\SuperClassMapModel.cs" />
+    <Compile Include="Mapping\Models\KeyMemberMapModel.cs" />
+    <Compile Include="Mapping\Models\KeyValueMemberMapModel.cs" />
+    <Compile Include="Mapping\Models\MapModel.cs" />
+    <Compile Include="Mapping\Models\ModelledMapProvider.cs" />
+    <Compile Include="Mapping\Models\NestedClassMapModel.cs" />
+    <Compile Include="Mapping\Models\MemberMapModel.cs" />
+    <Compile Include="Mapping\Models\RootClassMapModel.cs" />
+    <Compile Include="Mapping\Models\SubClassMapModel.cs" />
+    <Compile Include="Mapping\Models\SuperClassMapModel.cs" />
     <Compile Include="Mapping\IValueType.cs" />
     <Compile Include="Mapping\NestedClassMap.cs" />
     <Compile Include="Mapping\RootClassMap.cs" />

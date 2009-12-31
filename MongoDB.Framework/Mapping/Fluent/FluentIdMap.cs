@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using MongoDB.Framework.Mapping.Model;
+using MongoDB.Framework.Mapping.Models;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {

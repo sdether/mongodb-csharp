@@ -7,7 +7,7 @@ using MongoDB.Framework.Mapping.Types;
 using System.Text.RegularExpressions;
 using MongoDB.Framework.Mapping.IdGenerators;
 
-namespace MongoDB.Framework.Mapping.Model
+namespace MongoDB.Framework.Mapping.Models
 {
     public class ModelledMapProvider : IMapProvider
     {

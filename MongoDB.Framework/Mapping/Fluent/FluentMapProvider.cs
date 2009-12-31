@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 
-using MongoDB.Framework.Mapping.Model;
+using MongoDB.Framework.Mapping.Models;
 using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Mapping.Fluent
