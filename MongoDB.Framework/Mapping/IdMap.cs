@@ -47,5 +47,16 @@ namespace MongoDB.Framework.Mapping
         {
             return this.IdGenerator.Generate(entity, mongoContext);
         }
+
+        /// <summary>
+        /// Accepts the specified visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
+        public override void Accept(IMapVisitor visitor)
+        {
+            visitor.ProcessId(this);
+
+            base.Accept(visitor);
+        }
     }
 }

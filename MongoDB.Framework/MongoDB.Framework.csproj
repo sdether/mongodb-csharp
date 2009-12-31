@@ -57,6 +57,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mapping\IMapVisitor.cs" />
+    <Compile Include="Mapping\Visitors\DefaultMapVisitor.cs" />
+    <Compile Include="Mapping\Visitors\NullMapVisitor.cs" />
+    <Compile Include="Mapping\Visitors\ReferenceFinder.cs" />
     <Compile Include="Tracking\ChangeSet.cs" />
     <Compile Include="Configuration\IMongoConfiguration.cs" />
     <Compile Include="Configuration\MongoConfiguration.cs" />

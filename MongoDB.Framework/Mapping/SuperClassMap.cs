@@ -83,6 +83,20 @@ namespace MongoDB.Framework.Mapping
         #region Public Methods
 
         /// <summary>
+        /// Accepts the specified visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
+        public override void Accept(IMapVisitor visitor)
+        {
+            visitor.ProcessSuperClass(this);
+
+            foreach (var subClass in this.subClassMaps)
+                visitor.Visit(subClass);
+
+            base.Accept(visitor);
+        }
+
+        /// <summary>
         /// Gets the class map by discriminator.
         /// </summary>
         /// <param name="discriminator">The discriminator.</param>

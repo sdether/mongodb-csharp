@@ -55,5 +55,16 @@ namespace MongoDB.Framework.Mapping
         }
 
         #endregion
+
+        #region Public Methods
+
+        public override void Accept(IMapVisitor visitor)
+        {
+            visitor.ProcessRootClass(this);
+
+            base.Accept(visitor);
+        }
+
+        #endregion
     }
 }

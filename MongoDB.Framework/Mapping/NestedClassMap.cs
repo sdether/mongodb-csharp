@@ -25,8 +25,6 @@ namespace MongoDB.Framework.Mapping
             get { return null; }
         }
 
-        #region Constructors
-
         /// <summary>
         /// Initializes a new instance of the <see cref="NestedClassMap"/> class.
         /// </summary>
@@ -35,6 +33,15 @@ namespace MongoDB.Framework.Mapping
             : base(type, memberMaps, discriminatorKey, discriminator, subClassMaps, extendedPropertiesMap)
         { }
 
-        #endregion
+        /// <summary>
+        /// Accepts the specified visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
+        public override void Accept(IMapVisitor visitor)
+        {
+            visitor.ProcessNestedClass(this);
+
+            base.Accept(visitor);
+        }
     }
 }
