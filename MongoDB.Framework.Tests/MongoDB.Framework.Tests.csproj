@@ -84,9 +84,10 @@
     <Compile Include="Mapping\Types\OidValueTypeTests.cs" />
     <Compile Include="Mapping\Types\GuidValueTypeTests.cs" />
     <Compile Include="Mapping\Types\NullSafeValueTypeTests.cs" />
-    <Compile Include="MongoContextTests.cs">
+    <Compile Include="Linq\MongoQueryableTests.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MongoContextTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\LateBoundReflectionTests.cs" />
     <Compile Include="Linq\Visitors\MemberInfoPathExpressionTreeVisitorTests.cs" />

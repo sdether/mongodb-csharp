@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using MongoDB.Driver;
 
-namespace MongoDB.Framework
+namespace MongoDB.Framework.Linq
 {
     [TestFixture]
     public class MongoContextTests : IntegrationTestBase
@@ -21,9 +22,7 @@ namespace MongoDB.Framework
         [Test]
         public void Test_root_entity_query()
         {
-            var parties = (from p in context.Query<Party>()
-                           where p.PhoneNumber.AreaCode == "111"
-                           select p).ToList();
+            var parties = context.Find<Party>(new Document().Append("PhoneNumber.AreaCode", "111"));
 
             Assert.AreEqual(2, parties.Count());
         }
@@ -31,9 +30,7 @@ namespace MongoDB.Framework
         [Test]
         public void Test_root_entity_query_with_a_nestedClass_condition()
         {
-            var parties = (from p in context.Query<Party>()
-                           where p.PhoneNumber == new PhoneNumber() { AreaCode = "111", Prefix = "222", Number = "3333" }
-                           select p).ToList();
+            var parties = context.Find<Party>(new Document().Append("PhoneNumber", new Document().Append("AreaCode", "111").Append("Prefix", "222").Append("Number", "3333")));
 
             Assert.AreEqual(1, parties.Count());
         }
@@ -41,27 +38,23 @@ namespace MongoDB.Framework
         [Test]
         public void Test_discriminated_entity_query()
         {
-            var parties = (from p in context.Query<Organization>()
-                           where p.PhoneNumber.AreaCode == "111"
-                           select p).ToList();
+            var orgs = context.Find<Organization>(new Document().Append("PhoneNumber.AreaCode", "111"));
 
-            Assert.AreEqual(1, parties.Count());
+            Assert.AreEqual(1, orgs.Count());
         }
 
         [Test]
         public void Test_combined_query()
         {
-            var parties = (from p in context.Query<Organization>()
-                           where p.EmployeeCount > 12 && p.EmployeeCount < 24
-                           select p).ToList();
+            var orgs = context.Find<Organization>(new Document().Append("EmployeeCount", new Document().Append("$gt", 12).Append("$lt", 24)));
 
-            Assert.AreEqual(1, parties.Count());
+            Assert.AreEqual(1, orgs.Count());
         }
 
         [Test]
         public void Test_skip_operator()
         {
-            var parties = context.Query<Party>().Skip(1).ToList();
+            var parties = context.FindAll<Party>(0, 1);
 
             Assert.AreEqual(2, parties.Count());
         }
@@ -69,7 +62,7 @@ namespace MongoDB.Framework
         [Test]
         public void Test_take_operator()
         {
-            var parties = context.Query<Party>().Take(1).ToList();
+            var parties = context.FindAll<Party>(1, 0);
 
             Assert.AreEqual(1, parties.Count());
         }
@@ -77,39 +70,23 @@ namespace MongoDB.Framework
         [Test]
         public void Test_skip_and_take_operator()
         {
-            var parties = context.Query<Party>().Skip(1).Take(2).ToList();
+            var parties = context.FindAll<Party>(2, 1);
 
             Assert.AreEqual(2, parties.Count());
         }
 
         [Test]
-        public void Test_count_with_root_entity()
+        public void Test_find_one_with_root_entity()
         {
-            var partyCount = context.Query<Party>().Count();
-
-            Assert.AreEqual(3, partyCount);
-        }
-
-        [Test]
-        public void Test_count_with_discriminated_entity()
-        {
-            var personCount = context.Query<Person>().Count();
-
-            Assert.AreEqual(2, personCount);
-        }
-
-        [Test]
-        public void Test_first_with_root_entity()
-        {
-            var party = context.Query<Party>().First();
+            var party = context.FindOne<Party>(null);
 
             Assert.IsNotNull(party);
         }
 
         [Test]
-        public void Test_first_with_discriminated_entity()
+        public void Test_find_one_with_discriminated_entity()
         {
-            var person = context.Query<Person>().First();
+            var person = context.FindOne<Person>(null);
 
             Assert.IsNotNull(person);
         }
@@ -117,33 +94,11 @@ namespace MongoDB.Framework
         [Test]
         public void Test_ordering()
         {
-            var parties = (from p in context.Query<Party>()
-                           orderby p.Name descending
-                           select p).ToList();
+            var parties = context.FindAll<Party>(new Document().Append("Name", -1)).ToList();
 
             Assert.AreEqual("The Muffler Shop", parties[0].Name);
             Assert.AreEqual("Jane McJane", parties[1].Name);
             Assert.AreEqual("Bob McBob", parties[2].Name);
-        }
-
-        [Test]
-        public void Test_simple_projection()
-        {
-            var numbers = (from p in context.Query<Person>()
-                         select p.PhoneNumber.Number).ToList();
-
-            Assert.AreEqual(2, numbers.Count);
-            Assert.Contains("7890", numbers);
-            Assert.Contains("3333", numbers);
-        }
-
-        [Test]
-        public void Test_complex_projection()
-        {
-            var peopleNumbers = (from p in context.Query<Party>()
-                           select new { p.Name, p.PhoneNumber.Number }).ToList();
-
-            Assert.AreEqual(3, peopleNumbers.Count);
         }
 
         [Test]
@@ -159,36 +114,38 @@ namespace MongoDB.Framework
 
             using (var context2 = this.CreateContext())
             {
-                Assert.IsNotNull(context2.Query<Party>().First(p => p.Name == "Body by Jane"));
+                var party = context2.FindOne<Party>(new Document().Append("Name", "Body by Jane"));
+                Assert.AreEqual(org.Id, party.Id);
             }
         }
 
         [Test]
         public void Test_updating()
         {
-            var party = context.Query<Party>().First(p => p.Name == "Bob McBob");
+            var party = context.FindOne<Party>(new Document().Append("Name", "Bob McBob"));
 
-            party.Name = "Jack";
+            party.Name = "Jack McJack";
 
             context.SubmitChanges();
 
             using (var context2 = this.CreateContext())
             {
-                Assert.IsNotNull(context.Query<Party>().First(p => p.Name == "Jack"));
+                var sameParty = context2.FindOne<Party>(new Document().Append("Name", "Jack McJack"));
+                Assert.AreEqual(party.Id, sameParty.Id);
             }
         }
 
         [Test]
         public void Test_deleting()
         {
-            var party = context.Query<Party>().First(p => p.Name == "Bob McBob");
+            var party = context.FindOne<Party>(new Document().Append("Name", "Bob McBob"));
             context.DeleteOnSubmit(party);
 
             context.SubmitChanges();
 
             using (var context2 = this.CreateContext())
             {
-                Assert.IsNull(context.Query<Party>().FirstOrDefault(p => p.Name == "Bob McBob"));
+                Assert.IsNull(context2.FindOne<Party>(new Document().Append("Name", "Bob McBob")));
             }
         }
 

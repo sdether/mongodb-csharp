@@ -30,7 +30,7 @@ namespace MongoDB.Framework.Persistence
         public object FindOne(Type type, Document conditions)
         {
             var classMap = this.MongoContext.Configuration.MappingStore.GetClassMapFor(type);
-            return this.Find(classMap, conditions, 1, 0, null, null);
+            return this.Find(classMap, conditions, 1, 0, null, null).SingleOrDefault();
         }
     }
 }
