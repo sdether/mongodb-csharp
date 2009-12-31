@@ -64,14 +64,14 @@
     <Compile Include="Mapping\Visitors\DefaultMapVisitor.cs" />
     <Compile Include="Mapping\Visitors\NullMapVisitor.cs" />
     <Compile Include="Mapping\Visitors\DeleteDocumentMapper.cs" />
-    <Compile Include="Tracking\ReferenceProcessor.cs" />
+    <Compile Include="Tracking\IMongoContextCache.cs" />
+    <Compile Include="Tracking\MongoContextCache.cs" />
     <Compile Include="EntityNotFoundException.cs" />
     <Compile Include="Mapping\Cascade.cs" />
     <Compile Include="Mapping\Fluent\FluentReferenceMemberMap.cs" />
     <Compile Include="Mapping\Models\ReferenceMemberMapModel.cs" />
     <Compile Include="Mapping\Types\ReferenceValueType.cs" />
     <Compile Include="Persistence\GetByIdAction.cs" />
-    <Compile Include="Tracking\ChangeSet.cs" />
     <Compile Include="Configuration\IMongoConfiguration.cs" />
     <Compile Include="Configuration\MongoConfiguration.cs" />
     <Compile Include="DefaultMongoFactory.cs" />
@@ -166,8 +166,6 @@
     <Compile Include="Persistence\FindOneAction.cs" />
     <Compile Include="Persistence\FindAction.cs" />
     <Compile Include="Persistence\PersistenceAction.cs" />
-    <Compile Include="Tracking\ChangeTracker.cs" />
-    <Compile Include="Tracking\DefaultChangeTracker.cs" />
     <Compile Include="MongoContext.cs" />
     <Compile Include="Linq\MongoQueryable.cs" />
     <Compile Include="Linq\MongoQueryExecutor.cs" />
@@ -178,8 +176,6 @@
     <Compile Include="Linq\Visitors\MemberInfoPathBuilder.cs" />
     <Compile Include="Linq\Visitors\CollectionQueryModelVisitor.cs" />
     <Compile Include="Linq\Visitors\QueryDocumentBuilder.cs" />
-    <Compile Include="Tracking\TrackedObject.cs" />
-    <Compile Include="Tracking\TrackedObjectState.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MongoDBDriver\MongoDB.Driver.csproj">

@@ -52,10 +52,9 @@ namespace MongoDB.Framework.Persistence
         /// Initializes a new instance of the <see cref="FindAction"/> class.
         /// </summary>
         /// <param name="mongoContext">The mongoContext.</param>
-        /// <param name="changeTracker">The change tracker.</param>
-        /// <param name="collection">The collection.</param>
-        public FindActionBase(IMongoContext mongoContext, ChangeTracker changeTracker)
-            : base(mongoContext, changeTracker)
+        /// <param name="mongoContextCache">The mongo context cache.</param>
+        public FindActionBase(IMongoContext mongoContext, IMongoContextCache mongoContextCache)
+            : base(mongoContext, mongoContextCache)
         {  }
 
         #endregion
@@ -78,9 +77,9 @@ namespace MongoDB.Framework.Persistence
             if (IsFindById(classMap, conditions))
             {
                 var id = classMap.IdMap.ValueType.ConvertFromDocumentValue(conditions[classMap.IdMap.Key], null);
-                TrackedObject trackedObject = null;
-                if (this.ChangeTracker.TryGetTrackedObjectById(id, out trackedObject))
-                    return new[] { trackedObject.Current };
+                object entity = this.MongoContextCache.TryToFind(classMap.CollectionName, id);
+                if (entity != null)
+                    return new[] { entity };
 
                 documents = new[] { collection.FindOne(conditions) };
             }
@@ -141,7 +140,7 @@ namespace MongoDB.Framework.Persistence
                     .CreateEntity(concreteClassMap, document.Copy());
 
                 if (trackEntities)
-                    this.ChangeTracker.GetTrackedObject(entity).MoveToPossiblyModified(document);
+                    this.MongoContextCache.Store(classMap.CollectionName, classMap.GetId(entity), entity);
 
                 yield return entity;
             }

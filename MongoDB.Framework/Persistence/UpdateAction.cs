@@ -17,16 +17,14 @@ namespace MongoDB.Framework.Persistence
         /// Initializes a new instance of the <see cref="UpdateAction"/> class.
         /// </summary>
         /// <param name="mongoContext">The mongoContext.</param>
-        /// <param name="changeTracker">The change tracker.</param>
-        /// <param name="collection">The collection.</param>
-        public UpdateAction(IMongoContext mongoContext, ChangeTracker changeTracker)
-            : base(mongoContext, changeTracker)
+        /// <param name="mongoContextCache">The mongo context cache.</param>
+        public UpdateAction(IMongoContext mongoContext, IMongoContextCache mongoContextCache)
+            : base(mongoContext, mongoContextCache)
         { }
 
         /// <summary>
         /// Inserts the specified entity.
         /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="entity">The entity.</param>
         public void Update(object entity)
         {
@@ -40,7 +38,7 @@ namespace MongoDB.Framework.Persistence
             var mapper = new EntityToDocumentMapper(this.MongoContext);
             var document = mapper.CreateDocument(entity);
             this.GetCollectionForClassMap(classMap).Update(document);
-            this.ChangeTracker.GetTrackedObject(entity).MoveToPossiblyModified(document);
+            this.MongoContextCache.Store(classMap.CollectionName, classMap.GetId(entity), entity);
         }
     }
 }

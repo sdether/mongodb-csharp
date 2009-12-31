@@ -53,32 +53,18 @@ namespace MongoDB.Framework.Mapping
         }
 
         [Test]
-        public void Should_notice_reference_entity_change()
+        public void Should_delete_referenced_entity()
         {
             using (var context = CreateContext())
             {
                 var a = context.FindOne<EntityA>(null);
-                a.B.Name = "SomethingDifferent";
-                var changeSet = context.GetChangeSet();
-                Assert.IsFalse(changeSet.Modified.Contains(a));
-                Assert.IsTrue(changeSet.Modified.Contains(a.B));
-            }
-        }
-
-        [Test]
-        public void Should_not_delete_referenced_entity()
-        {
-            using (var context = CreateContext())
-            {
-                var a = context.FindOne<EntityA>(null);
-                context.DeleteOnSubmit(a);
-                context.SubmitChanges();
+                context.Delete(a);
             }
 
             using (var context = CreateContext())
             {
                 var b = context.FindOne<EntityB>(null);
-                Assert.IsNotNull(b);
+                Assert.IsNull(b);
             }
         }
     }
@@ -105,7 +91,8 @@ namespace MongoDB.Framework.Mapping
         {
             Id(x => x.Id);
             Map(x => x.Name);
-            References(x => x.B);
+            References(x => x.B)
+                .Cascade(Cascade.Delete);
         }
     }
 

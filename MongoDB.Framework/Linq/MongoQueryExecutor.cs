@@ -17,32 +17,30 @@ namespace MongoDB.Framework.Linq
 {
     public class MongoQueryExecutor : IQueryExecutor
     {
-        private ChangeTracker changeTracker;
+        private IMongoContextCache mongoContextCache;
         private IMongoContext mongoContext;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoQueryExecutor"/> class.
         /// </summary>
-        /// <param name="mappingStore">The mapping store.</param>
-        /// <param name="changeTracker">The change tracker.</param>
-        /// <param name="hydrator">The hydrator.</param>
-        /// <param name="database">The database.</param>
-        public MongoQueryExecutor(IMongoContext mongoContext, ChangeTracker changeTracker)
+        /// <param name="mongoContext">The mongo context.</param>
+        /// <param name="mongoContextCache">The mongo context cache.</param>
+        public MongoQueryExecutor(IMongoContext mongoContext, IMongoContextCache mongoContextCache)
         {
             if (mongoContext == null)
                 throw new ArgumentNullException("mongoContext");
-            if (changeTracker == null)
-                throw new ArgumentNullException("changeTracker");
+            if (mongoContextCache == null)
+                throw new ArgumentNullException("mongoContextCache");
 
-            this.changeTracker = changeTracker;
             this.mongoContext = mongoContext;
+            this.mongoContextCache = mongoContextCache;
         }
 
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
             var spec = CollectionQueryModelVisitor.CreateMongoQuerySpecification(this.mongoContext, queryModel);
             var classMap = this.mongoContext.Configuration.MappingStore.GetClassMapFor(queryModel.MainFromClause.ItemType);
-            var findAction = new FindAction(this.mongoContext, this.changeTracker);
+            var findAction = new FindAction(this.mongoContext, this.mongoContextCache);
             foreach (var entity in findAction.Find(classMap.Type, spec.Conditions, spec.Limit, spec.Skip, spec.OrderBy, spec.Projection.Fields))
                 yield return (T)spec.Projection.Projector(new ResultObjectMapping() { { queryModel.MainFromClause, entity } });
         }

@@ -112,8 +112,7 @@ namespace MongoDB.Framework.Linq
                 Name = "Body by Jane",
                 EmployeeCount = 2
             };
-            context.InsertOnSubmit(org);
-            context.SubmitChanges();
+            context.Insert(org);
 
             using (var context2 = this.CreateContext())
             {
@@ -126,10 +125,8 @@ namespace MongoDB.Framework.Linq
         public void Test_updating()
         {
             var party = context.FindOne<Party>(new Document().Append("Name", "Bob McBob"));
-
             party.Name = "Jack McJack";
-
-            context.SubmitChanges();
+            context.Update(party);
 
             using (var context2 = this.CreateContext())
             {
@@ -142,9 +139,7 @@ namespace MongoDB.Framework.Linq
         public void Test_deleting()
         {
             var party = context.FindOne<Party>(new Document().Append("Name", "Bob McBob"));
-            context.DeleteOnSubmit(party);
-
-            context.SubmitChanges();
+            context.Delete(party);
 
             using (var context2 = this.CreateContext())
             {

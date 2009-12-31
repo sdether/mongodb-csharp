@@ -16,9 +16,9 @@ namespace MongoDB.Framework.Persistence
         /// Initializes a new instance of the <see cref="GetByIdAction"/> class.
         /// </summary>
         /// <param name="mongoContext">The mongoContext.</param>
-        /// <param name="changeTracker">The change tracker.</param>
-        public GetByIdAction(IMongoContext mongoContext, ChangeTracker changeTracker)
-            : base(mongoContext, changeTracker)
+        /// <param name="mongoContextCache">The mongo context cache.</param>
+        public GetByIdAction(IMongoContext mongoContext, IMongoContextCache mongoContextCache)
+            : base(mongoContext, mongoContextCache)
         { }
 
         /// <summary>

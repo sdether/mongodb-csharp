@@ -17,25 +17,21 @@ namespace MongoDB.Framework.Linq
         /// <summary>
         /// Creates the executor.
         /// </summary>
-        /// <param name="database">The database.</param>
-        /// <param name="mappingStore">The mapping store.</param>
-        /// <param name="changeTracker">The change tracker.</param>
-        /// <param name="hydrator">The hydrator.</param>
+        /// <param name="mongoContext">The mongo context.</param>
+        /// <param name="mongoContextCache">The mongo context cache.</param>
         /// <returns></returns>
-        private static IQueryExecutor CreateExecutor(IMongoContext mongoContext, ChangeTracker changeTracker)
+        private static IQueryExecutor CreateExecutor(IMongoContext mongoContext, IMongoContextCache mongoContextCache)
         {
-            return new MongoQueryExecutor(mongoContext, changeTracker);
+            return new MongoQueryExecutor(mongoContext, mongoContextCache);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoQueryable&lt;TEntity&gt;"/> class.
         /// </summary>
-        /// <param name="database">The database.</param>
-        /// <param name="mappingStore">The mapping store.</param>
-        /// <param name="changeTracker">The change tracker.</param>
-        /// <param name="hydrator">The hydrator.</param>
-        public MongoQueryable(IMongoContext mongoContext, ChangeTracker changeTracker)
-            : base(CreateExecutor(mongoContext, changeTracker))
+        /// <param name="mongoContext">The mongo context.</param>
+        /// <param name="mongoContextCache">The mongo context cache.</param>
+        public MongoQueryable(IMongoContext mongoContext, IMongoContextCache mongoContextCache)
+            : base(CreateExecutor(mongoContext, mongoContextCache))
         { }
 
         /// <summary>
