@@ -44,11 +44,29 @@ namespace MongoDB.Framework.Mapping.Types
         [TestFixture]
         public class When_converting_to_a_document
         {
+            private IMappingContext mappingContext;
+
+            [SetUp]
+            public void SetUp()
+            {
+                var mockMappingContext = new Mock<IMappingContext>();
+                mockMappingContext.Setup(x => x.CreateChildMappingContext(It.IsAny<Document>(), It.IsAny<Complex>()))
+                    .Returns<Document, object>((d, c) =>
+                    {
+                        var mockNestedMappingContext = new Mock<IMappingContext>();
+                        mockNestedMappingContext.Setup(y => y.Document).Returns(d);
+                        mockNestedMappingContext.Setup(y => y.Entity).Returns(c);
+                        return mockNestedMappingContext.Object;
+                    });
+
+                mappingContext = mockMappingContext.Object;
+            }
+
             [Test]
             public void should_return_MongoDBNull_when_value_is_null()
             {
                 var valueType = new NestedClassValueType(GetComplexNestedClassMap());
-                var result = valueType.ConvertToDocumentValue(null);
+                var result = valueType.ConvertToDocumentValue(null, mappingContext);
 
                 Assert.AreEqual(MongoDBNull.Value, result);
             }
@@ -57,7 +75,7 @@ namespace MongoDB.Framework.Mapping.Types
             public void should_return_a_document_when_value_is_not_null()
             {
                 var valueType = new NestedClassValueType(GetComplexNestedClassMap());
-                var result = (Document)valueType.ConvertToDocumentValue(new Complex() { Real = 24, Imaginary = 42 });
+                var result = (Document)valueType.ConvertToDocumentValue(new Complex() { Real = 24, Imaginary = 42 }, mappingContext);
 
                 Assert.AreEqual(24, result["Real"]);
                 Assert.AreEqual(42, result["Imaginary"]);
@@ -73,12 +91,12 @@ namespace MongoDB.Framework.Mapping.Types
             public void SetUp()
             {
                 var mockMappingContext = new Mock<IMappingContext>();
-                mockMappingContext.Setup(x => x.CreateChildMappingContext(It.IsAny<Document>(), It.IsAny<Type>()))
-                    .Returns<Document, Type>((d, t) =>
+                mockMappingContext.Setup(x => x.CreateChildMappingContext(It.IsAny<Document>(), It.IsAny<Complex>()))
+                    .Returns<Document, object>((d, c) =>
                         {
                             var mockNestedMappingContext = new Mock<IMappingContext>();
                             mockNestedMappingContext.Setup(y => y.Document).Returns(d);
-                            mockNestedMappingContext.Setup(y => y.Entity).Returns(new Complex());
+                            mockNestedMappingContext.Setup(y => y.Entity).Returns(c);
                             return mockNestedMappingContext.Object;
                         });
 

@@ -37,19 +37,34 @@ namespace MongoDB.Framework.Mapping.Types
             if(document == null)
                 return null;
 
-            var childContext = mappingContext.CreateChildMappingContext(document, this.NestedClassMap.Type);
+            ClassMap concreteClassMap = this.NestedClassMap;
+            if (this.NestedClassMap.IsPolymorphic)
+            {
+                object discriminator = document[concreteClassMap.DiscriminatorKey];
+                concreteClassMap = concreteClassMap.GetClassMapByDiscriminator(discriminator);
+            }
+
+            var entity = Activator.CreateInstance(concreteClassMap.Type);
+            var childContext = mappingContext.CreateChildMappingContext(document, entity);
             this.NestedClassMap.MapFromDocument(childContext);
             return childContext.Entity;
         }
 
-        public override object ConvertToDocumentValue(object value)
+        /// <summary>
+        /// Converts to document value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="mappingContext">The mapping context.</param>
+        /// <returns></returns>
+        public override object ConvertToDocumentValue(object value, IMappingContext mappingContext)
         {
-            value = base.ConvertToDocumentValue(value);
+            value = base.ConvertToDocumentValue(value, mappingContext);
             if (value == MongoDBNull.Value)
                 return value;
 
             var document = new Document();
-            this.NestedClassMap.MapToDocument(value, document);
+            mappingContext = mappingContext.CreateChildMappingContext(document, value);
+            this.NestedClassMap.MapToDocument(mappingContext);
             return document;
         }
     }

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
+using MongoDB.Framework.DomainModels;
+using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Mapping.Fluent;
 
 using NUnit.Framework;
-using MongoDB.Driver;
-using MongoDB.Framework.Mapping.Fluent;
-using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework
 {

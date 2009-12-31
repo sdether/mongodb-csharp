@@ -29,13 +29,21 @@ namespace MongoDB.Framework.Mapping.Types
         [TestFixture]
         public class When_converting_to_a_document
         {
+            private IMappingContext mappingContext;
+
+            [SetUp]
+            public void SetUp()
+            {
+                mappingContext = new Mock<IMappingContext>().Object;
+            }
+
             [Test]
             public void should_return_null_when_value_is_null()
             {
                 var collectionType = new DictionaryCollectionType();
                 var elementValueType = new Mock<IValueType>();
 
-                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, null);
+                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, null, mappingContext);
 
                 Assert.IsNull(result);
             }
@@ -47,7 +55,7 @@ namespace MongoDB.Framework.Mapping.Types
                 var elementValueType = new Mock<IValueType>();
                 elementValueType.SetupGet(evt => evt.Type).Returns(typeof(int));
 
-                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, new Dictionary<string, int>());
+                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, new Dictionary<string, int>(), mappingContext);
 
                 Assert.AreEqual(new Document(), result);
             }
@@ -58,9 +66,9 @@ namespace MongoDB.Framework.Mapping.Types
                 var collectionType = new DictionaryCollectionType();
                 var elementValueType = new Mock<IValueType>();
                 elementValueType.SetupGet(evt => evt.Type).Returns(typeof(int));
-                elementValueType.Setup(evt => evt.ConvertToDocumentValue(It.IsAny<int>())).Returns<int>(i => i);
+                elementValueType.Setup(evt => evt.ConvertToDocumentValue(It.IsAny<int>(), mappingContext)).Returns<int, IMappingContext>((i, mc) => i);
 
-                var result = (Document)collectionType.ConvertToDocumentValue(elementValueType.Object, new Dictionary<string, int> { { "one", 1 }, { "two", 2}, { "three", 3 } });
+                var result = (Document)collectionType.ConvertToDocumentValue(elementValueType.Object, new Dictionary<string, int> { { "one", 1 }, { "two", 2 }, { "three", 3 } }, mappingContext);
 
                 Assert.AreEqual(1, result["one"]);
                 Assert.AreEqual(2, result["two"]);

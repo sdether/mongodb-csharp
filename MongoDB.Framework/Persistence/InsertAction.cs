@@ -37,13 +37,14 @@ namespace MongoDB.Framework.Persistence
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
             var document = new Document();
-            classMap.MapToDocument(entity, document);
+            var mappingContext = new MappingContext(this.MongoContext, document, entity);
+            classMap.MapToDocument(mappingContext);
             object id = classMap.IdMap.Generate(entity, this.MongoContext);
-            document[classMap.IdMap.Key] = classMap.IdMap.ValueType.ConvertToDocumentValue(id);
+            document[classMap.IdMap.Key] = classMap.IdMap.ValueType.ConvertToDocumentValue(id, mappingContext);
             this.GetCollectionForClassMap(classMap)
                 .Insert(document);
-            
-            var mappingContext = new MappingContext(this.MongoContext, document, entity);
+
+            mappingContext = new MappingContext(this.MongoContext, document, entity);
             classMap.IdMap.MapFromDocument(mappingContext);
             this.ChangeTracker.GetTrackedObject(entity).MoveToPossiblyModified(mappingContext.Document);
         }

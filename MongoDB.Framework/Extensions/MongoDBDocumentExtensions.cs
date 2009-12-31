@@ -9,6 +9,13 @@ namespace MongoDB.Framework
 {
     public static class MongoDBDocumentExtensions
     {
+        public static Document Copy(this Document document)
+        {
+            var copy = new Document();
+            document.CopyTo(copy);
+            return copy;
+        }
+
         public static IDictionary<string, object> ToDictionary(this Document document)
         {
             var dictionary = new Dictionary<string, object>();

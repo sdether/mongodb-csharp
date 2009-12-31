@@ -45,7 +45,7 @@ namespace MongoDB.Framework.Tracking
 
         #region Private Fields
 
-        private MappingStore mappingStore;
+        private IMongoContext mongoContext;
 
         #endregion
 
@@ -76,17 +76,17 @@ namespace MongoDB.Framework.Tracking
         /// <summary>
         /// Initializes a new instance of the <see cref="TrackedObject"/> class.
         /// </summary>
-        /// <param name="configuration">The configuration.</param>
+        /// <param name="mongoContext">The mongo context.</param>
         /// <param name="original">The original.</param>
         /// <param name="current">The current.</param>
-        public TrackedObject(MappingStore mappingStore, Document original, object current)
+        public TrackedObject(IMongoContext mongoContext, Document original, object current)
         {
-            if (mappingStore == null)
-                throw new ArgumentNullException("mappingStore");
+            if (mongoContext == null)
+                throw new ArgumentNullException("mongoContext");
             if (current == null)
                 throw new ArgumentNullException("current");
 
-            this.mappingStore = mappingStore;
+            this.mongoContext = mongoContext;
             this.Original = original;
             this.Current = current;
             this.State = TrackedObjectState.PossiblyModified;
@@ -107,7 +107,7 @@ namespace MongoDB.Framework.Tracking
             if (this.State != TrackedObjectState.PossiblyModified)
                 return;
 
-            var classMap = this.mappingStore.GetClassMapFor(this.Current.GetType());
+            var classMap = this.mongoContext.Configuration.MappingStore.GetClassMapFor(this.Current.GetType());
             if (this.Original == null)
             {
                 var value = (string)this.GetId();
@@ -119,7 +119,8 @@ namespace MongoDB.Framework.Tracking
             }
 
             var document = new Document();
-            classMap.MapToDocument(this.Current, document);
+            var mappingContext = new MappingContext(this.mongoContext, document, this.Current);
+            classMap.MapToDocument(mappingContext);
             if (!AreDocumentsEqual(this.Original, document))
                 this.MoveToModified();
         }
@@ -130,7 +131,7 @@ namespace MongoDB.Framework.Tracking
         /// <returns></returns>
         public object GetId()
         {
-            return (string)this.mappingStore.GetClassMapFor(this.Current.GetType()).IdMap.MemberGetter(this.Current);
+            return this.mongoContext.Configuration.MappingStore.GetClassMapFor(this.Current.GetType()).GetId(this.Current);
         }
 
         /// <summary>

@@ -15,11 +15,19 @@ namespace MongoDB.Framework.Mapping.Types
         [TestFixture]
         public class When_converting_to_a_document
         {
+            private IMappingContext mappingContext;
+
+            [SetUp]
+            public void SetUp()
+            {
+                mappingContext = new Mock<IMappingContext>().Object;
+            }
+
             [Test]
             public void should_return_MongoDBNull_when_value_is_null()
             {
                 var valueType = new GuidValueType();
-                var result = valueType.ConvertToDocumentValue(null);
+                var result = valueType.ConvertToDocumentValue(null, mappingContext);
 
                 Assert.AreEqual(MongoDBNull.Value, result);
             }
@@ -28,7 +36,7 @@ namespace MongoDB.Framework.Mapping.Types
             public void should_return_string_when_value_is_not_null()
             {
                 var valueType = new GuidValueType();
-                var result = valueType.ConvertToDocumentValue(Guid.Empty);
+                var result = valueType.ConvertToDocumentValue(Guid.Empty, mappingContext);
 
                 Assert.AreEqual(Guid.Empty.ToString(), result);
             }

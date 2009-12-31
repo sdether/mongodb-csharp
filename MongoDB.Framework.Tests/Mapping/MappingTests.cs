@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using NUnit.Framework;
-using MongoDB.Framework.Mapping.Fluent;
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
+using MongoDB.Framework.DomainModels;
+using MongoDB.Framework.Mapping.Fluent;
+
+using NUnit.Framework;
 
 namespace MongoDB.Framework.Mapping
 {
@@ -44,7 +46,7 @@ namespace MongoDB.Framework.Mapping
 
             var mongoContext = configuration.CreateContextFactory().CreateContext();
             var classMap = mappingStore.GetClassMapFor<Person>();
-            var mappingContext = new MappingContext(mongoContext, document, typeof(Person));
+            var mappingContext = new MappingContext(mongoContext, document, new Person());
             classMap.MapFromDocument(mappingContext);
             var person = mappingContext.Entity as Person;
             Assert.IsNotNull(person);
@@ -66,6 +68,8 @@ namespace MongoDB.Framework.Mapping
             var fluentMapProvider = new FluentMapProvider()
                 .AddMapsFromAssemblyContaining<PartyMap>();
             var mappingStore = new MappingStore(fluentMapProvider);
+            var configuration = new MongoConfiguration("tests", mappingStore);
+
             var person = new Person()
             {
                 Id = "4b27b9f1cf24000000002aa0",
@@ -92,8 +96,10 @@ namespace MongoDB.Framework.Mapping
             person.Aliases.Add("Sleepy");
 
             var document = new Document();
+            var mongoContext = configuration.CreateContextFactory().CreateContext();
             var classMap = mappingStore.GetClassMapFor<Person>();
-            classMap.MapToDocument(person, document);
+            var mappingContext = new MappingContext(mongoContext, document, person);
+            classMap.MapToDocument(mappingContext);
 
             Assert.AreEqual(new Oid("4b27b9f1cf24000000002aa0"), document["_id"]);
             Assert.AreEqual("Bob McBob", document["Name"]);

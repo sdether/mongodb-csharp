@@ -82,17 +82,14 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Maps the member to the document.
         /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <param name="document">The document.</param>
-        public virtual void MapToDocument(object entity, Document document)
+        /// <param name="mappingContext">The mapping context.</param>
+        public virtual void MapToDocument(IMappingContext mappingContext)
         {
-            if (entity == null)
-                throw new ArgumentNullException("entity");
-            if (document == null)
-                throw new ArgumentNullException("document");
-            var value = this.MemberGetter(entity);
-            value = this.ValueType.ConvertToDocumentValue(value);
-            document[this.Key] = value;
+            if (mappingContext == null)
+                throw new ArgumentNullException("mappingContext");
+            var value = this.MemberGetter(mappingContext.Entity);
+            value = this.ValueType.ConvertToDocumentValue(value, mappingContext);
+            mappingContext.Document[this.Key] = value;
         }
     }
 }

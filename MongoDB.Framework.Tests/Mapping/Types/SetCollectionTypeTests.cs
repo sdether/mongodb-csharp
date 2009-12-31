@@ -30,13 +30,21 @@ namespace MongoDB.Framework.Mapping.Types
         [TestFixture]
         public class When_converting_to_a_document
         {
+            private IMappingContext mappingContext;
+
+            [SetUp]
+            public void SetUp()
+            {
+                mappingContext = new Mock<IMappingContext>().Object;
+
+            }
             [Test]
             public void should_return_null_when_value_is_null()
             {
                 var collectionType = new SetCollectionType();
                 var elementValueType = new Mock<IValueType>();
 
-                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, null);
+                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, null, mappingContext);
 
                 Assert.IsNull(result);
             }
@@ -48,7 +56,7 @@ namespace MongoDB.Framework.Mapping.Types
                 var elementValueType = new Mock<IValueType>();
                 elementValueType.SetupGet(evt => evt.Type).Returns(typeof(string));
 
-                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, new HashSet<string>());
+                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, new HashSet<string>(), mappingContext);
 
                 Assert.AreEqual(new string[0], result);
             }
@@ -59,9 +67,9 @@ namespace MongoDB.Framework.Mapping.Types
                 var collectionType = new SetCollectionType();
                 var elementValueType = new Mock<IValueType>();
                 elementValueType.SetupGet(evt => evt.Type).Returns(typeof(string));
-                elementValueType.Setup(evt => evt.ConvertToDocumentValue(It.IsAny<string>())).Returns<string>(s => s);
+                elementValueType.Setup(evt => evt.ConvertToDocumentValue(It.IsAny<string>(), mappingContext)).Returns<string, IMappingContext>((s, mc) => s);
 
-                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, new HashSet<string> { { "one" }, { "two" }, { "three" } });
+                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, new HashSet<string> { { "one" }, { "two" }, { "three" } }, mappingContext);
 
                 Assert.AreEqual(new[] { "one", "two", "three" }, result);
             }

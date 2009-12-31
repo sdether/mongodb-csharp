@@ -46,7 +46,7 @@ namespace MongoDB.Framework.Mapping.Types
         /// <param name="value">The value.</param>
         /// <param name="mappingContext">The mapping context.</param>
         /// <returns></returns>
-        public virtual object ConvertToDocumentValue(object value)
+        public virtual object ConvertToDocumentValue(object value, IMappingContext mappingContext)
         {
             if (value == null)
                 return MongoDBNull.Value;

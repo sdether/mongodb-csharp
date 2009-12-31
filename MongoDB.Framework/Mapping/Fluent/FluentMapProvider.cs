@@ -51,5 +51,30 @@ namespace MongoDB.Framework.Mapping.Fluent
             }
             return this;
         }
+
+        /// <summary>
+        /// Adds the map.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rootClassMap">The root class map.</param>
+        /// <returns></returns>
+        public FluentMapProvider AddMap<T>(FluentRootClassMap<T> rootClassMap)
+        {
+            this.AddRootClassMapModel(rootClassMap.Model);
+            return this;
+        }
+
+        /// <summary>
+        /// Adds the map.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="nestedClassMap">The nested class map.</param>
+        /// <returns></returns>
+        public FluentMapProvider AddMap<T>(FluentNestedClassMap<T> nestedClassMap)
+        {
+            this.AddNestedClassMapModel(nestedClassMap.Model);
+            return this;
+        } 
+
     }
 }

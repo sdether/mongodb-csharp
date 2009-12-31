@@ -34,6 +34,6 @@ namespace MongoDB.Framework.Mapping
         /// <param name="document">The document.</param>
         /// <param name="entityType">Type of the entity.</param>
         /// <returns></returns>
-        IMappingContext CreateChildMappingContext(Document document, Type entityType);
+        IMappingContext CreateChildMappingContext(Document document, object entity);
     }
 }

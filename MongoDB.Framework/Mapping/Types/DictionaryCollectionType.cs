@@ -28,7 +28,7 @@ namespace MongoDB.Framework.Mapping.Types
             return dictionary;
         }
 
-        public object ConvertToDocumentValue(IValueType elementValueType, object value)
+        public object ConvertToDocumentValue(IValueType elementValueType, object value, IMappingContext mappingContext)
         {
             Document document = new Document();
             var enumerable = value as IEnumerable;
@@ -42,7 +42,7 @@ namespace MongoDB.Framework.Mapping.Types
             {
                 document.Add(
                     (string)keyProperty.GetValue(pair, null),
-                    elementValueType.ConvertToDocumentValue(valueProperty.GetValue(pair, null)));
+                    elementValueType.ConvertToDocumentValue(valueProperty.GetValue(pair, null), mappingContext));
             }
 
             return document;

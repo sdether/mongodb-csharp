@@ -45,15 +45,16 @@ namespace MongoDB.Framework.Mapping.Types
         /// </summary>
         /// <param name="elementValueType">Type of the element value.</param>
         /// <param name="value">The value.</param>
+        /// <param name="mappingContext"></param>
         /// <returns></returns>
-        public object ConvertToDocumentValue(IValueType elementValueType, object value)
+        public object ConvertToDocumentValue(IValueType elementValueType, object value, IMappingContext mappingContext)
         {
             var enumerableValue = value as IEnumerable;
             if (enumerableValue == null)
                 return null;
 
             return enumerableValue.OfType<object>()
-                .Select(e => elementValueType.ConvertToDocumentValue(e))
+                .Select(e => elementValueType.ConvertToDocumentValue(e, mappingContext))
                 .ToArray();
         }
     }

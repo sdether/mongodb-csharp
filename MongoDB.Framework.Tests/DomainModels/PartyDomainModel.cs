@@ -6,7 +6,7 @@ using System.Text;
 using MongoDB.Driver;
 using MongoDB.Framework.Mapping.Fluent;
 
-namespace MongoDB.Framework
+namespace MongoDB.Framework.DomainModels
 {
     public class PartyMap : FluentRootClassMap<Party>
     {

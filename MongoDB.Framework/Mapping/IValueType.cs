@@ -26,8 +26,8 @@ namespace MongoDB.Framework.Mapping
         /// Converts to document value.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <param name="owner">The owner.</param>
+        /// <param name="mappingContext">The mapping context.</param>
         /// <returns></returns>
-        object ConvertToDocumentValue(object value);
+        object ConvertToDocumentValue(object value, IMappingContext mappingContext);
     }
 }

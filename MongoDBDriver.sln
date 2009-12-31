@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDB.Framework", "MongoD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDB.Framework.Tests", "MongoDB.Framework.Tests\MongoDB.Framework.Tests.csproj", "{980BD21F-53C5-4316-ABEB-7EFAF4AFC74A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDB.Framework.IntegrationTests", "MongoDB.Framework.IntegrationTests\MongoDB.Framework.IntegrationTests.csproj", "{DD5780B2-DA67-460E-B78A-4A2AC1C06A44}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{980BD21F-53C5-4316-ABEB-7EFAF4AFC74A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{980BD21F-53C5-4316-ABEB-7EFAF4AFC74A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{980BD21F-53C5-4316-ABEB-7EFAF4AFC74A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD5780B2-DA67-460E-B78A-4A2AC1C06A44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD5780B2-DA67-460E-B78A-4A2AC1C06A44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD5780B2-DA67-460E-B78A-4A2AC1C06A44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD5780B2-DA67-460E-B78A-4A2AC1C06A44}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

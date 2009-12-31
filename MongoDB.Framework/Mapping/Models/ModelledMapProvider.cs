@@ -207,32 +207,33 @@ namespace MongoDB.Framework.Mapping.Models
             var setter = LateBoundReflection.GetSetter(model.Setter);
             string name = model.Getter.Name;
             string key = model.Key ?? name;
+            var memberValueType = LateBoundReflection.GetMemberValueType(model.Getter);
+            IValueType valueType;
 
             if(model is KeyValueMemberMapModel)
             {
                 var kvModel = (KeyValueMemberMapModel)model;
-                var valueType = kvModel.CustomValueType ?? this.GetValueTypeFromType(LateBoundReflection.GetMemberValueType(model.Getter));
-                return new MemberMap(
-                    key,
-                    name,
-                    getter,
-                    setter,
-                    valueType);
+                valueType = kvModel.CustomValueType ?? this.GetValueTypeFromType(memberValueType);
             }
             else if (model is HasManyMemberMapModel)
             {
                 var hmModel = (HasManyMemberMapModel)model;
-                var valueType = this.GetCollectionValueType(LateBoundReflection.GetMemberValueType(model.Getter), hmModel.CollectionType, hmModel.ElementType, hmModel.ElementValueType);
-
-                return new MemberMap(
-                    key,
-                    name,
-                    getter,
-                    setter,
-                    valueType);
+                valueType = this.GetCollectionValueType(memberValueType, hmModel.CollectionType, hmModel.ElementType, hmModel.ElementValueType);
             }
+            else if (model is ReferenceMemberMapModel)
+            {
+                var rModel = (ReferenceMemberMapModel)model;
+                valueType = new ReferenceValueType(memberValueType);
+            }
+            else
+                throw new NotSupportedException();
 
-            throw new NotSupportedException();
+            return new MemberMap(
+                key,
+                name,
+                getter,
+                setter,
+                valueType);
         }
 
         private SubClassMap BuildSubClassMap(SubClassMapModel model, IdMap idMap, string collectionName, string discriminatorKey, IEnumerable<MemberMap> superClassMemberMaps, ExtendedPropertiesMap extendedPropertiesMap)

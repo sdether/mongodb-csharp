@@ -32,11 +32,9 @@ namespace MongoDB.Framework.Persistence
                 throw new ArgumentNullException("entity");
 
             var classMap = this.MongoContext.Configuration.MappingStore.GetClassMapFor(entity.GetType());
-            if (!classMap.HasId)
-                throw new InvalidOperationException("Only entities with identifiers are persistable.");
-
             var document = new Document();
-            classMap.IdMap.MapToDocument(entity, document);
+            var mappingContext = new MappingContext(this.MongoContext, document, entity);
+            classMap.IdMap.MapToDocument(mappingContext);
             this.GetCollectionForClassMap(classMap).Delete(document);
             this.ChangeTracker.GetTrackedObject(entity).MoveToDead();
         }

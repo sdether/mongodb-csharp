@@ -25,14 +25,14 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="hydrator">The hydrator.</param>
         /// <param name="queryModel">The query model.</param>
         /// <returns></returns>
-        public static MongoQuerySpecification CreateMongoQuerySpecification(MappingStore mappingStore, QueryModel queryModel)
+        public static MongoQuerySpecification CreateMongoQuerySpecification(IMongoContext mongoContext, QueryModel queryModel)
         {
-            if (mappingStore == null)
-                throw new ArgumentNullException("mappingStore");
+            if (mongoContext == null)
+                throw new ArgumentNullException("mongoContext");
             if (queryModel == null)
                 throw new ArgumentNullException("queryModel");
 
-            var visitor = new CollectionQueryModelVisitor(mappingStore);
+            var visitor = new CollectionQueryModelVisitor(mongoContext);
             visitor.VisitQueryModel(queryModel);
             return visitor.querySpec;
         }
@@ -41,7 +41,7 @@ namespace MongoDB.Framework.Linq.Visitors
 
         #region Private Fields
 
-        private MappingStore mappingStore;
+        private IMongoContext mongoContext;
         private MongoQuerySpecification querySpec;
 
         #endregion
@@ -51,11 +51,10 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoQueryModelVisitor"/> class.
         /// </summary>
-        /// <param name="mappingStore">The mapping store.</param>
-        /// <param name="hydrator">The hydrator.</param>
-        private CollectionQueryModelVisitor(MappingStore mappingStore)
+        /// <param name="mongoContext">The mongo context.</param>
+        private CollectionQueryModelVisitor(IMongoContext mongoContext)
         {
-            this.mappingStore = mappingStore;
+            this.mongoContext = mongoContext;
             this.querySpec = new MongoQuerySpecification();
         }
 
@@ -83,7 +82,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitOrdering(Ordering ordering, QueryModel queryModel, OrderByClause orderByClause, int index)
         {
-            var memberMapPath = MemberMapPathBuilder.BuildFrom(this.mappingStore, ordering.Expression);
+            var memberMapPath = MemberMapPathBuilder.BuildFrom(this.mongoContext.Configuration.MappingStore, ordering.Expression);
             this.querySpec.OrderBy[memberMapPath.Key] = ordering.OrderingDirection == OrderingDirection.Asc ? 1 : -1;
         }
 
@@ -138,7 +137,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="queryModel">The query model.</param>
         public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
         {
-            this.querySpec.Projection = ProjectionBuilder.Build(this.mappingStore, selectClause.Selector);
+            this.querySpec.Projection = ProjectionBuilder.Build(this.mongoContext.Configuration.MappingStore, selectClause.Selector);
         }
 
         /// <summary>
@@ -149,7 +148,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            var query = QueryDocumentBuilder.BuildFrom(this.mappingStore, whereClause.Predicate);
+            var query = QueryDocumentBuilder.BuildFrom(this.mongoContext, whereClause.Predicate);
             query.CopyTo(this.querySpec.Conditions);            
         }
 

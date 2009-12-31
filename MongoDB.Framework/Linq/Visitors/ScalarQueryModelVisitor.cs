@@ -17,7 +17,7 @@ namespace MongoDB.Framework.Linq.Visitors
     {
         #region Private Fields
 
-        private MappingStore mappingStore;
+        private IMongoContext mongoContext;
 
         #endregion
 
@@ -42,10 +42,10 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoQueryModelVisitor"/> class.
         /// </summary>
-        /// <param name="entityMapper">The entity mapper.</param>
-        public ScalarQueryModelVisitor(MappingStore mappingStore)
+        /// <param name="mongoContext">The mongo context.</param>
+        public ScalarQueryModelVisitor(IMongoContext mongoContext)
         {
-            this.mappingStore = mappingStore;
+            this.mongoContext = mongoContext;
             this.Query = new Document();
         }
 
@@ -87,7 +87,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitWhereClause(WhereClause whereClause, QueryModel queryModel, int index)
         {
-            this.Query = QueryDocumentBuilder.BuildFrom(this.mappingStore, whereClause.Predicate);
+            this.Query = QueryDocumentBuilder.BuildFrom(this.mongoContext, whereClause.Predicate);
         }
 
         #endregion

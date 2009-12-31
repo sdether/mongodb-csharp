@@ -15,11 +15,19 @@ namespace MongoDB.Framework.Mapping.Types
         [TestFixture]
         public class When_converting_to_a_document
         {
+            private IMappingContext mappingContext;
+
+            [SetUp]
+            public void SetUp()
+            {
+                mappingContext = new Mock<IMappingContext>().Object;
+            }
+
             [Test]
             public void should_convert_nulls_into_MongoDBNull()
             {
                 var valueType = new NullSafeValueType(typeof(string));
-                var result = valueType.ConvertToDocumentValue(null);
+                var result = valueType.ConvertToDocumentValue(null, mappingContext);
 
                 Assert.AreEqual(MongoDBNull.Value, result);
             }
@@ -28,7 +36,7 @@ namespace MongoDB.Framework.Mapping.Types
             public void should_leave_value_alone_when_not_null()
             {
                 var valueType = new NullSafeValueType(typeof(string));
-                var result = valueType.ConvertToDocumentValue("Sammy");
+                var result = valueType.ConvertToDocumentValue("Sammy", mappingContext);
 
                 Assert.AreEqual("Sammy", result);
             }

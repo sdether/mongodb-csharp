@@ -92,10 +92,10 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public object ConvertToDocumentValue(object value)
+        public object ConvertToDocumentValue(object value, IMappingContext mappingContext)
         {
             var lastMemberMap = this.memberMaps[this.memberMaps.Count - 1];
-            return lastMemberMap.ValueType.ConvertToDocumentValue(value);
+            return lastMemberMap.ValueType.ConvertToDocumentValue(value, mappingContext);
         }
 
         #endregion

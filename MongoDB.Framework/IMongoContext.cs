@@ -4,6 +4,7 @@ using System.Linq;
 
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
+using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework
 {
@@ -40,6 +41,12 @@ namespace MongoDB.Framework
         void DeleteOnSubmit(object entity);
 
         /// <summary>
+        /// Gets the change set.
+        /// </summary>
+        /// <returns></returns>
+        ChangeSet GetChangeSet();
+
+        /// <summary>
         /// Gets the entity specified by the id.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
@@ -48,12 +55,28 @@ namespace MongoDB.Framework
         TEntity GetById<TEntity>(object id);
 
         /// <summary>
+        /// Gets the by id.
+        /// </summary>
+        /// <param name="entityType">Type of the entity.</param>
+        /// <param name="id">The id.</param>
+        /// <returns></returns>
+        object GetById(Type entityType, object id);
+
+        /// <summary>
         /// Finds one of the specified entity.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="query">The query.</param>
         /// <returns></returns>
         TEntity FindOne<TEntity>(Document conditions);
+
+        /// <summary>
+        /// Finds one of the specified entity.
+        /// </summary>
+        /// <param name="entityType">Type of the entity.</param>
+        /// <param name="conditions">The conditions.</param>
+        /// <returns></returns>
+        object FindOne(Type entityType, Document conditions);
 
         /// <summary>
         /// Finds all the entities.

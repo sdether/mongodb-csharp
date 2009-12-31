@@ -57,6 +57,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EntityNotFoundException.cs" />
+    <Compile Include="Mapping\Fluent\FluentReferenceMemberMap.cs" />
+    <Compile Include="Mapping\Models\ReferenceMemberMapModel.cs" />
+    <Compile Include="Mapping\Types\ReferenceValueType.cs" />
+    <Compile Include="Persistence\GetByIdAction.cs" />
     <Compile Include="Tracking\ChangeSet.cs" />
     <Compile Include="Configuration\IMongoConfiguration.cs" />
     <Compile Include="Configuration\MongoConfiguration.cs" />

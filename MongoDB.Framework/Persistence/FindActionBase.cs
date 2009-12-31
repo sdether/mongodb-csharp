@@ -76,7 +76,7 @@ namespace MongoDB.Framework.Persistence
             IEnumerable<Document> documents;
             if (IsFindById(classMap, conditions))
             {
-                string id = (string)classMap.IdMap.ValueType.ConvertFromDocumentValue(conditions[classMap.IdMap.Key], null);
+                var id = classMap.IdMap.ValueType.ConvertFromDocumentValue(conditions[classMap.IdMap.Key], null);
                 TrackedObject trackedObject = null;
                 if (this.ChangeTracker.TryGetTrackedObjectById(id, out trackedObject))
                     return new[] { trackedObject.Current };
@@ -135,7 +135,9 @@ namespace MongoDB.Framework.Persistence
                     object discriminator = document[classMap.DiscriminatorKey];
                     concreteClassMap = classMap.GetClassMapByDiscriminator(discriminator);
                 }
-                var mappingContext = new MappingContext(this.MongoContext, document, concreteClassMap.Type);
+
+                var entity = Activator.CreateInstance(concreteClassMap.Type);
+                var mappingContext = new MappingContext(this.MongoContext, document.Copy(), entity); //reading is descructive, so we pass a copy and keep the original
                 classMap.MapFromDocument(mappingContext);
                 if (trackEntities)
                     this.ChangeTracker.GetTrackedObject(mappingContext.Entity).MoveToPossiblyModified(document);

@@ -29,7 +29,8 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="elementValueType">Type of the element value.</param>
         /// <param name="value">The value.</param>
+        /// <param name="mappingContext">The mapping context.</param>
         /// <returns></returns>
-        object ConvertToDocumentValue(IValueType elementValueType, object value);
+        object ConvertToDocumentValue(IValueType elementValueType, object value, IMappingContext mappingContext);
     }
 }

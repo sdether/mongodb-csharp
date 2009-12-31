@@ -12,15 +12,6 @@ using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework
 {
-    [global::System.Serializable]
-    public class EntityNotFoundException : Exception
-    {
-        public EntityNotFoundException(string message) : base(message) { }
-        protected EntityNotFoundException(
-          System.Runtime.Serialization.SerializationInfo info,
-          System.Runtime.Serialization.StreamingContext context)
-            : base(info, context) { }
-    }
     public class MongoContext : IMongoContext
     {
         #region Private Fields
@@ -85,6 +76,7 @@ namespace MongoDB.Framework
                 throw new ArgumentNullException("database");
 
             this.changeTracker = changeTracker;
+            this.changeTracker.Initialize(this);
             this.configuration = configuration;
             this.database = database;
             this.mongo = mongo;
@@ -150,22 +142,6 @@ namespace MongoDB.Framework
         }
 
         /// <summary>
-        /// Gets the entity specified by the id.
-        /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <param name="id">The id.</param>
-        /// <returns></returns>
-        public TEntity GetById<TEntity>(object id)
-        {
-            var findOneAction = new FindOneAction(this, this.changeTracker);
-            var entity = findOneAction.FindOne(typeof(TEntity), new Document().Append("_id", id));
-            if (entity == null)
-                throw new EntityNotFoundException(string.Format("A {0} was not found with the id {1}.", typeof(TEntity), id));
-
-            return (TEntity)entity;
-        }
-
-        /// <summary>
         /// Finds one of the specified entity.
         /// </summary>
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
@@ -173,8 +149,19 @@ namespace MongoDB.Framework
         /// <returns></returns>
         public TEntity FindOne<TEntity>(Document conditions)
         {
+            return (TEntity)this.FindOne(typeof(TEntity), conditions);
+        }
+
+        /// <summary>
+        /// Finds one of the specified entity.
+        /// </summary>
+        /// <param name="entityType">Type of the entity.</param>
+        /// <param name="conditions">The conditions.</param>
+        /// <returns></returns>
+        public object FindOne(Type entityType, Document conditions)
+        {
             var findOneAction = new FindOneAction(this, this.changeTracker);
-            return (TEntity)findOneAction.FindOne(typeof(TEntity), conditions);
+            return findOneAction.FindOne(entityType, conditions);
         }
 
         /// <summary>
@@ -272,6 +259,38 @@ namespace MongoDB.Framework
         {
             var findAction = new FindAction(this, this.changeTracker);
             return findAction.Find(typeof(TEntity), conditions, limit, skip, orderBy, null).Cast<TEntity>();
+        }
+
+        /// <summary>
+        /// Gets the change set.
+        /// </summary>
+        /// <returns></returns>
+        public ChangeSet GetChangeSet()
+        {
+            return this.changeTracker.GetChangeSet();
+        }
+
+        /// <summary>
+        /// Gets the entity specified by the id.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="id">The id.</param>
+        /// <returns></returns>
+        public TEntity GetById<TEntity>(object id)
+        {
+            return (TEntity)this.GetById(typeof(TEntity), id);
+        }
+
+        /// <summary>
+        /// Gets the entity specified by the id.
+        /// </summary>
+        /// <param name="entityType">Type of the entity.</param>
+        /// <param name="id">The id.</param>
+        /// <returns></returns>
+        public object GetById(Type entityType, object id)
+        {
+            var getByIdAction = new GetByIdAction(this, this.changeTracker);
+            return getByIdAction.GetById(entityType, id);
         }
 
         /// <summary>

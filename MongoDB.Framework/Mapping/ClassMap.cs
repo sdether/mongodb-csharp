@@ -125,6 +125,19 @@ namespace MongoDB.Framework.Mapping
         public abstract ClassMap GetClassMapByDiscriminator(object discriminator);
 
         /// <summary>
+        /// Gets the id.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <returns></returns>
+        public object GetId(object entity)
+        {
+            if(!this.HasId)
+                throw new InvalidOperationException("Entity doesn't have an id.");
+
+            return this.IdMap.MemberGetter(entity);
+        }
+
+        /// <summary>
         /// Gets the name of the member map from member.
         /// </summary>
         /// <param name="memberName">Name of the member.</param>
@@ -175,24 +188,24 @@ namespace MongoDB.Framework.Mapping
         /// Maps to document.
         /// </summary>
         /// <param name="mappingContext">The mapping context.</param>
-        public virtual void MapToDocument(object entity, Document document)
+        public virtual void MapToDocument(IMappingContext mappingContext)
         {
             if (this.HasId)
-                this.IdMap.MapToDocument(entity, document);
+                this.IdMap.MapToDocument(mappingContext);
 
             foreach (var memberMap in this.MemberMaps)
-                memberMap.MapToDocument(entity, document);
+                memberMap.MapToDocument(mappingContext);
 
             //We are making the assumption that "null" is not a valid discriminator for an entity...
             if (this.IsPolymorphic && this.Discriminator != null)
-                document.Add(this.DiscriminatorKey, this.Discriminator);
+                mappingContext.Document.Add(this.DiscriminatorKey, this.Discriminator);
 
             if (this.HasExtendedProperties)
             {
-                var dictionary = (IDictionary<string, object>)this.ExtendedPropertiesMap.MemberGetter(entity);
+                var dictionary = (IDictionary<string, object>)this.ExtendedPropertiesMap.MemberGetter(mappingContext.Entity);
 
                 dictionary.ToDocument()
-                    .CopyTo(document);
+                    .CopyTo(mappingContext.Document);
             }
         }
 

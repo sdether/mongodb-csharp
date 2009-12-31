@@ -15,9 +15,9 @@ namespace MongoDB.Framework.Linq.Visitors
 {
     public class QueryDocumentBuilder : ThrowingExpressionTreeVisitor
     {
-        public static Document BuildFrom(MappingStore mappingStore, Expression expression)
+        public static Document BuildFrom(IMongoContext mongoContext, Expression expression)
         {
-            var builder = new QueryDocumentBuilder(mappingStore);
+            var builder = new QueryDocumentBuilder(mongoContext);
             builder.VisitExpression(expression);
             return builder.query;
         }
@@ -25,7 +25,7 @@ namespace MongoDB.Framework.Linq.Visitors
         #region Private Fields
 
         private Dictionary<string, Document> conditions;
-        private MappingStore mappingStore;
+        private IMongoContext mongoContext;
         private Document query;
         private MemberMapPath memberMapPath;
 
@@ -36,10 +36,10 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoWhereClauseExpressionTreeVisitor"/> class.
         /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        private QueryDocumentBuilder(MappingStore mappingStore)
+        /// <param name="mongoContext">The mongo context.</param>
+        private QueryDocumentBuilder(IMongoContext mongoContext)
         {
-            this.mappingStore = mappingStore;
+            this.mongoContext = mongoContext;
             this.query = new Document();
         }
 
@@ -95,8 +95,8 @@ namespace MongoDB.Framework.Linq.Visitors
             else
                 throw new NotSupportedException();
 
-            
-            value = this.memberMapPath.ConvertToDocumentValue(value);
+            var mappingContext = new MappingContext(this.mongoContext, new Document(), value);
+            value = this.memberMapPath.ConvertToDocumentValue(value, mappingContext);
             if (op == "$eq")
                 this.query[this.memberMapPath.Key] = value;
             else
@@ -113,7 +113,7 @@ namespace MongoDB.Framework.Linq.Visitors
 
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
-            this.memberMapPath = MemberMapPathBuilder.BuildFrom(this.mappingStore, expression);
+            this.memberMapPath = MemberMapPathBuilder.BuildFrom(this.mongoContext.Configuration.MappingStore, expression);
             return expression;
         }
 

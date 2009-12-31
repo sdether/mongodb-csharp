@@ -40,7 +40,7 @@ namespace MongoDB.Framework.Linq
 
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
-            var spec = CollectionQueryModelVisitor.CreateMongoQuerySpecification(this.mongoContext.Configuration.MappingStore, queryModel);
+            var spec = CollectionQueryModelVisitor.CreateMongoQuerySpecification(this.mongoContext, queryModel);
             var classMap = this.mongoContext.Configuration.MappingStore.GetClassMapFor(queryModel.MainFromClause.ItemType);
             var findAction = new FindAction(this.mongoContext, this.changeTracker);
             foreach (var entity in findAction.Find(classMap.Type, spec.Conditions, spec.Limit, spec.Skip, spec.OrderBy, spec.Projection.Fields))
@@ -49,7 +49,7 @@ namespace MongoDB.Framework.Linq
 
         public T ExecuteScalar<T>(QueryModel queryModel)
         {
-            var scalarVisitor = new ScalarQueryModelVisitor(this.mongoContext.Configuration.MappingStore);
+            var scalarVisitor = new ScalarQueryModelVisitor(this.mongoContext);
             scalarVisitor.VisitQueryModel(queryModel);
 
             var itemType = queryModel.MainFromClause.ItemType;

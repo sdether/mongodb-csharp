@@ -12,7 +12,7 @@ namespace MongoDB.Framework.Tracking
     {
         #region Private Fields
 
-        private MappingStore mappingStore;
+        private IMongoContext mongoContext;
         private Dictionary<object, TrackedObject> trackedObjects;
         private Dictionary<string, TrackedObject> trackedObjectsById;
 
@@ -23,13 +23,9 @@ namespace MongoDB.Framework.Tracking
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultChangeTracker"/> class.
         /// </summary>
-        /// <param name="mappingStore">The mapping store.</param>
-        public DefaultChangeTracker(MappingStore mappingStore)
+        /// <param name="mongoContext">The mongo context.</param>
+        public DefaultChangeTracker()
         {
-            if (mappingStore == null)
-                throw new ArgumentNullException("mappingStore");
-
-            this.mappingStore = mappingStore;
             this.trackedObjects = new Dictionary<object, TrackedObject>();
             this.trackedObjectsById = new Dictionary<string, TrackedObject>();
         }
@@ -81,13 +77,22 @@ namespace MongoDB.Framework.Tracking
         }
 
         /// <summary>
+        /// Initializes the specified mongo context.
+        /// </summary>
+        /// <param name="mongoContext">The mongo context.</param>
+        public override void Initialize(IMongoContext mongoContext)
+        {
+            this.mongoContext = mongoContext;
+        }
+
+        /// <summary>
         /// Tracks the specified original.
         /// </summary>
         /// <param name="original">The original.</param>
         /// <param name="current">The current.</param>
         public override TrackedObject Track(Document original, object current)
         {
-            var trackedObject = new TrackedObject(this.mappingStore, original, current);
+            var trackedObject = new TrackedObject(this.mongoContext, original, current);
             this.trackedObjects.Add(current, trackedObject);
             return trackedObject;
         }
