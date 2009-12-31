@@ -7,6 +7,6 @@ namespace MongoDB.Framework.Mapping.Models
 {
     public class ReferenceMemberMapModel : KeyMemberMapModel
     {
-
+        public Cascade Cascade { get; set; }
     }
 }

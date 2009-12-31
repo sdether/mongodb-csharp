@@ -20,5 +20,11 @@ namespace MongoDB.Framework.Mapping.Fluent
             return this;
         }
 
+        public FluentReferenceMemberMap Cascade(Cascade cascade)
+        {
+            this.Model.Cascade = cascade;
+            return this;
+        }
+
     }
 }

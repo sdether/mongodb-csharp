@@ -32,6 +32,7 @@ namespace MongoDB.Framework.Persistence
                 throw new ArgumentNullException("entity");
 
             var classMap = this.MongoContext.Configuration.MappingStore.GetClassMapFor(entity.GetType());
+
             var document = new Document();
             var mappingContext = new MappingContext(this.MongoContext, document, entity);
             classMap.IdMap.MapToDocument(mappingContext);

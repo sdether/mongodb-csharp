@@ -223,7 +223,7 @@ namespace MongoDB.Framework.Mapping.Models
             else if (model is ReferenceMemberMapModel)
             {
                 var rModel = (ReferenceMemberMapModel)model;
-                valueType = new ReferenceValueType(memberValueType);
+                valueType = new ReferenceValueType(memberValueType, rModel.Cascade);
             }
             else
                 throw new NotSupportedException();

@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntityNotFoundException.cs" />
+    <Compile Include="Mapping\Cascade.cs" />
     <Compile Include="Mapping\Fluent\FluentReferenceMemberMap.cs" />
     <Compile Include="Mapping\Models\ReferenceMemberMapModel.cs" />
     <Compile Include="Mapping\Types\ReferenceValueType.cs" />

@@ -64,6 +64,23 @@ namespace MongoDB.Framework.Mapping
                 Assert.IsTrue(changeSet.Modified.Contains(a.B));
             }
         }
+
+        [Test]
+        public void Should_not_delete_referenced_entity()
+        {
+            using (var context = CreateContext())
+            {
+                var a = context.FindOne<EntityA>(null);
+                context.DeleteOnSubmit(a);
+                context.SubmitChanges();
+            }
+
+            using (var context = CreateContext())
+            {
+                var b = context.FindOne<EntityB>(null);
+                Assert.IsNotNull(b);
+            }
+        }
     }
 
     public class EntityA
