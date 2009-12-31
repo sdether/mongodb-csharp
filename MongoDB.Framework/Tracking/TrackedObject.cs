@@ -6,6 +6,7 @@ using System.Text;
 using MongoDB.Driver;
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Persistence;
+using MongoDB.Framework.Mapping.Visitors;
 
 namespace MongoDB.Framework.Tracking
 {
@@ -118,9 +119,8 @@ namespace MongoDB.Framework.Tracking
                 return;
             }
 
-            var document = new Document();
-            var mappingContext = new MappingContext(this.mongoContext, document, this.Current);
-            classMap.MapToDocument(mappingContext);
+            var mapper = new EntityToDocumentMapper(this.mongoContext);
+            var document = mapper.CreateDocument(this.Current);
             if (!AreDocumentsEqual(this.Original, document))
                 this.MoveToModified();
         }

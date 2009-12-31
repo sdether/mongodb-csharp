@@ -20,17 +20,17 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="elementValueType">Type of the element value.</param>
         /// <param name="documentValue">The document value.</param>
-        /// <param name="mappingContext">The mapping context.</param>
+        /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMappingContext mappingContext);
+        object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMongoContext mongoContext);
 
         /// <summary>
         /// Converts to document value.
         /// </summary>
         /// <param name="elementValueType">Type of the element value.</param>
         /// <param name="value">The value.</param>
-        /// <param name="mappingContext">The mapping context.</param>
+        /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        object ConvertToDocumentValue(IValueType elementValueType, object value, IMappingContext mappingContext);
+        object ConvertToDocumentValue(IValueType elementValueType, object value, IMongoContext mongoContext);
     }
 }

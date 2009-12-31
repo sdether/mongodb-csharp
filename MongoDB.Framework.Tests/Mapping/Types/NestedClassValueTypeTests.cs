@@ -44,29 +44,19 @@ namespace MongoDB.Framework.Mapping.Types
         [TestFixture]
         public class When_converting_to_a_document
         {
-            private IMappingContext mappingContext;
+            private IMongoContext mongoContext;
 
             [SetUp]
             public void SetUp()
             {
-                var mockMappingContext = new Mock<IMappingContext>();
-                mockMappingContext.Setup(x => x.CreateChildMappingContext(It.IsAny<Document>(), It.IsAny<Complex>()))
-                    .Returns<Document, object>((d, c) =>
-                    {
-                        var mockNestedMappingContext = new Mock<IMappingContext>();
-                        mockNestedMappingContext.Setup(y => y.Document).Returns(d);
-                        mockNestedMappingContext.Setup(y => y.Entity).Returns(c);
-                        return mockNestedMappingContext.Object;
-                    });
-
-                mappingContext = mockMappingContext.Object;
+                mongoContext = new Mock<IMongoContext>().Object;
             }
 
             [Test]
             public void should_return_MongoDBNull_when_value_is_null()
             {
                 var valueType = new NestedClassValueType(GetComplexNestedClassMap());
-                var result = valueType.ConvertToDocumentValue(null, mappingContext);
+                var result = valueType.ConvertToDocumentValue(null, mongoContext);
 
                 Assert.AreEqual(MongoDBNull.Value, result);
             }
@@ -75,7 +65,7 @@ namespace MongoDB.Framework.Mapping.Types
             public void should_return_a_document_when_value_is_not_null()
             {
                 var valueType = new NestedClassValueType(GetComplexNestedClassMap());
-                var result = (Document)valueType.ConvertToDocumentValue(new Complex() { Real = 24, Imaginary = 42 }, mappingContext);
+                var result = (Document)valueType.ConvertToDocumentValue(new Complex() { Real = 24, Imaginary = 42 }, mongoContext);
 
                 Assert.AreEqual(24, result["Real"]);
                 Assert.AreEqual(42, result["Imaginary"]);
@@ -85,29 +75,19 @@ namespace MongoDB.Framework.Mapping.Types
         [TestFixture]
         public class When_converting_from_a_document
         {
-            private IMappingContext mappingContext;
+            private IMongoContext mongoContext;
 
             [SetUp]
             public void SetUp()
             {
-                var mockMappingContext = new Mock<IMappingContext>();
-                mockMappingContext.Setup(x => x.CreateChildMappingContext(It.IsAny<Document>(), It.IsAny<Complex>()))
-                    .Returns<Document, object>((d, c) =>
-                        {
-                            var mockNestedMappingContext = new Mock<IMappingContext>();
-                            mockNestedMappingContext.Setup(y => y.Document).Returns(d);
-                            mockNestedMappingContext.Setup(y => y.Entity).Returns(c);
-                            return mockNestedMappingContext.Object;
-                        });
-
-                mappingContext = mockMappingContext.Object;
+                mongoContext = new Mock<IMongoContext>().Object;
             }
 
             [Test]
             public void should_return_null_when_value_is_null()
             {
                 var valueType = new NestedClassValueType(GetComplexNestedClassMap());
-                var result = valueType.ConvertFromDocumentValue(null, mappingContext);
+                var result = valueType.ConvertFromDocumentValue(null, mongoContext);
 
                 Assert.IsNull(result);
             }
@@ -116,7 +96,7 @@ namespace MongoDB.Framework.Mapping.Types
             public void should_return_an_instance_when_value_is_valid()
             {
                 var valueType = new NestedClassValueType(GetComplexNestedClassMap());
-                var result = (Complex)valueType.ConvertFromDocumentValue(new Document().Append("Real", 24).Append("Imaginary", 42), mappingContext);
+                var result = (Complex)valueType.ConvertFromDocumentValue(new Document().Append("Real", 24).Append("Imaginary", 42), mongoContext);
 
                 Assert.AreEqual(24, result.Real);
                 Assert.AreEqual(42, result.Imaginary);

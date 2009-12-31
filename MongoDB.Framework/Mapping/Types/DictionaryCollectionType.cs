@@ -14,7 +14,14 @@ namespace MongoDB.Framework.Mapping.Types
             return typeof(Dictionary<,>).MakeGenericType(new[] { typeof(string), elementValueType.Type });
         }
 
-        public object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMappingContext mappingContext)
+        /// <summary>
+        /// Converts from document value.
+        /// </summary>
+        /// <param name="elementValueType">Type of the element value.</param>
+        /// <param name="documentValue">The document value.</param>
+        /// <param name="mongoContext">The mongo context.</param>
+        /// <returns></returns>
+        public object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMongoContext mongoContext)
         {
             Document document = documentValue as Document;
             if (document == null)
@@ -23,12 +30,19 @@ namespace MongoDB.Framework.Mapping.Types
             var dictionary = Activator.CreateInstance(this.GetCollectionType(elementValueType));
             var addMethod = dictionary.GetType().GetMethod("Add", new[] { typeof(string), elementValueType.Type });
             foreach (string key in document.Keys)
-                addMethod.Invoke(dictionary, new[] { key, elementValueType.ConvertFromDocumentValue(document[key], mappingContext) });
+                addMethod.Invoke(dictionary, new[] { key, elementValueType.ConvertFromDocumentValue(document[key], mongoContext) });
 
             return dictionary;
         }
 
-        public object ConvertToDocumentValue(IValueType elementValueType, object value, IMappingContext mappingContext)
+        /// <summary>
+        /// Converts to document value.
+        /// </summary>
+        /// <param name="elementValueType">Type of the element value.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="mongoContext">The mongo context.</param>
+        /// <returns></returns>
+        public object ConvertToDocumentValue(IValueType elementValueType, object value, IMongoContext mongoContext)
         {
             Document document = new Document();
             var enumerable = value as IEnumerable;
@@ -42,7 +56,7 @@ namespace MongoDB.Framework.Mapping.Types
             {
                 document.Add(
                     (string)keyProperty.GetValue(pair, null),
-                    elementValueType.ConvertToDocumentValue(valueProperty.GetValue(pair, null), mappingContext));
+                    elementValueType.ConvertToDocumentValue(valueProperty.GetValue(pair, null), mongoContext));
             }
 
             return document;

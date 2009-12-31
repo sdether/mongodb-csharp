@@ -29,12 +29,12 @@ namespace MongoDB.Framework.Mapping.Types
         [TestFixture]
         public class When_converting_to_a_document
         {
-            private IMappingContext mappingContext;
+            private IMongoContext mongoContext;
 
             [SetUp]
             public void SetUp()
             {
-                mappingContext = new Mock<IMappingContext>().Object;
+                mongoContext = new Mock<IMongoContext>().Object;
             }
 
             [Test]
@@ -43,7 +43,7 @@ namespace MongoDB.Framework.Mapping.Types
                 var collectionType = new ListCollectionType();
                 var elementValueType = new Mock<IValueType>();
 
-                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, null, mappingContext);
+                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, null, mongoContext);
 
                 Assert.IsNull(result);
             }
@@ -55,7 +55,7 @@ namespace MongoDB.Framework.Mapping.Types
                 var elementValueType = new Mock<IValueType>();
                 elementValueType.SetupGet(evt => evt.Type).Returns(typeof(string));
 
-                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, new List<string>(), mappingContext);
+                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, new List<string>(), mongoContext);
 
                 Assert.AreEqual(new string[0], result);
             }
@@ -66,9 +66,9 @@ namespace MongoDB.Framework.Mapping.Types
                 var collectionType = new ListCollectionType();
                 var elementValueType = new Mock<IValueType>();
                 elementValueType.SetupGet(evt => evt.Type).Returns(typeof(string));
-                elementValueType.Setup(evt => evt.ConvertToDocumentValue(It.IsAny<string>(), mappingContext)).Returns<string, IMappingContext>((s, mc) => s);
+                elementValueType.Setup(evt => evt.ConvertToDocumentValue(It.IsAny<string>(), mongoContext)).Returns<string, IMongoContext>((s, mc) => s);
 
-                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, new List<string> { { "one" }, { "two" }, { "three" } }, mappingContext);
+                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, new List<string> { { "one" }, { "two" }, { "three" } }, mongoContext);
 
                 Assert.AreEqual(new[] { "one", "two", "three" }, result);
             }
@@ -77,12 +77,12 @@ namespace MongoDB.Framework.Mapping.Types
         [TestFixture]
         public class When_converting_from_a_document
         {
-            private IMappingContext mappingContext;
+            private IMongoContext mongoContext;
 
             [SetUp]
             public void SetUp()
             {
-                mappingContext = new Mock<IMappingContext>().Object;
+                mongoContext = new Mock<IMongoContext>().Object;
             }
 
             [Test]
@@ -91,7 +91,7 @@ namespace MongoDB.Framework.Mapping.Types
                 var collectionType = new ListCollectionType();
                 var elementValueType = new Mock<IValueType>();
 
-                var result = collectionType.ConvertFromDocumentValue(elementValueType.Object, null, mappingContext);
+                var result = collectionType.ConvertFromDocumentValue(elementValueType.Object, null, mongoContext);
 
                 Assert.IsNull(result);
             }
@@ -102,9 +102,9 @@ namespace MongoDB.Framework.Mapping.Types
                 var collectionType = new ListCollectionType();
                 var elementValueType = new Mock<IValueType>();
                 elementValueType.SetupGet(evt => evt.Type).Returns(typeof(string));
-                elementValueType.Setup(evt => evt.ConvertFromDocumentValue(It.IsAny<string>(), mappingContext)).Returns<string, IMappingContext>((s, mc) => s);
+                elementValueType.Setup(evt => evt.ConvertFromDocumentValue(It.IsAny<string>(), mongoContext)).Returns<string, IMongoContext>((s, mc) => s);
 
-                var result = collectionType.ConvertFromDocumentValue(elementValueType.Object, new[] { "one", "two", "three" }, mappingContext);
+                var result = collectionType.ConvertFromDocumentValue(elementValueType.Object, new[] { "one", "two", "three" }, mongoContext);
 
                 Assert.AreEqual(new List<string> { { "one" }, { "two" }, { "three" } }, result);
             }

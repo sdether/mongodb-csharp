@@ -43,6 +43,16 @@ namespace MongoDB.Framework.Tracking
             List<object> added = new List<object>();
             List<object> modified = new List<object>();
             List<object> removed = new List<object>();
+
+            //Preprocess all entities to gather and mark reference information in the change tracker...
+            var trackedObjectsCopy = new List<TrackedObject>(this.trackedObjects.Values);
+            foreach (var trackedObject in trackedObjectsCopy)
+            {
+                var referenceProcessor = new ReferenceProcessor(this.mongoContext.Configuration.MappingStore, this, trackedObject);
+                referenceProcessor.Process();
+            }
+            
+            //have each determine state...
             foreach (var trackedObject in this.trackedObjects.Values)
             {
                 trackedObject.DetermineState();

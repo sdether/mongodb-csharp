@@ -26,7 +26,7 @@ namespace MongoDB.Framework.Mapping.Types
         /// <param name="documentValue">The document value.</param>
         /// <param name="mappingContext">The mapping context.</param>
         /// <returns></returns>
-        public object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMappingContext mappingContext)
+        public object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMongoContext mongoContext)
         {
             Array array = documentValue as Array;
             if (array == null)
@@ -35,7 +35,7 @@ namespace MongoDB.Framework.Mapping.Types
             var list = Activator.CreateInstance(this.GetCollectionType(elementValueType));
             var addMethod = list.GetType().GetMethod("Add", new[] { elementValueType.Type });
             foreach (var element in array)
-                addMethod.Invoke(list, new[] { elementValueType.ConvertFromDocumentValue(element, mappingContext) });
+                addMethod.Invoke(list, new[] { elementValueType.ConvertFromDocumentValue(element, mongoContext) });
 
             return list;
         }
@@ -45,16 +45,16 @@ namespace MongoDB.Framework.Mapping.Types
         /// </summary>
         /// <param name="elementValueType">Type of the element value.</param>
         /// <param name="value">The value.</param>
-        /// <param name="mappingContext"></param>
+        /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        public object ConvertToDocumentValue(IValueType elementValueType, object value, IMappingContext mappingContext)
+        public object ConvertToDocumentValue(IValueType elementValueType, object value, IMongoContext mongoContext)
         {
             var enumerableValue = value as IEnumerable;
             if (enumerableValue == null)
                 return null;
 
             return enumerableValue.OfType<object>()
-                .Select(e => elementValueType.ConvertToDocumentValue(e, mappingContext))
+                .Select(e => elementValueType.ConvertToDocumentValue(e, mongoContext))
                 .ToArray();
         }
     }

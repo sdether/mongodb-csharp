@@ -44,13 +44,13 @@ namespace MongoDB.Framework.Mapping.Types
         /// <param name="documentValue">The document value.</param>
         /// <param name="mappingContext">The mapping context.</param>
         /// <returns></returns>
-        public override object ConvertFromDocumentValue(object documentValue, IMappingContext mappingContext)
+        public override object ConvertFromDocumentValue(object documentValue, IMongoContext mongoContext)
         {
-            documentValue = base.ConvertFromDocumentValue(documentValue, mappingContext);
+            documentValue = base.ConvertFromDocumentValue(documentValue, mongoContext);
             if (documentValue == null)
                 return documentValue;
 
-            return this.collectionType.ConvertFromDocumentValue(this.elementValueType, documentValue, mappingContext);
+            return this.collectionType.ConvertFromDocumentValue(this.elementValueType, documentValue, mongoContext);
         }
 
         /// <summary>
@@ -59,13 +59,13 @@ namespace MongoDB.Framework.Mapping.Types
         /// <param name="value">The value.</param>
         /// <param name="mappingContext">The mapping context.</param>
         /// <returns></returns>
-        public override object ConvertToDocumentValue(object value, IMappingContext mappingContext)
+        public override object ConvertToDocumentValue(object value, IMongoContext mongoContext)
         {
-            value = base.ConvertToDocumentValue(value, mappingContext);
+            value = base.ConvertToDocumentValue(value, mongoContext);
             if (value == MongoDBNull.Value)
                 return value;
 
-            return this.collectionType.ConvertToDocumentValue(this.elementValueType, value, mappingContext);
+            return this.collectionType.ConvertToDocumentValue(this.elementValueType, value, mongoContext);
         }
     }
 }

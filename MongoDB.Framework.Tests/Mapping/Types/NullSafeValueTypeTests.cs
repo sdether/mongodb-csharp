@@ -15,19 +15,19 @@ namespace MongoDB.Framework.Mapping.Types
         [TestFixture]
         public class When_converting_to_a_document
         {
-            private IMappingContext mappingContext;
+            private IMongoContext mongoContext;
 
             [SetUp]
             public void SetUp()
             {
-                mappingContext = new Mock<IMappingContext>().Object;
+                mongoContext = new Mock<IMongoContext>().Object;
             }
 
             [Test]
             public void should_convert_nulls_into_MongoDBNull()
             {
                 var valueType = new NullSafeValueType(typeof(string));
-                var result = valueType.ConvertToDocumentValue(null, mappingContext);
+                var result = valueType.ConvertToDocumentValue(null, mongoContext);
 
                 Assert.AreEqual(MongoDBNull.Value, result);
             }
@@ -36,7 +36,7 @@ namespace MongoDB.Framework.Mapping.Types
             public void should_leave_value_alone_when_not_null()
             {
                 var valueType = new NullSafeValueType(typeof(string));
-                var result = valueType.ConvertToDocumentValue("Sammy", mappingContext);
+                var result = valueType.ConvertToDocumentValue("Sammy", mongoContext);
 
                 Assert.AreEqual("Sammy", result);
             }
@@ -48,19 +48,19 @@ namespace MongoDB.Framework.Mapping.Types
             [TestFixture]
             public class Given_the_type_is_a_reference_type
             {
-                private IMappingContext mappingContext;
+                private IMongoContext mongoContext;
 
                 [SetUp]
                 public void SetUp()
                 {
-                    mappingContext = new Mock<IMappingContext>().Object;
+                    mongoContext = new Mock<IMongoContext>().Object;
                 }
 
                 [Test]
                 public void should_convert_null_into_null()
                 {
                     var valueType = new NullSafeValueType(typeof(Uri));
-                    var result = valueType.ConvertFromDocumentValue(null, mappingContext);
+                    var result = valueType.ConvertFromDocumentValue(null, mongoContext);
 
                     Assert.IsNull(result);
                 }
@@ -69,7 +69,7 @@ namespace MongoDB.Framework.Mapping.Types
                 public void should_convert_MongoDBNull_into_null()
                 {
                     var valueType = new NullSafeValueType(typeof(Uri));
-                    var result = valueType.ConvertFromDocumentValue(MongoDBNull.Value, mappingContext);
+                    var result = valueType.ConvertFromDocumentValue(MongoDBNull.Value, mongoContext);
 
                     Assert.IsNull(result);
                 }
@@ -78,7 +78,7 @@ namespace MongoDB.Framework.Mapping.Types
                 public void should_leave_value_alone_when_not_null()
                 {
                     var valueType = new NullSafeValueType(typeof(Uri));
-                    var result = valueType.ConvertFromDocumentValue(new Uri("http://localhost"), mappingContext);
+                    var result = valueType.ConvertFromDocumentValue(new Uri("http://localhost"), mongoContext);
 
                     Assert.AreEqual(new Uri("http://localhost"), result);
                 }
@@ -87,19 +87,19 @@ namespace MongoDB.Framework.Mapping.Types
             [TestFixture]
             public class Given_the_type_is_a_value_type
             {
-                private IMappingContext mappingContext;
+                private IMongoContext mongoContext;
 
                 [SetUp]
                 public void SetUp()
                 {
-                    mappingContext = new Mock<IMappingContext>().Object;
+                    mongoContext = new Mock<IMongoContext>().Object;
                 }
 
                 [Test]
                 public void should_convert_null_into_null()
                 {
                     var valueType = new NullSafeValueType(typeof(int));
-                    var result = valueType.ConvertFromDocumentValue(null, mappingContext);
+                    var result = valueType.ConvertFromDocumentValue(null, mongoContext);
 
                     Assert.AreEqual(0, result);
                 }
@@ -108,7 +108,7 @@ namespace MongoDB.Framework.Mapping.Types
                 public void should_convert_MongoDBNull_into_null()
                 {
                     var valueType = new NullSafeValueType(typeof(int));
-                    var result = valueType.ConvertFromDocumentValue(MongoDBNull.Value, mappingContext);
+                    var result = valueType.ConvertFromDocumentValue(MongoDBNull.Value, mongoContext);
 
                     Assert.AreEqual(0, result);
                 }
@@ -117,7 +117,7 @@ namespace MongoDB.Framework.Mapping.Types
                 public void should_leave_value_alone_when_not_null()
                 {
                     var valueType = new NullSafeValueType(typeof(int));
-                    var result = valueType.ConvertFromDocumentValue(42, mappingContext);
+                    var result = valueType.ConvertFromDocumentValue(42, mongoContext);
 
                     Assert.AreEqual(42, result);
                 }

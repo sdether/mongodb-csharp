@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Tracking;
+using MongoDB.Framework.Mapping.Visitors;
 
 namespace MongoDB.Framework.Persistence
 {
@@ -136,13 +137,13 @@ namespace MongoDB.Framework.Persistence
                     concreteClassMap = classMap.GetClassMapByDiscriminator(discriminator);
                 }
 
-                var entity = Activator.CreateInstance(concreteClassMap.Type);
-                var mappingContext = new MappingContext(this.MongoContext, document.Copy(), entity); //reading is descructive, so we pass a copy and keep the original
-                classMap.MapFromDocument(mappingContext);
-                if (trackEntities)
-                    this.ChangeTracker.GetTrackedObject(mappingContext.Entity).MoveToPossiblyModified(document);
+                var entity = new DocumentToEntityMapper(this.MongoContext)
+                    .CreateEntity(concreteClassMap, document.Copy());
 
-                yield return mappingContext.Entity;
+                if (trackEntities)
+                    this.ChangeTracker.GetTrackedObject(entity).MoveToPossiblyModified(document);
+
+                yield return entity;
             }
         }
 

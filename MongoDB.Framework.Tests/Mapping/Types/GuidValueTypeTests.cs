@@ -15,19 +15,19 @@ namespace MongoDB.Framework.Mapping.Types
         [TestFixture]
         public class When_converting_to_a_document
         {
-            private IMappingContext mappingContext;
+            private IMongoContext mongoContext;
 
             [SetUp]
             public void SetUp()
             {
-                mappingContext = new Mock<IMappingContext>().Object;
+                mongoContext = new Mock<IMongoContext>().Object;
             }
 
             [Test]
             public void should_return_MongoDBNull_when_value_is_null()
             {
                 var valueType = new GuidValueType();
-                var result = valueType.ConvertToDocumentValue(null, mappingContext);
+                var result = valueType.ConvertToDocumentValue(null, mongoContext);
 
                 Assert.AreEqual(MongoDBNull.Value, result);
             }
@@ -36,7 +36,7 @@ namespace MongoDB.Framework.Mapping.Types
             public void should_return_string_when_value_is_not_null()
             {
                 var valueType = new GuidValueType();
-                var result = valueType.ConvertToDocumentValue(Guid.Empty, mappingContext);
+                var result = valueType.ConvertToDocumentValue(Guid.Empty, mongoContext);
 
                 Assert.AreEqual(Guid.Empty.ToString(), result);
             }
@@ -45,19 +45,19 @@ namespace MongoDB.Framework.Mapping.Types
         [TestFixture]
         public class When_converting_from_a_document
         {
-            private IMappingContext mappingContext;
+            private IMongoContext mongoContext;
 
             [SetUp]
             public void SetUp()
             {
-                mappingContext = new Mock<IMappingContext>().Object;
+                mongoContext = new Mock<IMongoContext>().Object;
             }
 
             [Test]
             public void should_return_an_empty_guid_when_value_is_null()
             {
                 var valueType = new GuidValueType();
-                var result = valueType.ConvertFromDocumentValue(null, mappingContext);
+                var result = valueType.ConvertFromDocumentValue(null, mongoContext);
 
                 Assert.AreEqual(Guid.Empty, result);
             }
@@ -67,7 +67,7 @@ namespace MongoDB.Framework.Mapping.Types
             {
                 var guid = Guid.NewGuid();
                 var valueType = new GuidValueType();
-                var result = valueType.ConvertFromDocumentValue(guid.ToString(), mappingContext);
+                var result = valueType.ConvertFromDocumentValue(guid.ToString(), mongoContext);
 
                 Assert.AreEqual(guid, result);
             }

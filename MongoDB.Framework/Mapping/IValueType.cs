@@ -18,16 +18,16 @@ namespace MongoDB.Framework.Mapping
         /// Converts from document value.
         /// </summary>
         /// <param name="documentValue">The document value.</param>
-        /// <param name="mappingContext">The mapping context.</param>
+        /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        object ConvertFromDocumentValue(object documentValue, IMappingContext mappingContext);
+        object ConvertFromDocumentValue(object documentValue, IMongoContext mongoContext);
 
         /// <summary>
         /// Converts to document value.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <param name="mappingContext">The mapping context.</param>
+        /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        object ConvertToDocumentValue(object value, IMappingContext mappingContext);
+        object ConvertToDocumentValue(object value, IMongoContext mongoContext);
     }
 }

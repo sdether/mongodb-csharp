@@ -19,10 +19,11 @@ namespace MongoDB.Framework.Mapping.Types
         /// Converts from document value.
         /// </summary>
         /// <param name="documentValue">The document value.</param>
+        /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        public override object ConvertFromDocumentValue(object documentValue, IMappingContext mappingContext)
+        public override object ConvertFromDocumentValue(object documentValue, IMongoContext mongoContext)
         {
-            documentValue = base.ConvertFromDocumentValue(documentValue, mappingContext);
+            documentValue = base.ConvertFromDocumentValue(documentValue, mongoContext);
             var guid = documentValue as string;
             if (guid == null)
                 return Guid.Empty;
@@ -34,11 +35,11 @@ namespace MongoDB.Framework.Mapping.Types
         /// Converts to document value.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <param name="mappingContext">The mapping context.</param>
+        /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        public override object ConvertToDocumentValue(object value, IMappingContext mappingContext)
+        public override object ConvertToDocumentValue(object value, IMongoContext mongoContext)
         {
-            value = base.ConvertToDocumentValue(value, mappingContext);
+            value = base.ConvertToDocumentValue(value, mongoContext);
             if (value == MongoDBNull.Value)
                 return value;
 

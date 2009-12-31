@@ -9,6 +9,7 @@ using MongoDB.Framework.DomainModels;
 using MongoDB.Framework.Mapping.Fluent;
 
 using NUnit.Framework;
+using MongoDB.Framework.Mapping.Visitors;
 
 namespace MongoDB.Framework.Mapping
 {
@@ -46,9 +47,8 @@ namespace MongoDB.Framework.Mapping
 
             var mongoContext = configuration.CreateContextFactory().CreateContext();
             var classMap = mappingStore.GetClassMapFor<Person>();
-            var mappingContext = new MappingContext(mongoContext, document, new Person());
-            classMap.MapFromDocument(mappingContext);
-            var person = mappingContext.Entity as Person;
+            var person = (Person)new DocumentToEntityMapper(mongoContext)
+                .CreateEntity(classMap, document);
             Assert.IsNotNull(person);
             Assert.AreEqual(person.Id, "4b27b9f1cf24000000002aa0");
             Assert.AreEqual("Bob McBob", person.Name);
@@ -95,11 +95,10 @@ namespace MongoDB.Framework.Mapping
             person.Aliases.Add("Dopey");
             person.Aliases.Add("Sleepy");
 
-            var document = new Document();
             var mongoContext = configuration.CreateContextFactory().CreateContext();
             var classMap = mappingStore.GetClassMapFor<Person>();
-            var mappingContext = new MappingContext(mongoContext, document, person);
-            classMap.MapToDocument(mappingContext);
+            var document = new EntityToDocumentMapper(mongoContext)
+                .CreateDocument(person);
 
             Assert.AreEqual(new Oid("4b27b9f1cf24000000002aa0"), document["_id"]);
             Assert.AreEqual("Bob McBob", document["Name"]);

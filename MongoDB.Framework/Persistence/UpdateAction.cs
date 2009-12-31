@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Tracking;
+using MongoDB.Framework.Mapping.Visitors;
 
 namespace MongoDB.Framework.Persistence
 {
@@ -36,9 +37,8 @@ namespace MongoDB.Framework.Persistence
             if (!classMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
-            var document = new Document();
-            var mappingContext = new MappingContext(this.MongoContext, document, entity);
-            classMap.MapToDocument(mappingContext);
+            var mapper = new EntityToDocumentMapper(this.MongoContext);
+            var document = mapper.CreateDocument(entity);
             this.GetCollectionForClassMap(classMap).Update(document);
             this.ChangeTracker.GetTrackedObject(entity).MoveToPossiblyModified(document);
         }

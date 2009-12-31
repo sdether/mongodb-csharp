@@ -25,34 +25,34 @@ namespace MongoDB.Framework.Mapping.Types
         /// Converts from document value.
         /// </summary>
         /// <param name="documentValue">The document value.</param>
-        /// <param name="mappingContext">The mapping context.</param>
+        /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        public override object ConvertFromDocumentValue(object documentValue, IMappingContext mappingContext)
+        public override object ConvertFromDocumentValue(object documentValue, IMongoContext mongoContext)
         {
-            documentValue = base.ConvertFromDocumentValue(documentValue, mappingContext);
+            documentValue = base.ConvertFromDocumentValue(documentValue, mongoContext);
             if (documentValue == null)
                 return documentValue;
 
             var dbref = (DBRef)documentValue;
             //TODO: this is where we would do lazy loading/proxying
-            return mappingContext.MongoContext.FindOne(this.Type, new Document().Append("_id", dbref.Id));
+            return mongoContext.FindOne(this.Type, new Document().Append("_id", dbref.Id));
         }
 
         /// <summary>
         /// Converts to document value.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <param name="mappingContext">The mapping context.</param>
+        /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        public override object ConvertToDocumentValue(object value, IMappingContext mappingContext)
+        public override object ConvertToDocumentValue(object value, IMongoContext mongoContext)
         {
-            value = base.ConvertToDocumentValue(value, mappingContext);
+            value = base.ConvertToDocumentValue(value, mongoContext);
             if (value == MongoDBNull.Value)
                 return value;
 
-            var refClassMap = mappingContext.MongoContext.Configuration.MappingStore.GetClassMapFor(this.Type);
+            var refClassMap = mongoContext.Configuration.MappingStore.GetClassMapFor(this.Type);
             var id = refClassMap.GetId(value);
-            var idValue = refClassMap.IdMap.ValueType.ConvertToDocumentValue(id, mappingContext);
+            var idValue = refClassMap.IdMap.ValueType.ConvertToDocumentValue(id, mongoContext);
             return new DBRef(refClassMap.CollectionName, idValue);
         }
     }

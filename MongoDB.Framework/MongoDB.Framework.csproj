@@ -57,10 +57,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mapping\Visitors\IdToEntityMapper.cs" />
+    <Compile Include="Mapping\Visitors\EntityToDocumentMapper.cs" />
+    <Compile Include="Mapping\Visitors\DocumentToEntityMapper.cs" />
     <Compile Include="Mapping\IMapVisitor.cs" />
     <Compile Include="Mapping\Visitors\DefaultMapVisitor.cs" />
     <Compile Include="Mapping\Visitors\NullMapVisitor.cs" />
-    <Compile Include="Mapping\Visitors\ReferenceFinder.cs" />
+    <Compile Include="Mapping\Visitors\DeleteDocumentMapper.cs" />
+    <Compile Include="Tracking\ReferenceProcessor.cs" />
     <Compile Include="EntityNotFoundException.cs" />
     <Compile Include="Mapping\Cascade.cs" />
     <Compile Include="Mapping\Fluent\FluentReferenceMemberMap.cs" />
@@ -119,7 +123,6 @@
     <Compile Include="Mapping\IdGenerators\OidGenerator.cs" />
     <Compile Include="Mapping\IIdGenerator.cs" />
     <Compile Include="Mapping\IdMap.cs" />
-    <Compile Include="Mapping\IMappingContext.cs" />
     <Compile Include="Mapping\IMapProvider.cs" />
     <Compile Include="Mapping\Models\ClassMapModel.cs" />
     <Compile Include="Mapping\Models\HasManyMemberMapModel.cs" />
@@ -140,7 +143,6 @@
     <Compile Include="Mapping\IValueType.cs" />
     <Compile Include="Mapping\NestedClassMap.cs" />
     <Compile Include="Mapping\RootClassMap.cs" />
-    <Compile Include="Mapping\MappingContext.cs" />
     <Compile Include="Mapping\Types\CollectionValueType.cs" />
     <Compile Include="Mapping\Types\OidValueType.cs" />
     <Compile Include="Mapping\Types\ListCollectionType.cs" />

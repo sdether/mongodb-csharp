@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Tracking;
+using MongoDB.Framework.Mapping.Visitors;
 
 namespace MongoDB.Framework.Persistence
 {
@@ -33,9 +34,9 @@ namespace MongoDB.Framework.Persistence
 
             var classMap = this.MongoContext.Configuration.MappingStore.GetClassMapFor(entity.GetType());
 
-            var document = new Document();
-            var mappingContext = new MappingContext(this.MongoContext, document, entity);
-            classMap.IdMap.MapToDocument(mappingContext);
+            var document = new DeleteDocumentMapper(this.MongoContext)
+                .CreateDocument(classMap, entity);
+
             this.GetCollectionForClassMap(classMap).Delete(document);
             this.ChangeTracker.GetTrackedObject(entity).MoveToDead();
         }

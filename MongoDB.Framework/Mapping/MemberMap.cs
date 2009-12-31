@@ -74,31 +74,5 @@ namespace MongoDB.Framework.Mapping
         {
             visitor.ProcessMember(this);
         }
-
-        /// <summary>
-        /// Maps the member from a document.
-        /// </summary>
-        /// <param name="mappingContext">The mapping context.</param>
-        public virtual void MapFromDocument(IMappingContext mappingContext)
-        {
-            if (mappingContext == null)
-                throw new ArgumentNullException("mappingContext");
-            var value = mappingContext.Document[this.Key];
-            value = this.ValueType.ConvertFromDocumentValue(value, mappingContext);
-            this.MemberSetter(mappingContext.Entity, value);
-        }
-
-        /// <summary>
-        /// Maps the member to the document.
-        /// </summary>
-        /// <param name="mappingContext">The mapping context.</param>
-        public virtual void MapToDocument(IMappingContext mappingContext)
-        {
-            if (mappingContext == null)
-                throw new ArgumentNullException("mappingContext");
-            var value = this.MemberGetter(mappingContext.Entity);
-            value = this.ValueType.ConvertToDocumentValue(value, mappingContext);
-            mappingContext.Document[this.Key] = value;
-        }
     }
 }
