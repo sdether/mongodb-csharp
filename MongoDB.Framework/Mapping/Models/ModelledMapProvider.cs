@@ -215,15 +215,10 @@ namespace MongoDB.Framework.Mapping.Models
                 var kvModel = (KeyValueMemberMapModel)model;
                 valueType = kvModel.CustomValueType ?? this.GetValueTypeFromType(memberValueType);
             }
-            else if (model is HasManyMemberMapModel)
+            else if (model is CollectionMemberMapModel)
             {
-                var hmModel = (HasManyMemberMapModel)model;
-                valueType = this.GetCollectionValueType(memberValueType, hmModel.CollectionType, hmModel.ElementType, hmModel.ElementValueType);
-            }
-            else if (model is ReferenceMemberMapModel)
-            {
-                var rModel = (ReferenceMemberMapModel)model;
-                valueType = new ReferenceValueType(memberValueType, rModel.Cascade);
+                var cModel = (CollectionMemberMapModel)model;
+                valueType = this.GetCollectionValueType(memberValueType, cModel.CollectionType, cModel.ElementType, cModel.ElementValueType);
             }
             else
                 throw new NotSupportedException();

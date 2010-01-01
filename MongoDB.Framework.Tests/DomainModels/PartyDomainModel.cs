@@ -15,11 +15,12 @@ namespace MongoDB.Framework.DomainModels
             UseCollection("parties");
 
             Id(x => x.Id);
+
             Map(x => x.Name);
             Map(x => x.PhoneNumber);
 
-            HasMany(x => x.AlternatePhoneNumbers);
-            HasMany(x => x.Aliases);
+            Collection(x => x.AlternatePhoneNumbers);
+            Collection(x => x.Aliases);
 
             DiscriminateSubClassesOnKey<string>("Type")
                 .SubClass<Person>(PartyType.Person.ToString(), m =>

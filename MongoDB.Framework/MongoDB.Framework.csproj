@@ -68,9 +68,6 @@
     <Compile Include="Tracking\MongoContextCache.cs" />
     <Compile Include="EntityNotFoundException.cs" />
     <Compile Include="Mapping\Cascade.cs" />
-    <Compile Include="Mapping\Fluent\FluentReferenceMemberMap.cs" />
-    <Compile Include="Mapping\Models\ReferenceMemberMapModel.cs" />
-    <Compile Include="Mapping\Types\ReferenceValueType.cs" />
     <Compile Include="Persistence\GetByIdAction.cs" />
     <Compile Include="Configuration\IMongoConfiguration.cs" />
     <Compile Include="Configuration\MongoConfiguration.cs" />
@@ -86,7 +83,7 @@
     <Compile Include="Linq\MongoQueryProjection.cs" />
     <Compile Include="Linq\Visitors\ScalarQueryModelVisitor.cs" />
     <Compile Include="Mapping\Fluent\FluentGeneratedBy.cs" />
-    <Compile Include="Mapping\Fluent\FluentHasManyMemberMap.cs" />
+    <Compile Include="Mapping\Fluent\FluentCollectionMemberMap.cs" />
     <Compile Include="Mapping\Fluent\FluentIdMap.cs" />
     <Compile Include="Mapping\Fluent\FluentMemberMap.cs" />
     <Compile Include="Mapping\Fluent\FluentClassMap.cs">
@@ -125,7 +122,7 @@
     <Compile Include="Mapping\IdMap.cs" />
     <Compile Include="Mapping\IMapProvider.cs" />
     <Compile Include="Mapping\Models\ClassMapModel.cs" />
-    <Compile Include="Mapping\Models\HasManyMemberMapModel.cs" />
+    <Compile Include="Mapping\Models\CollectionMemberMapModel.cs" />
     <Compile Include="Mapping\Models\IdMapModel.cs" />
     <Compile Include="Mapping\Types\GuidValueType.cs" />
     <Compile Include="Mapping\Types\DictionaryCollectionType.cs" />

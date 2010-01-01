@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping.Models
 {
-    public class HasManyMemberMapModel : KeyMemberMapModel
+    public class CollectionMemberMapModel : KeyMemberMapModel
     {
         public ICollectionType CollectionType { get; set; }
 

@@ -30,7 +30,7 @@ namespace MongoDB.Framework.DomainModels
             Map(x => x.Body);
             Map(x => x.PostDate);
 
-            HasMany(x => x.Comments);
+            Collection(x => x.Comments);
         }
     }
 
@@ -40,7 +40,7 @@ namespace MongoDB.Framework.DomainModels
         {
             Map(x => x.CommenterEmail);
             Map(x => x.Comment);
-            HasMany(x => x.Comments);
+            Collection(x => x.Comments);
         }
     }
 
