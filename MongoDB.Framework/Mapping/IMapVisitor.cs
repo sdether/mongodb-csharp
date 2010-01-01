@@ -15,6 +15,7 @@ namespace MongoDB.Framework.Mapping
         void ProcessId(IdMap idMap);
         void ProcessMember(MemberMap memberMap);
         void ProcessExtendedProperties(ExtendedPropertiesMap extendedPropertiesMap);
+        void ProcessIndex(IndexMap indexMap);
 
         void Visit(ClassMap classMap);
         void Visit(SuperClassMap superClassMap);
@@ -24,5 +25,6 @@ namespace MongoDB.Framework.Mapping
         void Visit(IdMap idMap);
         void Visit(MemberMap memberMap);
         void Visit(ExtendedPropertiesMap extendedPropertiesMap);
+        void Visit(IndexMap indexMap);
     }
 }

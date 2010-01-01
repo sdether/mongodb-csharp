@@ -58,6 +58,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Mapping\Fluent\FluentEmbeddedMemberMap.cs" />
+    <Compile Include="Mapping\IndexDirection.cs" />
+    <Compile Include="Mapping\IndexMap.cs" />
+    <Compile Include="Mapping\IndexPart.cs" />
     <Compile Include="Mapping\Models\EmbeddedClassPart.cs" />
     <Compile Include="Mapping\Models\EmbeddedMemberPart.cs" />
     <Compile Include="Mapping\Models\ExtendedPropertiesMapModel.cs" />

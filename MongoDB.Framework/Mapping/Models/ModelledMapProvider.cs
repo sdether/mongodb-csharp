@@ -129,7 +129,8 @@ namespace MongoDB.Framework.Mapping.Models
                 model.DiscriminatorKey,
                 model.Discriminator,
                 subClassMaps,
-                extPropMap);
+                extPropMap,
+                null);
 
             return rootClassMap;
         }

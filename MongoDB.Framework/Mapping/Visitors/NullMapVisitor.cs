@@ -31,6 +31,9 @@ namespace MongoDB.Framework.Mapping.Visitors
         public virtual void ProcessExtendedProperties(ExtendedPropertiesMap extendedPropertiesMap)
         { }
 
+        public virtual void ProcessIndex(IndexMap indexMap)
+        { }
+
         public virtual void Visit(ClassMap classMap)
         { }
 
@@ -53,6 +56,9 @@ namespace MongoDB.Framework.Mapping.Visitors
         { }
 
         public virtual void Visit(ExtendedPropertiesMap extendedPropertiesMap)
+        { }
+
+        public virtual void Visit(IndexMap indexMap)
         { }
     }
 }

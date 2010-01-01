@@ -55,6 +55,7 @@ namespace MongoDB.Framework
         {
             var mongo = this.Configuration.MongoFactory.CreateMongo();
             mongo.Connect();
+
             var database = mongo.getDB(this.Configuration.DatabaseName);
 
             if(!this.initialized)
@@ -73,21 +74,25 @@ namespace MongoDB.Framework
 
         #endregion
 
-        #region Private Methods
+        #region Protected Methods
 
-        /// <summary>
-        /// Initializes the specified database.
-        /// </summary>
-        /// <param name="database">The database.</param>
-        private void Initialize(Database database)
+         ///<summary>
+         ///Initializes the specified database.
+         ///</summary>
+         ///<param name="database">The database.</param>
+        protected virtual void Initialize(Database database)
         {
             //this.EnsureIndexes(database);
         }
 
-        ///// <summary>
-        ///// Ensures that the specified database has the appropriate indexes.
-        ///// </summary>
-        ///// <param name="database">The database.</param>
+        #endregion
+
+        //#region Private Methods
+
+        // <summary>
+        // Ensures that the specified database has the appropriate indexes.
+        // </summary>
+        // <param name="database">The database.</param>
         //private void EnsureIndexes(Database database)
         //{
         //    foreach (var rootEntityMap in this.Configuration.RootEntityMaps)
@@ -105,6 +110,6 @@ namespace MongoDB.Framework
         //    }
         //}
 
-        #endregion
+        //#endregion
     }
 }
