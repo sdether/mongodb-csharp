@@ -9,7 +9,7 @@ namespace MongoDB.Framework.Mapping.Models
     {
         public string DiscriminatorKey { get; set; }
 
-        public ValueMapModel ExtendedPropertiesMap { get; set; }
+        public EmbeddedValueMapModel ExtendedPropertiesMap { get; set; }
 
         public List<SubClassMapModel> SubClassMaps { get; private set; }
 

@@ -32,13 +32,13 @@ namespace MongoDB.Framework.Mapping.Fluent
 
         public void ExtendedProperties(string memberName)
         {
-            var memberInfo = this.GetSingleMember(memberName);
+            var memberInfo = ReflectionUtil.GetSingleMember<TClass>(memberName);
             this.ExtendedProperties(memberInfo);
         }
 
         public void ExtendedProperties(MemberInfo memberInfo)
         {
-            this.Model.ExtendedPropertiesMap = new ValueMapModel()
+            this.Model.ExtendedPropertiesMap = new EmbeddedValueMapModel()
             {
                 Getter = memberInfo,
                 Setter = memberInfo
@@ -47,7 +47,7 @@ namespace MongoDB.Framework.Mapping.Fluent
 
         public void ExtendedProperties(Expression<Func<TClass, IDictionary<string, object>>> member)
         {
-            var memberInfo = this.GetSingleMember(member);
+            var memberInfo = ReflectionUtil.GetSingleMember(member);
             this.ExtendedProperties(memberInfo);
         }
     }

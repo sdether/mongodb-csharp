@@ -16,20 +16,20 @@ namespace MongoDB.Framework.DomainModels
 
             Id(x => x.Id);
 
-            Map(x => x.Name);
-            Map(x => x.PhoneNumber);
+            Map.One(x => x.Name);
+            Map.One(x => x.PhoneNumber);
 
-            Collection(x => x.AlternatePhoneNumbers);
-            Collection(x => x.Aliases);
+            Map.Many(x => x.AlternatePhoneNumbers);
+            Map.Many(x => x.Aliases);
 
             DiscriminateSubClassesOnKey<string>("Type")
                 .SubClass<Person>(PartyType.Person.ToString(), m =>
                 {
-                    m.Map(x => x.BirthDate);
+                    m.Map.One(x => x.BirthDate);
                 })
                 .SubClass<Organization>(PartyType.Organization.ToString(), m =>
                 {
-                    m.Map(x => x.EmployeeCount);
+                    m.Map.One(x => x.EmployeeCount);
                 });
 
             ExtendedProperties(x => x.ExtendedProperties);
@@ -40,9 +40,9 @@ namespace MongoDB.Framework.DomainModels
     {
         public PhoneNumberMap()
         {
-            Map(x => x.AreaCode);
-            Map(x => x.Prefix);
-            Map(x => x.Number);
+            Map.One(x => x.AreaCode);
+            Map.One(x => x.Prefix);
+            Map.One(x => x.Number);
         }
     }
 
@@ -58,7 +58,6 @@ namespace MongoDB.Framework.DomainModels
         public string Prefix { get; set; }
         public string Number { get; set; }
     }
-
 
     public abstract class Party
     {

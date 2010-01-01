@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping.Models
 {
-    public class IdMapModel : ValueMapModel
+    public class IdMapModel : EmbeddedValueMapModel
     {
         /// <summary>
         /// Gets or sets the generator.

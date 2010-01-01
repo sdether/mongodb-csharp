@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mapping\Fluent\FluentMap.cs" />
     <Compile Include="Mapping\Models\ExtendedPropertiesMapModel.cs" />
     <Compile Include="Mapping\Models\IMapModelVisitor.cs" />
     <Compile Include="Mapping\Models\MemberMapModel.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="Mapping\Visitors\DefaultMapVisitor.cs" />
     <Compile Include="Mapping\Visitors\NullMapVisitor.cs" />
     <Compile Include="Mapping\Visitors\DeleteDocumentMapper.cs" />
+    <Compile Include="Reflection\ReflectionUtil.cs" />
     <Compile Include="Tracking\IMongoContextCache.cs" />
     <Compile Include="Tracking\MongoContextCache.cs" />
     <Compile Include="EntityNotFoundException.cs" />
@@ -88,7 +90,7 @@
     <Compile Include="Linq\MongoQueryProjection.cs" />
     <Compile Include="Linq\Visitors\ScalarQueryModelVisitor.cs" />
     <Compile Include="Mapping\Fluent\FluentGeneratedBy.cs" />
-    <Compile Include="Mapping\Fluent\FluentCollectionMap.cs" />
+    <Compile Include="Mapping\Fluent\FluentEmbeddedCollectionMap.cs" />
     <Compile Include="Mapping\Fluent\FluentIdMap.cs" />
     <Compile Include="Mapping\Fluent\FluentClassMap.cs">
       <SubType>Code</SubType>
@@ -96,13 +98,13 @@
     <Compile Include="Mapping\Fluent\FluentDiscriminator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentMap.cs">
+    <Compile Include="Mapping\Fluent\FluentBase.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\Fluent\FluentMapProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentValueMap.cs">
+    <Compile Include="Mapping\Fluent\FluentEmbeddedValueMap.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\Fluent\FluentNestedClassMap.cs">
@@ -126,13 +128,13 @@
     <Compile Include="Mapping\IdMap.cs" />
     <Compile Include="Mapping\IMapProvider.cs" />
     <Compile Include="Mapping\Models\ClassMapModel.cs" />
-    <Compile Include="Mapping\Models\CollectionMapModel.cs" />
+    <Compile Include="Mapping\Models\EmbeddedCollectionMapModel.cs" />
     <Compile Include="Mapping\Models\IdMapModel.cs" />
     <Compile Include="Mapping\Types\GuidValueType.cs" />
     <Compile Include="Mapping\Types\DictionaryCollectionType.cs" />
     <Compile Include="Mapping\Types\SetCollectionType.cs" />
     <Compile Include="Mapping\Types\ICollectionType.cs" />
-    <Compile Include="Mapping\Models\ValueMapModel.cs" />
+    <Compile Include="Mapping\Models\EmbeddedValueMapModel.cs" />
     <Compile Include="Mapping\Models\MapModel.cs" />
     <Compile Include="Mapping\Models\ModelledMapProvider.cs" />
     <Compile Include="Mapping\Models\NestedClassMapModel.cs" />

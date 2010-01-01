@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace MongoDB.Framework.Mapping.Models
 {
-    public class CollectionMapModel : MemberMapModel
+    public class EmbeddedCollectionMapModel : MemberMapModel
     {
         public ICollectionType CollectionType { get; set; }
 

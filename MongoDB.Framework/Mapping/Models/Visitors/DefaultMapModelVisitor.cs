@@ -12,7 +12,7 @@ namespace MongoDB.Framework.Mapping.Models.Visitors
             classMapModel.Accept(this);
         }
 
-        public override void Visit(CollectionMapModel collectionMapModel)
+        public override void Visit(EmbeddedCollectionMapModel collectionMapModel)
         {
             collectionMapModel.Accept(this);
         }
@@ -52,7 +52,7 @@ namespace MongoDB.Framework.Mapping.Models.Visitors
             superClassMapModel.Accept(this);
         }
 
-        public override void Visit(ValueMapModel valueMapModel)
+        public override void Visit(EmbeddedValueMapModel valueMapModel)
         {
             valueMapModel.Accept(this);
         }

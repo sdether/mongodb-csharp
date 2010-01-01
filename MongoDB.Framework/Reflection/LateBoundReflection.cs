@@ -148,25 +148,12 @@ namespace MongoDB.Framework.Reflection
             return result;
         }
 
-        public static Type GetMemberValueType(MemberInfo memberInfo)
-        {
-            switch (memberInfo.MemberType)
-            {
-                case MemberTypes.Field:
-                    return ((FieldInfo)memberInfo).FieldType;
-                case MemberTypes.Property:
-                    return ((PropertyInfo)memberInfo).PropertyType;
-            }
-
-            throw new NotSupportedException("Only fields and properties are supported.");
-        }
-
         private static string CreateKey(MemberInfo memberInfo)
         {
             return string.Format("{0}_{1}_{2}_{3}",
                 memberInfo.DeclaringType.FullName,
                 memberInfo.MemberType,
-                GetMemberValueType(memberInfo),
+                ReflectionUtil.GetMemberValueType(memberInfo),
                 memberInfo.Name);
         }
     }

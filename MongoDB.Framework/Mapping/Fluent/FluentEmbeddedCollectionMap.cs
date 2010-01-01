@@ -7,42 +7,42 @@ using System.Collections.ObjectModel;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentCollectionMap : FluentMap<CollectionMapModel>
+    public class FluentEmbeddedCollectionMap : FluentBase<EmbeddedCollectionMapModel>
     {
-        public FluentCollectionMap()
-            : base(new CollectionMapModel())
+        public FluentEmbeddedCollectionMap()
+            : base(new EmbeddedCollectionMapModel())
         { }
 
-        public FluentCollectionMap Key(string key)
+        public FluentEmbeddedCollectionMap Key(string key)
         {
             this.Model.Key = key;
             return this;
         }
 
-        public FluentCollectionMap CollectionType<TCollection>() where TCollection : ICollectionType, new()
+        public FluentEmbeddedCollectionMap CollectionType<TCollection>() where TCollection : ICollectionType, new()
         {
             this.Model.CollectionType = new TCollection();
             return this;
         }
 
-        public FluentCollectionMap CollectionType(ICollectionType collectionType)
+        public FluentEmbeddedCollectionMap CollectionType(ICollectionType collectionType)
         {
             this.Model.CollectionType = collectionType;
             return this;
         }
 
-        public FluentCollectionMap ElementType<TElement>()
+        public FluentEmbeddedCollectionMap ElementType<TElement>()
         {
             this.Model.ElementType = typeof(TElement);
             return this;
         }
 
-        public FluentCollectionMap ElementValueType<TElementValueType>() where TElementValueType : IValueType, new()
+        public FluentEmbeddedCollectionMap ElementValueType<TElementValueType>() where TElementValueType : IValueType, new()
         {
             return this.ElementValueType(new TElementValueType());
         }
 
-        public FluentCollectionMap ElementValueType(IValueType elementValueType)
+        public FluentEmbeddedCollectionMap ElementValueType(IValueType elementValueType)
         {
             this.Model.ElementValueType = elementValueType;
             return this;

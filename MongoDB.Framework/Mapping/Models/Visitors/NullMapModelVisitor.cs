@@ -25,10 +25,10 @@ namespace MongoDB.Framework.Mapping.Models.Visitors
         public virtual void ProcessId(IdMapModel idMapModel)
         { }
 
-        public virtual void ProcessCollection(CollectionMapModel collectionMapModel)
+        public virtual void ProcessCollection(EmbeddedCollectionMapModel collectionMapModel)
         { }
 
-        public virtual void ProcessValue(ValueMapModel valueMapModel)
+        public virtual void ProcessValue(EmbeddedValueMapModel valueMapModel)
         { }
 
         public virtual void ProcessMember(MemberMapModel memberMapModel)
@@ -55,10 +55,10 @@ namespace MongoDB.Framework.Mapping.Models.Visitors
         public virtual void Visit(IdMapModel idMapModel)
         { }
 
-        public virtual void Visit(CollectionMapModel collectionMapModel)
+        public virtual void Visit(EmbeddedCollectionMapModel collectionMapModel)
         { }
 
-        public virtual void Visit(ValueMapModel valueMapModel)
+        public virtual void Visit(EmbeddedValueMapModel valueMapModel)
         { }
 
         public virtual void Visit(MemberMapModel memberMapModel)

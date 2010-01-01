@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace MongoDB.Framework.Mapping.Models
 {
-    public class ValueMapModel : MemberMapModel
+    public class EmbeddedValueMapModel : MemberMapModel
     {
         public IValueType CustomValueType { get; set; }
 

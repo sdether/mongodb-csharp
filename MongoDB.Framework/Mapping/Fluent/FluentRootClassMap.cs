@@ -20,7 +20,7 @@ namespace MongoDB.Framework.Mapping.Fluent
 
         public FluentIdMap Id(string memberName)
         {
-            var memberInfo = this.GetSingleMember(memberName);
+            var memberInfo = ReflectionUtil.GetSingleMember<TRootClass>(memberName);
             return this.Id(memberInfo);
         }
 
@@ -35,7 +35,7 @@ namespace MongoDB.Framework.Mapping.Fluent
 
         public FluentIdMap Id(Expression<Func<TRootClass, object>> idMember)
         {
-            var memberInfo = this.GetSingleMember(idMember);
+            var memberInfo = ReflectionUtil.GetSingleMember(idMember);
             return this.Id(memberInfo);
         }
 

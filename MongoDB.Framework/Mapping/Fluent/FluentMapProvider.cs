@@ -11,8 +11,8 @@ namespace MongoDB.Framework.Mapping.Fluent
 {
     public class FluentMapProvider : ModelledMapProvider
     {
-        private static readonly PropertyInfo rootModelPropertyInfo = typeof(FluentMap<RootClassMapModel>).GetProperty("Model");
-        private static readonly PropertyInfo nestedModelPropertyInfo = typeof(FluentMap<NestedClassMapModel>).GetProperty("Model");
+        private static readonly PropertyInfo rootModelPropertyInfo = typeof(FluentBase<RootClassMapModel>).GetProperty("Model");
+        private static readonly PropertyInfo nestedModelPropertyInfo = typeof(FluentBase<NestedClassMapModel>).GetProperty("Model");
 
         /// <summary>
         /// Adds the maps from assembly containing the specified type.

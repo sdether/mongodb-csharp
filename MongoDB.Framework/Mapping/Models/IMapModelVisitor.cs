@@ -13,8 +13,8 @@ namespace MongoDB.Framework.Mapping.Models
         void ProcessSuperClass(SuperClassMapModel superClassMapModel);
         void ProcessClass(ClassMapModel classMapModel);
         void ProcessId(IdMapModel idMapModel);
-        void ProcessCollection(CollectionMapModel collectionMapModel);
-        void ProcessValue(ValueMapModel valueMapModel);
+        void ProcessCollection(EmbeddedCollectionMapModel collectionMapModel);
+        void ProcessValue(EmbeddedValueMapModel valueMapModel);
         void ProcessMember(MemberMapModel memberMapModel);
         void ProcessExtendedProperties(ExtendedPropertiesMapModel extendedPropertiesMapModel);
 
@@ -24,8 +24,8 @@ namespace MongoDB.Framework.Mapping.Models
         void Visit(SuperClassMapModel superClassMapModel);
         void Visit(ClassMapModel classMapModel);
         void Visit(IdMapModel idMapModel);
-        void Visit(CollectionMapModel collectionMapModel);
-        void Visit(ValueMapModel valueMapModel);
+        void Visit(EmbeddedCollectionMapModel collectionMapModel);
+        void Visit(EmbeddedValueMapModel valueMapModel);
         void Visit(MemberMapModel memberMapModel);
         void Visit(ExtendedPropertiesMapModel extendedPropertiesMapModel);
     }
