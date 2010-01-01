@@ -14,13 +14,31 @@ namespace MongoDB.Framework.Mapping.Fluent
 {
     public abstract class FluentClassMap<TModel, TEntity> : FluentBase<TModel> where TModel : ClassMapModel
     {
-        public FluentMap<TModel, TEntity> Map
-        {
-            get { return new FluentMap<TModel, TEntity>(this); }
-        }
-
         public FluentClassMap(TModel model)
             : base(model)
         { }
+
+        public FluentEmbeddedMemberMap<TEntity> Map(string memberName)
+        {
+            var memberInfo = ReflectionUtil.GetSingleMember<TEntity>(memberName);
+            return this.Map(memberInfo);
+        }
+
+        public FluentEmbeddedMemberMap<TEntity> Map(MemberInfo memberInfo)
+        {
+            var memberType = ReflectionUtil.GetMemberValueType(memberInfo);
+            var memberMap = new FluentEmbeddedMemberMap<TEntity>();
+            memberMap.Model.Getter = memberInfo;
+            memberMap.Model.Setter = memberInfo;
+
+            this.Model.MemberMaps.Add(memberMap.Model);
+            return memberMap;
+        }
+
+        public FluentEmbeddedMemberMap<TEntity> Map(Expression<Func<TEntity, object>> member)
+        {
+            var memberInfo = ReflectionUtil.GetSingleMember(member);
+            return this.Map(memberInfo);
+        }
     }
 }

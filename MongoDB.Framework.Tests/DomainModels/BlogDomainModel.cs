@@ -12,8 +12,8 @@ namespace MongoDB.Framework.DomainModels
         public BlogMap()
         {
             Id(x => x.Id);
-            Map.One(x => x.Name).Key("name");
-            Map.One(x => x.Description).Key("desc");
+            Map(x => x.Name).Key("name");
+            Map(x => x.Description).Key("desc");
 
             //HasMany(x => x.Entries);
         }
@@ -26,11 +26,11 @@ namespace MongoDB.Framework.DomainModels
             Id(x => x.Id);
             //Reference(x => x.Blog);
 
-            Map.One(x => x.Title);
-            Map.One(x => x.Body);
-            Map.One(x => x.PostDate);
+            Map(x => x.Title);
+            Map(x => x.Body);
+            Map(x => x.PostDate);
 
-            Map.Many(x => x.Comments);
+            Map(x => x.Comments);
         }
     }
 
@@ -38,9 +38,9 @@ namespace MongoDB.Framework.DomainModels
     {
         public BlogEntryCommentMap()
         {
-            Map.One(x => x.CommenterEmail);
-            Map.One(x => x.Comment);
-            Map.Many(x => x.Comments);
+            Map(x => x.CommenterEmail);
+            Map(x => x.Comment);
+            Map(x => x.Comments);
         }
     }
 

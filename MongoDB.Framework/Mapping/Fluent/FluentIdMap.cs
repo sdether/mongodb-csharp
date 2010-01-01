@@ -15,7 +15,7 @@ namespace MongoDB.Framework.Mapping.Fluent
         }
 
         public FluentIdMap()
-            : base(new IdMapModel())
+            : base(new IdMapModel() { ValuePart = new EmbeddedValuePart() })
         { }
 
         public FluentIdMap UnsavedValue(object unsavedValue)
@@ -31,7 +31,7 @@ namespace MongoDB.Framework.Mapping.Fluent
 
         public FluentIdMap CustomTypeIs(IValueType valueType)
         {
-            this.Model.CustomValueType = valueType;
+            this.Model.ValuePart.CustomValueType = valueType;
             return this;
         }
     }

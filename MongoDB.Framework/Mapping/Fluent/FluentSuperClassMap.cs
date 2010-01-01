@@ -38,7 +38,7 @@ namespace MongoDB.Framework.Mapping.Fluent
 
         public void ExtendedProperties(MemberInfo memberInfo)
         {
-            this.Model.ExtendedPropertiesMap = new EmbeddedValueMapModel()
+            this.Model.ExtendedPropertiesMap = new ExtendedPropertiesMapModel()
             {
                 Getter = memberInfo,
                 Setter = memberInfo

@@ -5,6 +5,7 @@ using System.Text;
 
 using MongoDB.Driver;
 using MongoDB.Framework.Mapping.Fluent;
+using MongoDB.Framework.Mapping.Types;
 
 namespace MongoDB.Framework.DomainModels
 {
@@ -16,20 +17,20 @@ namespace MongoDB.Framework.DomainModels
 
             Id(x => x.Id);
 
-            Map.One(x => x.Name);
-            Map.One(x => x.PhoneNumber);
+            Map(x => x.Name);
+            Map(x => x.PhoneNumber);
 
-            Map.Many(x => x.AlternatePhoneNumbers);
-            Map.Many(x => x.Aliases);
+            Map(x => x.AlternatePhoneNumbers);
+            Map(x => x.Aliases);
 
             DiscriminateSubClassesOnKey<string>("Type")
                 .SubClass<Person>(PartyType.Person.ToString(), m =>
                 {
-                    m.Map.One(x => x.BirthDate);
+                    m.Map(x => x.BirthDate);
                 })
                 .SubClass<Organization>(PartyType.Organization.ToString(), m =>
                 {
-                    m.Map.One(x => x.EmployeeCount);
+                    m.Map(x => x.EmployeeCount);
                 });
 
             ExtendedProperties(x => x.ExtendedProperties);
@@ -40,9 +41,9 @@ namespace MongoDB.Framework.DomainModels
     {
         public PhoneNumberMap()
         {
-            Map.One(x => x.AreaCode);
-            Map.One(x => x.Prefix);
-            Map.One(x => x.Number);
+            Map(x => x.AreaCode);
+            Map(x => x.Prefix);
+            Map(x => x.Number);
         }
     }
 

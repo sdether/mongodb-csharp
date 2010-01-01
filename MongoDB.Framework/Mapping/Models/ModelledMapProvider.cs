@@ -6,6 +6,7 @@ using MongoDB.Framework.Reflection;
 using MongoDB.Framework.Mapping.Types;
 using System.Text.RegularExpressions;
 using MongoDB.Framework.Mapping.IdGenerators;
+using System.Collections;
 
 namespace MongoDB.Framework.Mapping.Models
 {
@@ -159,7 +160,7 @@ namespace MongoDB.Framework.Mapping.Models
             return nestedClassMap;
         }
 
-        private ExtendedPropertiesMap BuildExtendedPropertiesMap(EmbeddedValueMapModel model)
+        private ExtendedPropertiesMap BuildExtendedPropertiesMap(ExtendedPropertiesMapModel model)
         {
             if (model == null)
                 return null;
@@ -175,7 +176,9 @@ namespace MongoDB.Framework.Mapping.Models
         {
             var getter = LateBoundReflection.GetGetter(model.Getter);
             var setter = LateBoundReflection.GetSetter(model.Setter);
-            IValueType valueType = model.CustomValueType;
+            IValueType valueType = null;
+            if(model.ValuePart != null)
+                valueType = model.ValuePart.CustomValueType;
             IIdGenerator generator = model.Generator;
             object unsavedValue = model.UnsavedValue;
 
@@ -210,18 +213,16 @@ namespace MongoDB.Framework.Mapping.Models
             var memberValueType = ReflectionUtil.GetMemberValueType(model.Getter);
             IValueType valueType;
 
-            if(model is EmbeddedValueMapModel)
+            if (model.ValuePart == null && (model.CollectionPart != null || this.IsCollection(memberValueType)))
             {
-                var kvModel = (EmbeddedValueMapModel)model;
-                valueType = kvModel.CustomValueType ?? this.GetValueTypeFromType(memberValueType);
-            }
-            else if (model is EmbeddedCollectionMapModel)
-            {
-                var cModel = (EmbeddedCollectionMapModel)model;
-                valueType = this.GetCollectionValueType(memberValueType, cModel.CollectionType, cModel.ElementType, cModel.ElementValueType);
+                valueType = this.GetCollectionValueType(memberValueType, model.CollectionPart);
             }
             else
-                throw new NotSupportedException();
+            {
+                if (model.ValuePart == null)
+                    model.ValuePart = new EmbeddedValuePart();
+                valueType = model.ValuePart.CustomValueType ?? this.GetValueTypeFromType(memberValueType);
+            }
 
             return new MemberMap(
                 key,
@@ -244,6 +245,11 @@ namespace MongoDB.Framework.Mapping.Models
                 extendedPropertiesMap);
         }
 
+        private bool IsCollection(Type type)
+        {
+            return typeof(IEnumerable).IsAssignableFrom(type) && type != typeof(string);
+        }
+
         private IValueType GetValueTypeFromType(Type type)
         {
             NestedClassMapModel nestedClassMapModel;
@@ -264,19 +270,22 @@ namespace MongoDB.Framework.Mapping.Models
             return new NullSafeValueType(type);
         }
 
-        private IValueType GetCollectionValueType(Type memberType, ICollectionType collectionType, Type elementType, IValueType elementValueType)
+        private IValueType GetCollectionValueType(Type memberType, EmbeddedCollectionPart collectionPart)
         {
-            if (collectionType == null)
-                collectionType = this.GetCollectionType(memberType);
+            if (collectionPart == null)
+                collectionPart = new EmbeddedCollectionPart();
 
-            if (elementValueType == null)
+            if (collectionPart.CollectionType == null)
+                collectionPart.CollectionType = this.GetCollectionType(memberType);
+
+            if (collectionPart.ElementValueType == null)
             {
-                if (elementType == null)
-                    elementType = this.DiscoverElementType(memberType);
-                elementValueType = this.GetValueTypeFromType(elementType);
+                if (collectionPart.ElementType == null)
+                    collectionPart.ElementType = this.DiscoverElementType(memberType);
+                collectionPart.ElementValueType = this.GetValueTypeFromType(collectionPart.ElementType);
             }
 
-            return new CollectionValueType(collectionType, elementValueType);
+            return new CollectionValueType(collectionPart.CollectionType, collectionPart.ElementValueType);
         }
 
         private Type DiscoverElementType(Type memberType)

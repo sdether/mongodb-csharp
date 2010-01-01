@@ -57,7 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Mapping\Fluent\FluentMap.cs" />
+    <Compile Include="Mapping\Fluent\FluentEmbeddedMemberMap.cs" />
     <Compile Include="Mapping\Models\ExtendedPropertiesMapModel.cs" />
     <Compile Include="Mapping\Models\IMapModelVisitor.cs" />
     <Compile Include="Mapping\Models\MemberMapModel.cs" />
@@ -90,7 +90,7 @@
     <Compile Include="Linq\MongoQueryProjection.cs" />
     <Compile Include="Linq\Visitors\ScalarQueryModelVisitor.cs" />
     <Compile Include="Mapping\Fluent\FluentGeneratedBy.cs" />
-    <Compile Include="Mapping\Fluent\FluentEmbeddedCollectionMap.cs" />
+    <Compile Include="Mapping\Fluent\FluentEmbeddedCollectionPart.cs" />
     <Compile Include="Mapping\Fluent\FluentIdMap.cs" />
     <Compile Include="Mapping\Fluent\FluentClassMap.cs">
       <SubType>Code</SubType>
@@ -104,7 +104,7 @@
     <Compile Include="Mapping\Fluent\FluentMapProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentEmbeddedValueMap.cs">
+    <Compile Include="Mapping\Fluent\FluentEmbeddedValuePart.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\Fluent\FluentNestedClassMap.cs">
@@ -128,13 +128,13 @@
     <Compile Include="Mapping\IdMap.cs" />
     <Compile Include="Mapping\IMapProvider.cs" />
     <Compile Include="Mapping\Models\ClassMapModel.cs" />
-    <Compile Include="Mapping\Models\EmbeddedCollectionMapModel.cs" />
+    <Compile Include="Mapping\Models\EmbeddedCollectionPart.cs" />
     <Compile Include="Mapping\Models\IdMapModel.cs" />
     <Compile Include="Mapping\Types\GuidValueType.cs" />
     <Compile Include="Mapping\Types\DictionaryCollectionType.cs" />
     <Compile Include="Mapping\Types\SetCollectionType.cs" />
     <Compile Include="Mapping\Types\ICollectionType.cs" />
-    <Compile Include="Mapping\Models\EmbeddedValueMapModel.cs" />
+    <Compile Include="Mapping\Models\EmbeddedValuePart.cs" />
     <Compile Include="Mapping\Models\MapModel.cs" />
     <Compile Include="Mapping\Models\ModelledMapProvider.cs" />
     <Compile Include="Mapping\Models\NestedClassMapModel.cs" />
