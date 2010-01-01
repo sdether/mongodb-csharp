@@ -10,7 +10,7 @@ namespace MongoDB.Framework.Mapping
     {
         #region Private Fields
 
-        private readonly Dictionary<string, MemberMap> memberMaps;
+        private readonly List<MemberMap> memberMaps;
 
         #endregion
 
@@ -78,9 +78,9 @@ namespace MongoDB.Framework.Mapping
         /// Gets the member maps.
         /// </summary>
         /// <value>The simple member maps.</value>
-        public IEnumerable<MemberMap> MemberMaps
+        public virtual IEnumerable<MemberMap> MemberMaps
         {
-            get { return this.memberMaps.Values; }
+            get { return this.memberMaps; }
         }
 
         /// <summary>
@@ -96,8 +96,9 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Initializes a new instance of the <see cref="ClassMap"/> class.
         /// </summary>
-        /// <param name="metaDataStore">The meta data store.</param>
-        /// <param name="type">ValueType of the entity.</param>
+        /// <param name="type">The type.</param>
+        /// <param name="memberMaps">The member maps.</param>
+        /// <param name="discriminator">The discriminator.</param>
         protected ClassMap(Type type, IEnumerable<MemberMap> memberMaps, object discriminator)
         {
             if (type == null)
@@ -106,10 +107,7 @@ namespace MongoDB.Framework.Mapping
                 throw new ArgumentNullException("memberMaps");
 
             this.Discriminator = discriminator;
-            this.memberMaps = new Dictionary<string, MemberMap>();
-            foreach (var memberMap in memberMaps)
-                this.memberMaps.Add(memberMap.Key, memberMap);
-
+            this.memberMaps = memberMaps.ToList();
             this.Type = type;
         }
 
@@ -125,7 +123,7 @@ namespace MongoDB.Framework.Mapping
         {
             visitor.ProcessClass(this);
 
-            if (this.HasId)
+            if(this.HasId)
                 visitor.Visit(this.IdMap);
 
             foreach (var memberMap in this.MemberMaps)
@@ -169,23 +167,6 @@ namespace MongoDB.Framework.Mapping
                 return memberMap;
 
             throw new UnmappedMemberException(string.Format("The member {0} has not been mapped.", memberName));
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        /// <summary>
-        /// Determines whether the specified key contains key.
-        /// </summary>
-        /// <param name="key">The key.</param>
-        /// <returns>
-        /// 	<c>true</c> if the specified key contains key; otherwise, <c>false</c>.
-        /// </returns>
-        private bool ContainsKey(string key)
-        {
-            return (key == "_id" && this.HasId)
-                || this.memberMaps.ContainsKey(key);
         }
 
         #endregion

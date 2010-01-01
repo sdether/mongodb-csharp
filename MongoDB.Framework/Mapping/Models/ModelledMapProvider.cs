@@ -112,14 +112,7 @@ namespace MongoDB.Framework.Mapping.Models
             var idMap = this.BuildIdMap(model.IdMap);
             string collectionName = model.CollectionName ?? model.Type.Name;
 
-            var subClassMaps = model.SubClassMaps
-                .Select(sc => this.BuildSubClassMap(
-                    sc,
-                    idMap,
-                    collectionName,
-                    model.DiscriminatorKey,
-                    memberMaps,
-                    extPropMap));
+            var subClassMaps = model.SubClassMaps.Select(sc => this.BuildSubClassMap(sc));
 
             var rootClassMap = new RootClassMap(
                 model.Type,
@@ -140,14 +133,7 @@ namespace MongoDB.Framework.Mapping.Models
             memberMaps.AddRange(model.MemberMaps.Select(mm => this.BuildMemberMap(mm)));
             var extPropMap = this.BuildExtendedPropertiesMap(model.ExtendedPropertiesMap);
 
-            var subClassMaps = model.SubClassMaps
-                .Select(sc => this.BuildSubClassMap(
-                    sc,
-                    null,
-                    null,
-                    model.DiscriminatorKey,
-                    memberMaps,
-                    extPropMap));
+            var subClassMaps = model.SubClassMaps.Select(sc => this.BuildSubClassMap(sc));
 
             var nestedClassMap = new NestedClassMap(
                 model.Type,
@@ -246,17 +232,13 @@ namespace MongoDB.Framework.Mapping.Models
                 valueType);
         }
 
-        private SubClassMap BuildSubClassMap(SubClassMapModel model, IdMap idMap, string collectionName, string discriminatorKey, IEnumerable<MemberMap> superClassMemberMaps, ExtendedPropertiesMap extendedPropertiesMap)
+        private SubClassMap BuildSubClassMap(SubClassMapModel model)
         {
             var subClassMemberMaps = model.MemberMaps.Select(mm => this.BuildMemberMap(mm));
             return new SubClassMap(
                 model.Type,
-                collectionName,
-                idMap,
-                superClassMemberMaps.Concat(subClassMemberMaps),
-                discriminatorKey,
-                model.Discriminator,
-                extendedPropertiesMap);
+                subClassMemberMaps,
+                model.Discriminator);
         }
 
         private bool IsCollection(Type type)

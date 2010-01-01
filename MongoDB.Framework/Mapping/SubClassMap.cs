@@ -7,15 +7,6 @@ namespace MongoDB.Framework.Mapping
 {
     public class SubClassMap : ClassMap
     {
-        #region Private Fields
-
-        private string collectionName;
-        private string discriminatorKey;
-        private ExtendedPropertiesMap extendedPropertiesMap;
-        private IdMap idMap;
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
@@ -24,7 +15,7 @@ namespace MongoDB.Framework.Mapping
         /// <value>The name of the collection.</value>
         public override string CollectionName
         {
-            get { return this.collectionName; }
+            get { return this.SuperClassMap.CollectionName; }
         }
 
         /// <summary>
@@ -33,7 +24,7 @@ namespace MongoDB.Framework.Mapping
         /// <value>The discriminator key.</value>
         public override string DiscriminatorKey
         {
-            get { return this.discriminatorKey; }
+            get { return this.SuperClassMap.DiscriminatorKey; }
         }
 
         /// <summary>
@@ -42,7 +33,7 @@ namespace MongoDB.Framework.Mapping
         /// <value>The extended properties map.</value>
         public override ExtendedPropertiesMap ExtendedPropertiesMap
         {
-            get { return this.extendedPropertiesMap; }
+            get { return this.SuperClassMap.ExtendedPropertiesMap; }
         }
 
         /// <summary>
@@ -51,7 +42,7 @@ namespace MongoDB.Framework.Mapping
         /// <value>The id map.</value>
         public override IdMap IdMap
         {
-            get { return this.idMap; }
+            get { return this.SuperClassMap.IdMap; }
         }
 
         /// <summary>
@@ -64,6 +55,25 @@ namespace MongoDB.Framework.Mapping
         {
             get { return true; }
         }
+
+        /// <summary>
+        /// Gets the member maps.
+        /// </summary>
+        /// <value>The simple member maps.</value>
+        public override IEnumerable<MemberMap> MemberMaps
+        {
+            get
+            {
+                return this.SuperClassMap.MemberMaps
+                    .Concat(base.MemberMaps);
+            }
+        }
+
+        /// <summary>
+        /// Gets the super class map.
+        /// </summary>
+        /// <value>The super class map.</value>
+        public SuperClassMap SuperClassMap { get; private set; }
 
         #endregion
 
@@ -79,14 +89,9 @@ namespace MongoDB.Framework.Mapping
         /// <param name="discriminatorKey">The discriminator key.</param>
         /// <param name="discriminator">The discriminator.</param>
         /// <param name="extendedPropertiesMap">The extended properties map.</param>
-        public SubClassMap(Type type, string collectionName, IdMap idMap, IEnumerable<MemberMap> memberMaps, string discriminatorKey, object discriminator, ExtendedPropertiesMap extendedPropertiesMap)
+        public SubClassMap(Type type, IEnumerable<MemberMap> memberMaps, object discriminator)
             : base(type, memberMaps, discriminator)
-        {
-            this.collectionName = collectionName;
-            this.idMap = idMap;
-            this.discriminatorKey = discriminatorKey;
-            this.extendedPropertiesMap = extendedPropertiesMap;
-        }
+        {  }
 
         #endregion
 
@@ -114,6 +119,19 @@ namespace MongoDB.Framework.Mapping
                 throw new InvalidOperationException(string.Format("The discriminator specified does not belong to the entity {0}.", this.Type));
 
             return this;
+        }
+
+        #endregion
+
+        #region Internal Methods
+
+        /// <summary>
+        /// Sets the super class.
+        /// </summary>
+        /// <param name="superClassMap">The super class map.</param>
+        internal void SetSuperClass(SuperClassMap superClassMap)
+        {
+            this.SuperClassMap = superClassMap;
         }
 
         #endregion
