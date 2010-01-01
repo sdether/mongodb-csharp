@@ -65,6 +65,10 @@ namespace MongoDB.Framework.Mapping
 
         #region Public Methods
 
+        /// <summary>
+        /// Accepts the specified visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
         public override void Accept(IMapVisitor visitor)
         {
             visitor.ProcessRootClass(this);

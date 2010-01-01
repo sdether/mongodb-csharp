@@ -76,6 +76,8 @@ namespace MongoDB.Framework.Mapping
             this.discriminatorKey = discriminatorKey;
             this.extendedPropertiesMap = extendedPropertiesMap;
             this.subClassMaps = new List<SubClassMap>(subClassMaps ?? new SubClassMap[0]);
+            foreach (var subClassMap in this.subClassMaps)
+                subClassMap.SetSuperClass(this);
         }
 
         #endregion
@@ -89,9 +91,6 @@ namespace MongoDB.Framework.Mapping
         public override void Accept(IMapVisitor visitor)
         {
             visitor.ProcessSuperClass(this);
-
-            foreach (var subClass in this.subClassMaps)
-                visitor.Visit(subClass);
 
             base.Accept(visitor);
         }
