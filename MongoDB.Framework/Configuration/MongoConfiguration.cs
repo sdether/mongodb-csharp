@@ -21,7 +21,7 @@ namespace MongoDB.Framework.Configuration
         /// Gets the mapping store.
         /// </summary>
         /// <value>The mapping store.</value>
-        public MappingStore MappingStore { get; private set; }
+        public IMappingStore IMappingStore { get; private set; }
 
         /// <summary>
         /// Gets the mongo factory.
@@ -38,7 +38,7 @@ namespace MongoDB.Framework.Configuration
         /// </summary>
         /// <param name="databaseName">Name of the database.</param>
         /// <param name="mappingStore">The mapping store.</param>
-        public MongoConfiguration(string databaseName, MappingStore mappingStore)
+        public MongoConfiguration(string databaseName, IMappingStore mappingStore)
         {
             if (string.IsNullOrEmpty(databaseName))
                 throw new ArgumentException("Cannot be null or empty.", "databaseName");
@@ -46,7 +46,7 @@ namespace MongoDB.Framework.Configuration
                 throw new ArgumentNullException("mappingStore");
 
             this.DatabaseName = databaseName;
-            this.MappingStore = mappingStore;
+            this.IMappingStore = mappingStore;
             this.MongoFactory = new DefaultMongoFactory();
         }
 

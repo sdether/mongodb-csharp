@@ -5,20 +5,20 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping
 {
-    public class MappingStore
+    public class MappingStore : IMappingStore
     {
         private Dictionary<Type, ClassMap> classMaps;
         private List<IMapProvider> mapProviders;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MappingStore"/> class.
+        /// Initializes a new instance of the <see cref="IMappingStore"/> class.
         /// </summary>
         public MappingStore()
             : this(null)
         { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MappingStore"/> class.
+        /// Initializes a new instance of the <see cref="IMappingStore"/> class.
         /// </summary>
         /// <param name="mapProviders">The map providers.</param>
         public MappingStore(params IMapProvider[] mapProviders)
@@ -26,7 +26,7 @@ namespace MongoDB.Framework.Mapping
         { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MappingStore"/> class.
+        /// Initializes a new instance of the <see cref="IMappingStore"/> class.
         /// </summary>
         /// <param name="mapProviders">The map providers.</param>
         public MappingStore(IEnumerable<IMapProvider> mapProviders)

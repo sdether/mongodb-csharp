@@ -32,7 +32,7 @@ namespace MongoDB.Framework
             var mongo = contextFactory.Configuration.MongoFactory.CreateMongo();
             mongo.Connect();
             Database db = mongo.getDB(contextFactory.Configuration.DatabaseName);
-            string collectionName = contextFactory.Configuration.MappingStore.GetClassMapFor<Party>().CollectionName;
+            string collectionName = contextFactory.Configuration.IMappingStore.GetClassMapFor<Party>().CollectionName;
             IMongoCollection collection = db.GetCollection(collectionName);
 
             var party1 = new Document()
@@ -77,7 +77,7 @@ namespace MongoDB.Framework
             var mongo = contextFactory.Configuration.MongoFactory.CreateMongo();
             mongo.Connect();
             Database db = mongo.getDB(contextFactory.Configuration.DatabaseName);
-            string collectionName = contextFactory.Configuration.MappingStore.GetClassMapFor<Party>().CollectionName;
+            string collectionName = contextFactory.Configuration.IMappingStore.GetClassMapFor<Party>().CollectionName;
             db.SendCommand(new Document().Append("drop", collectionName));
             mongo.Disconnect();
         }

@@ -17,7 +17,7 @@ namespace MongoDB.Framework.Linq.Visitors
 {
     public class ProjectionBuilder : ExpressionTreeVisitor
     {
-        public static MongoQueryProjection Build(MappingStore mappingStore, Expression expression)
+        public static MongoQueryProjection Build(IMappingStore mappingStore, Expression expression)
         {
             var resultObjectMappingParameter = Expression.Parameter(typeof(ResultObjectMapping), "resultObjectMapping");
             ProjectionBuilder builder = new ProjectionBuilder(mappingStore, resultObjectMappingParameter);
@@ -41,7 +41,7 @@ namespace MongoDB.Framework.Linq.Visitors
 
         #region Private Fields
 
-        private MappingStore mappingStore;
+        private IMappingStore mappingStore;
         private ParameterExpression resultObjectMappingParameter;
         private Document fields;
         private Stack<string> memberNames;
@@ -54,7 +54,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// Initializes a new instance of the <see cref="MongoWhereClauseExpressionTreeVisitor"/> class.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        private ProjectionBuilder(MappingStore mappingStore, ParameterExpression documentParameter)
+        private ProjectionBuilder(IMappingStore mappingStore, ParameterExpression documentParameter)
         {
             this.mappingStore = mappingStore;
             this.resultObjectMappingParameter = documentParameter;

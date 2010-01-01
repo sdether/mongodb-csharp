@@ -16,7 +16,7 @@ namespace MongoDB.Framework.Linq.Visitors
     {
         #region Public Static Methods
 
-        public static MemberMapPath BuildFrom(MappingStore mappingStore, Expression expression)
+        public static MemberMapPath BuildFrom(IMappingStore mappingStore, Expression expression)
         {
             MemberMapPathBuilder builder = new MemberMapPathBuilder(mappingStore);
             builder.VisitExpression(expression);
@@ -27,7 +27,7 @@ namespace MongoDB.Framework.Linq.Visitors
 
         #region Private Fields
 
-        private MappingStore mappingStore;
+        private IMappingStore mappingStore;
         private Stack<MemberInfo> members = new Stack<MemberInfo>();
         private MemberMapPath memberMapPath;
 
@@ -35,7 +35,7 @@ namespace MongoDB.Framework.Linq.Visitors
 
         #region Constructors
 
-        private MemberMapPathBuilder(MappingStore mappingStore)
+        private MemberMapPathBuilder(IMappingStore mappingStore)
         {
             this.mappingStore = mappingStore;
         }

@@ -14,7 +14,7 @@ namespace MongoDB.Framework.Mapping
         #region Private Fields
 
         private Type type;
-        private MappingStore mappingStore;
+        private IMappingStore mappingStore;
         private IEnumerable<string> memberNames;
 
         private List<MemberMap> memberMaps;
@@ -39,7 +39,7 @@ namespace MongoDB.Framework.Mapping
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="type">ValueType of the entity.</param>
         /// <param name="memberNames">The member names.</param>
-        public MemberMapPath(MappingStore mappingStore, Type type, params string[] memberNames)
+        public MemberMapPath(IMappingStore mappingStore, Type type, params string[] memberNames)
             : this(mappingStore, type, (IEnumerable<string>)memberNames)
         { }
 
@@ -49,7 +49,7 @@ namespace MongoDB.Framework.Mapping
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="type">ValueType of the entity.</param>
         /// <param name="memberNames">The member names.</param>
-        public MemberMapPath(MappingStore mappingStore, Type type, IEnumerable<string> memberNames)
+        public MemberMapPath(IMappingStore mappingStore, Type type, IEnumerable<string> memberNames)
         {
             if (mappingStore == null)
                 throw new ArgumentNullException("mappingStore");
@@ -69,7 +69,7 @@ namespace MongoDB.Framework.Mapping
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="type">ValueType of the entity.</param>
         /// <param name="memberInfos">The member infos.</param>
-        public MemberMapPath(MappingStore mappingStore, Type type, params MemberInfo[] memberInfos)
+        public MemberMapPath(IMappingStore mappingStore, Type type, params MemberInfo[] memberInfos)
             : this(mappingStore, type, (IEnumerable<MemberInfo>)memberInfos)
         { }
 
@@ -79,7 +79,7 @@ namespace MongoDB.Framework.Mapping
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="type">ValueType of the entity.</param>
         /// <param name="memberInfos">The member infos.</param>
-        public MemberMapPath(MappingStore mappingStore, Type type, IEnumerable<MemberInfo> memberInfos)
+        public MemberMapPath(IMappingStore mappingStore, Type type, IEnumerable<MemberInfo> memberInfos)
             : this(mappingStore, type, memberInfos.Select(mi => mi.Name))
         { }
 
@@ -155,7 +155,7 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="memberNames">The member names.</param>
-        public MemberMapPath(MappingStore mappingStore, params string[] memberNames)
+        public MemberMapPath(IMappingStore mappingStore, params string[] memberNames)
             : base(mappingStore, typeof(TEntity), memberNames)
         { }
 
@@ -164,7 +164,7 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="memberNames">The member names.</param>
-        public MemberMapPath(MappingStore mappingStore, IEnumerable<string> memberNames)
+        public MemberMapPath(IMappingStore mappingStore, IEnumerable<string> memberNames)
             : base(mappingStore, typeof(TEntity), memberNames)
         { }
 
@@ -173,7 +173,7 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="memberInfos">The member infos.</param>
-        public MemberMapPath(MappingStore mappingStore, params MemberInfo[] memberInfos)
+        public MemberMapPath(IMappingStore mappingStore, params MemberInfo[] memberInfos)
             : base(mappingStore, typeof(TEntity), memberInfos)
         { }
 
@@ -182,7 +182,7 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="memberInfos">The member infos.</param>
-        public MemberMapPath(MappingStore mappingStore, IEnumerable<MemberInfo> memberInfos)
+        public MemberMapPath(IMappingStore mappingStore, IEnumerable<MemberInfo> memberInfos)
             : base(mappingStore, typeof(TEntity), memberInfos)
         { }
 

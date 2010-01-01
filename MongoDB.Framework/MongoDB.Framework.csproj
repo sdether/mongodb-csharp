@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Mapping\Fluent\FluentEmbeddedMemberMap.cs" />
+    <Compile Include="Mapping\IMappingStore.cs" />
     <Compile Include="Mapping\IndexDirection.cs" />
     <Compile Include="Mapping\IndexMap.cs" />
     <Compile Include="Mapping\IndexPart.cs" />

@@ -18,7 +18,7 @@ namespace MongoDB.Framework.Configuration
         /// Gets the mapping store.
         /// </summary>
         /// <value>The mapping store.</value>
-        MappingStore MappingStore { get; }
+        IMappingStore IMappingStore { get; }
 
         /// <summary>
         /// Gets the mongo factory.

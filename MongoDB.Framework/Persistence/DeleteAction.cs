@@ -31,7 +31,7 @@ namespace MongoDB.Framework.Persistence
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
-            var classMap = this.MongoContext.Configuration.MappingStore.GetClassMapFor(entity.GetType());
+            var classMap = this.MongoContext.Configuration.IMappingStore.GetClassMapFor(entity.GetType());
 
             var document = new DeleteDocumentMapper(this.MongoContext)
                 .CreateDocument(classMap, entity);

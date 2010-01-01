@@ -33,7 +33,7 @@ namespace MongoDB.Framework.Persistence
         /// <returns></returns>
         public IEnumerable<object> Find(Type type, Document conditions, int limit, int skip, Document orderBy, Document fields)
         {
-            var classMap = this.MongoContext.Configuration.MappingStore.GetClassMapFor(type);
+            var classMap = this.MongoContext.Configuration.IMappingStore.GetClassMapFor(type);
             return this.Find(classMap, conditions, limit, skip, orderBy, fields);
         }
 
