@@ -46,25 +46,33 @@ namespace MongoDB.Framework.Mapping
         /// <value>
         /// 	<c>true</c> if this instance has extended properties; otherwise, <c>false</c>.
         /// </value>
-        public bool HasExtendedProperties
-        {
-            get { return this.ExtendedPropertiesMap != null; }
-        }
+        public abstract bool HasExtendedProperties { get; }
 
         /// <summary>
         /// Gets a value indicating whether this instance has id.
         /// </summary>
         /// <value><c>true</c> if this instance has id; otherwise, <c>false</c>.</value>
-        public bool HasId
-        {
-            get { return this.IdMap != null; }
-        }
+        public abstract bool HasId { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance has indexes.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance has indexes; otherwise, <c>false</c>.
+        /// </value>
+        public abstract bool HasIndexes { get; }
 
         /// <summary>
         /// Gets the id map.
         /// </summary>
         /// <value>The id map.</value>
         public abstract IdMap IdMap { get; }
+
+        /// <summary>
+        /// Gets the indexes.
+        /// </summary>
+        /// <value>The indexes.</value>
+        public abstract IEnumerable<IndexMap> Indexes { get; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is polymorphic.
@@ -113,25 +121,7 @@ namespace MongoDB.Framework.Mapping
 
         #endregion
 
-        #region Public Methods
-
-        /// <summary>
-        /// Accepts the specified visitor.
-        /// </summary>
-        /// <param name="visitor">The visitor.</param>
-        public override void Accept(IMapVisitor visitor)
-        {
-            visitor.ProcessClass(this);
-
-            if(this.HasId)
-                visitor.Visit(this.IdMap);
-
-            foreach (var memberMap in this.MemberMaps)
-                visitor.Visit(memberMap);
-
-            if (this.HasExtendedProperties)
-                visitor.Visit(this.ExtendedPropertiesMap);
-        }
+        #region Public Methods            
 
         /// <summary>
         /// Gets the class map by discriminator.

@@ -13,7 +13,27 @@ namespace MongoDB.Framework.Mapping
         /// <value>The name of the collection.</value>
         public override string CollectionName
         {
-            get { return null; }
+            get { throw new InvalidOperationException("NestedClasses cannot have collections."); }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance has id.
+        /// </summary>
+        /// <value><c>true</c> if this instance has id; otherwise, <c>false</c>.</value>
+        public override bool HasId
+        {
+            get { return false; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance has indexes.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance has indexes; otherwise, <c>false</c>.
+        /// </value>
+        public override bool HasIndexes
+        {
+            get { return false; }
         }
 
         /// <summary>
@@ -22,7 +42,16 @@ namespace MongoDB.Framework.Mapping
         /// <value>The id map.</value>
         public override IdMap IdMap
         {
-            get { return null; }
+            get { throw new InvalidOperationException("NestedClasses cannot have ids."); }
+        }
+
+        /// <summary>
+        /// Gets the indexes.
+        /// </summary>
+        /// <value>The indexes.</value>
+        public override IEnumerable<IndexMap> Indexes
+        {
+            get { throw new InvalidOperationException("NestedClasses cannot have indexes."); }
         }
 
         /// <summary>
@@ -41,7 +70,11 @@ namespace MongoDB.Framework.Mapping
         {
             visitor.ProcessNestedClass(this);
 
-            base.Accept(visitor);
+            foreach (var memberMap in this.MemberMaps)
+                visitor.Visit(memberMap);
+
+            if (this.HasExtendedProperties)
+                visitor.Visit(this.ExtendedPropertiesMap);
         }
     }
 }

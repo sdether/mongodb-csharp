@@ -37,6 +37,17 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
+        /// Gets a value indicating whether this instance has extended properties.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance has extended properties; otherwise, <c>false</c>.
+        /// </value>
+        public override bool HasExtendedProperties
+        {
+            get { return this.extendedPropertiesMap != null; }
+        }
+
+        /// <summary>
         /// Gets a value indicating whether this instance is polymorphic.
         /// </summary>
         /// <value>
@@ -83,17 +94,6 @@ namespace MongoDB.Framework.Mapping
         #endregion
 
         #region Public Methods
-
-        /// <summary>
-        /// Accepts the specified visitor.
-        /// </summary>
-        /// <param name="visitor">The visitor.</param>
-        public override void Accept(IMapVisitor visitor)
-        {
-            visitor.ProcessSuperClass(this);
-
-            base.Accept(visitor);
-        }
 
         /// <summary>
         /// Gets the class map by discriminator.

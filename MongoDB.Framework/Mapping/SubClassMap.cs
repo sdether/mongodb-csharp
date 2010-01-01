@@ -37,12 +37,52 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
+        /// Gets a value indicating whether this instance has extended properties.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance has extended properties; otherwise, <c>false</c>.
+        /// </value>
+        public override bool HasExtendedProperties
+        {
+            get { return this.SuperClassMap.HasExtendedProperties; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance has id.
+        /// </summary>
+        /// <value><c>true</c> if this instance has id; otherwise, <c>false</c>.</value>
+        public override bool HasId
+        {
+            get { return this.SuperClassMap.HasId; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance has indexes.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance has indexes; otherwise, <c>false</c>.
+        /// </value>
+        public override bool HasIndexes
+        {
+            get { return this.SuperClassMap.HasIndexes; }
+        }
+
+        /// <summary>
         /// Gets the id map.
         /// </summary>
         /// <value>The id map.</value>
         public override IdMap IdMap
         {
             get { return this.SuperClassMap.IdMap; }
+        }
+
+        /// <summary>
+        /// Gets the indexes.
+        /// </summary>
+        /// <value>The indexes.</value>
+        public override IEnumerable<IndexMap> Indexes
+        {
+            get { return this.SuperClassMap.Indexes; }
         }
 
         /// <summary>
@@ -105,7 +145,20 @@ namespace MongoDB.Framework.Mapping
         {
             visitor.ProcessSubClass(this);
 
-            base.Accept(visitor);
+            if(this.HasId)
+                visitor.Visit(this.IdMap);
+
+            foreach (var memberMap in this.MemberMaps)
+                visitor.Visit(memberMap);
+
+            if (this.HasExtendedProperties)
+                visitor.Visit(this.ExtendedPropertiesMap);
+
+            if(this.HasIndexes)
+            {
+                foreach (var index in this.Indexes)
+                    visitor.Visit(index);
+            }
         }
 
         /// <summary>

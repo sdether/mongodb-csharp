@@ -7,16 +7,6 @@ namespace MongoDB.Framework.Mapping.Visitors
 {
     public abstract class DefaultMapVisitor : NullMapVisitor
     {
-        public override void Visit(ClassMap classMap)
-        {
-            classMap.Accept(this);
-        }
-
-        public override void Visit(SuperClassMap superClassMap)
-        {
-            superClassMap.Accept(this);
-        }
-
         public override void Visit(RootClassMap rootClassMap)
         {
             rootClassMap.Accept(this);

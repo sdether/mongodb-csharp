@@ -31,15 +31,12 @@ namespace MongoDB.Framework.Mapping.Visitors
             this.document = document;
             this.entity = Activator.CreateInstance(classMap.Type);
 
+            if (classMap.IsPolymorphic)
+                document.Remove(classMap.DiscriminatorKey);
+
             classMap.Accept(this);
 
             return entity;
-        }
-
-        public override void ProcessClass(ClassMap classMap)
-        {
-            if (classMap.IsPolymorphic)
-                document.Remove(classMap.DiscriminatorKey);
         }
 
         public override void ProcessMember(MemberMap memberMap)

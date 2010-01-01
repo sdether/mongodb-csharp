@@ -7,12 +7,6 @@ namespace MongoDB.Framework.Mapping.Visitors
 {
     public abstract class NullMapVisitor : IMapVisitor
     {
-        public virtual void ProcessClass(ClassMap classMap)
-        { }
-
-        public virtual void ProcessSuperClass(SuperClassMap superClassMap)
-        { }
-
         public virtual void ProcessRootClass(RootClassMap rootClassMap)
         { }
 
@@ -32,12 +26,6 @@ namespace MongoDB.Framework.Mapping.Visitors
         { }
 
         public virtual void ProcessIndex(IndexMap indexMap)
-        { }
-
-        public virtual void Visit(ClassMap classMap)
-        { }
-
-        public virtual void Visit(SuperClassMap superClassMap)
         { }
 
         public virtual void Visit(RootClassMap rootClassMap)

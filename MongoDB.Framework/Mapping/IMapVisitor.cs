@@ -7,8 +7,6 @@ namespace MongoDB.Framework.Mapping
 {
     public interface IMapVisitor
     {
-        void ProcessClass(ClassMap classMap);
-        void ProcessSuperClass(SuperClassMap superClassMap);
         void ProcessRootClass(RootClassMap rootClassMap);
         void ProcessNestedClass(NestedClassMap nestedClassMap);
         void ProcessSubClass(SubClassMap subClassMap);
@@ -17,8 +15,6 @@ namespace MongoDB.Framework.Mapping
         void ProcessExtendedProperties(ExtendedPropertiesMap extendedPropertiesMap);
         void ProcessIndex(IndexMap indexMap);
 
-        void Visit(ClassMap classMap);
-        void Visit(SuperClassMap superClassMap);
         void Visit(RootClassMap rootClassMap);
         void Visit(NestedClassMap nestedClassMap);
         void Visit(SubClassMap subClassMap);
