@@ -11,24 +11,24 @@ using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentKeyValueMemberMap : FluentMemberMap<KeyValueMemberMapModel>
+    public class FluentValueMap : FluentMap<ValueMapModel>
     {
-        public FluentKeyValueMemberMap()
-            : base(new KeyValueMemberMapModel())
+        public FluentValueMap()
+            : base(new ValueMapModel())
         { }
 
-        public FluentKeyValueMemberMap Key(string key)
+        public FluentValueMap Key(string key)
         {
             this.Model.Key = key;
             return this;
         }
 
-        public FluentKeyValueMemberMap CustomTypeIs<TValueType>() where TValueType : IValueType, new()
+        public FluentValueMap CustomTypeIs<TValueType>() where TValueType : IValueType, new()
         {
             return this.CustomTypeIs(new TValueType());
         }
 
-        public FluentKeyValueMemberMap CustomTypeIs(IValueType valueType)
+        public FluentValueMap CustomTypeIs(IValueType valueType)
         {
             this.Model.CustomValueType = valueType;
             return this;

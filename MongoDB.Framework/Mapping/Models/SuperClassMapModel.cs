@@ -9,7 +9,7 @@ namespace MongoDB.Framework.Mapping.Models
     {
         public string DiscriminatorKey { get; set; }
 
-        public MemberMapModel ExtendedPropertiesMap { get; set; }
+        public ValueMapModel ExtendedPropertiesMap { get; set; }
 
         public List<SubClassMapModel> SubClassMaps { get; private set; }
 
@@ -17,6 +17,22 @@ namespace MongoDB.Framework.Mapping.Models
             : base(type)
         {
             this.SubClassMaps = new List<SubClassMapModel>();
+        }
+
+        /// <summary>
+        /// Accepts the specified visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
+        public override void Accept(IMapModelVisitor visitor)
+        {
+            visitor.ProcessSuperClass(this);
+
+            foreach (var subClassMap in this.SubClassMaps)
+                visitor.Visit(subClassMap);
+
+            visitor.Visit(this.ExtendedPropertiesMap);
+
+            base.Accept(visitor);
         }
     }
 }

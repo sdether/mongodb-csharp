@@ -57,6 +57,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mapping\Models\ExtendedPropertiesMapModel.cs" />
+    <Compile Include="Mapping\Models\IMapModelVisitor.cs" />
+    <Compile Include="Mapping\Models\MemberMapModel.cs" />
+    <Compile Include="Mapping\Models\Visitors\DefaultMapModelVisitor.cs" />
+    <Compile Include="Mapping\Models\Visitors\NullMapModelVisitor.cs" />
     <Compile Include="Mapping\Visitors\IdToEntityMapper.cs" />
     <Compile Include="Mapping\Visitors\EntityToDocumentMapper.cs" />
     <Compile Include="Mapping\Visitors\DocumentToEntityMapper.cs" />
@@ -83,13 +88,12 @@
     <Compile Include="Linq\MongoQueryProjection.cs" />
     <Compile Include="Linq\Visitors\ScalarQueryModelVisitor.cs" />
     <Compile Include="Mapping\Fluent\FluentGeneratedBy.cs" />
-    <Compile Include="Mapping\Fluent\FluentCollectionMemberMap.cs" />
+    <Compile Include="Mapping\Fluent\FluentCollectionMap.cs" />
     <Compile Include="Mapping\Fluent\FluentIdMap.cs" />
-    <Compile Include="Mapping\Fluent\FluentMemberMap.cs" />
     <Compile Include="Mapping\Fluent\FluentClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentDiscriminatorMap.cs">
+    <Compile Include="Mapping\Fluent\FluentDiscriminator.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\Fluent\FluentMap.cs">
@@ -98,7 +102,7 @@
     <Compile Include="Mapping\Fluent\FluentMapProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentKeyValueMemberMap.cs">
+    <Compile Include="Mapping\Fluent\FluentValueMap.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\Fluent\FluentNestedClassMap.cs">
@@ -122,18 +126,16 @@
     <Compile Include="Mapping\IdMap.cs" />
     <Compile Include="Mapping\IMapProvider.cs" />
     <Compile Include="Mapping\Models\ClassMapModel.cs" />
-    <Compile Include="Mapping\Models\CollectionMemberMapModel.cs" />
+    <Compile Include="Mapping\Models\CollectionMapModel.cs" />
     <Compile Include="Mapping\Models\IdMapModel.cs" />
     <Compile Include="Mapping\Types\GuidValueType.cs" />
     <Compile Include="Mapping\Types\DictionaryCollectionType.cs" />
     <Compile Include="Mapping\Types\SetCollectionType.cs" />
     <Compile Include="Mapping\Types\ICollectionType.cs" />
-    <Compile Include="Mapping\Models\KeyMemberMapModel.cs" />
-    <Compile Include="Mapping\Models\KeyValueMemberMapModel.cs" />
+    <Compile Include="Mapping\Models\ValueMapModel.cs" />
     <Compile Include="Mapping\Models\MapModel.cs" />
     <Compile Include="Mapping\Models\ModelledMapProvider.cs" />
     <Compile Include="Mapping\Models\NestedClassMapModel.cs" />
-    <Compile Include="Mapping\Models\MemberMapModel.cs" />
     <Compile Include="Mapping\Models\RootClassMapModel.cs" />
     <Compile Include="Mapping\Models\SubClassMapModel.cs" />
     <Compile Include="Mapping\Models\SuperClassMapModel.cs" />

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping.Models
 {
-    public class IdMapModel : MemberMapModel
+    public class IdMapModel : ValueMapModel
     {
         /// <summary>
         /// Gets or sets the generator.
@@ -20,9 +20,14 @@ namespace MongoDB.Framework.Mapping.Models
         public object UnsavedValue { get; set; }
 
         /// <summary>
-        /// Gets or sets the type of the custom value.
+        /// Accepts the specified visitor.
         /// </summary>
-        /// <value>The type of the custom value.</value>
-        public IValueType CustomValueType { get; set; }
+        /// <param name="visitor">The visitor.</param>
+        public override void Accept(IMapModelVisitor visitor)
+        {
+            visitor.ProcessId(this);
+
+            base.Accept(visitor);
+        }
     }
 }

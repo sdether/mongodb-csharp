@@ -18,16 +18,16 @@ namespace MongoDB.Framework.Mapping.Fluent
             : base(model)
         { }
 
-        public FluentKeyValueMemberMap Map(string memberName)
+        public FluentValueMap Map(string memberName)
         {
             var memberInfo = this.GetSingleMember(memberName);
             return this.Map(memberInfo);
         }
 
-        public FluentKeyValueMemberMap Map(MemberInfo memberInfo)
+        public FluentValueMap Map(MemberInfo memberInfo)
         {
             var memberType = LateBoundReflection.GetMemberValueType(memberInfo);
-            var memberMap = new FluentKeyValueMemberMap();
+            var memberMap = new FluentValueMap();
             memberMap.Model.Getter = memberInfo;
             memberMap.Model.Setter = memberInfo;
 
@@ -35,22 +35,22 @@ namespace MongoDB.Framework.Mapping.Fluent
             return memberMap;
         }
 
-        public FluentKeyValueMemberMap Map(Expression<Func<TEntity, object>> member)
+        public FluentValueMap Map(Expression<Func<TEntity, object>> member)
         {
             var memberInfo = this.GetSingleMember(member);
             return this.Map(memberInfo);
         }
 
-        public FluentCollectionMemberMap Collection(string memberName)
+        public FluentCollectionMap Collection(string memberName)
         {
             var memberInfo = this.GetSingleMember(memberName);
             return this.Collection(memberInfo);
         }
 
-        public FluentCollectionMemberMap Collection(MemberInfo memberInfo)
+        public FluentCollectionMap Collection(MemberInfo memberInfo)
         {
             var memberType = LateBoundReflection.GetMemberValueType(memberInfo);
-            var memberMap = new FluentCollectionMemberMap();
+            var memberMap = new FluentCollectionMap();
             memberMap.Model.Getter = memberInfo;
             memberMap.Model.Setter = memberInfo;
 
@@ -58,7 +58,7 @@ namespace MongoDB.Framework.Mapping.Fluent
             return memberMap;
         }
 
-        public FluentCollectionMemberMap Collection(Expression<Func<TEntity, object>> member)
+        public FluentCollectionMap Collection(Expression<Func<TEntity, object>> member)
         {
             var memberInfo = this.GetSingleMember(member);
             return this.Collection(memberInfo);

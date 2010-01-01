@@ -7,43 +7,42 @@ using System.Collections.ObjectModel;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentCollectionMemberMap : FluentMemberMap<CollectionMemberMapModel>
+    public class FluentCollectionMap : FluentMap<CollectionMapModel>
     {
-
-        public FluentCollectionMemberMap()
-            : base(new CollectionMemberMapModel())
+        public FluentCollectionMap()
+            : base(new CollectionMapModel())
         { }
 
-        public FluentCollectionMemberMap Key(string key)
+        public FluentCollectionMap Key(string key)
         {
             this.Model.Key = key;
             return this;
         }
 
-        public FluentCollectionMemberMap CollectionType<TCollection>() where TCollection : ICollectionType, new()
+        public FluentCollectionMap CollectionType<TCollection>() where TCollection : ICollectionType, new()
         {
             this.Model.CollectionType = new TCollection();
             return this;
         }
 
-        public FluentCollectionMemberMap CollectionType(ICollectionType collectionType)
+        public FluentCollectionMap CollectionType(ICollectionType collectionType)
         {
             this.Model.CollectionType = collectionType;
             return this;
         }
 
-        public FluentCollectionMemberMap ElementType<TElement>()
+        public FluentCollectionMap ElementType<TElement>()
         {
             this.Model.ElementType = typeof(TElement);
             return this;
         }
 
-        public FluentCollectionMemberMap ElementValueType<TElementValueType>() where TElementValueType : IValueType, new()
+        public FluentCollectionMap ElementValueType<TElementValueType>() where TElementValueType : IValueType, new()
         {
             return this.ElementValueType(new TElementValueType());
         }
 
-        public FluentCollectionMemberMap ElementValueType(IValueType elementValueType)
+        public FluentCollectionMap ElementValueType(IValueType elementValueType)
         {
             this.Model.ElementValueType = elementValueType;
             return this;

@@ -159,7 +159,7 @@ namespace MongoDB.Framework.Mapping.Models
             return nestedClassMap;
         }
 
-        private ExtendedPropertiesMap BuildExtendedPropertiesMap(MemberMapModel model)
+        private ExtendedPropertiesMap BuildExtendedPropertiesMap(ValueMapModel model)
         {
             if (model == null)
                 return null;
@@ -201,7 +201,7 @@ namespace MongoDB.Framework.Mapping.Models
             return new IdMap(model.Getter.Name, getter, setter, valueType, generator, unsavedValue);
         }
 
-        private MemberMap BuildMemberMap(KeyMemberMapModel model)
+        private MemberMap BuildMemberMap(MemberMapModel model)
         {
             var getter = LateBoundReflection.GetGetter(model.Getter);
             var setter = LateBoundReflection.GetSetter(model.Setter);
@@ -210,14 +210,14 @@ namespace MongoDB.Framework.Mapping.Models
             var memberValueType = LateBoundReflection.GetMemberValueType(model.Getter);
             IValueType valueType;
 
-            if(model is KeyValueMemberMapModel)
+            if(model is ValueMapModel)
             {
-                var kvModel = (KeyValueMemberMapModel)model;
+                var kvModel = (ValueMapModel)model;
                 valueType = kvModel.CustomValueType ?? this.GetValueTypeFromType(memberValueType);
             }
-            else if (model is CollectionMemberMapModel)
+            else if (model is CollectionMapModel)
             {
-                var cModel = (CollectionMemberMapModel)model;
+                var cModel = (CollectionMapModel)model;
                 valueType = this.GetCollectionValueType(memberValueType, cModel.CollectionType, cModel.ElementType, cModel.ElementValueType);
             }
             else

@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 
 namespace MongoDB.Framework.Mapping.Models
 {
-    public class SubClassMapModel : ClassMapModel
+    public class ValueMapModel : MemberMapModel
     {
-        public SubClassMapModel(Type type)
-            : base(type)
-        { }
+        public IValueType CustomValueType { get; set; }
 
         public override void Accept(IMapModelVisitor visitor)
         {
-            visitor.ProcessSubClass(this);
+            visitor.ProcessValue(this);
 
             base.Accept(visitor);
         }

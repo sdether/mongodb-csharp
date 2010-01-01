@@ -17,7 +17,7 @@ namespace MongoDB.Framework.Mapping.Models
         /// Gets the member maps.
         /// </summary>
         /// <value>The member maps.</value>
-        public List<KeyMemberMapModel> MemberMaps { get; private set; }
+        public List<MemberMapModel> MemberMaps { get; private set; }
 
         /// <summary>
         /// Gets the type.
@@ -31,8 +31,20 @@ namespace MongoDB.Framework.Mapping.Models
         /// <param name="type">The type.</param>
         public ClassMapModel(Type type)
         {
-            this.MemberMaps = new List<KeyMemberMapModel>();
+            this.MemberMaps = new List<MemberMapModel>();
             this.Type = type;
+        }
+
+        /// <summary>
+        /// Accepts the specified visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
+        public override void Accept(IMapModelVisitor visitor)
+        {
+            visitor.ProcessClass(this);
+
+            foreach (var memberMap in this.MemberMaps)
+                visitor.Visit(memberMap);
         }
     }
 }

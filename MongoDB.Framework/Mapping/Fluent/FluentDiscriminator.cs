@@ -6,16 +6,16 @@ using MongoDB.Framework.Mapping.Models;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentDiscriminatorMap<TDiscriminator>
+    public class FluentDiscriminator<TDiscriminator>
     {
         private SuperClassMapModel superClassMapModel;
 
-        public FluentDiscriminatorMap(SuperClassMapModel superClassMapModel)
+        public FluentDiscriminator(SuperClassMapModel superClassMapModel)
         {
             this.superClassMapModel = superClassMapModel;
         }
 
-        public FluentDiscriminatorMap<TDiscriminator> SubClass<TSubClass>(TDiscriminator discriminator, Action<FluentSubClassMap<TSubClass>> configure)
+        public FluentDiscriminator<TDiscriminator> SubClass<TSubClass>(TDiscriminator discriminator, Action<FluentSubClassMap<TSubClass>> configure)
         {
             var subClassMap = new FluentSubClassMap<TSubClass>();
             configure(subClassMap);

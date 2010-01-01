@@ -7,7 +7,7 @@ using MongoDB.Framework.Mapping.Models;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentIdMap : FluentMemberMap<IdMapModel>
+    public class FluentIdMap : FluentMap<IdMapModel>
     {
         public FluentGeneratedBy GeneratedBy
         {

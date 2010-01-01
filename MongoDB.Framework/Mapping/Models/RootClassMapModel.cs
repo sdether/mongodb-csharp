@@ -14,5 +14,18 @@ namespace MongoDB.Framework.Mapping.Models
         public RootClassMapModel(Type type)
             : base(type)
         { }
+
+        /// <summary>
+        /// Accepts the specified visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
+        public override void Accept(IMapModelVisitor visitor)
+        {
+            visitor.ProcessRootClass(this);
+
+            visitor.Visit(this.IdMap);
+
+            base.Accept(visitor);
+        }
     }
 }

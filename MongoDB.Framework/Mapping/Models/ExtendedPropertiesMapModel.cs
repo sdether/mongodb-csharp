@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace MongoDB.Framework.Mapping.Models
 {
-    public class SubClassMapModel : ClassMapModel
+    public class ExtendedPropertiesMapModel : MapModel
     {
-        public SubClassMapModel(Type type)
-            : base(type)
-        { }
+        public MemberInfo Getter { get; set; }
+
+        public MemberInfo Setter { get; set; }
 
         public override void Accept(IMapModelVisitor visitor)
         {
-            visitor.ProcessSubClass(this);
-
-            base.Accept(visitor);
+            visitor.ProcessExtendedProperties(this);
         }
     }
 }
