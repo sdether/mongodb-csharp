@@ -58,6 +58,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Mapping\Fluent\FluentEmbeddedMemberMap.cs" />
+    <Compile Include="Mapping\Models\EmbeddedClassPart.cs" />
+    <Compile Include="Mapping\Models\EmbeddedMemberPart.cs" />
     <Compile Include="Mapping\Models\ExtendedPropertiesMapModel.cs" />
     <Compile Include="Mapping\Models\IMapModelVisitor.cs" />
     <Compile Include="Mapping\Models\MemberMapModel.cs" />

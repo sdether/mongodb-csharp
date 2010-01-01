@@ -6,8 +6,8 @@ using System.Reflection;
 
 namespace MongoDB.Framework.Mapping.Models
 {
-    public class EmbeddedValuePart : EmbeddedMemberPart
+    public class EmbeddedClassPart : EmbeddedMemberPart
     {
-        public IValueType CustomValueType { get; set; }
+        public NestedClassMapModel NestedClassMap { get; set; }
     }
 }

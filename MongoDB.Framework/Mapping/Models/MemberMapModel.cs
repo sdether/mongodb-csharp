@@ -14,9 +14,7 @@ namespace MongoDB.Framework.Mapping.Models
 
         public MemberInfo Setter { get; set; }
 
-        public EmbeddedCollectionPart CollectionPart { get; set; }
-
-        public EmbeddedValuePart ValuePart { get; set; }
+        public EmbeddedMemberPart Part { get; set; }
 
         public override void Accept(IMapModelVisitor visitor)
         {

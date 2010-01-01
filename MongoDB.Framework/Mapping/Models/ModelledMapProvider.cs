@@ -177,8 +177,8 @@ namespace MongoDB.Framework.Mapping.Models
             var getter = LateBoundReflection.GetGetter(model.Getter);
             var setter = LateBoundReflection.GetSetter(model.Setter);
             IValueType valueType = null;
-            if(model.ValuePart != null)
-                valueType = model.ValuePart.CustomValueType;
+            if(model.Part != null)
+                valueType = ((EmbeddedValuePart)model.Part).CustomValueType;
             IIdGenerator generator = model.Generator;
             object unsavedValue = model.UnsavedValue;
 
@@ -213,16 +213,30 @@ namespace MongoDB.Framework.Mapping.Models
             var memberValueType = ReflectionUtil.GetMemberValueType(model.Getter);
             IValueType valueType;
 
-            if (model.ValuePart == null && (model.CollectionPart != null || this.IsCollection(memberValueType)))
+            if (model.Part == null)
             {
-                valueType = this.GetCollectionValueType(memberValueType, model.CollectionPart);
+                if (this.IsCollection(memberValueType))
+                    model.Part = new EmbeddedCollectionPart();
+                else //this will also pick up nested class...
+                    model.Part = new EmbeddedValuePart();
+            }
+
+            if (model.Part is EmbeddedValuePart)
+            {
+                var valuePart = (EmbeddedValuePart)model.Part;
+                valueType = valuePart.CustomValueType ?? this.GetValueTypeFromType(memberValueType);
+            }
+            else if (model.Part is EmbeddedCollectionPart)
+            {
+                valueType = this.GetCollectionValueType(memberValueType, (EmbeddedCollectionPart)model.Part);
+            }
+            else if (model.Part is EmbeddedClassPart)
+            {
+                var ncPart = (EmbeddedClassPart)model.Part;
+                valueType = new NestedClassValueType(this.BuildNestedClassMap(ncPart.NestedClassMap));
             }
             else
-            {
-                if (model.ValuePart == null)
-                    model.ValuePart = new EmbeddedValuePart();
-                valueType = model.ValuePart.CustomValueType ?? this.GetValueTypeFromType(memberValueType);
-            }
+                throw new NotSupportedException("Unknown EmbeddedMemberPart.");
 
             return new MemberMap(
                 key,
@@ -252,12 +266,7 @@ namespace MongoDB.Framework.Mapping.Models
 
         private IValueType GetValueTypeFromType(Type type)
         {
-            NestedClassMapModel nestedClassMapModel;
-            if (this.nestedClassMapModels.TryGetValue(type, out nestedClassMapModel))
-            {
-                return new NestedClassValueType(
-                    this.BuildNestedClassMap(nestedClassMapModel));
-            }
+            NestedClassMapModel nestedClassMapModel;            if (this.nestedClassMapModels.TryGetValue(type, out nestedClassMapModel))            {                return new NestedClassValueType(                    this.BuildNestedClassMap(nestedClassMapModel));            }
 
             if (type == typeof(Guid))
                 return new GuidValueType();
@@ -272,9 +281,6 @@ namespace MongoDB.Framework.Mapping.Models
 
         private IValueType GetCollectionValueType(Type memberType, EmbeddedCollectionPart collectionPart)
         {
-            if (collectionPart == null)
-                collectionPart = new EmbeddedCollectionPart();
-
             if (collectionPart.CollectionType == null)
                 collectionPart.CollectionType = this.GetCollectionType(memberType);
 
