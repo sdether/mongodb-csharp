@@ -145,20 +145,7 @@ namespace MongoDB.Framework.Mapping
         {
             visitor.ProcessSubClass(this);
 
-            if(this.HasId)
-                visitor.Visit(this.IdMap);
-
-            foreach (var memberMap in this.MemberMaps)
-                visitor.Visit(memberMap);
-
-            if (this.HasExtendedProperties)
-                visitor.Visit(this.ExtendedPropertiesMap);
-
-            if(this.HasIndexes)
-            {
-                foreach (var index in this.Indexes)
-                    visitor.Visit(index);
-            }
+            base.Accept(visitor);
         }
 
         /// <summary>

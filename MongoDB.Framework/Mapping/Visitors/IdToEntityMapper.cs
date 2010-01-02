@@ -6,7 +6,7 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Mapping.Visitors
 {
-    public class IdToEntityMapper : DefaultMapVisitor
+    public class IdToEntityMapper : TranslationVisitor
     {
         private Document document;
         private object entity;

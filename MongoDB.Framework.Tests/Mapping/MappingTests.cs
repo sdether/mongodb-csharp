@@ -50,7 +50,7 @@ namespace MongoDB.Framework.Mapping
             var person = (Person)new DocumentToEntityMapper(mongoContext)
                 .CreateEntity(classMap, document);
             Assert.IsNotNull(person);
-            Assert.AreEqual(person.Id, "4b27b9f1cf24000000002aa0");
+            Assert.AreEqual("4b27b9f1cf24000000002aa0", person.Id);
             Assert.AreEqual("Bob McBob", person.Name);
             Assert.AreEqual("123", person.PhoneNumber.AreaCode);
             Assert.AreEqual("456", person.PhoneNumber.Prefix);

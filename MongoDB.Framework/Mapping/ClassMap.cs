@@ -121,7 +121,16 @@ namespace MongoDB.Framework.Mapping
 
         #endregion
 
-        #region Public Methods            
+        #region Public Methods
+
+        /// <summary>
+        /// Accepts the specified visitor.
+        /// </summary>
+        /// <param name="visitor">The visitor.</param>
+        public override void Accept(IMapVisitor visitor)
+        {
+            visitor.ProcessClass(this);
+        }
 
         /// <summary>
         /// Gets the class map by discriminator.

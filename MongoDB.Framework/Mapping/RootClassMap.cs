@@ -97,16 +97,7 @@ namespace MongoDB.Framework.Mapping
         {
             visitor.ProcessRootClass(this);
 
-            visitor.Visit(this.IdMap);
-
-            foreach (var memberMap in this.MemberMaps)
-                visitor.Visit(memberMap);
-
-            if (this.HasExtendedProperties)
-                visitor.Visit(this.ExtendedPropertiesMap);
-
-            foreach (var index in this.Indexes)
-                visitor.Visit(index);
+            base.Accept(visitor);
         }
 
         #endregion

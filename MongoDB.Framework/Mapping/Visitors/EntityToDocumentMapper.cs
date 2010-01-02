@@ -7,7 +7,7 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Mapping.Visitors
 {
-    public class EntityToDocumentMapper : DefaultMapVisitor
+    public class EntityToDocumentMapper : TranslationVisitor
     {
         private Document document;
         private object entity;

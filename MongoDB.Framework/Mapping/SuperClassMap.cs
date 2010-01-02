@@ -95,6 +95,13 @@ namespace MongoDB.Framework.Mapping
 
         #region Public Methods
 
+        public override void Accept(IMapVisitor visitor)
+        {
+            visitor.ProcessSuperClass(this);
+
+            base.Accept(visitor);
+        }
+
         /// <summary>
         /// Gets the class map by discriminator.
         /// </summary>

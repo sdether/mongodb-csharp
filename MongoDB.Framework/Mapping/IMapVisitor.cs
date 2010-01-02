@@ -10,6 +10,8 @@ namespace MongoDB.Framework.Mapping
         void ProcessRootClass(RootClassMap rootClassMap);
         void ProcessNestedClass(NestedClassMap nestedClassMap);
         void ProcessSubClass(SubClassMap subClassMap);
+        void ProcessSuperClass(SuperClassMap superClassMap);
+        void ProcessClass(ClassMap classMap);
         void ProcessId(IdMap idMap);
         void ProcessMember(MemberMap memberMap);
         void ProcessExtendedProperties(ExtendedPropertiesMap extendedPropertiesMap);
@@ -18,6 +20,8 @@ namespace MongoDB.Framework.Mapping
         void Visit(RootClassMap rootClassMap);
         void Visit(NestedClassMap nestedClassMap);
         void Visit(SubClassMap subClassMap);
+        void Visit(SuperClassMap superClassMap);
+        void Visit(ClassMap classMap);
         void Visit(IdMap idMap);
         void Visit(MemberMap memberMap);
         void Visit(ExtendedPropertiesMap extendedPropertiesMap);

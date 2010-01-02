@@ -75,7 +75,7 @@
     <Compile Include="Mapping\Visitors\EntityToDocumentMapper.cs" />
     <Compile Include="Mapping\Visitors\DocumentToEntityMapper.cs" />
     <Compile Include="Mapping\IMapVisitor.cs" />
-    <Compile Include="Mapping\Visitors\DefaultMapVisitor.cs" />
+    <Compile Include="Mapping\Visitors\TranslationVisitor.cs" />
     <Compile Include="Mapping\Visitors\NullMapVisitor.cs" />
     <Compile Include="Mapping\Visitors\DeleteDocumentMapper.cs" />
     <Compile Include="Reflection\ReflectionUtil.cs" />

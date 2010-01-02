@@ -70,11 +70,7 @@ namespace MongoDB.Framework.Mapping
         {
             visitor.ProcessNestedClass(this);
 
-            foreach (var memberMap in this.MemberMaps)
-                visitor.Visit(memberMap);
-
-            if (this.HasExtendedProperties)
-                visitor.Visit(this.ExtendedPropertiesMap);
+            base.Accept(visitor);
         }
     }
 }

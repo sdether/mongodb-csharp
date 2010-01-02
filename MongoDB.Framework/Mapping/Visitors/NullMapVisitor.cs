@@ -16,6 +16,12 @@ namespace MongoDB.Framework.Mapping.Visitors
         public virtual void ProcessSubClass(SubClassMap subClassMap)
         { }
 
+        public virtual void ProcessSuperClass(SuperClassMap superClassMap)
+        { }
+
+        public virtual void ProcessClass(ClassMap classMap)
+        { }
+
         public virtual void ProcessId(IdMap idMap)
         { }
 
@@ -35,6 +41,12 @@ namespace MongoDB.Framework.Mapping.Visitors
         { }
 
         public virtual void Visit(SubClassMap subClassMap)
+        { }
+
+        public virtual void Visit(SuperClassMap superClassMap)
+        { }
+
+        public virtual void Visit(ClassMap classMap)
         { }
 
         public virtual void Visit(IdMap idMap)
