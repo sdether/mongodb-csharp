@@ -6,7 +6,7 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Mapping.Visitors
 {
-    public class DeleteDocumentMapper : TranslationVisitor
+    public class DeleteDocumentMapper : DefaultMapVisitor
     {
         private Document document;
         private object entity;

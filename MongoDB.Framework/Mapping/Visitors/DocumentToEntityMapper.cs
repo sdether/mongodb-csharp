@@ -7,7 +7,7 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Mapping.Visitors
 {
-    public class DocumentToEntityMapper : TranslationVisitor
+    public class DocumentToEntityMapper : DefaultMapVisitor
     {
         private Document document;
         private object entity;
@@ -31,12 +31,15 @@ namespace MongoDB.Framework.Mapping.Visitors
             this.document = document;
             this.entity = Activator.CreateInstance(classMap.Type);
 
-            if (classMap.IsPolymorphic)
-                document.Remove(classMap.DiscriminatorKey);
-
             classMap.Accept(this);
 
             return entity;
+        }
+
+        public override void ProcessClass(ClassMap classMap)
+        {
+            if (classMap.IsPolymorphic)
+                document.Remove(classMap.DiscriminatorKey);
         }
 
         public override void ProcessMember(MemberMap memberMap)

@@ -5,26 +5,8 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping.Visitors
 {
-    public abstract class TranslationVisitor : NullMapVisitor
+    public abstract class DefaultMapVisitor : NullMapVisitor
     {
-        public override void ProcessClass(ClassMap classMap)
-        {
-            if (classMap.HasId)
-                this.Visit(classMap.IdMap);
-
-            foreach (var memberMap in classMap.MemberMaps)
-                this.Visit(memberMap);
-
-            if (classMap.HasExtendedProperties)
-                this.Visit(classMap.ExtendedPropertiesMap);
-
-            if (classMap.HasIndexes)
-            {
-                foreach (var index in classMap.Indexes)
-                    this.Visit(index);
-            }
-        }
-
         public override void Visit(RootClassMap rootClassMap)
         {
             rootClassMap.Accept(this);
