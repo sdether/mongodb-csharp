@@ -8,18 +8,31 @@ using MongoDB.Framework.Mapping.Fluent;
 using NUnit.Framework;
 using MongoDB.Driver;
 
-namespace MongoDB.Framework.Inserts
+namespace MongoDB.Framework.Updates
 {
     [TestFixture]
-    public class NestedClass : TestCase
+    public class SimpleDictionary : TestCase
     {
         protected override IMapProvider MapProvider
         {
             get
             {
                 return new FluentMapProvider()
-                    .AddMap(new EntityMap())
-                    .AddMap(new SubEntityMap());
+                    .AddMap(new EntityMap());
+            }
+        }
+
+        protected override void BeforeTest()
+        {
+            using (var context = this.CreateContext())
+            {
+                context.Database.GetCollection("Entity")
+                    .Insert(new Document()
+                        .Append("_id", Guid.NewGuid().ToString())
+                        .Append("Integers", new Document()
+                            .Append("one", 1)
+                            .Append("two", 2)
+                            .Append("three", 3)));
             }
         }
 
@@ -32,17 +45,15 @@ namespace MongoDB.Framework.Inserts
         }
 
         [Test]
-        public void Should_insert()
+        public void Should_update()
         {
-            var entity = new Entity();
-            entity.SubEntity = new SubEntity()
-            {
-                Integer = 42,
-                Double = 123.456
-            };
             using (var context = this.CreateContext())
             {
-                context.Insert(entity);
+                var entity = context.FindOne<Entity>(null);
+                entity.Integers.Clear();
+                entity.Integers["four"] = 4;
+
+                context.Update(entity);
             }
 
             Document insertedDocument;
@@ -52,23 +63,15 @@ namespace MongoDB.Framework.Inserts
             }
 
             Assert.IsNotNull(insertedDocument);
-            Assert.AreEqual(entity.Id, new Guid((string)insertedDocument["_id"]));
-            Assert.AreEqual(42, ((Document)insertedDocument["SubEntity"])["Integer"]);
-            Assert.AreEqual(123.456, ((Document)insertedDocument["SubEntity"])["Double"]);
+            Assert.AreEqual(1, ((Document)insertedDocument["Integers"]).Count);
+            Assert.AreEqual(4, ((Document)insertedDocument["Integers"])["four"]);
         }
 
         public class Entity
         {
             public Guid Id { get; private set; }
 
-            public SubEntity SubEntity { get; set; }
-        }
-
-        public class SubEntity
-        {
-            public double Double { get; set; }
-
-            public int Integer { get; set; }
+            public Dictionary<string,int> Integers { get; set; }
         }
 
         public class EntityMap : FluentRootClassMap<Entity>
@@ -76,16 +79,7 @@ namespace MongoDB.Framework.Inserts
             public EntityMap()
             {
                 Id(x => x.Id);
-                Map(x => x.SubEntity);
-            }
-        }
-
-        public class SubEntityMap : FluentNestedClassMap<SubEntity>
-        {
-            public SubEntityMap()
-            {
-                Map(x => x.Double);
-                Map(x => x.Integer);
+                Map(x => x.Integers);
             }
         }
     }

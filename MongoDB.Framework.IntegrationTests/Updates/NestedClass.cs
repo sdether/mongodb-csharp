@@ -8,7 +8,7 @@ using MongoDB.Framework.Mapping.Fluent;
 using NUnit.Framework;
 using MongoDB.Driver;
 
-namespace MongoDB.Framework.Inserts
+namespace MongoDB.Framework.Updates
 {
     [TestFixture]
     public class NestedClass : TestCase
@@ -23,6 +23,19 @@ namespace MongoDB.Framework.Inserts
             }
         }
 
+        protected override void BeforeTest()
+        {
+            using (var context = this.CreateContext())
+            {
+                context.Database.GetCollection("Entity")
+                    .Insert(new Document()
+                        .Append("_id", Guid.NewGuid().ToString())
+                        .Append("SubEntity", new Document()
+                            .Append("Integer", 42)
+                            .Append("Double", 123.456)));
+            }
+        }
+
         protected override void AfterTest()
         {
             using (var context = this.CreateContext())
@@ -32,29 +45,25 @@ namespace MongoDB.Framework.Inserts
         }
 
         [Test]
-        public void Should_insert()
+        public void Should_update()
         {
-            var entity = new Entity();
-            entity.SubEntity = new SubEntity()
-            {
-                Integer = 42,
-                Double = 123.456
-            };
             using (var context = this.CreateContext())
             {
-                context.Insert(entity);
+                var entity = context.FindOne<Entity>(null);
+                entity.SubEntity.Integer = 43;
+                entity.SubEntity.Double = 654.321;
+                context.Update(entity);
             }
 
-            Document insertedDocument;
+            Document updatedDocument;
             using (var context = this.CreateContext())
             {
-                insertedDocument = context.Database.GetCollection("Entity").FindOne(null);
+                updatedDocument = context.Database.GetCollection("Entity").FindOne(null);
             }
 
-            Assert.IsNotNull(insertedDocument);
-            Assert.AreEqual(entity.Id, new Guid((string)insertedDocument["_id"]));
-            Assert.AreEqual(42, ((Document)insertedDocument["SubEntity"])["Integer"]);
-            Assert.AreEqual(123.456, ((Document)insertedDocument["SubEntity"])["Double"]);
+            Assert.IsNotNull(updatedDocument);
+            Assert.AreEqual(43, ((Document)updatedDocument["SubEntity"])["Integer"]);
+            Assert.AreEqual(654.321, ((Document)updatedDocument["SubEntity"])["Double"]);
         }
 
         public class Entity

@@ -105,20 +105,6 @@ namespace MongoDB.Framework.Linq
         }
 
         [Test]
-        public void Test_updating()
-        {
-            var party = context.FindOne<Party>(new Document().Append("Name", "Bob McBob"));
-            party.Name = "Jack McJack";
-            context.Update(party);
-
-            using (var context2 = this.CreateContext())
-            {
-                var sameParty = context2.FindOne<Party>(new Document().Append("Name", "Jack McJack"));
-                Assert.AreEqual(party.Id, sameParty.Id);
-            }
-        }
-
-        [Test]
         public void Test_deleting()
         {
             var party = context.FindOne<Party>(new Document().Append("Name", "Bob McBob"));

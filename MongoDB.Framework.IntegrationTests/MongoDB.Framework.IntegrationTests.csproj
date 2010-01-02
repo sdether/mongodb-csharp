@@ -61,6 +61,12 @@
     <Compile Include="Inserts\Simple.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestCase.cs" />
+    <Compile Include="Updates\NestedClass.cs" />
+    <Compile Include="Updates\SimpleList.cs" />
+    <Compile Include="Updates\NestedClassDictionary.cs" />
+    <Compile Include="Updates\NestedClassList.cs" />
+    <Compile Include="Updates\Simple.cs" />
+    <Compile Include="Updates\SimpleDictionary.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MongoDB.Framework\MongoDB.Framework.csproj">
