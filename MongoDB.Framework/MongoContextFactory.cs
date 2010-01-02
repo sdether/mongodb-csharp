@@ -5,6 +5,7 @@ using System.Text;
 using MongoDB.Framework.Configuration;
 using MongoDB.Driver;
 using MongoDB.Framework.Tracking;
+using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework
 {
@@ -69,7 +70,11 @@ namespace MongoDB.Framework
                     }
                 }
             }
-            return new MongoContext(this.Configuration, new MongoContextCache(), mongo, database);
+            return new MongoContext(
+                new IndexingMappingStore(this.Configuration.MappingStore, database), 
+                new MongoContextCache(), 
+                mongo, 
+                database);
         }
 
         #endregion

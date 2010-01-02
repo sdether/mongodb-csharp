@@ -82,7 +82,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="index">The index.</param>
         public override void VisitOrdering(Ordering ordering, QueryModel queryModel, OrderByClause orderByClause, int index)
         {
-            var memberMapPath = MemberMapPathBuilder.BuildFrom(this.mongoContext.Configuration.IMappingStore, ordering.Expression);
+            var memberMapPath = MemberMapPathBuilder.BuildFrom(this.mongoContext.MappingStore, ordering.Expression);
             this.querySpec.OrderBy[memberMapPath.Key] = ordering.OrderingDirection == OrderingDirection.Asc ? 1 : -1;
         }
 
@@ -137,7 +137,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="queryModel">The query model.</param>
         public override void VisitSelectClause(SelectClause selectClause, QueryModel queryModel)
         {
-            this.querySpec.Projection = ProjectionBuilder.Build(this.mongoContext.Configuration.IMappingStore, selectClause.Selector);
+            this.querySpec.Projection = ProjectionBuilder.Build(this.mongoContext.MappingStore, selectClause.Selector);
         }
 
         /// <summary>

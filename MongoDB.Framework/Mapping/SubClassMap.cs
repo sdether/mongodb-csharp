@@ -80,7 +80,7 @@ namespace MongoDB.Framework.Mapping
         /// Gets the indexes.
         /// </summary>
         /// <value>The indexes.</value>
-        public override IEnumerable<IndexMap> Indexes
+        public override IEnumerable<Index> Indexes
         {
             get { return this.SuperClassMap.Indexes; }
         }

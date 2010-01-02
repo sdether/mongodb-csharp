@@ -32,7 +32,7 @@ namespace MongoDB.Framework.Persistence
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
-            var classMap = this.MongoContext.Configuration.IMappingStore.GetClassMapFor(entity.GetType());
+            var classMap = this.MongoContext.MappingStore.GetClassMapFor(entity.GetType());
             if (!classMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 

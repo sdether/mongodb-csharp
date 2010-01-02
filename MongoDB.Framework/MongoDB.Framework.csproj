@@ -58,14 +58,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Mapping\Fluent\FluentEmbeddedMemberMap.cs" />
+    <Compile Include="Mapping\Fluent\FluentIndex.cs" />
     <Compile Include="Mapping\IMappingStore.cs" />
     <Compile Include="Mapping\IndexDirection.cs" />
-    <Compile Include="Mapping\IndexMap.cs" />
-    <Compile Include="Mapping\IndexPart.cs" />
+    <Compile Include="Mapping\IndexingMappingStore.cs" />
+    <Compile Include="Mapping\Index.cs" />
     <Compile Include="Mapping\Models\EmbeddedClassPart.cs" />
     <Compile Include="Mapping\Models\EmbeddedMemberPart.cs" />
     <Compile Include="Mapping\Models\ExtendedPropertiesMapModel.cs" />
     <Compile Include="Mapping\Models\IMapModelVisitor.cs" />
+    <Compile Include="Mapping\Models\IndexModel.cs" />
     <Compile Include="Mapping\Models\MemberMapModel.cs" />
     <Compile Include="Mapping\Models\Visitors\DefaultMapModelVisitor.cs" />
     <Compile Include="Mapping\Models\Visitors\NullMapModelVisitor.cs" />

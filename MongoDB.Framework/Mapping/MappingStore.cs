@@ -50,16 +50,6 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Gets the class map for.
         /// </summary>
-        /// <typeparam name="TEntity">The type of the entity.</typeparam>
-        /// <returns></returns>
-        public ClassMap GetClassMapFor<TEntity>()
-        {
-            return this.GetClassMapFor(typeof(TEntity));
-        }
-
-        /// <summary>
-        /// Gets the class map for.
-        /// </summary>
         /// <param name="type">ValueType of the entity.</param>
         /// <returns></returns>
         public virtual ClassMap GetClassMapFor(Type type)

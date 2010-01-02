@@ -39,6 +39,13 @@ namespace MongoDB.Framework.Mapping.Fluent
             return this.Id(memberInfo);
         }
 
+        public FluentIndex<TRootClass> Index()
+        {
+            var fluentIndex = new FluentIndex<TRootClass>();
+            this.Model.Indexes.Add(fluentIndex.Model);
+            return fluentIndex;
+        }
+
         public void UseCollection(string collectionName)
         {
             this.Model.CollectionName = collectionName;

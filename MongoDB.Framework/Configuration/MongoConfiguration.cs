@@ -21,7 +21,7 @@ namespace MongoDB.Framework.Configuration
         /// Gets the mapping store.
         /// </summary>
         /// <value>The mapping store.</value>
-        public IMappingStore IMappingStore { get; private set; }
+        public IMappingStore MappingStore { get; private set; }
 
         /// <summary>
         /// Gets the mongo factory.
@@ -46,7 +46,7 @@ namespace MongoDB.Framework.Configuration
                 throw new ArgumentNullException("mappingStore");
 
             this.DatabaseName = databaseName;
-            this.IMappingStore = mappingStore;
+            this.MappingStore = mappingStore;
             this.MongoFactory = new DefaultMongoFactory();
         }
 

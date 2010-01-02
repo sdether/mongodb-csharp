@@ -114,6 +114,8 @@ namespace MongoDB.Framework.Mapping.Models
 
             var subClassMaps = model.SubClassMaps.Select(sc => this.BuildSubClassMap(sc));
 
+            var indexes = model.Indexes.Select(i => this.BuildIndex(i));
+
             var rootClassMap = new RootClassMap(
                 model.Type,
                 collectionName,
@@ -123,7 +125,7 @@ namespace MongoDB.Framework.Mapping.Models
                 model.Discriminator,
                 subClassMaps,
                 extPropMap,
-                null);
+                indexes);
 
             return rootClassMap;
         }
@@ -189,6 +191,14 @@ namespace MongoDB.Framework.Mapping.Models
                 unsavedValue = memberType.IsValueType ? Activator.CreateInstance(memberType) : null;
                         
             return new IdMap(model.Getter.Name, getter, setter, valueType, generator, unsavedValue);
+        }
+
+        private Index BuildIndex(IndexModel model)
+        {
+            if (model.Name == null)
+                model.Name = model.Parts.Aggregate("ix", (c, p) => c + "_" + p.Key);
+
+            return new Index(model.Name, model.Parts, model.IsUnique);
         }
 
         private MemberMap BuildMemberMap(MemberMapModel model)

@@ -72,7 +72,7 @@ namespace MongoDB.Framework.Mapping
         /// Gets the indexes.
         /// </summary>
         /// <value>The indexes.</value>
-        public abstract IEnumerable<IndexMap> Indexes { get; }
+        public abstract IEnumerable<Index> Indexes { get; }
 
         /// <summary>
         /// Gets a value indicating whether this instance is polymorphic.

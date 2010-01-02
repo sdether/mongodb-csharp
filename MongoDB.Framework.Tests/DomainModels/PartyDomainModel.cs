@@ -15,6 +15,8 @@ namespace MongoDB.Framework.DomainModels
         {
             UseCollection("parties");
 
+            Index().Ascending("Name");
+
             Id(x => x.Id);
 
             Map(x => x.Name);

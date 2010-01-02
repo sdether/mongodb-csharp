@@ -26,7 +26,7 @@ namespace MongoDB.Framework.Mapping.Visitors
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
-            var classMap = this.mongoContext.Configuration.IMappingStore.GetClassMapFor(entity.GetType());
+            var classMap = this.mongoContext.MappingStore.GetClassMapFor(entity.GetType());
             return this.CreateDocument(classMap, entity);
         }
 

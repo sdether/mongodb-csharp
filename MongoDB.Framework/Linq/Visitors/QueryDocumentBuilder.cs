@@ -112,7 +112,7 @@ namespace MongoDB.Framework.Linq.Visitors
 
         protected override Expression VisitMemberExpression(MemberExpression expression)
         {
-            this.memberMapPath = MemberMapPathBuilder.BuildFrom(this.mongoContext.Configuration.IMappingStore, expression);
+            this.memberMapPath = MemberMapPathBuilder.BuildFrom(this.mongoContext.MappingStore, expression);
             return expression;
         }
 

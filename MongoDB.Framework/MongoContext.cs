@@ -17,8 +17,8 @@ namespace MongoDB.Framework
         #region Private Fields
 
         private IMongoContextCache cache;
-        private IMongoConfiguration configuration;
         private Database database;
+        private IMappingStore mappingStore;
         private Mongo mongo;
 
         #endregion
@@ -26,16 +26,16 @@ namespace MongoDB.Framework
         #region Public Properties
 
         /// <summary>
-        /// Gets the configuration.
+        /// Gets the mapping store.
         /// </summary>
-        /// <value>The configuration.</value>
-        public IMongoConfiguration Configuration
+        /// <value>The mapping store.</value>
+        public IMappingStore MappingStore
         {
             get
             {
                 this.EnsureNotDisposed();
 
-                return this.configuration;
+                return this.mappingStore;
             }
         }
 
@@ -60,14 +60,14 @@ namespace MongoDB.Framework
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoContext"/> class.
         /// </summary>
-        /// <param name="configuration">The configuration.</param>
+        /// <param name="mappingStore">The mapping store.</param>
         /// <param name="mongoContextCache">The mongo context cache.</param>
         /// <param name="mongo">The mongo.</param>
         /// <param name="database">The database.</param>
-        public MongoContext(IMongoConfiguration configuration, IMongoContextCache mongoContextCache, Mongo mongo, Database database)
+        public MongoContext(IMappingStore mappingStore, IMongoContextCache mongoContextCache, Mongo mongo, Database database)
         {
-            if (configuration == null)
-                throw new ArgumentNullException("configuration");
+            if (mappingStore == null)
+                throw new ArgumentNullException("mappingStore");
             if (mongoContextCache == null)
                 throw new ArgumentNullException("mongoContextCache");
             if (mongo == null)
@@ -76,7 +76,7 @@ namespace MongoDB.Framework
                 throw new ArgumentNullException("database");
 
             this.cache = mongoContextCache;
-            this.configuration = configuration;
+            this.mappingStore = mappingStore;
             this.database = database;
             this.mongo = mongo;
         }
@@ -389,7 +389,7 @@ namespace MongoDB.Framework
 
             this.cache.Clear();
             this.cache = null;
-            this.configuration = null;
+            this.mappingStore = null;
             this.database = null;
             this.mongo.Disconnect();
             this.mongo = null;

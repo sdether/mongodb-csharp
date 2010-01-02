@@ -11,7 +11,7 @@ namespace MongoDB.Framework.Mapping
 
         private string collectionName;
         private IdMap idMap;
-        private IEnumerable<IndexMap> indexes;
+        private IEnumerable<Index> indexes;
 
 	    #endregion
 
@@ -59,7 +59,7 @@ namespace MongoDB.Framework.Mapping
         /// Gets the indexes.
         /// </summary>
         /// <value>The indexes.</value>
-        public override IEnumerable<IndexMap> Indexes
+        public override IEnumerable<Index> Indexes
         {
             get { return this.indexes; }
         }
@@ -72,7 +72,7 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="RootClassMap"/> class.
         /// </summary>
         /// <param name="type">The type.</param>
-        public RootClassMap(Type type, string collectionName, IdMap idMap, IEnumerable<MemberMap> memberMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap, IEnumerable<IndexMap> indexes)
+        public RootClassMap(Type type, string collectionName, IdMap idMap, IEnumerable<MemberMap> memberMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap, IEnumerable<Index> indexes)
             : base(type, memberMaps, discriminatorKey, discriminator, subClassMaps, extendedPropertiesMap)
         {
             if (collectionName == null)
@@ -82,7 +82,7 @@ namespace MongoDB.Framework.Mapping
 
             this.collectionName = collectionName;
             this.idMap = idMap;
-            this.indexes = indexes ?? Enumerable.Empty<IndexMap>();
+            this.indexes = indexes ?? Enumerable.Empty<Index>();
         }
 
         #endregion

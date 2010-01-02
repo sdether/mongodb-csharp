@@ -5,22 +5,23 @@ using System.Linq;
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
 using MongoDB.Framework.Tracking;
+using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework
 {
     public interface IMongoContext : IDisposable
     {
         /// <summary>
-        /// Gets the configuration.
-        /// </summary>
-        /// <value>The configuration.</value>
-        IMongoConfiguration Configuration { get; }
-
-        /// <summary>
         /// Gets the database.
         /// </summary>
         /// <value>The database.</value>
         Database Database { get; }
+
+        /// <summary>
+        /// Gets the mapping store.
+        /// </summary>
+        /// <value>The mapping store.</value>
+        IMappingStore MappingStore { get; }
 
         /// <summary>
         /// Deletes all the entities.

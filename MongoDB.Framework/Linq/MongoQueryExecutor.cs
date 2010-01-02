@@ -39,7 +39,7 @@ namespace MongoDB.Framework.Linq
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
             var spec = CollectionQueryModelVisitor.CreateMongoQuerySpecification(this.mongoContext, queryModel);
-            var classMap = this.mongoContext.Configuration.IMappingStore.GetClassMapFor(queryModel.MainFromClause.ItemType);
+            var classMap = this.mongoContext.MappingStore.GetClassMapFor(queryModel.MainFromClause.ItemType);
             var findAction = new FindAction(this.mongoContext, this.mongoContextCache);
             foreach (var entity in findAction.Find(classMap.Type, spec.Conditions, spec.Limit, spec.Skip, spec.OrderBy, spec.Projection.Fields))
                 yield return (T)spec.Projection.Projector(new ResultObjectMapping() { { queryModel.MainFromClause, entity } });
@@ -51,7 +51,7 @@ namespace MongoDB.Framework.Linq
             scalarVisitor.VisitQueryModel(queryModel);
 
             var itemType = queryModel.MainFromClause.ItemType;
-            var classMap = this.mongoContext.Configuration.IMappingStore.GetClassMapFor(itemType);
+            var classMap = this.mongoContext.MappingStore.GetClassMapFor(itemType);
             if (classMap.IsPolymorphic && classMap.Discriminator != null)
                 scalarVisitor.Query[classMap.DiscriminatorKey] = classMap.Discriminator;
 

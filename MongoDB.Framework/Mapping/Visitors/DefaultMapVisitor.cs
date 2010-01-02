@@ -37,7 +37,7 @@ namespace MongoDB.Framework.Mapping.Visitors
             extendedPropertiesMap.Accept(this);
         }
 
-        public override void Visit(IndexMap indexMap)
+        public override void Visit(Index indexMap)
         {
             indexMap.Accept(this);
         }

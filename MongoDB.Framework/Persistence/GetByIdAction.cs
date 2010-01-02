@@ -28,7 +28,7 @@ namespace MongoDB.Framework.Persistence
         /// <returns></returns>
         public object GetById(Type type, object id)
         {
-            var classMap = this.MongoContext.Configuration.IMappingStore.GetClassMapFor(type);
+            var classMap = this.MongoContext.MappingStore.GetClassMapFor(type);
             var idValue = classMap.IdMap.ValueType.ConvertToDocumentValue(id, null);
             var conditions = new Document().Append("_id", idValue);
             var entity = this.Find(classMap, conditions, 1, 0, null, null).SingleOrDefault();
