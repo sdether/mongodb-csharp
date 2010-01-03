@@ -12,28 +12,28 @@ using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentRootClassMap<TRootClass> : FluentSuperClassMap<RootClassMapModel, TRootClass>
+    public class FluentRootClass<TRootClass> : FluentSuperClass<RootClassMapModel, TRootClass>
     {
-        public FluentRootClassMap()
+        public FluentRootClass()
             : base(new RootClassMapModel(typeof(TRootClass)))
         { }
 
-        public FluentIdMap Id(string memberName)
+        public FluentId Id(string memberName)
         {
             var memberInfo = ReflectionUtil.GetSingleMember<TRootClass>(memberName);
             return this.Id(memberInfo);
         }
 
-        public FluentIdMap Id(MemberInfo memberInfo)
+        public FluentId Id(MemberInfo memberInfo)
         {
-            var fluentIdMap = new FluentIdMap();
+            var fluentIdMap = new FluentId();
             fluentIdMap.Model.Getter = memberInfo;
             fluentIdMap.Model.Setter = memberInfo;
             this.Model.IdMap = fluentIdMap.Model;
             return fluentIdMap;
         }
 
-        public FluentIdMap Id(Expression<Func<TRootClass, object>> idMember)
+        public FluentId Id(Expression<Func<TRootClass, object>> idMember)
         {
             var memberInfo = ReflectionUtil.GetSingleMember(idMember);
             return this.Id(memberInfo);

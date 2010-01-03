@@ -14,6 +14,12 @@ namespace MongoDB.Framework.Mapping.Models
         public object Discriminator { get; set; }
 
         /// <summary>
+        /// Gets the many to one maps.
+        /// </summary>
+        /// <value>The many to one maps.</value>
+        public List<ManyToOneMapModel> ManyToOneMaps { get; private set; }
+
+        /// <summary>
         /// Gets the member maps.
         /// </summary>
         /// <value>The member maps.</value>
@@ -31,6 +37,7 @@ namespace MongoDB.Framework.Mapping.Models
         /// <param name="type">The type.</param>
         public ClassMapModel(Type type)
         {
+            this.ManyToOneMaps = new List<ManyToOneMapModel>();
             this.MemberMaps = new List<MemberMapModel>();
             this.Type = type;
         }
@@ -45,6 +52,9 @@ namespace MongoDB.Framework.Mapping.Models
 
             foreach (var memberMap in this.MemberMaps)
                 visitor.Visit(memberMap);
+
+            foreach (var manyToOneMap in this.ManyToOneMaps)
+                visitor.Visit(manyToOneMap);
         }
     }
 }

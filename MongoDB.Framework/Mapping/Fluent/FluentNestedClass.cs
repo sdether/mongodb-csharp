@@ -5,9 +5,9 @@ using MongoDB.Framework.Mapping.Models;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentNestedClassMap<TNestedClass> : FluentSuperClassMap<NestedClassMapModel, TNestedClass>
+    public class FluentNestedClass<TNestedClass> : FluentSuperClass<NestedClassMapModel, TNestedClass>
     {
-        public FluentNestedClassMap()
+        public FluentNestedClass()
             : base(new NestedClassMapModel(typeof(TNestedClass)))
         { }
     }

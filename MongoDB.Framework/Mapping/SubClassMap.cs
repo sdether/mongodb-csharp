@@ -97,6 +97,19 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
+        /// Gets the many to one maps.
+        /// </summary>
+        /// <value>The many to one maps.</value>
+        public override IEnumerable<ManyToOneMap> ManyToOneMaps
+        {
+            get
+            {
+                return this.SuperClassMap.ManyToOneMaps
+                    .Concat(base.ManyToOneMaps);
+            }
+        }
+
+        /// <summary>
         /// Gets the member maps.
         /// </summary>
         /// <value>The simple member maps.</value>
@@ -123,14 +136,11 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="SubClassMap"/> class.
         /// </summary>
         /// <param name="type">ValueType of the entity.</param>
-        /// <param name="collectionName">Name of the collection.</param>
-        /// <param name="idMap">The id map.</param>
         /// <param name="memberMaps">The member maps.</param>
-        /// <param name="discriminatorKey">The discriminator key.</param>
+        /// <param name="manyToOneMaps">The many to one maps.</param>
         /// <param name="discriminator">The discriminator.</param>
-        /// <param name="extendedPropertiesMap">The extended properties map.</param>
-        public SubClassMap(Type type, IEnumerable<MemberMap> memberMaps, object discriminator)
-            : base(type, memberMaps, discriminator)
+        public SubClassMap(Type type, IEnumerable<MemberMap> memberMaps, IEnumerable<ManyToOneMap> manyToOneMaps, object discriminator)
+            : base(type, memberMaps, manyToOneMaps, discriminator)
         {  }
 
         #endregion

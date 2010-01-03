@@ -36,13 +36,13 @@ namespace MongoDB.Framework.Mapping.Fluent
                 if (!baseType.IsGenericType)
                     continue;
 
-                if(typeof(FluentRootClassMap<>).IsAssignableFrom(baseType.GetGenericTypeDefinition()))
+                if(typeof(FluentRootClass<>).IsAssignableFrom(baseType.GetGenericTypeDefinition()))
                 {
                     var fluentRootClassMap = Activator.CreateInstance(type);
                     this.AddRootClassMapModel((RootClassMapModel)rootModelPropertyInfo.GetValue(fluentRootClassMap, null));
                     continue;
                 }
-                else if (typeof(FluentNestedClassMap<>).IsAssignableFrom(baseType.GetGenericTypeDefinition()))
+                else if (typeof(FluentNestedClass<>).IsAssignableFrom(baseType.GetGenericTypeDefinition()))
                 {
                     var fluentNestedClassMap = Activator.CreateInstance(type);
                     this.AddNestedClassMapModel((NestedClassMapModel)nestedModelPropertyInfo.GetValue(fluentNestedClassMap, null));
@@ -58,7 +58,7 @@ namespace MongoDB.Framework.Mapping.Fluent
         /// <typeparam name="T"></typeparam>
         /// <param name="rootClassMap">The root class map.</param>
         /// <returns></returns>
-        public FluentMapProvider AddMap<T>(FluentRootClassMap<T> rootClassMap)
+        public FluentMapProvider AddMap<T>(FluentRootClass<T> rootClassMap)
         {
             this.AddRootClassMapModel(rootClassMap.Model);
             return this;
@@ -70,7 +70,7 @@ namespace MongoDB.Framework.Mapping.Fluent
         /// <typeparam name="T"></typeparam>
         /// <param name="nestedClassMap">The nested class map.</param>
         /// <returns></returns>
-        public FluentMapProvider AddMap<T>(FluentNestedClassMap<T> nestedClassMap)
+        public FluentMapProvider AddMap<T>(FluentNestedClass<T> nestedClassMap)
         {
             this.AddNestedClassMapModel(nestedClassMap.Model);
             return this;

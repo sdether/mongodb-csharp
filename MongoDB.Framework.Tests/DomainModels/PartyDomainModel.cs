@@ -9,7 +9,7 @@ using MongoDB.Framework.Mapping.Types;
 
 namespace MongoDB.Framework.DomainModels
 {
-    public class PartyMap : FluentRootClassMap<Party>
+    public class PartyMap : FluentRootClass<Party>
     {
         public PartyMap()
         {
@@ -39,7 +39,7 @@ namespace MongoDB.Framework.DomainModels
         }
     }
 
-    public class PhoneNumberMap : FluentNestedClassMap<PhoneNumber>
+    public class PhoneNumberMap : FluentNestedClass<PhoneNumber>
     {
         public PhoneNumberMap()
         {

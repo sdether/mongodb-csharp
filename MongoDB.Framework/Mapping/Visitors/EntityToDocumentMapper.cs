@@ -48,6 +48,20 @@ namespace MongoDB.Framework.Mapping.Visitors
                 document[classMap.DiscriminatorKey] = classMap.Discriminator;
         }
 
+        public override void ProcessManyToOne(ManyToOneMap manyToOneMap)
+        {
+            object value = MongoDBNull.Value;
+            var referenceEntity = manyToOneMap.MemberGetter(this.entity);
+            if (referenceEntity != null)
+            {
+                var referenceClassMap = this.mongoContext.MappingStore.GetClassMapFor(manyToOneMap.ReferenceType);
+                var id = referenceClassMap.IdMap.ValueType.ConvertToDocumentValue(referenceClassMap.GetId(referenceEntity), this.mongoContext);
+                value = new DBRef(referenceClassMap.CollectionName, id);
+            }
+
+            this.document[manyToOneMap.Key] = value;
+        }
+
         public override void ProcessMember(MemberMap memberMap)
         {
             var value = memberMap.MemberGetter(this.entity);

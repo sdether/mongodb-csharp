@@ -96,7 +96,7 @@ namespace MongoDB.Framework.Updates
             public double Double { get; set; }
         }
 
-        public class EntityMap : FluentRootClassMap<Entity>
+        public class EntityMap : FluentRootClass<Entity>
         {
             public EntityMap()
             {
@@ -105,7 +105,7 @@ namespace MongoDB.Framework.Updates
             }
         }
 
-        public class SubEntityMap : FluentNestedClassMap<SubEntity>
+        public class SubEntityMap : FluentNestedClass<SubEntity>
         {
             public SubEntityMap()
             {

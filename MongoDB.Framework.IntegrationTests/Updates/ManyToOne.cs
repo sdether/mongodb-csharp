@@ -11,14 +11,15 @@ using MongoDB.Driver;
 namespace MongoDB.Framework.Updates
 {
     [TestFixture]
-    public class Simple : TestCase
+    public class ManyToOne : TestCase
     {
         protected override IMapProvider MapProvider
         {
             get 
             {
                 return new FluentMapProvider()
-                    .AddMap(new EntityMap());
+                    .AddMap(new EntityMap())
+                    .AddMap(new EntityRefMap());
             }
         }
 
@@ -26,10 +27,13 @@ namespace MongoDB.Framework.Updates
         {
             using (var context = this.CreateContext())
             {
+                var refId = Guid.NewGuid().ToString();
+                context.Database.GetCollection("EntityRef")
+                    .Insert(new Document().Append("_id", refId));
                 context.Database.GetCollection("Entity")
                     .Insert(new Document()
                         .Append("_id", Guid.NewGuid().ToString())
-                        .Append("String", "s"));
+                        .Append("Reference", new DBRef("EntityRef", refId)));
             }
         }
 
@@ -38,6 +42,7 @@ namespace MongoDB.Framework.Updates
             using (var context = this.CreateContext())
             {
                 context.Database.MetaData.DropCollection("Entity");
+                context.Database.MetaData.DropCollection("EntityRef");
             }
         }
 
@@ -47,7 +52,7 @@ namespace MongoDB.Framework.Updates
             using (var context = this.CreateContext())
             {
                 var entity = context.FindOne<Entity>(null);
-                entity.String = "t";
+                entity.Reference = null;
                 context.Update(entity);
             }
 
@@ -58,14 +63,19 @@ namespace MongoDB.Framework.Updates
             }
 
             Assert.IsNotNull(updatedDocument);
-            Assert.AreEqual("t", updatedDocument["String"]);
+            Assert.AreEqual(MongoDBNull.Value, updatedDocument["Reference"]);
         }
 
         public class Entity
         {
             public Guid Id { get; private set; }
 
-            public string String { get; set; }
+            public EntityRef Reference { get; set; }
+        }
+
+        public class EntityRef
+        {
+            public Guid Id { get; private set; }
         }
 
         public class EntityMap : FluentRootClass<Entity>
@@ -73,8 +83,17 @@ namespace MongoDB.Framework.Updates
             public EntityMap()
             {
                 Id(x => x.Id);
-                Map(x => x.String);
+                References(x => x.Reference);
             }
         }
+
+        public class EntityRefMap : FluentRootClass<EntityRef>
+        {
+            public EntityRefMap()
+            {
+                Id(x => x.Id);
+            }
+        }
+
     }
 }

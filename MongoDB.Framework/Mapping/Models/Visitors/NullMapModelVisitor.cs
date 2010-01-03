@@ -28,6 +28,9 @@ namespace MongoDB.Framework.Mapping.Models.Visitors
         public virtual void ProcessMember(MemberMapModel memberMapModel)
         { }
 
+        public virtual void ProcessManyToOne(ManyToOneMapModel manyToOneMapModel)
+        { }
+
         public virtual void ProcessExtendedProperties(ExtendedPropertiesMapModel extendedPropertiesMapModel)
         { }
 
@@ -53,6 +56,9 @@ namespace MongoDB.Framework.Mapping.Models.Visitors
         { }
 
         public virtual void Visit(MemberMapModel memberMapModel)
+        { }
+
+        public virtual void Visit(ManyToOneMapModel manyToOneMapModel)
         { }
 
         public virtual void Visit(ExtendedPropertiesMapModel extendedPropertiesMapModel)

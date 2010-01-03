@@ -33,6 +33,9 @@ namespace MongoDB.Framework.Mapping.Models
 
             visitor.Visit(this.IdMap);
 
+            foreach (var index in this.Indexes)
+                visitor.Visit(index);
+
             base.Accept(visitor);
         }
     }

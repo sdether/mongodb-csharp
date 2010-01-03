@@ -71,7 +71,7 @@ namespace MongoDB.Framework.Inserts
             public int Integer { get; set; }
         }
 
-        public class EntityMap : FluentRootClassMap<Entity>
+        public class EntityMap : FluentRootClass<Entity>
         {
             public EntityMap()
             {
@@ -80,7 +80,7 @@ namespace MongoDB.Framework.Inserts
             }
         }
 
-        public class SubEntityMap : FluentNestedClassMap<SubEntity>
+        public class SubEntityMap : FluentNestedClass<SubEntity>
         {
             public SubEntityMap()
             {

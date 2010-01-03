@@ -106,8 +106,8 @@ namespace MongoDB.Framework.Mapping.Models
 
         private RootClassMap BuildRootClassMap(RootClassMapModel model)
         {
-            var memberMaps = new List<MemberMap>();
-            memberMaps.AddRange(model.MemberMaps.Select(mm => this.BuildMemberMap(mm)));
+            var manyToOneMaps = model.ManyToOneMaps.Select(mto => this.BuildManyToOneMap(mto)).ToList();
+            var memberMaps = model.MemberMaps.Select(mm => this.BuildMemberMap(mm)).ToList();
             var extPropMap = this.BuildExtendedPropertiesMap(model.ExtendedPropertiesMap);
             var idMap = this.BuildIdMap(model.IdMap);
             string collectionName = model.CollectionName ?? model.Type.Name;
@@ -121,6 +121,7 @@ namespace MongoDB.Framework.Mapping.Models
                 collectionName,
                 idMap,
                 memberMaps,
+                manyToOneMaps,
                 model.DiscriminatorKey,
                 model.Discriminator,
                 subClassMaps,
@@ -132,8 +133,8 @@ namespace MongoDB.Framework.Mapping.Models
 
         private NestedClassMap BuildNestedClassMap(NestedClassMapModel model)
         {
-            var memberMaps = new List<MemberMap>();
-            memberMaps.AddRange(model.MemberMaps.Select(mm => this.BuildMemberMap(mm)));
+            var manyToOneMaps = model.ManyToOneMaps.Select(mto => this.BuildManyToOneMap(mto)).ToList();
+            var memberMaps = model.MemberMaps.Select(mm => this.BuildMemberMap(mm)).ToList();
             var extPropMap = this.BuildExtendedPropertiesMap(model.ExtendedPropertiesMap);
 
             var subClassMaps = model.SubClassMaps.Select(sc => this.BuildSubClassMap(sc));
@@ -141,6 +142,7 @@ namespace MongoDB.Framework.Mapping.Models
             var nestedClassMap = new NestedClassMap(
                 model.Type,
                 memberMaps,
+                manyToOneMaps,
                 model.DiscriminatorKey,
                 model.Discriminator,
                 subClassMaps,
@@ -201,6 +203,17 @@ namespace MongoDB.Framework.Mapping.Models
             return new Index(model.Name, model.Parts, model.IsUnique);
         }
 
+        private ManyToOneMap BuildManyToOneMap(ManyToOneMapModel model)
+        {
+            var getter = LateBoundReflection.GetGetter(model.Getter);
+            var setter = LateBoundReflection.GetSetter(model.Setter);
+            string name = model.Getter.Name;
+            string key = model.Key ?? name;
+            var memberValueType = ReflectionUtil.GetMemberValueType(model.Getter);
+
+            return new ManyToOneMap(key, name, getter, setter, memberValueType);
+        }
+
         private MemberMap BuildMemberMap(MemberMapModel model)
         {
             var getter = LateBoundReflection.GetGetter(model.Getter);
@@ -245,10 +258,12 @@ namespace MongoDB.Framework.Mapping.Models
 
         private SubClassMap BuildSubClassMap(SubClassMapModel model)
         {
-            var subClassMemberMaps = model.MemberMaps.Select(mm => this.BuildMemberMap(mm));
+            var manyToOneMaps = model.ManyToOneMaps.Select(mto => this.BuildManyToOneMap(mto)).ToList();
+            var memberMaps = model.MemberMaps.Select(mm => this.BuildMemberMap(mm)).ToList();
             return new SubClassMap(
                 model.Type,
-                subClassMemberMaps,
+                memberMaps,
+                manyToOneMaps,
                 model.Discriminator);
         }
 

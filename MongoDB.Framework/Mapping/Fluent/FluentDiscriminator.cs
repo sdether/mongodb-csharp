@@ -15,9 +15,9 @@ namespace MongoDB.Framework.Mapping.Fluent
             this.superClassMapModel = superClassMapModel;
         }
 
-        public FluentDiscriminator<TDiscriminator> SubClass<TSubClass>(TDiscriminator discriminator, Action<FluentSubClassMap<TSubClass>> configure)
+        public FluentDiscriminator<TDiscriminator> SubClass<TSubClass>(TDiscriminator discriminator, Action<FluentSubClass<TSubClass>> configure)
         {
-            var subClassMap = new FluentSubClassMap<TSubClass>();
+            var subClassMap = new FluentSubClass<TSubClass>();
             configure(subClassMap);
             subClassMap.Model.Discriminator = discriminator;
             this.superClassMapModel.SubClassMaps.Add(subClassMap.Model);

@@ -8,32 +8,32 @@ namespace MongoDB.Framework.Mapping.Fluent
 {
     public class FluentGeneratedBy
     {
-        private FluentIdMap idMap;
+        private FluentId idMap;
 
-        public FluentGeneratedBy(FluentIdMap idMap)
+        public FluentGeneratedBy(FluentId idMap)
         {
             this.idMap = idMap;
         }
 
-        public FluentIdMap Assigned()
+        public FluentId Assigned()
         {
             this.idMap.Model.Generator = new AssignedGenerator();
             return this.idMap;
         }
 
-        public FluentIdMap Guid()
+        public FluentId Guid()
         {
             this.idMap.Model.Generator = new GuidGenerator();
             return this.idMap;
         }
 
-        public FluentIdMap GuidComb()
+        public FluentId GuidComb()
         {
             this.idMap.Model.Generator = new GuidCombGenerator();
             return this.idMap;
         }
 
-        public FluentIdMap Oid()
+        public FluentId Oid()
         {
             this.idMap.Model.Generator = new OidGenerator();
             return this.idMap;

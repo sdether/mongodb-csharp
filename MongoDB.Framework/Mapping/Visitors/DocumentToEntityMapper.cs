@@ -50,6 +50,20 @@ namespace MongoDB.Framework.Mapping.Visitors
             this.document.Remove(memberMap.Key);
         }
 
+        public override void ProcessManyToOne(ManyToOneMap manyToOneMap)
+        {
+            var value = document[manyToOneMap.Key] as DBRef;
+            this.document.Remove(manyToOneMap.Key);
+            if (value == null)
+                return;
+
+            var referenceClassMap = this.mongoContext.MappingStore.GetClassMapFor(manyToOneMap.ReferenceType);
+            var id = referenceClassMap.IdMap.ValueType.ConvertFromDocumentValue(value.Id, this.mongoContext);
+
+            var referenceEntity = this.mongoContext.GetById(manyToOneMap.ReferenceType, id);
+            manyToOneMap.MemberSetter(this.entity, referenceEntity);
+        }
+
         public override void ProcessExtendedProperties(ExtendedPropertiesMap extendedPropertiesMap)
         {
             var dictionary = this.document.ToDictionary();

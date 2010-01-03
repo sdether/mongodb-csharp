@@ -16,7 +16,7 @@ namespace MongoDB.Framework.Mapping.IdGenerators
         {
             var generator = new AssignedGenerator();
             var idMap = new IdMap("Id", x => 42, (x, y) => { }, new Mock<IValueType>().Object, generator, null);
-            var mockClassMap = new Mock<ClassMap>(typeof(int), Enumerable.Empty<MemberMap>(), null);
+            var mockClassMap = new Mock<ClassMap>(typeof(int), Enumerable.Empty<MemberMap>(), Enumerable.Empty<ManyToOneMap>(), null);
             var mockMongoContext = new Mock<IMongoContext>();
             mockMongoContext.Setup(x => x.MappingStore.GetClassMapFor(It.IsAny<Type>())).Returns(mockClassMap.Object);
             mockClassMap.SetupGet(x => x.IdMap).Returns(idMap);
@@ -31,7 +31,7 @@ namespace MongoDB.Framework.Mapping.IdGenerators
         {
             var generator = new AssignedGenerator();
             var idMap = new IdMap("Id", x => null, (x, y) => { }, new Mock<IValueType>().Object, generator, null);
-            var mockClassMap = new Mock<ClassMap>(typeof(int), Enumerable.Empty<MemberMap>(), null);
+            var mockClassMap = new Mock<ClassMap>(typeof(int), Enumerable.Empty<MemberMap>(), Enumerable.Empty<ManyToOneMap>(), null);
             var mockMongoContext = new Mock<IMongoContext>();
             mockMongoContext.Setup(x => x.MappingStore.GetClassMapFor(It.IsAny<Type>())).Returns(mockClassMap.Object);
             mockClassMap.SetupGet(x => x.IdMap).Returns(idMap);

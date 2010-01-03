@@ -11,9 +11,9 @@ using MongoDB.Framework.Mapping.Models;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public abstract class FluentSuperClassMap<TModel, TClass> : FluentClassMap<TModel, TClass> where TModel : SuperClassMapModel
+    public abstract class FluentSuperClass<TModel, TClass> : FluentClass<TModel, TClass> where TModel : SuperClassMapModel
     {
-        public FluentSuperClassMap(TModel model)
+        public FluentSuperClass(TModel model)
             : base(model)
         { }
 

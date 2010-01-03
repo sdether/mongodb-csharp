@@ -27,6 +27,11 @@ namespace MongoDB.Framework.Mapping.Models.Visitors
             memberMapModel.Accept(this);
         }
 
+        public override void Visit(ManyToOneMapModel manyToOneMapModel)
+        {
+            manyToOneMapModel.Accept(this);
+        }
+
         public override void Visit(NestedClassMapModel nestedClassMapModel)
         {
             nestedClassMapModel.Accept(this);
@@ -45,6 +50,11 @@ namespace MongoDB.Framework.Mapping.Models.Visitors
         public override void Visit(SuperClassMapModel superClassMapModel)
         {
             superClassMapModel.Accept(this);
+        }
+
+        public override void Visit(IndexModel indexModel)
+        {
+            indexModel.Accept(this);
         }
     }
 }

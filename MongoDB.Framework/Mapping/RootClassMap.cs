@@ -72,8 +72,17 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="RootClassMap"/> class.
         /// </summary>
         /// <param name="type">The type.</param>
-        public RootClassMap(Type type, string collectionName, IdMap idMap, IEnumerable<MemberMap> memberMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap, IEnumerable<Index> indexes)
-            : base(type, memberMaps, discriminatorKey, discriminator, subClassMaps, extendedPropertiesMap)
+        /// <param name="collectionName">Name of the collection.</param>
+        /// <param name="idMap">The id map.</param>
+        /// <param name="memberMaps">The member maps.</param>
+        /// <param name="manyToOneMaps">The many to one maps.</param>
+        /// <param name="discriminatorKey">The discriminator key.</param>
+        /// <param name="discriminator">The discriminator.</param>
+        /// <param name="subClassMaps">The sub class maps.</param>
+        /// <param name="extendedPropertiesMap">The extended properties map.</param>
+        /// <param name="indexes">The indexes.</param>
+        public RootClassMap(Type type, string collectionName, IdMap idMap, IEnumerable<MemberMap> memberMaps, IEnumerable<ManyToOneMap> manyToOneMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap, IEnumerable<Index> indexes)
+            : base(type, memberMaps, manyToOneMaps, discriminatorKey, discriminator, subClassMaps, extendedPropertiesMap)
         {
             if (collectionName == null)
                 throw new ArgumentException("Cannot be null or empty.", "collectionName");

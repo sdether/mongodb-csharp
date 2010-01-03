@@ -37,6 +37,11 @@ namespace MongoDB.Framework.Mapping.Visitors
             memberMap.Accept(this);
         }
 
+        public override void Visit(ManyToOneMap manyToOneMap)
+        {
+            manyToOneMap.Accept(this);
+        }
+
         public override void Visit(ExtendedPropertiesMap extendedPropertiesMap)
         {
             extendedPropertiesMap.Accept(this);

@@ -7,7 +7,7 @@ using MongoDB.Framework.Mapping.Fluent;
 namespace MongoDB.Framework.DomainModels
 {
 
-    public class BlogMap : FluentRootClassMap<Blog>
+    public class BlogMap : FluentRootClass<Blog>
     {
         public BlogMap()
         {
@@ -19,7 +19,7 @@ namespace MongoDB.Framework.DomainModels
         }
     }
 
-    public class BlogEntryMap : FluentRootClassMap<BlogEntry>
+    public class BlogEntryMap : FluentRootClass<BlogEntry>
     {
         public BlogEntryMap()
         {
@@ -34,7 +34,7 @@ namespace MongoDB.Framework.DomainModels
         }
     }
 
-    public class BlogEntryCommentMap : FluentNestedClassMap<BlogEntryComment>
+    public class BlogEntryCommentMap : FluentNestedClass<BlogEntryComment>
     {
         public BlogEntryCommentMap()
         {

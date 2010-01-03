@@ -11,14 +11,15 @@ using MongoDB.Driver;
 namespace MongoDB.Framework.Inserts
 {
     [TestFixture]
-    public class SimpleDictionary : TestCase
+    public class ManyToOne : TestCase
     {
         protected override IMapProvider MapProvider
         {
-            get
+            get 
             {
                 return new FluentMapProvider()
-                    .AddMap(new EntityMap());
+                    .AddMap(new EntityMap())
+                    .AddMap(new EntityRefMap());
             }
         }
 
@@ -27,16 +28,19 @@ namespace MongoDB.Framework.Inserts
             using (var context = this.CreateContext())
             {
                 context.Database.MetaData.DropCollection("Entity");
+                context.Database.MetaData.DropCollection("EntityRef");
             }
         }
 
         [Test]
         public void Should_insert()
         {
+            var reference = new EntityRef();
             var entity = new Entity();
-            entity.Integers = new Dictionary<string, int>() { { "one", 1 }, { "two", 2}, { "three", 3 } };
+            entity.Reference = reference;
             using (var context = this.CreateContext())
             {
+                context.Insert(reference);
                 context.Insert(entity);
             }
 
@@ -48,16 +52,19 @@ namespace MongoDB.Framework.Inserts
 
             Assert.IsNotNull(insertedDocument);
             Assert.AreEqual(entity.Id, new Guid((string)insertedDocument["_id"]));
-            Assert.AreEqual(1, ((Document)insertedDocument["Integers"])["one"]);
-            Assert.AreEqual(2, ((Document)insertedDocument["Integers"])["two"]);
-            Assert.AreEqual(3, ((Document)insertedDocument["Integers"])["three"]);
+            Assert.AreEqual(reference.Id, new Guid((string)((DBRef)insertedDocument["Reference"]).Id));
         }
 
         public class Entity
         {
             public Guid Id { get; private set; }
 
-            public Dictionary<string,int> Integers { get; set; }
+            public EntityRef Reference { get; set; }
+        }
+
+        public class EntityRef
+        {
+            public Guid Id { get; private set; }
         }
 
         public class EntityMap : FluentRootClass<Entity>
@@ -65,8 +72,17 @@ namespace MongoDB.Framework.Inserts
             public EntityMap()
             {
                 Id(x => x.Id);
-                Map(x => x.Integers);
+                References(x => x.Reference);
             }
         }
+
+        public class EntityRefMap : FluentRootClass<EntityRef>
+        {
+            public EntityRefMap()
+            {
+                Id(x => x.Id);
+            }
+        }
+
     }
 }

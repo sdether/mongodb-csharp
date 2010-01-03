@@ -57,9 +57,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Mapping\Cascade.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Mapping\ClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -69,7 +66,7 @@
     <Compile Include="Mapping\Fluent\FluentBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentClassMap.cs">
+    <Compile Include="Mapping\Fluent\FluentClass.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\Fluent\FluentDiscriminator.cs">
@@ -78,7 +75,7 @@
     <Compile Include="Mapping\Fluent\FluentEmbeddedCollectionPart.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentEmbeddedMemberMap.cs">
+    <Compile Include="Mapping\Fluent\FluentEmbeddedMember.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\Fluent\FluentEmbeddedValuePart.cs">
@@ -87,7 +84,7 @@
     <Compile Include="Mapping\Fluent\FluentGeneratedBy.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentIdMap.cs">
+    <Compile Include="Mapping\Fluent\FluentId.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\Fluent\FluentIndex.cs">
@@ -96,16 +93,17 @@
     <Compile Include="Mapping\Fluent\FluentMapProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentNestedClassMap.cs">
+    <Compile Include="Mapping\Fluent\FluentNestedClass.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentRootClassMap.cs">
+    <Compile Include="Mapping\Fluent\FluentReference.cs" />
+    <Compile Include="Mapping\Fluent\FluentRootClass.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentSubClassMap.cs">
+    <Compile Include="Mapping\Fluent\FluentSubClass.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentSuperClassMap.cs">
+    <Compile Include="Mapping\Fluent\FluentSuperClass.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\IdGenerators\AssignedGenerator.cs">
@@ -159,6 +157,7 @@
     <Compile Include="Mapping\MemberMap.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Mapping\MemberMapBase.cs" />
     <Compile Include="Mapping\MemberMapPath.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -189,12 +188,14 @@
     <Compile Include="Mapping\Models\IndexModel.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Mapping\Models\ManyToOneMapModel.cs" />
     <Compile Include="Mapping\Models\MapModel.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\Models\MemberMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Mapping\Models\MemberMapModelBase.cs" />
     <Compile Include="Mapping\Models\ModelledMapProvider.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -219,6 +220,7 @@
     <Compile Include="Mapping\NestedClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Mapping\ManyToOneMap.cs" />
     <Compile Include="Mapping\RootClassMap.cs">
       <SubType>Code</SubType>
     </Compile>

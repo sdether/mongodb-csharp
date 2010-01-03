@@ -10,19 +10,19 @@ using MongoDB.Framework.Linq.Visitors;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentEmbeddedMemberMap<TEntity> : FluentBase<MemberMapModel>
+    public class FluentEmbeddedMember<TEntity> : FluentBase<MemberMapModel>
     {
-        public FluentEmbeddedMemberMap()
+        public FluentEmbeddedMember()
             : base(new MemberMapModel())
         { }
 
-        public FluentEmbeddedMemberMap<TEntity> Key(string key)
+        public FluentEmbeddedMember<TEntity> Key(string key)
         {
             this.Model.Key = key;
             return this;
         }
 
-        public FluentEmbeddedMemberMap<TEntity> AsCollection(Action<FluentEmbeddedCollectionPart> configure)
+        public FluentEmbeddedMember<TEntity> AsCollection(Action<FluentEmbeddedCollectionPart> configure)
         {
             var collectionPart = new EmbeddedCollectionPart();
             var fluentCollectionPart = new FluentEmbeddedCollectionPart(collectionPart);
@@ -31,17 +31,17 @@ namespace MongoDB.Framework.Mapping.Fluent
             return this;
         }
 
-        public FluentEmbeddedMemberMap<TEntity> AsNestedClass<TNestedClass>(Action<FluentNestedClassMap<TNestedClass>> configure)
+        public FluentEmbeddedMember<TEntity> AsNestedClass<TNestedClass>(Action<FluentNestedClass<TNestedClass>> configure)
         {
             var classPart = new EmbeddedClassPart();
-            var fluentNestedClassMap = new FluentNestedClassMap<TNestedClass>();
+            var fluentNestedClassMap = new FluentNestedClass<TNestedClass>();
             classPart.NestedClassMap = fluentNestedClassMap.Model;
             configure(fluentNestedClassMap);
             this.Model.Part = classPart;
             return this;
         }
 
-        public FluentEmbeddedMemberMap<TEntity> AsValue(Action<FluentEmbeddedValuePart> configure)
+        public FluentEmbeddedMember<TEntity> AsValue(Action<FluentEmbeddedValuePart> configure)
         {
             var valuePart = new EmbeddedValuePart();
             var fluentValuePart = new FluentEmbeddedValuePart(valuePart);

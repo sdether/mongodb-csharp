@@ -7,29 +7,29 @@ using MongoDB.Framework.Mapping.Models;
 
 namespace MongoDB.Framework.Mapping.Fluent
 {
-    public class FluentIdMap : FluentBase<IdMapModel>
+    public class FluentId : FluentBase<IdMapModel>
     {
         public FluentGeneratedBy GeneratedBy
         {
             get { return new FluentGeneratedBy(this); }
         }
 
-        public FluentIdMap()
+        public FluentId()
             : base(new IdMapModel() { Part = new EmbeddedValuePart() })
         { }
 
-        public FluentIdMap UnsavedValue(object unsavedValue)
+        public FluentId UnsavedValue(object unsavedValue)
         {
             this.Model.UnsavedValue = unsavedValue;
             return this;
         }
 
-        public FluentIdMap CustomTypeIs<TValueType>() where TValueType : IValueType, new()
+        public FluentId CustomTypeIs<TValueType>() where TValueType : IValueType, new()
         {
             return this.CustomTypeIs(new TValueType());
         }
 
-        public FluentIdMap CustomTypeIs(IValueType valueType)
+        public FluentId CustomTypeIs(IValueType valueType)
         {
             ((EmbeddedValuePart)this.Model.Part).CustomValueType = valueType;
             return this;
