@@ -8,6 +8,12 @@ namespace MongoDB.Framework.Configuration.Mapping.Models
     public abstract class ClassMapModel : MapModel
     {
         /// <summary>
+        /// Gets the collection maps.
+        /// </summary>
+        /// <value>The collections.</value>
+        public List<CollectionMapModel> CollectionMaps { get; private set; }
+
+        /// <summary>
         /// Gets or sets the discriminator.
         /// </summary>
         /// <value>The discriminator.</value>
@@ -20,10 +26,10 @@ namespace MongoDB.Framework.Configuration.Mapping.Models
         public List<ManyToOneMapModel> ManyToOneMaps { get; private set; }
 
         /// <summary>
-        /// Gets the member maps.
+        /// Gets the value maps.
         /// </summary>
-        /// <value>The member maps.</value>
-        public List<MemberMapModel> MemberMaps { get; private set; }
+        /// <value>The value maps.</value>
+        public List<ValueMapModel> ValueMaps { get; private set; }
 
         /// <summary>
         /// Gets the type.
@@ -37,8 +43,9 @@ namespace MongoDB.Framework.Configuration.Mapping.Models
         /// <param name="type">The type.</param>
         public ClassMapModel(Type type)
         {
+            this.CollectionMaps = new List<CollectionMapModel>();
             this.ManyToOneMaps = new List<ManyToOneMapModel>();
-            this.MemberMaps = new List<MemberMapModel>();
+            this.ValueMaps = new List<ValueMapModel>();
             this.Type = type;
         }
 
@@ -50,8 +57,11 @@ namespace MongoDB.Framework.Configuration.Mapping.Models
         {
             visitor.ProcessClass(this);
 
-            foreach (var memberMap in this.MemberMaps)
-                visitor.Visit(memberMap);
+            foreach (var valueMap in this.ValueMaps)
+                visitor.Visit(valueMap);
+
+            foreach (var collectionMap in this.CollectionMaps)
+                visitor.Visit(collectionMap);
 
             foreach (var manyToOneMap in this.ManyToOneMaps)
                 visitor.Visit(manyToOneMap);

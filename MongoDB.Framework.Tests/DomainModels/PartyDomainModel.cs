@@ -14,7 +14,6 @@ namespace MongoDB.Framework.DomainModels
         public PartyMap()
         {
             UseCollection("parties");
-
             Index().Ascending("Name");
 
             Id(x => x.Id);
@@ -22,8 +21,8 @@ namespace MongoDB.Framework.DomainModels
             Map(x => x.Name);
             Map(x => x.PhoneNumber);
 
-            Map(x => x.AlternatePhoneNumbers);
-            Map(x => x.Aliases);
+            Collection(x => x.AlternatePhoneNumbers);
+            Collection(x => x.Aliases);
 
             DiscriminateSubClassesOnKey<string>("Type")
                 .SubClass<Person>(PartyType.Person.ToString(), m =>

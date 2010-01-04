@@ -65,7 +65,7 @@ namespace MongoDB.Framework.Inserts
             public EntityMap()
             {
                 Id(x => x.Id);
-                Map(x => x.Integers);
+                Collection(x => x.Integers);
             }
         }
     }

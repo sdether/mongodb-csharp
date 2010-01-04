@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Configuration.Mapping.Models
 {
-    public class IdMapModel : MemberMapModel
+    public class IdMapModel : ValueMapModel
     {
         /// <summary>
         /// Gets or sets the generator.

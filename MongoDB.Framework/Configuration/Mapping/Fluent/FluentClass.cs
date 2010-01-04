@@ -18,24 +18,47 @@ namespace MongoDB.Framework.Configuration.Mapping.Fluent
             : base(model)
         { }
 
-        public FluentEmbeddedMember<TEntity> Map(string memberName)
+        public FluentCollection Collection(string memberName)
+        {
+            var memberInfo = ReflectionUtil.GetSingleMember<TEntity>(memberName);
+            return this.Collection(memberInfo);
+        }
+
+        public FluentCollection Collection(MemberInfo memberInfo)
+        {
+            var memberType = ReflectionUtil.GetMemberValueType(memberInfo);
+            var collection = new FluentCollection();
+            collection.Model.Getter = memberInfo;
+            collection.Model.Setter = memberInfo;
+
+            this.Model.CollectionMaps.Add(collection.Model);
+            return collection;
+        }
+
+        public FluentCollection Collection(Expression<Func<TEntity, object>> member)
+        {
+            var memberInfo = ReflectionUtil.GetSingleMember(member);
+            return this.Collection(memberInfo);
+        }
+
+        public FluentValue Map(string memberName)
         {
             var memberInfo = ReflectionUtil.GetSingleMember<TEntity>(memberName);
             return this.Map(memberInfo);
         }
 
-        public FluentEmbeddedMember<TEntity> Map(MemberInfo memberInfo)
+        public FluentValue Map(MemberInfo memberInfo)
         {
             var memberType = ReflectionUtil.GetMemberValueType(memberInfo);
-            var memberMap = new FluentEmbeddedMember<TEntity>();
-            memberMap.Model.Getter = memberInfo;
-            memberMap.Model.Setter = memberInfo;
+            var value = new FluentValue();
+            value.Model.Getter = memberInfo;
+            value.Model.Setter = memberInfo;
 
-            this.Model.MemberMaps.Add(memberMap.Model);
-            return memberMap;
+            this.Model.ValueMaps.Add(value.Model);
+            return value;
         }
 
-        public FluentEmbeddedMember<TEntity> Map(Expression<Func<TEntity, object>> member)
+        public FluentValue Map(Expression<Func<TEntity, object>> member)
         {
             var memberInfo = ReflectionUtil.GetSingleMember(member);
             return this.Map(memberInfo);

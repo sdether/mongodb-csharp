@@ -14,15 +14,7 @@ namespace MongoDB.Framework.Configuration.Mapping.Models
     {
         #region Private Fields
 
-        private Dictionary<Type, Func<Type, Type>> elementTypeFactories = new Dictionary<Type, Func<Type, Type>>()
-        {
-            { typeof(ICollection<>), mt => mt.GetGenericArguments()[0] },
-            { typeof(IList<>), mt => mt.GetGenericArguments()[0] },
-            { typeof(List<>), mt => mt.GetGenericArguments()[0] },
-            { typeof(HashSet<>), mt => mt.GetGenericArguments()[0] },
-            { typeof(IDictionary<,>), mt => mt.GetGenericArguments()[1] },
-            { typeof(Dictionary<,>), mt => mt.GetGenericArguments()[1] },
-        };
+        private Dictionary<Type, Func<Type, Type>> elementTypeFactories = new Dictionary<Type, Func<Type, Type>>()        {            { typeof(ICollection<>), mt => mt.GetGenericArguments()[0] },            { typeof(IList<>), mt => mt.GetGenericArguments()[0] },            { typeof(List<>), mt => mt.GetGenericArguments()[0] },            { typeof(HashSet<>), mt => mt.GetGenericArguments()[0] },            { typeof(IDictionary<,>), mt => mt.GetGenericArguments()[1] },            { typeof(Dictionary<,>), mt => mt.GetGenericArguments()[1] },        };
 
         private Dictionary<Type, RootClassMapModel> rootClassMapModels;
         private Dictionary<Type, NestedClassMapModel> nestedClassMapModels;
@@ -107,7 +99,9 @@ namespace MongoDB.Framework.Configuration.Mapping.Models
         private RootClassMap BuildRootClassMap(RootClassMapModel model)
         {
             var manyToOneMaps = model.ManyToOneMaps.Select(mto => this.BuildManyToOneMap(mto)).ToList();
-            var memberMaps = model.MemberMaps.Select(mm => this.BuildMemberMap(mm)).ToList();
+            var memberMaps = model.ValueMaps.Select(vm => this.BuildMemberMap(vm))
+                .Concat(model.CollectionMaps.Select(cm => this.BuildMemberMap(cm)))
+                .ToList();
             var extPropMap = this.BuildExtendedPropertiesMap(model.ExtendedPropertiesMap);
             var idMap = this.BuildIdMap(model.IdMap);
             string collectionName = model.CollectionName ?? model.Type.Name;
@@ -134,7 +128,9 @@ namespace MongoDB.Framework.Configuration.Mapping.Models
         private NestedClassMap BuildNestedClassMap(NestedClassMapModel model)
         {
             var manyToOneMaps = model.ManyToOneMaps.Select(mto => this.BuildManyToOneMap(mto)).ToList();
-            var memberMaps = model.MemberMaps.Select(mm => this.BuildMemberMap(mm)).ToList();
+            var memberMaps = model.ValueMaps.Select(vm => this.BuildMemberMap(vm))
+                            .Concat(model.CollectionMaps.Select(cm => this.BuildMemberMap(cm)))
+                            .ToList();
             var extPropMap = this.BuildExtendedPropertiesMap(model.ExtendedPropertiesMap);
 
             var subClassMaps = model.SubClassMaps.Select(sc => this.BuildSubClassMap(sc));
@@ -168,8 +164,6 @@ namespace MongoDB.Framework.Configuration.Mapping.Models
             var getter = LateBoundReflection.GetGetter(model.Getter);
             var setter = LateBoundReflection.GetSetter(model.Setter);
             IValueType valueType = null;
-            if(model.Part != null)
-                valueType = ((EmbeddedValuePart)model.Part).CustomValueType;
             IIdGenerator generator = model.Generator;
             object unsavedValue = model.UnsavedValue;
 
@@ -191,7 +185,7 @@ namespace MongoDB.Framework.Configuration.Mapping.Models
 
             if (unsavedValue == null)
                 unsavedValue = memberType.IsValueType ? Activator.CreateInstance(memberType) : null;
-                        
+
             return new IdMap(model.Getter.Name, getter, setter, valueType, generator, unsavedValue);
         }
 
@@ -214,7 +208,7 @@ namespace MongoDB.Framework.Configuration.Mapping.Models
             return new ManyToOneMap(key, name, getter, setter, memberValueType);
         }
 
-        private MemberMap BuildMemberMap(MemberMapModel model)
+        private MemberMap BuildMemberMap(MemberMapModelBase model)
         {
             var getter = LateBoundReflection.GetGetter(model.Getter);
             var setter = LateBoundReflection.GetSetter(model.Setter);
@@ -223,30 +217,17 @@ namespace MongoDB.Framework.Configuration.Mapping.Models
             var memberValueType = ReflectionUtil.GetMemberValueType(model.Getter);
             IValueType valueType;
 
-            if (model.Part == null)
+            if (model is ValueMapModel)
             {
-                if (this.IsCollection(memberValueType))
-                    model.Part = new EmbeddedCollectionPart();
-                else //this will also pick up nested class...
-                    model.Part = new EmbeddedValuePart();
+                var value = (ValueMapModel)model;
+                valueType = value.CustomValueType ?? this.GetValueTypeFromType(memberValueType);
             }
-
-            if (model.Part is EmbeddedValuePart)
+            else if (model is CollectionMapModel)
             {
-                var valuePart = (EmbeddedValuePart)model.Part;
-                valueType = valuePart.CustomValueType ?? this.GetValueTypeFromType(memberValueType);
-            }
-            else if (model.Part is EmbeddedCollectionPart)
-            {
-                valueType = this.GetCollectionValueType(memberValueType, (EmbeddedCollectionPart)model.Part);
-            }
-            else if (model.Part is EmbeddedClassPart)
-            {
-                var ncPart = (EmbeddedClassPart)model.Part;
-                valueType = new NestedClassValueType(this.BuildNestedClassMap(ncPart.NestedClassMap));
+                valueType = this.GetCollectionValueType(memberValueType, (CollectionMapModel)model);
             }
             else
-                throw new NotSupportedException("Unknown EmbeddedMemberPart.");
+                throw new NotSupportedException("Unknown MemberMap.");
 
             return new MemberMap(
                 key,
@@ -259,7 +240,9 @@ namespace MongoDB.Framework.Configuration.Mapping.Models
         private SubClassMap BuildSubClassMap(SubClassMapModel model)
         {
             var manyToOneMaps = model.ManyToOneMaps.Select(mto => this.BuildManyToOneMap(mto)).ToList();
-            var memberMaps = model.MemberMaps.Select(mm => this.BuildMemberMap(mm)).ToList();
+            var memberMaps = model.ValueMaps.Select(vm => this.BuildMemberMap(vm))
+                            .Concat(model.CollectionMaps.Select(cm => this.BuildMemberMap(cm)))
+                            .ToList();
             return new SubClassMap(
                 model.Type,
                 memberMaps,
@@ -274,12 +257,9 @@ namespace MongoDB.Framework.Configuration.Mapping.Models
 
         private IValueType GetValueTypeFromType(Type type)
         {
-            NestedClassMapModel nestedClassMapModel;
-            if (this.nestedClassMapModels.TryGetValue(type, out nestedClassMapModel))
-            {
-                return new NestedClassValueType(
-                    this.BuildNestedClassMap(nestedClassMapModel));
-            }
+            var nestedClassMap = this.GetNestedClassMapFor(type);
+            if (nestedClassMap != null)
+                return new NestedClassValueType(nestedClassMap);
 
             if (type == typeof(Guid))
                 return new GuidValueType();
@@ -292,27 +272,28 @@ namespace MongoDB.Framework.Configuration.Mapping.Models
             return new NullSafeValueType(type);
         }
 
-        private IValueType GetCollectionValueType(Type memberType, EmbeddedCollectionPart collectionPart)
+        private IValueType GetCollectionValueType(Type memberType, CollectionMapModel model)
         {
-            if (collectionPart.CollectionType == null)
-                collectionPart.CollectionType = this.GetCollectionType(memberType);
+            if (model.CollectionType == null)
+                model.CollectionType = this.GetCollectionType(memberType);
 
-            if (collectionPart.ElementValueType == null)
+            if (model.ElementValueType == null)
             {
-                if (collectionPart.ElementType == null)
-                    collectionPart.ElementType = this.DiscoverElementType(memberType);
-                collectionPart.ElementValueType = this.GetValueTypeFromType(collectionPart.ElementType);
+                if (model.ElementType == null)
+                    model.ElementType = this.DiscoverCollectionElementType(memberType);
+
+                model.ElementValueType = this.GetValueTypeFromType(model.ElementType);
             }
 
-            return new CollectionValueType(collectionPart.CollectionType, collectionPart.ElementValueType);
+            return new CollectionValueType(model.CollectionType, model.ElementValueType);
         }
 
-        private Type DiscoverElementType(Type memberType)
+        private Type DiscoverCollectionElementType(Type memberType)
         {
             if (memberType.IsGenericType)
             {
                 Func<Type, Type> elementTypeFactory;
-                if(this.elementTypeFactories.TryGetValue(memberType.GetGenericTypeDefinition(), out elementTypeFactory))
+                if (this.elementTypeFactories.TryGetValue(memberType.GetGenericTypeDefinition(), out elementTypeFactory))
                     return elementTypeFactory(memberType);
             }
 

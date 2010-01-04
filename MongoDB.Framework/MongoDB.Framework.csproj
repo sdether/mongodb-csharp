@@ -72,13 +72,10 @@
     <Compile Include="Configuration\Mapping\Fluent\FluentDiscriminator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Fluent\FluentEmbeddedCollectionPart.cs">
+    <Compile Include="Configuration\Mapping\Fluent\FluentCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Fluent\FluentEmbeddedMember.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Configuration\Mapping\Fluent\FluentEmbeddedValuePart.cs">
+    <Compile Include="Configuration\Mapping\Fluent\FluentValue.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Mapping\Fluent\FluentGeneratedBy.cs">
@@ -93,6 +90,7 @@
     <Compile Include="Configuration\Mapping\Fluent\FluentMapProvider.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\Mapping\Fluent\FluentMember.cs" />
     <Compile Include="Configuration\Mapping\Fluent\FluentNestedClass.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -164,18 +162,7 @@
     <Compile Include="Configuration\Mapping\Models\ClassMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Models\EmbeddedClassPart.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Configuration\Mapping\Models\EmbeddedCollectionPart.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Configuration\Mapping\Models\EmbeddedMemberPart.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Configuration\Mapping\Models\EmbeddedValuePart.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Configuration\Mapping\Models\CollectionMapModel.cs" />
     <Compile Include="Configuration\Mapping\Models\ExtendedPropertiesMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -190,9 +177,6 @@
     </Compile>
     <Compile Include="Configuration\Mapping\Models\ManyToOneMapModel.cs" />
     <Compile Include="Configuration\Mapping\Models\MapModel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Configuration\Mapping\Models\MemberMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Mapping\Models\MemberMapModelBase.cs" />
@@ -211,6 +195,7 @@
     <Compile Include="Configuration\Mapping\Models\SuperClassMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\Mapping\Models\ValueMapModel.cs" />
     <Compile Include="Configuration\Mapping\Models\Visitors\DefaultMapModelVisitor.cs">
       <SubType>Code</SubType>
     </Compile>

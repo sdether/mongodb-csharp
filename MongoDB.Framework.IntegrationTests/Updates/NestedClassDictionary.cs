@@ -101,7 +101,7 @@ namespace MongoDB.Framework.Updates
             public EntityMap()
             {
                 Id(x => x.Id);
-                Map(x => x.SubEntities);
+                Collection(x => x.SubEntities);
             }
         }
 
