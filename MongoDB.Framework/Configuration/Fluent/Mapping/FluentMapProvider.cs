@@ -7,7 +7,7 @@ using System.Reflection;
 using MongoDB.Framework.Configuration.Mapping.Models;
 using MongoDB.Framework.Reflection;
 
-namespace MongoDB.Framework.Configuration.Mapping.Fluent
+namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
     public class FluentMapProvider : ModelledMapProvider
     {

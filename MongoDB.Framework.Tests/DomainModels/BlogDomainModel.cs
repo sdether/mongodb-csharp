@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MongoDB.Framework.Configuration.Mapping.Fluent;
+using MongoDB.Framework.Configuration.Fluent.Mapping;
 
 namespace MongoDB.Framework.DomainModels
 {

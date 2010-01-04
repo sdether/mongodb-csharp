@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using MongoDB.Framework.Configuration.Mapping.Models;
 
-namespace MongoDB.Framework.Configuration.Mapping.Fluent
+namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
     public abstract class FluentMember<TModel, TFluent> : FluentBase<TModel> where TModel : MemberMapModelBase
     {

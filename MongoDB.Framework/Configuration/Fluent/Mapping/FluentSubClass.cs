@@ -9,7 +9,7 @@ using MongoDB.Framework.Linq.Visitors;
 using MongoDB.Framework.Configuration.Mapping.Models;
 using MongoDB.Framework.Reflection;
 
-namespace MongoDB.Framework.Configuration.Mapping.Fluent
+namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
     public class FluentSubClass<TSubClass> : FluentClass<SubClassMapModel, TSubClass>
     {

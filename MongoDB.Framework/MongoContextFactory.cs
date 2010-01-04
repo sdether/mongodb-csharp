@@ -87,34 +87,8 @@ namespace MongoDB.Framework
          ///<param name="database">The database.</param>
         protected virtual void Initialize(Database database)
         {
-            //this.EnsureIndexes(database);
         }
 
         #endregion
-
-        //#region Private Methods
-
-        // <summary>
-        // Ensures that the specified database has the appropriate indexes.
-        // </summary>
-        // <param name="database">The database.</param>
-        //private void EnsureIndexes(Database database)
-        //{
-        //    foreach (var rootEntityMap in this.Configuration.RootEntityMaps)
-        //    {
-        //        IMongoCollection collection = database.GetCollection(rootEntityMap.CollectionName);
-
-        //        foreach (var index in rootEntityMap.Indexes)
-        //        {
-        //            Document fieldsAndDirections = new Document();
-        //            foreach (var pair in index.DocumentKeys)
-        //                fieldsAndDirections.Add(pair.Key, pair.Value == IndexDirection.Ascending ? 1 : -1);
-
-        //            collection.MetaData.CreateIndex(fieldsAndDirections, index.IsUnique);
-        //        }
-        //    }
-        //}
-
-        //#endregion
     }
 }

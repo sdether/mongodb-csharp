@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MongoDB.Framework.Configuration.Mapping.Models;
-using System.Collections.ObjectModel;
 
-namespace MongoDB.Framework.Configuration.Mapping.Fluent
+using MongoDB.Framework.Configuration.Mapping;
+using MongoDB.Framework.Configuration.Mapping.Models;
+
+namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
     public class FluentCollection : FluentMember<CollectionMapModel, FluentCollection>
     {

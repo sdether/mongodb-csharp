@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using MongoDB.Framework.Configuration.Mapping.IdGenerators;
 
-namespace MongoDB.Framework.Configuration.Mapping.Fluent
+namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
     public class FluentGeneratedBy
     {

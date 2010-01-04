@@ -5,11 +5,12 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
+using MongoDB.Framework.Configuration.Mapping;
 using MongoDB.Framework.Configuration.Mapping.Models;
 using MongoDB.Framework.Configuration.Mapping.Types;
 using MongoDB.Framework.Reflection;
 
-namespace MongoDB.Framework.Configuration.Mapping.Fluent
+namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
     public class FluentValue : FluentMember<ValueMapModel, FluentValue>
     {

@@ -63,45 +63,45 @@
     <Compile Include="Configuration\Mapping\ExtendedPropertiesMap.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Fluent\FluentBase.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Fluent\FluentClass.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentClass.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Fluent\FluentDiscriminator.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentDiscriminator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Fluent\FluentCollection.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Fluent\FluentValue.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentValue.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Fluent\FluentGeneratedBy.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentGeneratedBy.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Fluent\FluentId.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentId.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Fluent\FluentIndex.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentIndex.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Fluent\FluentMapProvider.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentMapProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Fluent\FluentMember.cs" />
-    <Compile Include="Configuration\Mapping\Fluent\FluentNestedClass.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentMember.cs" />
+    <Compile Include="Configuration\Fluent\Mapping\FluentNestedClass.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Fluent\FluentReference.cs" />
-    <Compile Include="Configuration\Mapping\Fluent\FluentRootClass.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentReference.cs" />
+    <Compile Include="Configuration\Fluent\Mapping\FluentRootClass.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Fluent\FluentSubClass.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentSubClass.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Fluent\FluentSuperClass.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentSuperClass.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Mapping\IdGenerators\AssignedGenerator.cs">

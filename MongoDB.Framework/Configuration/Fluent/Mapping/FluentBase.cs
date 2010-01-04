@@ -6,7 +6,7 @@ using MongoDB.Framework.Configuration.Mapping.Models;
 using System.Reflection;
 using MongoDB.Framework.Linq.Visitors;
 
-namespace MongoDB.Framework.Configuration.Mapping.Fluent
+namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
     public abstract class FluentBase<TModel> where TModel : MapModel
     {

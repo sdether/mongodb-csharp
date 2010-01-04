@@ -10,7 +10,7 @@ using MongoDB.Framework.Reflection;
 using MongoDB.Framework.Configuration.Mapping.Models;
 using MongoDB.Framework.Configuration.Mapping.Types;
 
-namespace MongoDB.Framework.Configuration.Mapping.Fluent
+namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
     public abstract class FluentClass<TModel, TEntity> : FluentBase<TModel> where TModel : ClassMapModel
     {
