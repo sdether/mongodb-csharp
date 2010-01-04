@@ -108,7 +108,8 @@ namespace MongoDB.Framework.Linq
         public void Test_deleting()
         {
             var party = context.FindOne<Party>(new Document().Append("Name", "Bob McBob"));
-            context.Delete(party);
+            context.DeleteOnSubmit(party);
+            context.SubmitChanges();
 
             using (var context2 = this.CreateContext())
             {

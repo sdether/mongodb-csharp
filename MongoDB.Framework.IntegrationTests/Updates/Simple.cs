@@ -48,7 +48,7 @@ namespace MongoDB.Framework.Updates
             {
                 var entity = context.FindOne<Entity>(null);
                 entity.String = "t";
-                context.Update(entity);
+                context.SubmitChanges();
             }
 
             Document updatedDocument;

@@ -37,7 +37,8 @@ namespace MongoDB.Framework.Inserts
             entity.Strings = new List<string>() { { "one" }, { "two" }, { "three" } };
             using (var context = this.CreateContext())
             {
-                context.Insert(entity);
+                context.InsertOnSubmit(entity);
+                context.SubmitChanges();
             }
 
             Document insertedDocument;

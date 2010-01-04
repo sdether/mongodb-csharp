@@ -24,22 +24,22 @@ namespace MongoDB.Framework
         IMappingStore MappingStore { get; }
 
         /// <summary>
-        /// Deletes all the entities.
+        /// Deletes all the entities upon submit.
         /// </summary>
         /// <param name="entities">The entities.</param>
-        void DeleteAll(params object[] entities);
+        void DeleteAllOnSubmit(params object[] entities);
 
         /// <summary>
-        /// Deletes all the entities.
+        /// Deletes all the entities upon onsubmit.
         /// </summary>
         /// <param name="entities">The entities.</param>
-        void DeleteAll(IEnumerable<object> entities);
+        void DeleteAllOnSubmit(IEnumerable<object> entities);
 
         /// <summary>
-        /// Deletes the entity.
+        /// Deletes the entity upon submit.
         /// </summary>
         /// <param name="entity">The entity.</param>
-        void Delete(object entity);
+        void DeleteOnSubmit(object entity);
 
         /// <summary>
         /// Gets the entity specified by the id.
@@ -145,22 +145,22 @@ namespace MongoDB.Framework
         IEnumerable<TEntity> Find<TEntity>(Document conditions, int limit, int skip, Document orderBy);
 
         /// <summary>
-        /// Inserts all the entities.
+        /// Inserts all the entities upon submit.
         /// </summary>
         /// <param name="entities">The entities.</param>
-        void InsertAll(IEnumerable<object> entities);
+        void InsertAllOnSubmit(IEnumerable<object> entities);
 
         /// <summary>
-        /// Inserts all the entities.
+        /// Inserts all the entities upon submit.
         /// </summary>
         /// <param name="entities">The entities.</param>
-        void InsertAll(params object[] entities);
+        void InsertAllOnSubmit(params object[] entities);
 
         /// <summary>
-        /// Inserts the entity.
+        /// Inserts the entity upon submit.
         /// </summary>
         /// <param name="entity">The entity.</param>
-        void Insert(object entity);
+        void InsertOnSubmit(object entity);
 
         /// <summary>
         /// Creates a queryable for the entity.
@@ -170,21 +170,8 @@ namespace MongoDB.Framework
         IQueryable<TEntity> Query<TEntity>();
 
         /// <summary>
-        /// Updates all the entities.
+        /// Submits the changes.
         /// </summary>
-        /// <param name="entities">The entities.</param>
-        void UpdateAll(IEnumerable<object> entities);
-
-        /// <summary>
-        /// Updates all the entities.
-        /// </summary>
-        /// <param name="entities">The entities.</param>
-        void UpdateAll(params object[] entities);
-
-        /// <summary>
-        /// Updates the specified entity.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        void Update(object entity);
+        void SubmitChanges();
     }
 }

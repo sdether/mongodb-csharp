@@ -53,7 +53,7 @@ namespace MongoDB.Framework.Updates
                 entity.Integers.Clear();
                 entity.Integers["four"] = 4;
 
-                context.Update(entity);
+                context.SubmitChanges();
             }
 
             Document insertedDocument;

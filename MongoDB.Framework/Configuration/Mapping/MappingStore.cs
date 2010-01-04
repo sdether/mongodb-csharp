@@ -61,6 +61,12 @@ namespace MongoDB.Framework.Configuration.Mapping
             return classMap;
         }
 
+        /// <summary>
+        /// Tries the get class map.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="classMap">The class map.</param>
+        /// <returns></returns>
         private bool TryGetClassMap(Type type, out ClassMap classMap)
         {
             if (this.classMaps.TryGetValue(type, out classMap))

@@ -70,9 +70,9 @@ namespace MongoDB.Framework
                     }
                 }
             }
+
             return new MongoContext(
                 new IndexingMappingStore(this.Configuration.MappingStore, database), 
-                new MongoContextCache(), 
                 mongo, 
                 database);
         }

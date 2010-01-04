@@ -12,11 +12,15 @@ using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class MongoContext : IMongoContext
     {
         #region Private Fields
 
         private IMongoContextCache cache;
+        private IChangeTracker changeTracker;
         private Database database;
         private IMappingStore mappingStore;
         private Mongo mongo;
@@ -64,18 +68,17 @@ namespace MongoDB.Framework
         /// <param name="mongoContextCache">The mongo context cache.</param>
         /// <param name="mongo">The mongo.</param>
         /// <param name="database">The database.</param>
-        public MongoContext(IMappingStore mappingStore, IMongoContextCache mongoContextCache, Mongo mongo, Database database)
+        public MongoContext(IMappingStore mappingStore, Mongo mongo, Database database)
         {
             if (mappingStore == null)
                 throw new ArgumentNullException("mappingStore");
-            if (mongoContextCache == null)
-                throw new ArgumentNullException("mongoContextCache");
             if (mongo == null)
                 throw new ArgumentNullException("mongo");
             if (database == null)
                 throw new ArgumentNullException("database");
 
-            this.cache = mongoContextCache;
+            this.cache = new MongoContextCache();
+            this.changeTracker = new ChangeTracker(this);
             this.mappingStore = mappingStore;
             this.database = database;
             this.mongo = mongo;
@@ -104,32 +107,32 @@ namespace MongoDB.Framework
         }
 
         /// <summary>
-        /// Deletes the entity.
+        /// Deletes the entity upon submit.
         /// </summary>
         /// <param name="entity">The entity.</param>
-        public void Delete(object entity)
+        public void DeleteOnSubmit(object entity)
         {
             this.EnsureNotDisposed();
 
-            this.DeleteAll(new[] { entity });
+            this.DeleteAllOnSubmit(new[] { entity });
         }
 
         /// <summary>
-        /// Deletes all the entities.
+        /// Deletes all the entities upon submit.
         /// </summary>
         /// <param name="entities">The entities.</param>
-        public void DeleteAll(params object[] entities)
+        public void DeleteAllOnSubmit(params object[] entities)
         {
             this.EnsureNotDisposed();
 
-            this.DeleteAll((IEnumerable<object>)entities);
+            this.DeleteAllOnSubmit((IEnumerable<object>)entities);
         }
 
         /// <summary>
-        /// Deletes all the entities.
+        /// Deletes all the entities upon onsubmit.
         /// </summary>
         /// <param name="entities">The entities.</param>
-        public void DeleteAll(IEnumerable<object> entities)
+        public void DeleteAllOnSubmit(IEnumerable<object> entities)
         {
             this.EnsureNotDisposed();
 
@@ -137,10 +140,7 @@ namespace MongoDB.Framework
                 throw new ArgumentNullException("entities");
 
             foreach (var entity in entities)
-            {
-                var action = new DeleteAction(this, this.cache);
-                action.Delete(entity);
-            }
+                this.changeTracker.GetTrackedEntity(entity).MoveToDeleted();
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace MongoDB.Framework
         {
             this.EnsureNotDisposed();
 
-            var findOneAction = new FindOneAction(this, this.cache);
+            var findOneAction = new FindOneAction(this, this.cache, this.changeTracker);
             return findOneAction.FindOne(entityType, conditions);
         }
 
@@ -261,7 +261,7 @@ namespace MongoDB.Framework
         /// <returns></returns>
         public IEnumerable<TEntity> Find<TEntity>(Document conditions, int limit, int skip, Document orderBy)
         {
-            var findAction = new FindAction(this, this.cache);
+            var findAction = new FindAction(this, this.cache, this.changeTracker);
             return findAction.Find(typeof(TEntity), conditions, limit, skip, orderBy, null).Cast<TEntity>();
         }
 
@@ -286,33 +286,33 @@ namespace MongoDB.Framework
         {
             this.EnsureNotDisposed();
 
-            var getByIdAction = new GetByIdAction(this, this.cache);
+            var getByIdAction = new GetByIdAction(this, this.cache, this.changeTracker);
             return getByIdAction.GetById(entityType, id);
         }
 
         /// <summary>
-        /// Inserts the entity.
+        /// Inserts the entity upon submit.
         /// </summary>
         /// <param name="entity">The entity.</param>
-        public void Insert(object entity)
+        public void InsertOnSubmit(object entity)
         {
-            this.InsertAll(new[] { entity });
+            this.InsertAllOnSubmit(new[] { entity });
         }
 
         /// <summary>
-        /// Inserts all the entities.
+        /// Inserts all the entities upon submit.
         /// </summary>
         /// <param name="entities">The entities.</param>
-        public void InsertAll(params object[] entities)
+        public void InsertAllOnSubmit(params object[] entities)
         {
-            this.InsertAll((IEnumerable<object>)entities);
+            this.InsertAllOnSubmit((IEnumerable<object>)entities);
         }
 
         /// <summary>
-        /// Inserts all the entities.
+        /// Inserts all the entities upon submit.
         /// </summary>
         /// <param name="entities">The entities.</param>
-        public void InsertAll(IEnumerable<object> entities)
+        public void InsertAllOnSubmit(IEnumerable<object> entities)
         {
             this.EnsureNotDisposed();
 
@@ -321,8 +321,7 @@ namespace MongoDB.Framework
 
             foreach (var entity in entities)
             {
-                var insertAction = new InsertAction(this, this.cache);
-                insertAction.Insert(entity);
+                this.changeTracker.GetTrackedEntity(entity).MoveToInserted();
             }
         }
 
@@ -335,43 +334,21 @@ namespace MongoDB.Framework
         {
             this.EnsureNotDisposed();
 
-            return new MongoQueryable<TEntity>(this, this.cache);
+            return new MongoQueryable<TEntity>(this, this.cache, this.changeTracker);
         }
 
         /// <summary>
-        /// Updates all the entities.
+        /// Submits the changes.
         /// </summary>
-        /// <param name="entities">The entities.</param>
-        public void UpdateAll(IEnumerable<object> entities)
+        public void SubmitChanges()
         {
-            this.EnsureNotDisposed();
-
-            if (entities == null)
-                throw new ArgumentNullException("entities");
-
-            foreach (var entity in entities)
-            {
-                var action = new UpdateAction(this, this.cache);
-                action.Update(entity);
-            }
-        }
-
-        /// <summary>
-        /// Updates all the entities.
-        /// </summary>
-        /// <param name="entities">The entities.</param>
-        public void UpdateAll(params object[] entities)
-        {
-            this.UpdateAll((IEnumerable<object>)entities);
-        }
-
-        /// <summary>
-        /// Updates the specified entity.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        public void Update(object entity)
-        {
-            this.UpdateAll(new[] { entity });
+            var changeSet = this.changeTracker.GetChangeSet();
+            foreach (var inserted in changeSet.Inserted)
+                this.PerformInsert(inserted);
+            foreach (var modified in changeSet.Modified)
+                this.PerformUpdate(modified);
+            foreach (var deleted in changeSet.Deleted)
+                this.PerformDelete(deleted);
         }
 
         #endregion
@@ -389,6 +366,8 @@ namespace MongoDB.Framework
 
             this.cache.Clear();
             this.cache = null;
+            this.changeTracker.Dispose();
+            this.changeTracker = null;
             this.mappingStore = null;
             this.database = null;
             this.mongo.Disconnect();
@@ -402,6 +381,28 @@ namespace MongoDB.Framework
         {
             if (this.mongo == null)
                 throw new ObjectDisposedException("MongoContext");
+        }
+
+        protected virtual void PerformInsert(object entity)
+        {
+            var action = new InsertAction(this, this.cache, this.changeTracker);
+            action.Insert(entity);
+        }
+
+        protected virtual void PerformUpdate(object entity)
+        {
+            var action = new UpdateAction(this, this.cache, this.changeTracker);
+            action.Update(entity);
+        }
+
+        /// <summary>
+        /// Performs the delete.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        protected virtual void PerformDelete(object entity)
+        {
+            var action = new DeleteAction(this, this.cache, this.changeTracker);
+            action.Delete(entity);
         }
 
         #endregion

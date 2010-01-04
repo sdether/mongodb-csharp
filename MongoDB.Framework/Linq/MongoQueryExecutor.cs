@@ -17,6 +17,7 @@ namespace MongoDB.Framework.Linq
 {
     public class MongoQueryExecutor : IQueryExecutor
     {
+        private IChangeTracker changeTracker;
         private IMongoContextCache mongoContextCache;
         private IMongoContext mongoContext;
 
@@ -25,13 +26,17 @@ namespace MongoDB.Framework.Linq
         /// </summary>
         /// <param name="mongoContext">The mongo context.</param>
         /// <param name="mongoContextCache">The mongo context cache.</param>
-        public MongoQueryExecutor(IMongoContext mongoContext, IMongoContextCache mongoContextCache)
+        /// <param name="changeTracker">The change tracker.</param>
+        public MongoQueryExecutor(IMongoContext mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
         {
             if (mongoContext == null)
                 throw new ArgumentNullException("mongoContext");
             if (mongoContextCache == null)
                 throw new ArgumentNullException("mongoContextCache");
+            if (changeTracker == null)
+                throw new ArgumentNullException("changeTracker");
 
+            this.changeTracker = changeTracker;
             this.mongoContext = mongoContext;
             this.mongoContextCache = mongoContextCache;
         }
@@ -40,7 +45,7 @@ namespace MongoDB.Framework.Linq
         {
             var spec = CollectionQueryModelVisitor.CreateMongoQuerySpecification(this.mongoContext, queryModel);
             var classMap = this.mongoContext.MappingStore.GetClassMapFor(queryModel.MainFromClause.ItemType);
-            var findAction = new FindAction(this.mongoContext, this.mongoContextCache);
+            var findAction = new FindAction(this.mongoContext, this.mongoContextCache, changeTracker);
             foreach (var entity in findAction.Find(classMap.Type, spec.Conditions, spec.Limit, spec.Skip, spec.OrderBy, spec.Projection.Fields))
                 yield return (T)spec.Projection.Projector(new ResultObjectMapping() { { queryModel.MainFromClause, entity } });
         }

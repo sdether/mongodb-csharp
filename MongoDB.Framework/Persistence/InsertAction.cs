@@ -18,8 +18,9 @@ namespace MongoDB.Framework.Persistence
         /// </summary>
         /// <param name="mongoContext">The mongoContext.</param>
         /// <param name="mongoContextCache">The mongo context cache.</param>
-        public InsertAction(IMongoContext mongoContext, IMongoContextCache mongoContextCache)
-            : base(mongoContext, mongoContextCache)
+        /// <param name="changeTracker">The change tracker.</param>
+        public InsertAction(IMongoContext mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
+            : base(mongoContext, mongoContextCache, changeTracker)
         { }
 
         /// <summary>
@@ -47,6 +48,7 @@ namespace MongoDB.Framework.Persistence
 
             new IdToEntityMapper(this.MongoContext).ApplyId(classMap, document, entity);
             this.MongoContextCache.Store(classMap.CollectionName, id, entity);
+            this.ChangeTracker.GetTrackedEntity(entity).MoveToPossibleModified(document);
         }
     }
 }

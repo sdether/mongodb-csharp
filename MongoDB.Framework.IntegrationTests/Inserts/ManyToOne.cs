@@ -40,8 +40,9 @@ namespace MongoDB.Framework.Inserts
             entity.Reference = reference;
             using (var context = this.CreateContext())
             {
-                context.Insert(reference);
-                context.Insert(entity);
+                context.InsertOnSubmit(reference);
+                context.InsertOnSubmit(entity);
+                context.SubmitChanges();
             }
 
             Document insertedDocument;

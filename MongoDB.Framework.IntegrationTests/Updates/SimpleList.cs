@@ -50,7 +50,7 @@ namespace MongoDB.Framework.Updates
                 entity.Strings.Remove("two");
                 entity.Strings.Remove("three");
                 entity.Strings.Add("four");
-                context.Update(entity);
+                context.SubmitChanges();
             }
 
             Document updatedDocument;

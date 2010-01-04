@@ -19,10 +19,11 @@ namespace MongoDB.Framework.Linq
         /// </summary>
         /// <param name="mongoContext">The mongo context.</param>
         /// <param name="mongoContextCache">The mongo context cache.</param>
+        /// <param name="changeTracker">The change tracker.</param>
         /// <returns></returns>
-        private static IQueryExecutor CreateExecutor(IMongoContext mongoContext, IMongoContextCache mongoContextCache)
+        private static IQueryExecutor CreateExecutor(IMongoContext mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
         {
-            return new MongoQueryExecutor(mongoContext, mongoContextCache);
+            return new MongoQueryExecutor(mongoContext, mongoContextCache, changeTracker);
         }
 
         /// <summary>
@@ -30,8 +31,9 @@ namespace MongoDB.Framework.Linq
         /// </summary>
         /// <param name="mongoContext">The mongo context.</param>
         /// <param name="mongoContextCache">The mongo context cache.</param>
-        public MongoQueryable(IMongoContext mongoContext, IMongoContextCache mongoContextCache)
-            : base(CreateExecutor(mongoContext, mongoContextCache))
+        /// <param name="changeTracker">The change tracker.</param>
+        public MongoQueryable(IMongoContext mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
+            : base(CreateExecutor(mongoContext, mongoContextCache, changeTracker))
         { }
 
         /// <summary>

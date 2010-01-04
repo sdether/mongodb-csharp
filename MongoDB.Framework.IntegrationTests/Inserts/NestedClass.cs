@@ -42,7 +42,8 @@ namespace MongoDB.Framework.Inserts
             };
             using (var context = this.CreateContext())
             {
-                context.Insert(entity);
+                context.InsertOnSubmit(entity);
+                context.SubmitChanges();
             }
 
             Document insertedDocument;

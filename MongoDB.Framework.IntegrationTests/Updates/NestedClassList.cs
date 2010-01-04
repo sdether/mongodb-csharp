@@ -60,7 +60,7 @@ namespace MongoDB.Framework.Updates
                 entity.SubEntities.RemoveAt(1);
                 entity.SubEntities.RemoveAt(1);
                 entity.SubEntities.Add(new SubEntity() { Double = 4.4, Integer = 4 });
-                context.Update(entity);
+                context.SubmitChanges();
             }
 
             Document insertedDocument;

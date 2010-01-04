@@ -53,7 +53,7 @@ namespace MongoDB.Framework.Updates
             {
                 var entity = context.FindOne<Entity>(null);
                 entity.Reference = null;
-                context.Update(entity);
+                context.SubmitChanges();
             }
 
             Document updatedDocument;

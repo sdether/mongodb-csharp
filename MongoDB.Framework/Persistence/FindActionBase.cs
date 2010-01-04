@@ -53,8 +53,9 @@ namespace MongoDB.Framework.Persistence
         /// </summary>
         /// <param name="mongoContext">The mongoContext.</param>
         /// <param name="mongoContextCache">The mongo context cache.</param>
-        public FindActionBase(IMongoContext mongoContext, IMongoContextCache mongoContextCache)
-            : base(mongoContext, mongoContextCache)
+        /// <param name="changeTracker">The change tracker.</param>
+        public FindActionBase(IMongoContext mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
+            : base(mongoContext, mongoContextCache, changeTracker)
         {  }
 
         #endregion
@@ -140,7 +141,10 @@ namespace MongoDB.Framework.Persistence
                     .CreateEntity(concreteClassMap, document.Copy());
 
                 if (trackEntities)
+                {
                     this.MongoContextCache.Store(classMap.CollectionName, classMap.GetId(entity), entity);
+                    this.ChangeTracker.GetTrackedEntity(entity).MoveToPossibleModified(document);
+                }
 
                 yield return entity;
             }

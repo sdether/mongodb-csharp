@@ -270,7 +270,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Reflection\ReflectionUtil.cs" />
+    <Compile Include="Tracking\ChangeSet.cs" />
+    <Compile Include="Tracking\ChangeTracker.cs" />
+    <Compile Include="Tracking\IChangeTracker.cs" />
     <Compile Include="Tracking\IMongoContextCache.cs" />
+    <Compile Include="Tracking\ITrackedEntity.cs" />
     <Compile Include="Tracking\MongoContextCache.cs" />
     <Compile Include="EntityNotFoundException.cs" />
     <Compile Include="Persistence\GetByIdAction.cs" />
@@ -304,6 +308,7 @@
     <Compile Include="Linq\Visitors\MemberInfoPathBuilder.cs" />
     <Compile Include="Linq\Visitors\CollectionQueryModelVisitor.cs" />
     <Compile Include="Linq\Visitors\QueryDocumentBuilder.cs" />
+    <Compile Include="Tracking\TrackedEntityState.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MongoDBDriver\MongoDB.Driver.csproj">

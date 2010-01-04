@@ -64,7 +64,7 @@ namespace MongoDB.Framework.Updates
                     Double = 4.4,
                     Integer = 4
                 });
-                context.Update(entity);
+                context.SubmitChanges();
             }
 
             Document insertedDocument;

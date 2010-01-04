@@ -17,8 +17,9 @@ namespace MongoDB.Framework.Persistence
         /// </summary>
         /// <param name="mongoContext">The mongoContext.</param>
         /// <param name="mongoContextCache">The mongo context cache.</param>
-        public GetByIdAction(IMongoContext mongoContext, IMongoContextCache mongoContextCache)
-            : base(mongoContext, mongoContextCache)
+        /// <param name="changeTracker">The change tracker.</param>
+        public GetByIdAction(IMongoContext mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
+            : base(mongoContext, mongoContextCache, changeTracker)
         { }
 
         /// <summary>

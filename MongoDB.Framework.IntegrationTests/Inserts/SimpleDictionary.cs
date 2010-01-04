@@ -37,7 +37,8 @@ namespace MongoDB.Framework.Inserts
             entity.Integers = new Dictionary<string, int>() { { "one", 1 }, { "two", 2}, { "three", 3 } };
             using (var context = this.CreateContext())
             {
-                context.Insert(entity);
+                context.InsertOnSubmit(entity);
+                context.SubmitChanges();
             }
 
             Document insertedDocument;

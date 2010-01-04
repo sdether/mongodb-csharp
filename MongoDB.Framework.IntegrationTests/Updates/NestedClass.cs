@@ -52,7 +52,7 @@ namespace MongoDB.Framework.Updates
                 var entity = context.FindOne<Entity>(null);
                 entity.SubEntity.Integer = 43;
                 entity.SubEntity.Double = 654.321;
-                context.Update(entity);
+                context.SubmitChanges();
             }
 
             Document updatedDocument;
