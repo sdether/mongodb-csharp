@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Configuration.Mapping;
 using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration

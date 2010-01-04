@@ -9,7 +9,7 @@ using Remotion.Data.Linq.Parsing;
 using Remotion.Data.Linq.Clauses.ExpressionTreeVisitors;
 
 using MongoDB.Driver;
-using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Configuration.Mapping;
 
 namespace MongoDB.Framework.Linq.Visitors
 {

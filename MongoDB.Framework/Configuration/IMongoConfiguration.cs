@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Configuration.Mapping;
 
 namespace MongoDB.Framework.Configuration
 {

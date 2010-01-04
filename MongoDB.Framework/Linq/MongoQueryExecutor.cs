@@ -7,7 +7,7 @@ using Remotion.Data.Linq;
 using Remotion.Data.Linq.Clauses.ResultOperators;
 
 using MongoDB.Driver;
-using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Configuration.Mapping;
 using MongoDB.Framework.Tracking;
 using MongoDB.Framework.Linq.Visitors;
 using System.Collections;

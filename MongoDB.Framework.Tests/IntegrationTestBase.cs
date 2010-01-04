@@ -6,8 +6,8 @@ using System.Text;
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
 using MongoDB.Framework.DomainModels;
-using MongoDB.Framework.Mapping;
-using MongoDB.Framework.Mapping.Fluent;
+using MongoDB.Framework.Configuration.Mapping;
+using MongoDB.Framework.Configuration.Mapping.Fluent;
 
 using NUnit.Framework;
 

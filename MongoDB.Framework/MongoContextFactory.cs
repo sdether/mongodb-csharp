@@ -5,7 +5,7 @@ using System.Text;
 using MongoDB.Framework.Configuration;
 using MongoDB.Driver;
 using MongoDB.Framework.Tracking;
-using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Configuration.Mapping;
 
 namespace MongoDB.Framework
 {

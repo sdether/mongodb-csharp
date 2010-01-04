@@ -10,7 +10,7 @@ using Remotion.Data.Linq.Clauses.ResultOperators;
 
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
-using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Configuration.Mapping;
 
 namespace MongoDB.Framework.Linq.Visitors
 {

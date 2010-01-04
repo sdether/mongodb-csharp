@@ -5,7 +5,7 @@ using System.Text;
 
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
-using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Configuration.Mapping;
 using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework.Persistence

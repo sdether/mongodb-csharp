@@ -57,231 +57,231 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Mapping\ClassMap.cs">
+    <Compile Include="Configuration\Mapping\ClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\ExtendedPropertiesMap.cs">
+    <Compile Include="Configuration\Mapping\ExtendedPropertiesMap.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentBase.cs">
+    <Compile Include="Configuration\Mapping\Fluent\FluentBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentClass.cs">
+    <Compile Include="Configuration\Mapping\Fluent\FluentClass.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentDiscriminator.cs">
+    <Compile Include="Configuration\Mapping\Fluent\FluentDiscriminator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentEmbeddedCollectionPart.cs">
+    <Compile Include="Configuration\Mapping\Fluent\FluentEmbeddedCollectionPart.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentEmbeddedMember.cs">
+    <Compile Include="Configuration\Mapping\Fluent\FluentEmbeddedMember.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentEmbeddedValuePart.cs">
+    <Compile Include="Configuration\Mapping\Fluent\FluentEmbeddedValuePart.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentGeneratedBy.cs">
+    <Compile Include="Configuration\Mapping\Fluent\FluentGeneratedBy.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentId.cs">
+    <Compile Include="Configuration\Mapping\Fluent\FluentId.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentIndex.cs">
+    <Compile Include="Configuration\Mapping\Fluent\FluentIndex.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentMapProvider.cs">
+    <Compile Include="Configuration\Mapping\Fluent\FluentMapProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentNestedClass.cs">
+    <Compile Include="Configuration\Mapping\Fluent\FluentNestedClass.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentReference.cs" />
-    <Compile Include="Mapping\Fluent\FluentRootClass.cs">
+    <Compile Include="Configuration\Mapping\Fluent\FluentReference.cs" />
+    <Compile Include="Configuration\Mapping\Fluent\FluentRootClass.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentSubClass.cs">
+    <Compile Include="Configuration\Mapping\Fluent\FluentSubClass.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Fluent\FluentSuperClass.cs">
+    <Compile Include="Configuration\Mapping\Fluent\FluentSuperClass.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\IdGenerators\AssignedGenerator.cs">
+    <Compile Include="Configuration\Mapping\IdGenerators\AssignedGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\IdGenerators\GuidCombGenerator.cs">
+    <Compile Include="Configuration\Mapping\IdGenerators\GuidCombGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\IdGenerators\GuidGenerator.cs">
+    <Compile Include="Configuration\Mapping\IdGenerators\GuidGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\IdGenerators\IdGenerationException.cs">
+    <Compile Include="Configuration\Mapping\IdGenerators\IdGenerationException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\IdGenerators\OidGenerator.cs">
+    <Compile Include="Configuration\Mapping\IdGenerators\OidGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\IdMap.cs">
+    <Compile Include="Configuration\Mapping\IdMap.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\IIdGenerator.cs">
+    <Compile Include="Configuration\Mapping\IIdGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\IMappingStore.cs">
+    <Compile Include="Configuration\Mapping\IMappingStore.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\IMapProvider.cs">
+    <Compile Include="Configuration\Mapping\IMapProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\IMapVisitor.cs">
+    <Compile Include="Configuration\Mapping\IMapVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Index.cs">
+    <Compile Include="Configuration\Mapping\Index.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\IndexDirection.cs">
+    <Compile Include="Configuration\Mapping\IndexDirection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\IndexingMappingStore.cs">
+    <Compile Include="Configuration\Mapping\IndexingMappingStore.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\IValueType.cs">
+    <Compile Include="Configuration\Mapping\IValueType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Map.cs">
+    <Compile Include="Configuration\Mapping\Map.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\MappingStore.cs">
+    <Compile Include="Configuration\Mapping\MappingStore.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\MemberMap.cs">
+    <Compile Include="Configuration\Mapping\MemberMap.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\MemberMapBase.cs" />
-    <Compile Include="Mapping\MemberMapPath.cs">
+    <Compile Include="Configuration\Mapping\MemberMapBase.cs" />
+    <Compile Include="Configuration\Mapping\MemberMapPath.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\ClassMapModel.cs">
+    <Compile Include="Configuration\Mapping\Models\ClassMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\EmbeddedClassPart.cs">
+    <Compile Include="Configuration\Mapping\Models\EmbeddedClassPart.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\EmbeddedCollectionPart.cs">
+    <Compile Include="Configuration\Mapping\Models\EmbeddedCollectionPart.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\EmbeddedMemberPart.cs">
+    <Compile Include="Configuration\Mapping\Models\EmbeddedMemberPart.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\EmbeddedValuePart.cs">
+    <Compile Include="Configuration\Mapping\Models\EmbeddedValuePart.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\ExtendedPropertiesMapModel.cs">
+    <Compile Include="Configuration\Mapping\Models\ExtendedPropertiesMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\IdMapModel.cs">
+    <Compile Include="Configuration\Mapping\Models\IdMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\IMapModelVisitor.cs">
+    <Compile Include="Configuration\Mapping\Models\IMapModelVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\IndexModel.cs">
+    <Compile Include="Configuration\Mapping\Models\IndexModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\ManyToOneMapModel.cs" />
-    <Compile Include="Mapping\Models\MapModel.cs">
+    <Compile Include="Configuration\Mapping\Models\ManyToOneMapModel.cs" />
+    <Compile Include="Configuration\Mapping\Models\MapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\MemberMapModel.cs">
+    <Compile Include="Configuration\Mapping\Models\MemberMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\MemberMapModelBase.cs" />
-    <Compile Include="Mapping\Models\ModelledMapProvider.cs">
+    <Compile Include="Configuration\Mapping\Models\MemberMapModelBase.cs" />
+    <Compile Include="Configuration\Mapping\Models\ModelledMapProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\NestedClassMapModel.cs">
+    <Compile Include="Configuration\Mapping\Models\NestedClassMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\RootClassMapModel.cs">
+    <Compile Include="Configuration\Mapping\Models\RootClassMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\SubClassMapModel.cs">
+    <Compile Include="Configuration\Mapping\Models\SubClassMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\SuperClassMapModel.cs">
+    <Compile Include="Configuration\Mapping\Models\SuperClassMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\Visitors\DefaultMapModelVisitor.cs">
+    <Compile Include="Configuration\Mapping\Models\Visitors\DefaultMapModelVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Models\Visitors\NullMapModelVisitor.cs">
+    <Compile Include="Configuration\Mapping\Models\Visitors\NullMapModelVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\NestedClassMap.cs">
+    <Compile Include="Configuration\Mapping\NestedClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\ManyToOneMap.cs" />
-    <Compile Include="Mapping\RootClassMap.cs">
+    <Compile Include="Configuration\Mapping\ManyToOneMap.cs" />
+    <Compile Include="Configuration\Mapping\RootClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\SubClassMap.cs">
+    <Compile Include="Configuration\Mapping\SubClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\SuperClassMap.cs">
+    <Compile Include="Configuration\Mapping\SuperClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Types\CollectionValueType.cs">
+    <Compile Include="Configuration\Mapping\Types\CollectionValueType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Types\DictionaryCollectionType.cs">
+    <Compile Include="Configuration\Mapping\Types\DictionaryCollectionType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Types\GuidValueType.cs">
+    <Compile Include="Configuration\Mapping\Types\GuidValueType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Types\ICollectionType.cs">
+    <Compile Include="Configuration\Mapping\Types\ICollectionType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Types\ListCollectionType.cs">
+    <Compile Include="Configuration\Mapping\Types\ListCollectionType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Types\NestedClassValueType.cs">
+    <Compile Include="Configuration\Mapping\Types\NestedClassValueType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Types\NullSafeValueType.cs">
+    <Compile Include="Configuration\Mapping\Types\NullSafeValueType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Types\OidValueType.cs">
+    <Compile Include="Configuration\Mapping\Types\OidValueType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Types\SetCollectionType.cs">
+    <Compile Include="Configuration\Mapping\Types\SetCollectionType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\UnmappedDiscriminiatorException.cs">
+    <Compile Include="Configuration\Mapping\UnmappedDiscriminiatorException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\UnmappedMemberException.cs">
+    <Compile Include="Configuration\Mapping\UnmappedMemberException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\UnmappedTypeException.cs">
+    <Compile Include="Configuration\Mapping\UnmappedTypeException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Visitors\DefaultMapVisitor.cs">
+    <Compile Include="Configuration\Mapping\Visitors\DefaultMapVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Visitors\DeleteDocumentMapper.cs">
+    <Compile Include="Configuration\Mapping\Visitors\DeleteDocumentMapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Visitors\DocumentToEntityMapper.cs">
+    <Compile Include="Configuration\Mapping\Visitors\DocumentToEntityMapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Visitors\EntityToDocumentMapper.cs">
+    <Compile Include="Configuration\Mapping\Visitors\EntityToDocumentMapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Visitors\IdToEntityMapper.cs">
+    <Compile Include="Configuration\Mapping\Visitors\IdToEntityMapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Visitors\NullMapVisitor.cs">
+    <Compile Include="Configuration\Mapping\Visitors\NullMapVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Reflection\ReflectionUtil.cs" />

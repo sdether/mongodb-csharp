@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Driver;
-using MongoDB.Framework.Mapping.Fluent;
-using MongoDB.Framework.Mapping.Types;
+using MongoDB.Framework.Configuration.Mapping.Fluent;
+using MongoDB.Framework.Configuration.Mapping.Types;
 
 namespace MongoDB.Framework.DomainModels
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Framework.Configuration;
-using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Configuration.Mapping;
 
 using NUnit.Framework;
 using MongoDB.Driver;
