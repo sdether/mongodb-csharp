@@ -21,7 +21,7 @@ namespace MongoDB.Framework.Configuration.Mapping.Types
         /// <param name="documentValue">The document value.</param>
         /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        public object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMongoContext mongoContext)
+        public object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMongoContextImplementor mongoContext)
         {
             Document document = documentValue as Document;
             if (document == null)
@@ -42,7 +42,7 @@ namespace MongoDB.Framework.Configuration.Mapping.Types
         /// <param name="value">The value.</param>
         /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        public object ConvertToDocumentValue(IValueType elementValueType, object value, IMongoContext mongoContext)
+        public object ConvertToDocumentValue(IValueType elementValueType, object value, IMongoContextImplementor mongoContext)
         {
             Document document = new Document();
             var enumerable = value as IEnumerable;

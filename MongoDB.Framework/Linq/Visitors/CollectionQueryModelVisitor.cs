@@ -25,7 +25,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// <param name="hydrator">The hydrator.</param>
         /// <param name="queryModel">The query model.</param>
         /// <returns></returns>
-        public static MongoQuerySpecification CreateMongoQuerySpecification(IMongoContext mongoContext, QueryModel queryModel)
+        public static MongoQuerySpecification CreateMongoQuerySpecification(IMongoContextImplementor mongoContext, QueryModel queryModel)
         {
             if (mongoContext == null)
                 throw new ArgumentNullException("mongoContext");
@@ -41,7 +41,7 @@ namespace MongoDB.Framework.Linq.Visitors
 
         #region Private Fields
 
-        private IMongoContext mongoContext;
+        private IMongoContextImplementor mongoContext;
         private MongoQuerySpecification querySpec;
 
         #endregion
@@ -52,7 +52,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// Initializes a new instance of the <see cref="MongoQueryModelVisitor"/> class.
         /// </summary>
         /// <param name="mongoContext">The mongo context.</param>
-        private CollectionQueryModelVisitor(IMongoContext mongoContext)
+        private CollectionQueryModelVisitor(IMongoContextImplementor mongoContext)
         {
             this.mongoContext = mongoContext;
             this.querySpec = new MongoQuerySpecification();

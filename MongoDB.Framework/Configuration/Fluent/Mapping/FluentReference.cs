@@ -17,5 +17,11 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
             this.Model.Key = key;
             return this;
         }
+
+        public FluentReference NotLazy()
+        {
+            this.Model.IsLazy = false;
+            return this;
+        }
     }
 }

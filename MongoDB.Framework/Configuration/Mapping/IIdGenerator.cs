@@ -13,6 +13,6 @@ namespace MongoDB.Framework.Configuration.Mapping
         /// <param name="entity">The entity.</param>
         /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        object Generate(object entity, IMongoContext mongoContext);
+        object Generate(object entity, IMongoContextImplementor mongoContext);
     }
 }

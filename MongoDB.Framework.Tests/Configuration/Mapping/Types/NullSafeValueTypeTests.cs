@@ -15,12 +15,12 @@ namespace MongoDB.Framework.Configuration.Mapping.Types
         [TestFixture]
         public class When_converting_to_a_document
         {
-            private IMongoContext mongoContext;
+            private IMongoContextImplementor mongoContext;
 
             [SetUp]
             public void SetUp()
             {
-                mongoContext = new Mock<IMongoContext>().Object;
+                mongoContext = new Mock<IMongoContextImplementor>().Object;
             }
 
             [Test]
@@ -48,12 +48,12 @@ namespace MongoDB.Framework.Configuration.Mapping.Types
             [TestFixture]
             public class Given_the_type_is_a_reference_type
             {
-                private IMongoContext mongoContext;
+                private IMongoContextImplementor mongoContext;
 
                 [SetUp]
                 public void SetUp()
                 {
-                    mongoContext = new Mock<IMongoContext>().Object;
+                    mongoContext = new Mock<IMongoContextImplementor>().Object;
                 }
 
                 [Test]
@@ -87,12 +87,12 @@ namespace MongoDB.Framework.Configuration.Mapping.Types
             [TestFixture]
             public class Given_the_type_is_a_value_type
             {
-                private IMongoContext mongoContext;
+                private IMongoContextImplementor mongoContext;
 
                 [SetUp]
                 public void SetUp()
                 {
-                    mongoContext = new Mock<IMongoContext>().Object;
+                    mongoContext = new Mock<IMongoContextImplementor>().Object;
                 }
 
                 [Test]

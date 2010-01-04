@@ -45,12 +45,12 @@ namespace MongoDB.Framework.Configuration.Mapping.Types
         [TestFixture]
         public class When_converting_to_a_document
         {
-            private IMongoContext mongoContext;
+            private IMongoContextImplementor mongoContext;
 
             [SetUp]
             public void SetUp()
             {
-                mongoContext = new Mock<IMongoContext>().Object;
+                mongoContext = new Mock<IMongoContextImplementor>().Object;
             }
 
             [Test]
@@ -76,12 +76,12 @@ namespace MongoDB.Framework.Configuration.Mapping.Types
         [TestFixture]
         public class When_converting_from_a_document
         {
-            private IMongoContext mongoContext;
+            private IMongoContextImplementor mongoContext;
 
             [SetUp]
             public void SetUp()
             {
-                mongoContext = new Mock<IMongoContext>().Object;
+                mongoContext = new Mock<IMongoContextImplementor>().Object;
             }
 
             [Test]

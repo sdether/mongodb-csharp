@@ -7,6 +7,13 @@ namespace MongoDB.Framework.Configuration.Mapping.Models
 {
     public class ManyToOneMapModel : MemberMapModelBase
     {
+        public bool IsLazy { get; set; }
+
+        public ManyToOneMapModel()
+        {
+            this.IsLazy = true;
+        }
+
         public override void Accept(IMapModelVisitor visitor)
         {
             visitor.ProcessManyToOne(this);

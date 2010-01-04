@@ -16,7 +16,7 @@ namespace MongoDB.Framework.Configuration.Mapping.IdGenerators
         /// <remarks>
         /// This code was taken from NHibernate.
         /// </remarks>
-        public object Generate(object entity, IMongoContext mongoContext)
+        public object Generate(object entity, IMongoContextImplementor mongoContext)
         {
             byte[] guidArray = Guid.NewGuid().ToByteArray();
 

@@ -72,6 +72,7 @@ namespace MongoDB.Framework
             }
 
             return new MongoContext(
+                this.Configuration,
                 new IndexingMappingStore(this.Configuration.MappingStore, database), 
                 mongo, 
                 database);

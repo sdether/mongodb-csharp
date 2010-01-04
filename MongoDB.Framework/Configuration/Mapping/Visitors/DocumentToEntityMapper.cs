@@ -11,9 +11,9 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
     {
         private Document document;
         private object entity;
-        private IMongoContext mongoContext;
+        private IMongoContextImplementor mongoContext;
 
-        public DocumentToEntityMapper(IMongoContext mongoContext)
+        public DocumentToEntityMapper(IMongoContextImplementor mongoContext)
         {
             if (mongoContext == null)
                 throw new ArgumentNullException("mongoContext");
@@ -60,8 +60,18 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
             var referenceClassMap = this.mongoContext.MappingStore.GetClassMapFor(manyToOneMap.ReferenceType);
             var id = referenceClassMap.IdMap.ValueType.ConvertFromDocumentValue(value.Id, this.mongoContext);
 
-            var referenceEntity = this.mongoContext.GetById(manyToOneMap.ReferenceType, id);
-            manyToOneMap.MemberSetter(this.entity, referenceEntity);
+            object referencedEntity = null;
+            if (!manyToOneMap.IsLazy)
+            {
+                referencedEntity = this.mongoContext.GetById(manyToOneMap.ReferenceType, id);
+            }
+            else
+            {
+                referencedEntity = this.mongoContext.Configuration.ProxyGenerator.GetProxy(referenceClassMap.Type, id, this.mongoContext);
+            }
+
+
+            manyToOneMap.MemberSetter(this.entity, referencedEntity);
         }
 
         public override void ProcessExtendedProperties(ExtendedPropertiesMap extendedPropertiesMap)

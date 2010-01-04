@@ -13,7 +13,7 @@ namespace MongoDB.Framework.Configuration.Mapping.IdGenerators
         /// <param name="entity">The entity.</param>
         /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        public object Generate(object entity, IMongoContext mongoContext)
+        public object Generate(object entity, IMongoContextImplementor mongoContext)
         {
             return Guid.NewGuid();
         }

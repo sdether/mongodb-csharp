@@ -7,6 +7,7 @@ using MongoDB.Framework.Configuration.Mapping.Types;
 using System.Text.RegularExpressions;
 using MongoDB.Framework.Configuration.Mapping.IdGenerators;
 using System.Collections;
+using System.Reflection;
 
 namespace MongoDB.Framework.Configuration.Mapping.Models
 {
@@ -204,8 +205,12 @@ namespace MongoDB.Framework.Configuration.Mapping.Models
             string name = model.Getter.Name;
             string key = model.Key ?? name;
             var memberValueType = ReflectionUtil.GetMemberValueType(model.Getter);
+            bool isLazy = model.IsLazy;
 
-            return new ManyToOneMap(key, name, getter, setter, memberValueType);
+            if (memberValueType.IsSealed)
+                isLazy = false;
+            
+            return new ManyToOneMap(key, name, getter, setter, memberValueType, isLazy);
         }
 
         private MemberMap BuildMemberMap(MemberMapModelBase model)

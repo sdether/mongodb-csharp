@@ -10,9 +10,9 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
     {
         private Document document;
         private object entity;
-        private IMongoContext mongoContext;
+        private IMongoContextImplementor mongoContext;
 
-        public IdToEntityMapper(IMongoContext mongoContext)
+        public IdToEntityMapper(IMongoContextImplementor mongoContext)
         {
             if (mongoContext == null)
                 throw new ArgumentNullException("mongoContext");

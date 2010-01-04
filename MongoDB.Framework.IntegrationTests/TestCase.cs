@@ -8,6 +8,7 @@ using MongoDB.Framework.Configuration.Mapping;
 
 using NUnit.Framework;
 using MongoDB.Driver;
+using MongoDB.Framework.Configuration.Proxy.Castle;
 
 namespace MongoDB.Framework
 {
@@ -27,6 +28,7 @@ namespace MongoDB.Framework
         {
             var mappingStore = new MappingStore(this.MapProvider);
             var configuration = new MongoConfiguration(this.DatabaseName, mappingStore);
+            configuration.ProxyGenerator = new CastleProxyGenerator();
             contextFactory = new MongoContextFactory(configuration);
         }
 

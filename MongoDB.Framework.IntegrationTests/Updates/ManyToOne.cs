@@ -29,7 +29,7 @@ namespace MongoDB.Framework.Updates
             {
                 var refId = Guid.NewGuid().ToString();
                 context.Database.GetCollection("EntityRef")
-                    .Insert(new Document().Append("_id", refId));
+                    .Insert(new Document().Append("_id", refId).Append("Name", "Jack"));
                 context.Database.GetCollection("Entity")
                     .Insert(new Document()
                         .Append("_id", Guid.NewGuid().ToString())
@@ -76,6 +76,7 @@ namespace MongoDB.Framework.Updates
         public class EntityRef
         {
             public Guid Id { get; private set; }
+            public string Name { get; private set; }
         }
 
         public class EntityMap : FluentRootClass<Entity>
@@ -83,7 +84,7 @@ namespace MongoDB.Framework.Updates
             public EntityMap()
             {
                 Id(x => x.Id);
-                References(x => x.Reference);
+                References(x => x.Reference).NotLazy();
             }
         }
 
@@ -92,6 +93,7 @@ namespace MongoDB.Framework.Updates
             public EntityRefMap()
             {
                 Id(x => x.Id);
+                Map(x => x.Name);
             }
         }
 

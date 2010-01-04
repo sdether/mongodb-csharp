@@ -15,12 +15,12 @@ namespace MongoDB.Framework.Configuration.Mapping.Types
         [TestFixture]
         public class When_converting_to_a_document
         {
-            private IMongoContext mongoContext;
+            private IMongoContextImplementor mongoContext;
 
             [SetUp]
             public void SetUp()
             {
-                mongoContext = new Mock<IMongoContext>().Object;
+                mongoContext = new Mock<IMongoContextImplementor>().Object;
             }
 
             [Test]
@@ -52,12 +52,12 @@ namespace MongoDB.Framework.Configuration.Mapping.Types
         [TestFixture]
         public class When_converting_from_a_document
         {
-            private IMongoContext mongoContext;
+            private IMongoContextImplementor mongoContext;
 
             [SetUp]
             public void SetUp()
             {
-                mongoContext = new Mock<IMongoContext>().Object;
+                mongoContext = new Mock<IMongoContextImplementor>().Object;
             }
 
             [Test]
@@ -77,7 +77,7 @@ namespace MongoDB.Framework.Configuration.Mapping.Types
             {
                 var mockCollectionType = new Mock<ICollectionType>();
                 mockCollectionType.Setup(x => x.GetCollectionType(It.IsAny<IValueType>())).Returns(typeof(List<int>));
-                mockCollectionType.Setup(x => x.ConvertFromDocumentValue(It.IsAny<IValueType>(), It.IsAny<object>(), It.IsAny<IMongoContext>())).Returns(new[] { 1, 2, 3 });
+                mockCollectionType.Setup(x => x.ConvertFromDocumentValue(It.IsAny<IValueType>(), It.IsAny<object>(), It.IsAny<IMongoContextImplementor>())).Returns(new[] { 1, 2, 3 });
                 var elementValueType = new Mock<IValueType>().Object;
                 var valueType = new CollectionValueType(mockCollectionType.Object, elementValueType);
                 var result = valueType.ConvertFromDocumentValue(new[] { 7, 8, 9 }, mongoContext);

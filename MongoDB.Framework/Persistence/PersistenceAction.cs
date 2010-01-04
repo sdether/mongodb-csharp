@@ -13,7 +13,7 @@ namespace MongoDB.Framework.Persistence
     {
         protected IChangeTracker ChangeTracker { get; private set; }
         protected IMongoContextCache MongoContextCache { get; private set; }
-        protected IMongoContext MongoContext{ get; private set; }
+        protected IMongoContextImplementor MongoContext{ get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PersistenceAction"/> class.
@@ -21,7 +21,7 @@ namespace MongoDB.Framework.Persistence
         /// <param name="mongoContext">The mongo context.</param>
         /// <param name="mongoContextCache">The mongo context cache.</param>
         /// <param name="changeTracker">The change tracker.</param>
-        public PersistenceAction(IMongoContext mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
+        public PersistenceAction(IMongoContextImplementor mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
         {
             if (mongoContext == null)
                 throw new ArgumentNullException("mongoContext");

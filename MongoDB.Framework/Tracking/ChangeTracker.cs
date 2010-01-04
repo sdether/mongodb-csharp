@@ -50,7 +50,7 @@ namespace MongoDB.Framework.Tracking
 
         #region Private Fields
 
-        private IMongoContext mongoContext;
+        private IMongoContextImplementor mongoContext;
         private List<TrackedEntity> trackedEntities;
 
         #endregion
@@ -61,7 +61,7 @@ namespace MongoDB.Framework.Tracking
         /// Initializes a new instance of the <see cref="ChangeTracker"/> class.
         /// </summary>
         /// <param name="mongoContext">The mongo context.</param>
-        public ChangeTracker(IMongoContext mongoContext)
+        public ChangeTracker(IMongoContextImplementor mongoContext)
         {
             if (mongoContext == null)
                 throw new ArgumentNullException("mongoContext");

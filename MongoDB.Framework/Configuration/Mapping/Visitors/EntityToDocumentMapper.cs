@@ -11,9 +11,9 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
     {
         private Document document;
         private object entity;
-        private IMongoContext mongoContext;
+        private IMongoContextImplementor mongoContext;
 
-        public EntityToDocumentMapper(IMongoContext mongoContext)
+        public EntityToDocumentMapper(IMongoContextImplementor mongoContext)
         {
             if (mongoContext == null)
                 throw new ArgumentNullException("mongoContext");

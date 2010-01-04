@@ -7,7 +7,7 @@ namespace MongoDB.Framework.Configuration.Mapping.IdGenerators
 {
     public class AssignedGenerator : IIdGenerator
     {
-        public object Generate(object entity, IMongoContext mongoContext)
+        public object Generate(object entity, IMongoContextImplementor mongoContext)
         {
             var classMap = mongoContext.MappingStore.GetClassMapFor(entity.GetType());
             object id = classMap.IdMap.MemberGetter(entity);

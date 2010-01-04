@@ -12,18 +12,29 @@ using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public class MongoContext : IMongoContext
+    public class MongoContext : IMongoContext, IMongoContextImplementor
     {
         #region Private Fields
 
         private IMongoContextCache cache;
         private IChangeTracker changeTracker;
+        private IMongoConfiguration configuration;
         private Database database;
         private IMappingStore mappingStore;
         private Mongo mongo;
+
+        #endregion
+
+        #region Explicit Properties
+
+        /// <summary>
+        /// Gets the configuration.
+        /// </summary>
+        /// <value>The configuration.</value>
+        IMongoConfiguration IMongoContextImplementor.Configuration
+        {
+            get { return this.configuration; }
+        }
 
         #endregion
 
@@ -68,7 +79,7 @@ namespace MongoDB.Framework
         /// <param name="mongoContextCache">The mongo context cache.</param>
         /// <param name="mongo">The mongo.</param>
         /// <param name="database">The database.</param>
-        public MongoContext(IMappingStore mappingStore, Mongo mongo, Database database)
+        public MongoContext(IMongoConfiguration configuration, IMappingStore mappingStore, Mongo mongo, Database database)
         {
             if (mappingStore == null)
                 throw new ArgumentNullException("mappingStore");
@@ -79,6 +90,7 @@ namespace MongoDB.Framework
 
             this.cache = new MongoContextCache();
             this.changeTracker = new ChangeTracker(this);
+            this.configuration = configuration;
             this.mappingStore = mappingStore;
             this.database = database;
             this.mongo = mongo;

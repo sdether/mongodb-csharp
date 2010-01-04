@@ -31,6 +31,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\redist\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.DynamicProxy2, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\redist\Castle.DynamicProxy2.dll</HintPath>
+    </Reference>
     <Reference Include="Remotion, Version=1.13.33.1, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\redist\Remotion.dll</HintPath>
@@ -104,6 +112,8 @@
     <Compile Include="Configuration\Fluent\Mapping\FluentSuperClass.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\Proxy\Castle\CastleProxyGenerator.cs" />
+    <Compile Include="Configuration\Proxy\IdentityEqualityComparer.cs" />
     <Compile Include="Configuration\Mapping\IdGenerators\AssignedGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -269,6 +279,15 @@
     <Compile Include="Configuration\Mapping\Visitors\NullMapVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\Proxy\AbstractLazyInitializer.cs" />
+    <Compile Include="Configuration\Proxy\BasicLazyInitializer.cs" />
+    <Compile Include="Configuration\Proxy\Castle\CastleLazyInitializer.cs" />
+    <Compile Include="Configuration\Proxy\ILazyInitializer.cs" />
+    <Compile Include="Configuration\Proxy\IMongoProxy.cs" />
+    <Compile Include="Configuration\Proxy\IProxyGenerator.cs" />
+    <Compile Include="Configuration\Proxy\LazyInitializationException.cs" />
+    <Compile Include="Configuration\Proxy\ProxyUtil.cs" />
+    <Compile Include="IMongoContextImplementor.cs" />
     <Compile Include="Reflection\ReflectionUtil.cs" />
     <Compile Include="Tracking\ChangeSet.cs" />
     <Compile Include="Tracking\ChangeTracker.cs" />

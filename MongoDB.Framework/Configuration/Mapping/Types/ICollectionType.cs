@@ -22,7 +22,7 @@ namespace MongoDB.Framework.Configuration.Mapping
         /// <param name="documentValue">The document value.</param>
         /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMongoContext mongoContext);
+        object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMongoContextImplementor mongoContext);
 
         /// <summary>
         /// Converts to document value.
@@ -31,6 +31,6 @@ namespace MongoDB.Framework.Configuration.Mapping
         /// <param name="value">The value.</param>
         /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        object ConvertToDocumentValue(IValueType elementValueType, object value, IMongoContext mongoContext);
+        object ConvertToDocumentValue(IValueType elementValueType, object value, IMongoContextImplementor mongoContext);
     }
 }

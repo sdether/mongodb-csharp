@@ -32,7 +32,7 @@ namespace MongoDB.Framework.Configuration.Mapping.Types
         /// <param name="documentValue">The document value.</param>
         /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        public virtual object ConvertFromDocumentValue(object documentValue, IMongoContext mongoContext)
+        public virtual object ConvertFromDocumentValue(object documentValue, IMongoContextImplementor mongoContext)
         {
             if (documentValue == null || documentValue == MongoDBNull.Value)
                 return this.Type.IsValueType ? Activator.CreateInstance(this.Type) : null;
@@ -46,7 +46,7 @@ namespace MongoDB.Framework.Configuration.Mapping.Types
         /// <param name="value">The value.</param>
         /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        public virtual object ConvertToDocumentValue(object value, IMongoContext mongoContext)
+        public virtual object ConvertToDocumentValue(object value, IMongoContextImplementor mongoContext)
         {
             if (value == null)
                 return MongoDBNull.Value;

@@ -19,7 +19,7 @@ namespace MongoDB.Framework.Persistence
         /// <param name="mongoContext">The mongoContext.</param>
         /// <param name="mongoContextCache">The mongo context cache.</param>
         /// <param name="changeTracker">The change tracker.</param>
-        public DeleteAction(IMongoContext mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
+        public DeleteAction(IMongoContextImplementor mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
             : base(mongoContext, mongoContextCache, changeTracker)
         { }
 

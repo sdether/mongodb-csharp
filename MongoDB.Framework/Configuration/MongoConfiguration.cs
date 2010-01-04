@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using MongoDB.Framework.Configuration.Mapping;
 using MongoDB.Driver;
+using MongoDB.Framework.Configuration.Proxy;
 
 namespace MongoDB.Framework.Configuration
 {
@@ -28,6 +29,12 @@ namespace MongoDB.Framework.Configuration
         /// </summary>
         /// <value>The mongo factory.</value>
         public IMongoFactory MongoFactory { get; set; }
+
+        /// <summary>
+        /// Gets the proxy generator.
+        /// </summary>
+        /// <value>The proxy generator.</value>
+        public IProxyGenerator ProxyGenerator { get; set; }
 
         #endregion
 

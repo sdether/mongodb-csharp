@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MongoDB.Framework.Configuration.Mapping;
+using MongoDB.Framework.Configuration.Proxy;
 
 namespace MongoDB.Framework.Configuration
 {
@@ -25,6 +26,12 @@ namespace MongoDB.Framework.Configuration
         /// </summary>
         /// <value>The mongo factory.</value>
         IMongoFactory MongoFactory { get; }
+
+        /// <summary>
+        /// Gets the proxy generator.
+        /// </summary>
+        /// <value>The proxy generator.</value>
+        IProxyGenerator ProxyGenerator { get; }
 
         /// <summary>
         /// Creates the context factory.

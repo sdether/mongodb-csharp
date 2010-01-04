@@ -17,7 +17,7 @@ namespace MongoDB.Framework.Linq.Visitors
     {
         #region Private Fields
 
-        private IMongoContext mongoContext;
+        private IMongoContextImplementor mongoContext;
 
         #endregion
 
@@ -43,7 +43,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// Initializes a new instance of the <see cref="MongoQueryModelVisitor"/> class.
         /// </summary>
         /// <param name="mongoContext">The mongo context.</param>
-        public ScalarQueryModelVisitor(IMongoContext mongoContext)
+        public ScalarQueryModelVisitor(IMongoContextImplementor mongoContext)
         {
             this.mongoContext = mongoContext;
             this.Query = new Document();

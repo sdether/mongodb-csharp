@@ -43,7 +43,7 @@ namespace MongoDB.Framework.Configuration.Mapping
         /// <param name="entity">The entity.</param>
         /// <param name="mongoContext">The mongo context.</param>
         /// <returns></returns>
-        public object Generate(object entity, IMongoContext mongoContext)
+        public object Generate(object entity, IMongoContextImplementor mongoContext)
         {
             return this.IdGenerator.Generate(entity, mongoContext);
         }

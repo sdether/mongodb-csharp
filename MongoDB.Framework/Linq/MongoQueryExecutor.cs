@@ -19,7 +19,7 @@ namespace MongoDB.Framework.Linq
     {
         private IChangeTracker changeTracker;
         private IMongoContextCache mongoContextCache;
-        private IMongoContext mongoContext;
+        private IMongoContextImplementor mongoContext;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoQueryExecutor"/> class.
@@ -27,7 +27,7 @@ namespace MongoDB.Framework.Linq
         /// <param name="mongoContext">The mongo context.</param>
         /// <param name="mongoContextCache">The mongo context cache.</param>
         /// <param name="changeTracker">The change tracker.</param>
-        public MongoQueryExecutor(IMongoContext mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
+        public MongoQueryExecutor(IMongoContextImplementor mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
         {
             if (mongoContext == null)
                 throw new ArgumentNullException("mongoContext");

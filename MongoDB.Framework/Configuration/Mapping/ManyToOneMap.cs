@@ -7,7 +7,7 @@ namespace MongoDB.Framework.Configuration.Mapping
 {
     public class ManyToOneMap : MemberMapBase
     {
-        //public bool IsLazy { get; private set; }
+        public bool IsLazy { get; private set; }
 
         /// <summary>
         /// Gets or sets the type of the reference.
@@ -24,12 +24,13 @@ namespace MongoDB.Framework.Configuration.Mapping
         /// <param name="memberSetter">The member setter.</param>
         /// <param name="referenceType">Type of the reference.</param>
         /// <param name="cascade">The cascade.</param>
-        public ManyToOneMap(string key, string memberName, Func<object, object> memberGetter, Action<object, object> memberSetter, Type referenceType)
+        public ManyToOneMap(string key, string memberName, Func<object, object> memberGetter, Action<object, object> memberSetter, Type referenceType, bool isLazy)
             : base(key, memberName, memberGetter, memberSetter)
         {
             if (referenceType == null)
                 throw new ArgumentNullException("referenceType");
 
+            this.IsLazy = isLazy;
             this.ReferenceType = referenceType;
         }
 

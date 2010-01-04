@@ -15,7 +15,7 @@ namespace MongoDB.Framework.Linq.Visitors
 {
     public class QueryDocumentBuilder : ThrowingExpressionTreeVisitor
     {
-        public static Document BuildFrom(IMongoContext mongoContext, Expression expression)
+        public static Document BuildFrom(IMongoContextImplementor mongoContext, Expression expression)
         {
             var builder = new QueryDocumentBuilder(mongoContext);
             builder.VisitExpression(expression);
@@ -25,7 +25,7 @@ namespace MongoDB.Framework.Linq.Visitors
         #region Private Fields
 
         private Dictionary<string, Document> conditions;
-        private IMongoContext mongoContext;
+        private IMongoContextImplementor mongoContext;
         private Document query;
         private MemberMapPath memberMapPath;
 
@@ -37,7 +37,7 @@ namespace MongoDB.Framework.Linq.Visitors
         /// Initializes a new instance of the <see cref="MongoWhereClauseExpressionTreeVisitor"/> class.
         /// </summary>
         /// <param name="mongoContext">The mongo context.</param>
-        private QueryDocumentBuilder(IMongoContext mongoContext)
+        private QueryDocumentBuilder(IMongoContextImplementor mongoContext)
         {
             this.mongoContext = mongoContext;
             this.query = new Document();
