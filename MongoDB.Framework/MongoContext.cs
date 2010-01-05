@@ -6,7 +6,7 @@ using System.Text;
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
 using MongoDB.Framework.Linq;
-using MongoDB.Framework.Configuration.Mapping;
+using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Persistence;
 using MongoDB.Framework.Tracking;
 

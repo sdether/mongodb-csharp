@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Driver;
-using MongoDB.Framework.Configuration.Mapping.Visitors;
+using MongoDB.Framework.Mapping.Visitors;
 
 namespace MongoDB.Framework.Tracking
 {

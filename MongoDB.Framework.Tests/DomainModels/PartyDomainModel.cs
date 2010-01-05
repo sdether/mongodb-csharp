@@ -5,7 +5,6 @@ using System.Text;
 
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration.Fluent.Mapping;
-using MongoDB.Framework.Configuration.Mapping.Types;
 
 namespace MongoDB.Framework.DomainModels
 {

@@ -71,19 +71,19 @@
     <Compile Include="IntegrationTestBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\IdGenerators\AssignedGeneratorTests.cs" />
-    <Compile Include="Configuration\Mapping\IdGenerators\OidGeneratorTests.cs" />
-    <Compile Include="Configuration\Mapping\IdGenerators\GuidCombGeneratorTests.cs" />
-    <Compile Include="Configuration\Mapping\IdGenerators\GuidGeneratorTests.cs" />
-    <Compile Include="Configuration\Mapping\MappingTests.cs" />
-    <Compile Include="Configuration\Mapping\Types\CollectionValueTypeTests.cs" />
-    <Compile Include="Configuration\Mapping\Types\NestedClassValueTypeTests.cs" />
-    <Compile Include="Configuration\Mapping\Types\DictionaryCollectionTypeTests.cs" />
-    <Compile Include="Configuration\Mapping\Types\SetCollectionTypeTests.cs" />
-    <Compile Include="Configuration\Mapping\Types\ListCollectionTypeTests.cs" />
-    <Compile Include="Configuration\Mapping\Types\OidValueTypeTests.cs" />
-    <Compile Include="Configuration\Mapping\Types\GuidValueTypeTests.cs" />
-    <Compile Include="Configuration\Mapping\Types\NullSafeValueTypeTests.cs" />
+    <Compile Include="Mapping\IdGenerators\AssignedGeneratorTests.cs" />
+    <Compile Include="Mapping\IdGenerators\OidGeneratorTests.cs" />
+    <Compile Include="Mapping\IdGenerators\GuidCombGeneratorTests.cs" />
+    <Compile Include="Mapping\IdGenerators\GuidGeneratorTests.cs" />
+    <Compile Include="Mapping\MappingTests.cs" />
+    <Compile Include="Mapping\Types\CollectionValueTypeTests.cs" />
+    <Compile Include="Mapping\Types\NestedClassValueTypeTests.cs" />
+    <Compile Include="Mapping\Types\DictionaryCollectionTypeTests.cs" />
+    <Compile Include="Mapping\Types\SetCollectionTypeTests.cs" />
+    <Compile Include="Mapping\Types\ListCollectionTypeTests.cs" />
+    <Compile Include="Mapping\Types\OidValueTypeTests.cs" />
+    <Compile Include="Mapping\Types\GuidValueTypeTests.cs" />
+    <Compile Include="Mapping\Types\NullSafeValueTypeTests.cs" />
     <Compile Include="Linq\MongoQueryableTests.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -102,6 +102,9 @@
       <Project>{B125BBA6-BFFD-44FA-9254-9B1754CD8AF3}</Project>
       <Name>MongoDB.Driver</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Configuration\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

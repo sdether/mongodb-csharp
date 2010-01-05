@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using MongoDB.Framework.Reflection;
-using MongoDB.Framework.Configuration.Mapping.Types;
-using System.Text.RegularExpressions;
-using MongoDB.Framework.Configuration.Mapping.IdGenerators;
-using System.Collections;
 using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
+
+using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Mapping.IdGenerators;
+using MongoDB.Framework.Mapping.Types;
+using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration.Mapping.Models
 {

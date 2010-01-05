@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MongoDB.Framework.Configuration.Mapping;
+
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration.Proxy;
+using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Configuration
 {

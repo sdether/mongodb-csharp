@@ -5,10 +5,10 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
-using MongoDB.Framework.Linq.Visitors;
-using MongoDB.Framework.Reflection;
 using MongoDB.Framework.Configuration.Mapping.Models;
-using MongoDB.Framework.Configuration.Mapping.Types;
+using MongoDB.Framework.Linq.Visitors;
+using MongoDB.Framework.Mapping.Types;
+using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
