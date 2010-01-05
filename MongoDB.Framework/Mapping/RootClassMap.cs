@@ -10,7 +10,6 @@ namespace MongoDB.Framework.Mapping
         #region Private Fields
 
         private string collectionName;
-        private IdMap idMap;
         private IEnumerable<Index> indexes;
 
 	    #endregion
@@ -27,15 +26,6 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
-        /// Gets a value indicating whether this instance has id.
-        /// </summary>
-        /// <value><c>true</c> if this instance has id; otherwise, <c>false</c>.</value>
-        public override bool HasId
-        {
-            get { return true; }
-        }
-
-        /// <summary>
         /// Gets a value indicating whether this instance has indexes.
         /// </summary>
         /// <value>
@@ -44,15 +34,6 @@ namespace MongoDB.Framework.Mapping
         public override bool HasIndexes
         {
             get { return true; }
-        }
-
-        /// <summary>
-        /// Gets the id map.
-        /// </summary>
-        /// <value>The id map.</value>
-        public override IdMap IdMap
-        {
-            get { return this.idMap; }
         }
 
         /// <summary>
@@ -91,7 +72,7 @@ namespace MongoDB.Framework.Mapping
         /// <param name="extendedPropertiesMap">The extended properties map.</param>
         /// <param name="indexes">The indexes.</param>
         public RootClassMap(Type type, string collectionName, IdMap idMap, IEnumerable<MemberMap> memberMaps, IEnumerable<ManyToOneMap> manyToOneMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap, IEnumerable<Index> indexes)
-            : base(type, memberMaps, manyToOneMaps, discriminatorKey, discriminator, subClassMaps, extendedPropertiesMap)
+            : base(type, idMap, memberMaps, manyToOneMaps, discriminatorKey, discriminator, subClassMaps, extendedPropertiesMap)
         {
             if (collectionName == null)
                 throw new ArgumentException("Cannot be null or empty.", "collectionName");
@@ -99,7 +80,6 @@ namespace MongoDB.Framework.Mapping
                 throw new ArgumentNullException("idMap");
 
             this.collectionName = collectionName;
-            this.idMap = idMap;
             this.indexes = indexes ?? Enumerable.Empty<Index>();
         }
 

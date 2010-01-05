@@ -36,6 +36,7 @@ namespace MongoDB.Framework.Mapping.Types
                 new NullSafeValueType(typeof(int)));
 
             return new NestedClassMap(typeof(Complex),
+                null,
                 new[] { realMemberMap, imaginaryMemberMap },
                 Enumerable.Empty<ManyToOneMap>(),
                 null,

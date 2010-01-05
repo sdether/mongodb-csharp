@@ -11,6 +11,8 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         public ExtendedPropertiesMapModel ExtendedPropertiesMap { get; set; }
 
+        public IdMapModel IdMap { get; set; }
+
         public List<SubClassMapModel> SubClassMaps { get; private set; }
 
         public SuperClassMapModel(Type type)
@@ -26,6 +28,8 @@ namespace MongoDB.Framework.Configuration.Mapping
         public override void Accept(IMapModelVisitor visitor)
         {
             visitor.ProcessSuperClass(this);
+
+            visitor.Visit(this.IdMap);
 
             foreach (var subClassMap in this.SubClassMaps)
                 visitor.Visit(subClassMap);

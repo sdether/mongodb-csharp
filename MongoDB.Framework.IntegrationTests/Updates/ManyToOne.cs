@@ -65,7 +65,7 @@ namespace MongoDB.Framework.Updates
             }
 
             Assert.IsNotNull(updatedDocument);
-            Assert.AreEqual(MongoDBNull.Value, updatedDocument["Reference"]);
+            Assert.IsNull(updatedDocument["Reference"]);
         }
 
         public class Entity

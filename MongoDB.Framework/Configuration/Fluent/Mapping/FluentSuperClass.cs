@@ -50,5 +50,26 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
             var memberInfo = ReflectionUtil.GetSingleMember(member);
             this.ExtendedProperties(memberInfo);
         }
+
+        public FluentId Id(string memberName)
+        {
+            var memberInfo = ReflectionUtil.GetSingleMember<TClass>(memberName);
+            return this.Id(memberInfo);
+        }
+
+        public FluentId Id(MemberInfo memberInfo)
+        {
+            var fluentIdMap = new FluentId();
+            fluentIdMap.Model.Getter = memberInfo;
+            fluentIdMap.Model.Setter = memberInfo;
+            this.Model.IdMap = fluentIdMap.Model;
+            return fluentIdMap;
+        }
+
+        public FluentId Id(Expression<Func<TClass, object>> idMember)
+        {
+            var memberInfo = ReflectionUtil.GetSingleMember(idMember);
+            return this.Id(memberInfo);
+        }
     }
 }

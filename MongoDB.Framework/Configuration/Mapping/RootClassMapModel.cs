@@ -9,8 +9,6 @@ namespace MongoDB.Framework.Configuration.Mapping
     {
         public string CollectionName { get; set; }
 
-        public IdMapModel IdMap { get; set; }
-
         public List<IndexModel> Indexes { get; private set; }
 
         /// <summary>
@@ -30,8 +28,6 @@ namespace MongoDB.Framework.Configuration.Mapping
         public override void Accept(IMapModelVisitor visitor)
         {
             visitor.ProcessRootClass(this);
-
-            visitor.Visit(this.IdMap);
 
             foreach (var index in this.Indexes)
                 visitor.Visit(index);

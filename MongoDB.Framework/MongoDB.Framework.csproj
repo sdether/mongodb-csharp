@@ -113,6 +113,7 @@
     <Compile Include="Configuration\Fluent\Mapping\FluentSuperClass.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Mapping\Visitors\IdGenerator.cs" />
     <Compile Include="Proxy\Castle\CastleProxyGenerator.cs" />
     <Compile Include="Proxy\IdentityEqualityComparer.cs" />
     <Compile Include="Mapping\IdGenerators\AssignedGenerator.cs">

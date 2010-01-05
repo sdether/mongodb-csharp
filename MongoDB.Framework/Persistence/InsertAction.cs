@@ -36,16 +36,17 @@ namespace MongoDB.Framework.Persistence
             if (!classMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
+            var generator = new IdGenerator(this.MongoSession);
+            generator.GenerateIdsFor(entity, classMap);
+
             var document = new EntityToDocumentMapper(this.MongoSession)
                 .CreateDocument(entity);
 
-            object id = classMap.IdMap.Generate(entity, this.MongoSession);
-
-            document[classMap.IdMap.Key] = classMap.IdMap.ValueType.ConvertToDocumentValue(id, this.MongoSession);
             this.GetCollectionForClassMap(classMap)
                 .Insert(document);
 
-            new IdToEntityMapper(this.MongoSession).ApplyId(classMap, document, entity);
+            var id = classMap.GetId(entity);
+
             this.MongoSessionCache.Store(classMap.CollectionName, id, entity);
             this.ChangeTracker.GetTrackedEntity(entity).MoveToPossibleModified(document);
         }

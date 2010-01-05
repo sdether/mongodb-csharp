@@ -141,11 +141,14 @@ namespace MongoDB.Framework.Configuration.Mapping
                             .Concat(model.CollectionMaps.Select(cm => this.BuildMemberMap(cm)))
                             .ToList();
             var extPropMap = this.BuildExtendedPropertiesMap(model.ExtendedPropertiesMap);
-
+            IdMap idMap = null;
+            if(model.IdMap != null)
+                idMap = this.BuildIdMap(model.IdMap);
             var subClassMaps = model.SubClassMaps.Select(sc => this.BuildSubClassMap(sc));
 
             var nestedClassMap = new NestedClassMap(
                 model.Type,
+                idMap,
                 memberMaps,
                 manyToOneMaps,
                 model.DiscriminatorKey,

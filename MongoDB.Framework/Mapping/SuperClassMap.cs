@@ -12,6 +12,7 @@ namespace MongoDB.Framework.Mapping
         private string discriminatorKey;
         private object discriminator;
         private ExtendedPropertiesMap extendedPropertiesMap;
+        private IdMap idMap;
         private readonly List<SubClassMap> subClassMaps;
 
         #endregion
@@ -48,6 +49,24 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
+        /// Gets a value indicating whether this instance has id.
+        /// </summary>
+        /// <value><c>true</c> if this instance has id; otherwise, <c>false</c>.</value>
+        public override bool HasId
+        {
+            get { return this.idMap != null; }
+        }
+
+        /// <summary>
+        /// Gets the id map.
+        /// </summary>
+        /// <value>The id map.</value>
+        public override IdMap IdMap
+        {
+            get { return this.idMap; }
+        }
+
+        /// <summary>
         /// Gets a value indicating whether this instance is polymorphic.
         /// </summary>
         /// <value>
@@ -76,17 +95,19 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="SuperClassMap"/> class.
         /// </summary>
         /// <param name="type">ValueType of the entity.</param>
+        /// <param name="idMap">The id map.</param>
         /// <param name="memberMaps">The member maps.</param>
         /// <param name="manyToOneMaps">The many to one maps.</param>
         /// <param name="discriminatorKey">The discriminator key.</param>
         /// <param name="discriminator">The discriminator.</param>
         /// <param name="subClassMaps">The sub class maps.</param>
         /// <param name="extendedPropertiesMap">The extended properties map.</param>
-        protected SuperClassMap(Type type, IEnumerable<MemberMap> memberMaps, IEnumerable<ManyToOneMap> manyToOneMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap)
+        protected SuperClassMap(Type type, IdMap idMap, IEnumerable<MemberMap> memberMaps, IEnumerable<ManyToOneMap> manyToOneMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap)
             : base(type, memberMaps, manyToOneMaps, discriminator)
         {
             this.discriminatorKey = discriminatorKey;
             this.extendedPropertiesMap = extendedPropertiesMap;
+            this.idMap = idMap;
             this.subClassMaps = new List<SubClassMap>(subClassMaps ?? new SubClassMap[0]);
             foreach (var subClassMap in this.subClassMaps)
                 subClassMap.SetSuperClass(this);
