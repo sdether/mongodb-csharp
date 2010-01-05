@@ -8,6 +8,7 @@ using MongoDB.Framework.Configuration;
 using MongoDB.Framework.Linq;
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Persistence;
+using MongoDB.Framework.Proxy;
 using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework
@@ -18,33 +19,20 @@ namespace MongoDB.Framework
 
         private IMongoContextCache cache;
         private IChangeTracker changeTracker;
-        private IMongoConfiguration configuration;
         private Database database;
-        private IMappingStore mappingStore;
         private Mongo mongo;
+        private IMappingStore mappingStore;
+        private IProxyGenerator proxyGenerator;
 
         #endregion
 
         #region Explicit Properties
 
         /// <summary>
-        /// Gets the configuration.
-        /// </summary>
-        /// <value>The configuration.</value>
-        IMongoConfiguration IMongoContextImplementor.Configuration
-        {
-            get { return this.configuration; }
-        }
-
-        #endregion
-
-        #region Public Properties
-
-        /// <summary>
         /// Gets the mapping store.
         /// </summary>
         /// <value>The mapping store.</value>
-        public IMappingStore MappingStore
+        IMappingStore IMongoContextImplementor.MappingStore
         {
             get
             {
@@ -53,6 +41,24 @@ namespace MongoDB.Framework
                 return this.mappingStore;
             }
         }
+
+        /// <summary>
+        /// Gets the configuration.
+        /// </summary>
+        /// <value>The configuration.</value>
+        IProxyGenerator IMongoContextImplementor.ProxyGenerator
+        {
+            get
+            {
+                this.EnsureNotDisposed();
+
+                return this.proxyGenerator;
+            }
+        }
+
+        #endregion
+
+        #region Public Properties
 
         /// <summary>
         /// Gets the database.
@@ -76,13 +82,15 @@ namespace MongoDB.Framework
         /// Initializes a new instance of the <see cref="MongoContext"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
-        /// <param name="mongoContextCache">The mongo context cache.</param>
+        /// <param name="proxyGenerator">The proxy generator.</param>
         /// <param name="mongo">The mongo.</param>
         /// <param name="database">The database.</param>
-        public MongoContext(IMongoConfiguration configuration, IMappingStore mappingStore, Mongo mongo, Database database)
+        public MongoContext(IMappingStore mappingStore, IProxyGenerator proxyGenerator, Mongo mongo, Database database)
         {
             if (mappingStore == null)
                 throw new ArgumentNullException("mappingStore");
+            if (proxyGenerator == null)
+                throw new ArgumentNullException("proxyGenerator");
             if (mongo == null)
                 throw new ArgumentNullException("mongo");
             if (database == null)
@@ -90,10 +98,10 @@ namespace MongoDB.Framework
 
             this.cache = new MongoContextCache();
             this.changeTracker = new ChangeTracker(this);
-            this.configuration = configuration;
-            this.mappingStore = mappingStore;
             this.database = database;
+            this.mappingStore = mappingStore;
             this.mongo = mongo;
+            this.proxyGenerator = proxyGenerator;
         }
 
         /// <summary>
@@ -384,6 +392,7 @@ namespace MongoDB.Framework
             this.database = null;
             this.mongo.Disconnect();
             this.mongo = null;
+            this.proxyGenerator = null;
         }
 
         /// <summary>

@@ -18,12 +18,6 @@ namespace MongoDB.Framework
         Database Database { get; }
 
         /// <summary>
-        /// Gets the mapping store.
-        /// </summary>
-        /// <value>The mapping store.</value>
-        IMappingStore MappingStore { get; }
-
-        /// <summary>
         /// Deletes all the entities upon submit.
         /// </summary>
         /// <param name="entities">The entities.</param>

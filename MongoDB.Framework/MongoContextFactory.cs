@@ -73,8 +73,8 @@ namespace MongoDB.Framework
             }
 
             return new MongoContext(
-                this.Configuration,
                 new IndexingMappingStore(this.Configuration.MappingStore, database), 
+                this.Configuration.ProxyGenerator,
                 mongo, 
                 database);
         }

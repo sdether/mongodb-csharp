@@ -68,7 +68,7 @@ namespace MongoDB.Framework.Mapping.Visitors
             }
             else
             {
-                referencedEntity = this.mongoContext.Configuration.ProxyGenerator.GetProxy(referenceClassMap.Type, id, this.mongoContext);
+                referencedEntity = this.mongoContext.ProxyGenerator.GetProxy(referenceClassMap.Type, id, this.mongoContext);
             }
 
 
