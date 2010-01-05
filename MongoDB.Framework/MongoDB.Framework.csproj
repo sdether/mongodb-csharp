@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\Mapping\IMapModelRegistry.cs" />
     <Compile Include="Mapping\ClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -95,7 +96,7 @@
     <Compile Include="Configuration\Fluent\Mapping\FluentIndex.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Fluent\Mapping\FluentMapProvider.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentMapModelRegistry.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Fluent\Mapping\FluentMember.cs" />
@@ -150,9 +151,6 @@
     <Compile Include="Mapping\IndexDirection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\IndexingMappingStore.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Mapping\IValueType.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -190,7 +188,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Mapping\MemberMapModelBase.cs" />
-    <Compile Include="Configuration\Mapping\ModelledMapProvider.cs">
+    <Compile Include="Configuration\Mapping\MapModelRegistry.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Mapping\NestedClassMapModel.cs">

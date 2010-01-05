@@ -21,12 +21,10 @@ namespace MongoDB.Framework.Configuration.Mapping
         [Test]
         public void Should_map_from_document_to_entity()
         {
-            var fluentMapProvider = new FluentMapProvider()
+            var fluentMapModelRegistry = new FluentMapModelRegistry()
                 .AddMapsFromAssemblyContaining<PartyMap>();
-            var mappingStore = new MappingStore(fluentMapProvider);
+            var configuration = new MongoConfiguration("tests", fluentMapModelRegistry);
 
-            var configuration = new MongoConfiguration("tests", mappingStore);
-            configuration.ProxyGenerator = new CastleProxyGenerator();
             var document = new Document()
                 .Append("_id", new Oid("4b27b9f1cf24000000002aa0"))
                 .Append("Name", "Bob McBob")
@@ -48,9 +46,9 @@ namespace MongoDB.Framework.Configuration.Mapping
                 .Append("BirthDate", new DateTime(1900, 1, 1))
                 .Append("not-mapped", true);
 
-            var mongoSession = configuration.CreateMongoSessionFactory().OpenMongoSession();
-            var classMap = mappingStore.GetClassMapFor<Person>();
-            var person = (Person)new DocumentToEntityMapper((IMongoSessionImplementor)mongoSession)
+            var mongoSession = (IMongoSessionImplementor)configuration.CreateMongoSessionFactory().OpenMongoSession();
+            var classMap = mongoSession.MappingStore.GetClassMapFor<Person>();
+            var person = (Person)new DocumentToEntityMapper(mongoSession)
                 .CreateEntity(classMap, document);
             Assert.IsNotNull(person);
             Assert.AreEqual("4b27b9f1cf24000000002aa0", person.Id);
@@ -68,11 +66,9 @@ namespace MongoDB.Framework.Configuration.Mapping
         [Test]
         public void Should_map_from_entity_to_document()
         {
-            var fluentMapProvider = new FluentMapProvider()
+            var fluentMapModelRegistry = new FluentMapModelRegistry()
                 .AddMapsFromAssemblyContaining<PartyMap>();
-            var mappingStore = new MappingStore(fluentMapProvider);
-            var configuration = new MongoConfiguration("tests", mappingStore);
-            configuration.ProxyGenerator = new CastleProxyGenerator();
+            var configuration = new MongoConfiguration("tests", fluentMapModelRegistry);
 
             var person = new Person()
             {
@@ -99,9 +95,9 @@ namespace MongoDB.Framework.Configuration.Mapping
             person.Aliases.Add("Dopey");
             person.Aliases.Add("Sleepy");
 
-            var mongoSession = configuration.CreateMongoSessionFactory().OpenMongoSession();
-            var classMap = mappingStore.GetClassMapFor<Person>();
-            var document = new EntityToDocumentMapper((IMongoSessionImplementor)mongoSession)
+            var mongoSession = (IMongoSessionImplementor)configuration.CreateMongoSessionFactory().OpenMongoSession();
+            var classMap = mongoSession.MappingStore.GetClassMapFor<Person>();
+            var document = new EntityToDocumentMapper(mongoSession)
                 .CreateDocument(person);
 
             Assert.AreEqual(new Oid("4b27b9f1cf24000000002aa0"), document["_id"]);

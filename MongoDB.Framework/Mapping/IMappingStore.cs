@@ -1,9 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MongoDB.Framework.Mapping
 {
     public interface IMappingStore
     {
+        /// <summary>
+        /// Gets the root class maps.
+        /// </summary>
+        /// <value>The root class maps.</value>
+        IEnumerable<RootClassMap> RootClassMaps { get; }
+
         /// <summary>
         /// Gets the class map for the specified entity type.
         /// </summary>

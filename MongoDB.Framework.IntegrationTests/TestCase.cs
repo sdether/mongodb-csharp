@@ -5,7 +5,7 @@ using System.Text;
 
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
-using MongoDB.Framework.Proxy.Castle;
+using MongoDB.Framework.Configuration.Mapping;
 using MongoDB.Framework.Mapping;
 
 using NUnit.Framework;
@@ -14,6 +14,7 @@ namespace MongoDB.Framework
 {
     public abstract class TestCase
     {
+        protected IMongoConfiguration mongoConfiguration;
         protected IMongoSessionFactory mongoSessionFactory;
 
         protected virtual string DatabaseName
@@ -21,23 +22,21 @@ namespace MongoDB.Framework
             get { return "tests"; }
         }
 
-        protected abstract IMapProvider MapProvider { get; }
+        protected abstract IMapModelRegistry MapModelRegistry { get; }
 
         [TestFixtureSetUp]
         public void TestFixtureSetup()
         {
-            var mappingStore = new MappingStore(this.MapProvider);
-            var configuration = new MongoConfiguration(this.DatabaseName, mappingStore);
-            configuration.ProxyGenerator = new CastleProxyGenerator();
-            mongoSessionFactory = configuration.CreateMongoSessionFactory();
+            mongoConfiguration = new MongoConfiguration(this.DatabaseName, this.MapModelRegistry);
+            mongoSessionFactory = mongoConfiguration.CreateMongoSessionFactory();
         }
 
         [TestFixtureTearDown]
         public void TestFixtureTearDown()
         {
-            var mongo = mongoSessionFactory.Configuration.MongoFactory.CreateMongo();
+            var mongo = mongoConfiguration.MongoFactory.CreateMongo();
             mongo.Connect();
-            Database db = mongo.getDB(mongoSessionFactory.Configuration.DatabaseName);
+            Database db = mongo.getDB(mongoConfiguration.DatabaseName);
             db.MetaData.DropDatabase();
             mongo.Disconnect();
         }
@@ -45,7 +44,6 @@ namespace MongoDB.Framework
         [SetUp]
         public void SetUp()
         {
-            
             BeforeTest();
         }
 

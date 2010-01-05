@@ -16,25 +16,24 @@ namespace MongoDB.Framework
 {
     public abstract class IntegrationTestBase
     {
-        private static MongoSessionFactory mongoSessionFactory;
+        private static IMongoConfiguration mongoConfiguration;
+        private static IMongoSessionFactory mongoSessionFactory;
 
         static IntegrationTestBase()
         {
-            var fluentMapProvider = new FluentMapProvider()
+            var fluentMapModelRegistry = new FluentMapModelRegistry()
                 .AddMapsFromAssemblyContaining<PartyMap>();
-            var mappingStore = new MappingStore(fluentMapProvider);
 
-            var configuration = new MongoConfiguration("tests", mappingStore);
-            configuration.ProxyGenerator = new CastleProxyGenerator();
-            mongoSessionFactory = new MongoSessionFactory(configuration);
+            mongoConfiguration = new MongoConfiguration("tests", fluentMapModelRegistry);
+            mongoSessionFactory = mongoConfiguration.CreateMongoSessionFactory();
         }
 
         protected void SetupEnvironment()
         {
-            var mongo = mongoSessionFactory.Configuration.MongoFactory.CreateMongo();
+            var mongo = mongoConfiguration.MongoFactory.CreateMongo();
             mongo.Connect();
-            Database db = mongo.getDB(mongoSessionFactory.Configuration.DatabaseName);
-            string collectionName = mongoSessionFactory.Configuration.MappingStore.GetClassMapFor<Party>().CollectionName;
+            Database db = mongo.getDB(mongoConfiguration.DatabaseName);
+            string collectionName = mongoSessionFactory.MappingStore.GetClassMapFor<Party>().CollectionName;
             IMongoCollection collection = db.GetCollection(collectionName);
 
             var party1 = new Document()
@@ -76,10 +75,10 @@ namespace MongoDB.Framework
 
         protected void TearDownEnvironment()
         {
-            var mongo = mongoSessionFactory.Configuration.MongoFactory.CreateMongo();
+            var mongo = mongoConfiguration.MongoFactory.CreateMongo();
             mongo.Connect();
-            Database db = mongo.getDB(mongoSessionFactory.Configuration.DatabaseName);
-            string collectionName = mongoSessionFactory.Configuration.MappingStore.GetClassMapFor<Party>().CollectionName;
+            Database db = mongo.getDB(mongoConfiguration.DatabaseName);
+            string collectionName = mongoSessionFactory.MappingStore.GetClassMapFor<Party>().CollectionName;
             db.SendCommand(new Document().Append("drop", collectionName));
             mongo.Disconnect();
         }

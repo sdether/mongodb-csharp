@@ -6,6 +6,8 @@ using System.Text;
 using MongoDB.Driver;
 using MongoDB.Framework.Proxy;
 using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Configuration.Mapping;
+using MongoDB.Framework.Proxy.Castle;
 
 namespace MongoDB.Framework.Configuration
 {
@@ -23,7 +25,7 @@ namespace MongoDB.Framework.Configuration
         /// Gets the mapping store.
         /// </summary>
         /// <value>The mapping store.</value>
-        public IMappingStore MappingStore { get; private set; }
+        public IMapModelRegistry MapModelRegistry { get; private set; }
 
         /// <summary>
         /// Gets the mongo factory.
@@ -46,16 +48,17 @@ namespace MongoDB.Framework.Configuration
         /// </summary>
         /// <param name="databaseName">Name of the database.</param>
         /// <param name="mappingStore">The mapping store.</param>
-        public MongoConfiguration(string databaseName, IMappingStore mappingStore)
+        public MongoConfiguration(string databaseName, IMapModelRegistry mapModelRegistry)
         {
             if (string.IsNullOrEmpty(databaseName))
                 throw new ArgumentException("Cannot be null or empty.", "databaseName");
-            if (mappingStore == null)
-                throw new ArgumentNullException("mappingStore");
+            if (mapModelRegistry == null)
+                throw new ArgumentNullException("mapModelRegistry");
 
             this.DatabaseName = databaseName;
-            this.MappingStore = mappingStore;
+            this.MapModelRegistry = mapModelRegistry;
             this.MongoFactory = new DefaultMongoFactory();
+            this.ProxyGenerator = new CastleProxyGenerator();
         }
 
         #endregion
@@ -66,9 +69,13 @@ namespace MongoDB.Framework.Configuration
         /// Creates the mongo session factory.
         /// </summary>
         /// <returns></returns>
-        public IMongoSessionFactory CreateMongoSessionFactory()
+        public virtual IMongoSessionFactory CreateMongoSessionFactory()
         {
-            return new MongoSessionFactory(this);
+            return new MongoSessionFactory(
+                this.DatabaseName,
+                this.MapModelRegistry.BuildMappingStore(),
+                this.MongoFactory,
+                this.ProxyGenerator);
         }
 
         #endregion

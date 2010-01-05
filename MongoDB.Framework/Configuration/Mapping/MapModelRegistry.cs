@@ -13,7 +13,7 @@ using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
-    public class ModelledMapProvider : IMapProvider
+    public class MapModelRegistry : IMapModelRegistry
     {
         #region Private Fields
 
@@ -22,6 +22,21 @@ namespace MongoDB.Framework.Configuration.Mapping
         private Dictionary<Type, RootClassMapModel> rootClassMapModels;
         private Dictionary<Type, NestedClassMapModel> nestedClassMapModels;
 
+        private Dictionary<Type, RootClassMap> rootClassMaps;
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// Gets the root class map models.
+        /// </summary>
+        /// <value>The root class map models.</value>
+        public IEnumerable<RootClassMapModel> RootClassMapModels
+        {
+            get { return this.rootClassMapModels.Values; }
+        }
+
         #endregion
 
         #region Constructors
@@ -29,7 +44,7 @@ namespace MongoDB.Framework.Configuration.Mapping
         /// <summary>
         /// Initializes a new instance of the <see cref="ModelledMapProvider"/> class.
         /// </summary>
-        public ModelledMapProvider()
+        public MapModelRegistry()
         {
             this.rootClassMapModels = new Dictionary<Type, RootClassMapModel>();
             this.nestedClassMapModels = new Dictionary<Type, NestedClassMapModel>();
@@ -66,38 +81,29 @@ namespace MongoDB.Framework.Configuration.Mapping
         }
 
         /// <summary>
-        /// Gets the root class map for.
+        /// Builds the mapping store.
         /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>
-        /// The RootClassMap if it exists; otherwise <c>null</c>.
-        /// </returns>
-        public RootClassMap GetRootClassMapFor(Type type)
-        {
-            RootClassMapModel rootClassMapModel;
-            if (!this.rootClassMapModels.TryGetValue(type, out rootClassMapModel))
-                return null;
-
-            return this.BuildRootClassMap(rootClassMapModel);
-        }
-
-        /// <summary>
-        /// Gets the nested class map for.
-        /// </summary>
-        /// <param name="type">The type.</param>
         /// <returns></returns>
-        public NestedClassMap GetNestedClassMapFor(Type type)
+        public IMappingStore BuildMappingStore()
         {
-            NestedClassMapModel nestedClassMapModel;
-            if (!this.nestedClassMapModels.TryGetValue(type, out nestedClassMapModel))
-                return null;
-
-            return this.BuildNestedClassMap(nestedClassMapModel);
+            this.BuildRootClassMaps();
+            return new MappingStore(this.rootClassMaps.Values);
         }
 
         #endregion
 
         #region Private Methods
+
+        private void BuildRootClassMaps()
+        {
+            this.rootClassMaps = new Dictionary<Type, RootClassMap>();
+
+            foreach (var rootClassMapModel in this.rootClassMapModels.Values)
+            {
+                var rootClassMap = this.BuildRootClassMap(rootClassMapModel);
+                this.rootClassMaps[rootClassMap.Type] = rootClassMap;
+            }
+        }
 
         private RootClassMap BuildRootClassMap(RootClassMapModel model)
         {
@@ -260,6 +266,15 @@ namespace MongoDB.Framework.Configuration.Mapping
         private bool IsCollection(Type type)
         {
             return typeof(IEnumerable).IsAssignableFrom(type) && type != typeof(string);
+        }
+
+        private NestedClassMap GetNestedClassMapFor(Type type)
+        {
+            NestedClassMapModel nestedClassMapModel;
+            if (!this.nestedClassMapModels.TryGetValue(type, out nestedClassMapModel))
+                return null;
+
+            return this.BuildNestedClassMap(nestedClassMapModel);
         }
 
         private IValueType GetValueTypeFromType(Type type)

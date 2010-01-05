@@ -9,7 +9,7 @@ using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
-    public class FluentMapProvider : ModelledMapProvider
+    public class FluentMapModelRegistry : MapModelRegistry
     {
         private static readonly PropertyInfo rootModelPropertyInfo = typeof(FluentBase<RootClassMapModel>).GetProperty("Model");
         private static readonly PropertyInfo nestedModelPropertyInfo = typeof(FluentBase<NestedClassMapModel>).GetProperty("Model");
@@ -18,7 +18,7 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         /// Adds the maps from assembly containing the specified type.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        public FluentMapProvider AddMapsFromAssemblyContaining<T>()
+        public FluentMapModelRegistry AddMapsFromAssemblyContaining<T>()
         {
             this.AddMapsFromAssembly(typeof(T).Assembly);
             return this;
@@ -28,7 +28,7 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         /// Adds the maps from assembly.
         /// </summary>
         /// <param name="assembly">The assembly.</param>
-        public FluentMapProvider AddMapsFromAssembly(Assembly assembly)
+        public FluentMapModelRegistry AddMapsFromAssembly(Assembly assembly)
         {
             foreach (var type in assembly.GetTypes())
             {
@@ -58,7 +58,7 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         /// <typeparam name="T"></typeparam>
         /// <param name="rootClassMap">The root class map.</param>
         /// <returns></returns>
-        public FluentMapProvider AddMap<T>(FluentRootClass<T> rootClassMap)
+        public FluentMapModelRegistry AddMap<T>(FluentRootClass<T> rootClassMap)
         {
             this.AddRootClassMapModel(rootClassMap.Model);
             return this;
@@ -70,7 +70,7 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         /// <typeparam name="T"></typeparam>
         /// <param name="nestedClassMap">The nested class map.</param>
         /// <returns></returns>
-        public FluentMapProvider AddMap<T>(FluentNestedClass<T> nestedClassMap)
+        public FluentMapModelRegistry AddMap<T>(FluentNestedClass<T> nestedClassMap)
         {
             this.AddNestedClassMapModel(nestedClassMap.Model);
             return this;

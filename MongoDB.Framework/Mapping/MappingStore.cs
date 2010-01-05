@@ -8,7 +8,15 @@ namespace MongoDB.Framework.Mapping
     public class MappingStore : IMappingStore
     {
         private Dictionary<Type, ClassMap> classMaps;
-        private List<IMapProvider> mapProviders;
+
+        /// <summary>
+        /// Gets the root class maps.
+        /// </summary>
+        /// <value>The root class maps.</value>
+        public IEnumerable<RootClassMap> RootClassMaps
+        {
+            get { return this.classMaps.Values.OfType<RootClassMap>(); }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IMappingStore"/> class.
@@ -20,31 +28,29 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Initializes a new instance of the <see cref="IMappingStore"/> class.
         /// </summary>
-        /// <param name="mapProviders">The map providers.</param>
-        public MappingStore(params IMapProvider[] mapProviders)
-            : this((IEnumerable<IMapProvider>)mapProviders)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="IMappingStore"/> class.
-        /// </summary>
-        /// <param name="mapProviders">The map providers.</param>
-        public MappingStore(IEnumerable<IMapProvider> mapProviders)
+        /// <param name="rootClassMaps">The root class maps.</param>
+        public MappingStore(IEnumerable<RootClassMap> rootClassMaps)
         {
+            if (rootClassMaps == null)
+                throw new ArgumentNullException("rootClassMaps");
+
             this.classMaps = new Dictionary<Type, ClassMap>();
-            this.mapProviders = new List<IMapProvider>(mapProviders ?? Enumerable.Empty<IMapProvider>());
+            foreach (var rootClassMap in rootClassMaps)
+                this.AddRootClassMap(rootClassMap);
         }
 
         /// <summary>
-        /// Adds the map provider.
+        /// Adds the root class map.
         /// </summary>
-        /// <param name="mapProvider">The map provider.</param>
-        public void AddMapProvider(IMapProvider mapProvider)
+        /// <param name="rootClassMap">The root class map.</param>
+        public void AddRootClassMap(RootClassMap rootClassMap)
         {
-            if (mapProviders == null)
-                throw new ArgumentNullException("mapProviders");
+            if (rootClassMap == null)
+                throw new ArgumentNullException("rootClassMap");
 
-            this.mapProviders.Add(mapProvider);
+            this.classMaps.Add(rootClassMap.Type, rootClassMap);
+            foreach (var subClassMap in rootClassMap.SubClassMaps)
+                this.classMaps.Add(subClassMap.Type, subClassMap);
         }
 
         /// <summary>
@@ -55,35 +61,11 @@ namespace MongoDB.Framework.Mapping
         public virtual ClassMap GetClassMapFor(Type type)
         {
             ClassMap classMap = null;
-            if(!this.TryGetClassMap(type, out classMap))
+            //TODO: add hook for runtime creation of map...
+            if(!this.classMaps.TryGetValue(type, out classMap))
                 throw new UnmappedTypeException(string.Format("The type {0} is unmapped.", type));
 
             return classMap;
-        }
-
-        /// <summary>
-        /// Tries the get class map.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="classMap">The class map.</param>
-        /// <returns></returns>
-        private bool TryGetClassMap(Type type, out ClassMap classMap)
-        {
-            if (this.classMaps.TryGetValue(type, out classMap))
-                return true;
-
-            foreach (var mapProvider in this.mapProviders)
-            {
-                var rootClassMap = mapProvider.GetRootClassMapFor(type);
-                if (rootClassMap != null)
-                {
-                    this.classMaps.Add(rootClassMap.Type, rootClassMap);
-                    foreach (var subClassMap in rootClassMap.SubClassMaps)
-                        this.classMaps.Add(subClassMap.Type, subClassMap);
-                }
-            }
-
-            return this.classMaps.TryGetValue(type, out classMap);
         }
     }
 }

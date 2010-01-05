@@ -5,6 +5,7 @@ using System.Text;
 
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Proxy;
+using MongoDB.Framework.Configuration.Mapping;
 
 namespace MongoDB.Framework.Configuration
 {
@@ -17,10 +18,10 @@ namespace MongoDB.Framework.Configuration
         string DatabaseName { get; }
 
         /// <summary>
-        /// Gets the mapping store.
+        /// Gets the map model registry.
         /// </summary>
-        /// <value>The mapping store.</value>
-        IMappingStore MappingStore { get; }
+        /// <value>The map model registry.</value>
+        IMapModelRegistry MapModelRegistry { get; }
 
         /// <summary>
         /// Gets the mongo factory.

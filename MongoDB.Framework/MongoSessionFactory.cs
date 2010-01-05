@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Tracking;
+using MongoDB.Framework.Proxy;
 
 namespace MongoDB.Framework
 {
@@ -14,18 +15,25 @@ namespace MongoDB.Framework
     {
         #region Private Fields
 
+        private string databaseName;
         private bool initialized;
-        private object initializeObject = new object();
+        private object initializationObject;
+        private IMappingStore mappingStore;
+        private IMongoFactory mongoFactory;
+        private IProxyGenerator proxyGenerator;
 
         #endregion
 
         #region Public Properties
 
         /// <summary>
-        /// Gets the configuration.
+        /// Gets the mapping store.
         /// </summary>
-        /// <value>The configuration.</value>
-        public IMongoConfiguration Configuration { get; private set; }
+        /// <value>The mapping store.</value>
+        public IMappingStore MappingStore
+        {
+            get { return this.mappingStore; }
+        }
 
         #endregion
 
@@ -36,13 +44,23 @@ namespace MongoDB.Framework
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <param name="mongo">The mongo.</param>
-        public MongoSessionFactory(IMongoConfiguration configuration)
+        public MongoSessionFactory(string databaseName, IMappingStore mappingStore, IMongoFactory mongoFactory, IProxyGenerator proxyGenerator)
         {
-            if (configuration == null)
-                throw new ArgumentNullException("configuration");
+            if (string.IsNullOrEmpty(databaseName))
+                throw new ArgumentException("Cannot be null or empty.", "databaseName");
+            if (mappingStore == null)
+                throw new ArgumentNullException("mappingStore");
+            if (mongoFactory == null)
+                throw new ArgumentNullException("mongoFactory");
+            if (proxyGenerator == null)
+                throw new ArgumentNullException("proxyGenerator");
 
-            this.Configuration = configuration;
+            this.databaseName = databaseName;
             this.initialized = false;
+            this.initializationObject = new object();
+            this.mappingStore = mappingStore;
+            this.mongoFactory = mongoFactory;
+            this.proxyGenerator = proxyGenerator;
         }
 
         #endregion
@@ -55,14 +73,14 @@ namespace MongoDB.Framework
         /// <returns></returns>
         public IMongoSession OpenMongoSession()
         {
-            var mongo = this.Configuration.MongoFactory.CreateMongo();
+            var mongo = this.mongoFactory.CreateMongo();
             mongo.Connect();
 
-            var database = mongo.getDB(this.Configuration.DatabaseName);
+            var database = mongo.getDB(this.databaseName);
 
             if(!this.initialized)
             {
-                lock(this.initializeObject)
+                lock(this.initializationObject)
                 {
                     if(!this.initialized)
                     {
@@ -73,8 +91,8 @@ namespace MongoDB.Framework
             }
 
             return new MongoSession(
-                new IndexingMappingStore(this.Configuration.MappingStore, database), 
-                this.Configuration.ProxyGenerator,
+                this.mappingStore,
+                this.proxyGenerator,
                 mongo, 
                 database);
         }
@@ -83,12 +101,44 @@ namespace MongoDB.Framework
 
         #region Protected Methods
 
-         ///<summary>
-         ///Initializes the specified database.
-         ///</summary>
-         ///<param name="database">The database.</param>
+        /// <summary>
+        /// Initializes the specified database.
+        /// </summary>
+        /// <param name="database">The database.</param>
         protected virtual void Initialize(Database database)
         {
+            this.CreateIndexes(database);
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Creates the indexes.
+        /// </summary>
+        private void CreateIndexes(Database database)
+        {
+            foreach (var rootClassMap in this.mappingStore.RootClassMaps)
+            {
+                //getting a collection is more expensive than counting indexes, so let's make this as fast as possible...
+                if (rootClassMap.Indexes.Count() == 0)
+                    continue;
+
+                var collectionMetaData = database.GetCollection(rootClassMap.CollectionName).MetaData;
+                foreach (var index in rootClassMap.Indexes)
+                {
+                    Document fieldsAndDirections = new Document();
+                    foreach (var part in index.Parts)
+                    {
+                        fieldsAndDirections.Add(
+                            part.Key,
+                            part.Value == IndexDirection.Ascending ? 1 : -1);
+                    }
+
+                    collectionMetaData.CreateIndex(index.Name, fieldsAndDirections, index.IsUnique);
+                }
+            }
         }
 
         #endregion

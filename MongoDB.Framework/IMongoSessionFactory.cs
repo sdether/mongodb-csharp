@@ -1,16 +1,17 @@
 ﻿using System;
 
 using MongoDB.Framework.Configuration;
+using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework
 {
     public interface IMongoSessionFactory
     {
         /// <summary>
-        /// Gets the configuration.
+        /// Gets the mapping store.
         /// </summary>
-        /// <value>The configuration.</value>
-        IMongoConfiguration Configuration { get; }
+        /// <value>The mapping store.</value>
+        IMappingStore MappingStore { get; }
 
         /// <summary>
         /// Opens the mongo session.
