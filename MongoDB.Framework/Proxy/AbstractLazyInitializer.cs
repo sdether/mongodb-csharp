@@ -19,7 +19,7 @@ namespace MongoDB.Framework.Proxy
         #region Private Fields
 
         [NonSerialized]
-        private IMongoContextImplementor mongoContext;
+        private IMongoSessionImplementor mongoSession;
 
         #endregion
 
@@ -56,12 +56,12 @@ namespace MongoDB.Framework.Proxy
         public bool IsInitialized { get; private set; }
 
         /// <summary>
-        /// Gets the mongo context.
+        /// Gets the mongo session.
         /// </summary>
-        /// <value>The mongo context.</value>
-        public IMongoContext MongoContext
+        /// <value>The mongo session.</value>
+        public IMongoSession MongoSession
         {
-            get { return this.mongoContext; }
+            get { return this.mongoSession; }
         }
 
         #endregion
@@ -73,20 +73,20 @@ namespace MongoDB.Framework.Proxy
         /// </summary>
         /// <param name="entityType">Type of the entity.</param>
         /// <param name="id">The id.</param>
-        /// <param name="mongoContext">The mongo context.</param>
-        protected AbstractLazyInitializer(Type entityType, object id, IMongoContextImplementor mongoContext)
+        /// <param name="mongoSession">The mongo session.</param>
+        protected AbstractLazyInitializer(Type entityType, object id, IMongoSessionImplementor mongoSession)
         {
             if (entityType == null)
                 throw new ArgumentNullException("rootClassType");
             if (id == null)
                 throw new ArgumentNullException("id");
-            if (mongoContext == null)
-                throw new ArgumentNullException("mongoContext");
+            if (mongoSession == null)
+                throw new ArgumentNullException("mongoSession");
 
             this.EntityType = entityType;
             this.Id = id;
             this.IsInitialized = false;
-            this.mongoContext = mongoContext;
+            this.mongoSession = mongoSession;
         }
 
         #endregion
@@ -100,12 +100,12 @@ namespace MongoDB.Framework.Proxy
         {
             if (!this.IsInitialized)
             {
-                if (this.MongoContext == null)
+                if (this.MongoSession == null)
                     throw new LazyInitializationException(string.Format("Could not initialize proxy for {0}, {1} - no Mongo Context.", this.EntityType, this.Id));
 
-                //TODO: maybe check for connectivity on mongo context
+                //TODO: maybe check for connectivity on mongo session
 
-                this.Target = this.MongoContext.GetById(this.EntityType, this.Id);
+                this.Target = this.MongoSession.GetById(this.EntityType, this.Id);
                 this.IsInitialized = true;
             }
         }
@@ -123,11 +123,11 @@ namespace MongoDB.Framework.Proxy
         /// <summary>
         /// Gets the implementation.
         /// </summary>
-        /// <param name="mongoContext">The mongo context.</param>
+        /// <param name="mongoSession">The mongo session.</param>
         /// <returns></returns>
-        public object GetImplementation(IMongoContextImplementor mongoContext)
+        public object GetImplementation(IMongoSessionImplementor mongoSession)
         {
-            return mongoContext.GetById(this.EntityType, this.Id);
+            return mongoSession.GetById(this.EntityType, this.Id);
         }
 
         /// <summary>

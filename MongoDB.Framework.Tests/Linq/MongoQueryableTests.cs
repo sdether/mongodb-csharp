@@ -12,19 +12,19 @@ namespace MongoDB.Framework.Linq
     [TestFixture]
     public class MongoQueryableTests : IntegrationTestBase
     {
-        private MongoContext context;
+        private IMongoSession mongoSession;
 
         [SetUp]
         public void SetUp()
         {
             this.SetupEnvironment();
-            this.context = this.CreateContext();
+            this.mongoSession = this.CreateMongoSession();
         }
 
         [Test]
         public void Test_root_entity_query()
         {
-            var parties = (from p in context.Query<Party>()
+            var parties = (from p in mongoSession.Query<Party>()
                            where p.PhoneNumber.AreaCode == "111"
                            select p).ToList();
 
@@ -34,7 +34,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_root_entity_query_with_a_nestedClass_condition()
         {
-            var parties = (from p in context.Query<Party>()
+            var parties = (from p in mongoSession.Query<Party>()
                            where p.PhoneNumber == new PhoneNumber() { AreaCode = "111", Prefix = "222", Number = "3333" }
                            select p).ToList();
 
@@ -44,7 +44,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_discriminated_entity_query()
         {
-            var parties = (from p in context.Query<Organization>()
+            var parties = (from p in mongoSession.Query<Organization>()
                            where p.PhoneNumber.AreaCode == "111"
                            select p).ToList();
 
@@ -54,7 +54,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_combined_query()
         {
-            var parties = (from p in context.Query<Organization>()
+            var parties = (from p in mongoSession.Query<Organization>()
                            where p.EmployeeCount > 12 && p.EmployeeCount < 24
                            select p).ToList();
 
@@ -64,7 +64,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_skip_operator()
         {
-            var parties = context.Query<Party>().Skip(1).ToList();
+            var parties = mongoSession.Query<Party>().Skip(1).ToList();
 
             Assert.AreEqual(2, parties.Count());
         }
@@ -72,7 +72,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_take_operator()
         {
-            var parties = context.Query<Party>().Take(1).ToList();
+            var parties = mongoSession.Query<Party>().Take(1).ToList();
 
             Assert.AreEqual(1, parties.Count());
         }
@@ -80,7 +80,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_skip_and_take_operator()
         {
-            var parties = context.Query<Party>().Skip(1).Take(2).ToList();
+            var parties = mongoSession.Query<Party>().Skip(1).Take(2).ToList();
 
             Assert.AreEqual(2, parties.Count());
         }
@@ -88,7 +88,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_count_with_root_entity()
         {
-            var partyCount = context.Query<Party>().Count();
+            var partyCount = mongoSession.Query<Party>().Count();
 
             Assert.AreEqual(3, partyCount);
         }
@@ -96,7 +96,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_count_with_discriminated_entity()
         {
-            var personCount = context.Query<Person>().Count();
+            var personCount = mongoSession.Query<Person>().Count();
 
             Assert.AreEqual(2, personCount);
         }
@@ -104,7 +104,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_first_with_root_entity()
         {
-            var party = context.Query<Party>().First();
+            var party = mongoSession.Query<Party>().First();
 
             Assert.IsNotNull(party);
         }
@@ -112,7 +112,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_first_with_discriminated_entity()
         {
-            var person = context.Query<Person>().First();
+            var person = mongoSession.Query<Person>().First();
 
             Assert.IsNotNull(person);
         }
@@ -120,7 +120,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_ordering()
         {
-            var parties = (from p in context.Query<Party>()
+            var parties = (from p in mongoSession.Query<Party>()
                            orderby p.Name descending
                            select p).ToList();
 
@@ -132,7 +132,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_simple_projection()
         {
-            var numbers = (from p in context.Query<Person>()
+            var numbers = (from p in mongoSession.Query<Person>()
                          select p.PhoneNumber.Number).ToList();
 
             Assert.AreEqual(2, numbers.Count);
@@ -143,7 +143,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_complex_projection()
         {
-            var peopleNumbers = (from p in context.Query<Party>()
+            var peopleNumbers = (from p in mongoSession.Query<Party>()
                            select new { p.Name, p.PhoneNumber.Number }).ToList();
 
             Assert.AreEqual(3, peopleNumbers.Count);
@@ -152,8 +152,8 @@ namespace MongoDB.Framework.Linq
         [TearDown]
         public void TearDown()
         {
-            context.Dispose();
-            context = null;
+            mongoSession.Dispose();
+            mongoSession = null;
             this.TearDownEnvironment();
         }
     }

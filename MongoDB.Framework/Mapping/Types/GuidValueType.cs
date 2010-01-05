@@ -19,11 +19,11 @@ namespace MongoDB.Framework.Mapping.Types
         /// Converts from document value.
         /// </summary>
         /// <param name="documentValue">The document value.</param>
-        /// <param name="mongoContext">The mongo context.</param>
+        /// <param name="mongoSession">The mongo session.</param>
         /// <returns></returns>
-        public override object ConvertFromDocumentValue(object documentValue, IMongoContextImplementor mongoContext)
+        public override object ConvertFromDocumentValue(object documentValue, IMongoSessionImplementor mongoSession)
         {
-            documentValue = base.ConvertFromDocumentValue(documentValue, mongoContext);
+            documentValue = base.ConvertFromDocumentValue(documentValue, mongoSession);
             var guid = documentValue as string;
             if (guid == null)
                 return Guid.Empty;
@@ -35,11 +35,11 @@ namespace MongoDB.Framework.Mapping.Types
         /// Converts to document value.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <param name="mongoContext">The mongo context.</param>
+        /// <param name="mongoSession">The mongo session.</param>
         /// <returns></returns>
-        public override object ConvertToDocumentValue(object value, IMongoContextImplementor mongoContext)
+        public override object ConvertToDocumentValue(object value, IMongoSessionImplementor mongoSession)
         {
-            value = base.ConvertToDocumentValue(value, mongoContext);
+            value = base.ConvertToDocumentValue(value, mongoSession);
             if (value == MongoDBNull.Value)
                 return value;
 

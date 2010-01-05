@@ -21,11 +21,11 @@ namespace MongoDB.Framework.Proxy
         /// </summary>
         /// <param name="entityType">Type of the entity.</param>
         /// <param name="id">The id.</param>
-        /// <param name="mongoContext">The mongo context.</param>
-        protected BasicLazyInitializer(Type entityType, object id, IMongoContextImplementor mongoContext)
-            : base(entityType, id, mongoContext)
+        /// <param name="mongoSession">The mongo session.</param>
+        protected BasicLazyInitializer(Type entityType, object id, IMongoSessionImplementor mongoSession)
+            : base(entityType, id, mongoSession)
         {
-            this.idMemberName = mongoContext.MappingStore.GetClassMapFor(entityType).IdMap.MemberName;
+            this.idMemberName = mongoSession.MappingStore.GetClassMapFor(entityType).IdMap.MemberName;
             this.overridesEquals = entityType.Overrides("Equals", new[] { typeof(object) });
         }
 
@@ -88,9 +88,9 @@ namespace MongoDB.Framework.Proxy
                     SerializationInfo info = (SerializationInfo)args[0];
                     StreamingContext context = (StreamingContext)args[1]; // not used !?!
 
-                    if (this.Target == null & this.MongoContext != null)
+                    if (this.Target == null & this.MongoSession != null)
                     {
-                        object entity = this.MongoContext.GetById(this.EntityType, this.Id);
+                        object entity = this.MongoSession.GetById(this.EntityType, this.Id);
                         if (entity != null)
                             this.SetImplementation(entity);
                     }

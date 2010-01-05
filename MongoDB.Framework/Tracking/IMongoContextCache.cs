@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Tracking
 {
-    public interface IMongoContextCache
+    public interface IMongoSessionCache
     {
         /// <summary>
         /// Clears the cache.

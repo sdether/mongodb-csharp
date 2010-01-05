@@ -17,23 +17,23 @@ namespace MongoDB.Framework.Linq
         /// <summary>
         /// Creates the executor.
         /// </summary>
-        /// <param name="mongoContext">The mongo context.</param>
-        /// <param name="mongoContextCache">The mongo context cache.</param>
+        /// <param name="mongoSession">The mongo session.</param>
+        /// <param name="mongoSessionCache">The mongo session cache.</param>
         /// <param name="changeTracker">The change tracker.</param>
         /// <returns></returns>
-        private static IQueryExecutor CreateExecutor(IMongoContextImplementor mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
+        private static IQueryExecutor CreateExecutor(IMongoSessionImplementor mongoSession, IMongoSessionCache mongoSessionCache, IChangeTracker changeTracker)
         {
-            return new MongoQueryExecutor(mongoContext, mongoContextCache, changeTracker);
+            return new MongoQueryExecutor(mongoSession, mongoSessionCache, changeTracker);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoQueryable&lt;TEntity&gt;"/> class.
         /// </summary>
-        /// <param name="mongoContext">The mongo context.</param>
-        /// <param name="mongoContextCache">The mongo context cache.</param>
+        /// <param name="mongoSession">The mongo session.</param>
+        /// <param name="mongoSessionCache">The mongo session cache.</param>
         /// <param name="changeTracker">The change tracker.</param>
-        public MongoQueryable(IMongoContextImplementor mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
-            : base(CreateExecutor(mongoContext, mongoContextCache, changeTracker))
+        public MongoQueryable(IMongoSessionImplementor mongoSession, IMongoSessionCache mongoSessionCache, IChangeTracker changeTracker)
+            : base(CreateExecutor(mongoSession, mongoSessionCache, changeTracker))
         { }
 
         /// <summary>

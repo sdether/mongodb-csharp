@@ -13,11 +13,11 @@ using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework
 {
-    public class MongoContext : IMongoContext, IMongoContextImplementor
+    public class MongoSession : IMongoSession, IMongoSessionImplementor
     {
         #region Private Fields
 
-        private IMongoContextCache cache;
+        private IMongoSessionCache cache;
         private IChangeTracker changeTracker;
         private Database database;
         private Mongo mongo;
@@ -32,7 +32,7 @@ namespace MongoDB.Framework
         /// Gets the mapping store.
         /// </summary>
         /// <value>The mapping store.</value>
-        IMappingStore IMongoContextImplementor.MappingStore
+        IMappingStore IMongoSessionImplementor.MappingStore
         {
             get
             {
@@ -46,7 +46,7 @@ namespace MongoDB.Framework
         /// Gets the configuration.
         /// </summary>
         /// <value>The configuration.</value>
-        IProxyGenerator IMongoContextImplementor.ProxyGenerator
+        IProxyGenerator IMongoSessionImplementor.ProxyGenerator
         {
             get
             {
@@ -79,13 +79,13 @@ namespace MongoDB.Framework
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MongoContext"/> class.
+        /// Initializes a new instance of the <see cref="MongoSession"/> class.
         /// </summary>
         /// <param name="mappingStore">The mapping store.</param>
         /// <param name="proxyGenerator">The proxy generator.</param>
         /// <param name="mongo">The mongo.</param>
         /// <param name="database">The database.</param>
-        public MongoContext(IMappingStore mappingStore, IProxyGenerator proxyGenerator, Mongo mongo, Database database)
+        public MongoSession(IMappingStore mappingStore, IProxyGenerator proxyGenerator, Mongo mongo, Database database)
         {
             if (mappingStore == null)
                 throw new ArgumentNullException("mappingStore");
@@ -96,7 +96,7 @@ namespace MongoDB.Framework
             if (database == null)
                 throw new ArgumentNullException("database");
 
-            this.cache = new MongoContextCache();
+            this.cache = new MongoSessionCache();
             this.changeTracker = new ChangeTracker(this);
             this.database = database;
             this.mappingStore = mappingStore;
@@ -106,9 +106,9 @@ namespace MongoDB.Framework
 
         /// <summary>
         /// Releases unmanaged resources and performs other cleanup operations before the
-        /// <see cref="MongoContext"/> is reclaimed by garbage collection.
+        /// <see cref="MongoSession"/> is reclaimed by garbage collection.
         /// </summary>
-        ~MongoContext()
+        ~MongoSession()
         {
             this.Dispose(false);
         }
@@ -401,7 +401,7 @@ namespace MongoDB.Framework
         protected void EnsureNotDisposed()
         {
             if (this.mongo == null)
-                throw new ObjectDisposedException("MongoContext");
+                throw new ObjectDisposedException("MongoSession");
         }
 
         protected virtual void PerformInsert(object entity)

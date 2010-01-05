@@ -29,12 +29,12 @@ namespace MongoDB.Framework.Mapping.Types
         [TestFixture]
         public class When_converting_to_a_document
         {
-            private IMongoContextImplementor mongoContext;
+            private IMongoSessionImplementor mongoSession;
 
             [SetUp]
             public void SetUp()
             {
-                mongoContext = new Mock<IMongoContextImplementor>().Object;
+                mongoSession = new Mock<IMongoSessionImplementor>().Object;
             }
 
             [Test]
@@ -43,7 +43,7 @@ namespace MongoDB.Framework.Mapping.Types
                 var collectionType = new DictionaryCollectionType();
                 var elementValueType = new Mock<IValueType>();
 
-                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, null, mongoContext);
+                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, null, mongoSession);
 
                 Assert.IsNull(result);
             }
@@ -55,7 +55,7 @@ namespace MongoDB.Framework.Mapping.Types
                 var elementValueType = new Mock<IValueType>();
                 elementValueType.SetupGet(evt => evt.Type).Returns(typeof(int));
 
-                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, new Dictionary<string, int>(), mongoContext);
+                var result = collectionType.ConvertToDocumentValue(elementValueType.Object, new Dictionary<string, int>(), mongoSession);
 
                 Assert.AreEqual(new Document(), result);
             }
@@ -66,9 +66,9 @@ namespace MongoDB.Framework.Mapping.Types
                 var collectionType = new DictionaryCollectionType();
                 var elementValueType = new Mock<IValueType>();
                 elementValueType.SetupGet(evt => evt.Type).Returns(typeof(int));
-                elementValueType.Setup(evt => evt.ConvertToDocumentValue(It.IsAny<int>(), mongoContext)).Returns<int, IMongoContext>((i, mc) => i);
+                elementValueType.Setup(evt => evt.ConvertToDocumentValue(It.IsAny<int>(), mongoSession)).Returns<int, IMongoSession>((i, mc) => i);
 
-                var result = (Document)collectionType.ConvertToDocumentValue(elementValueType.Object, new Dictionary<string, int> { { "one", 1 }, { "two", 2 }, { "three", 3 } }, mongoContext);
+                var result = (Document)collectionType.ConvertToDocumentValue(elementValueType.Object, new Dictionary<string, int> { { "one", 1 }, { "two", 2 }, { "three", 3 } }, mongoSession);
 
                 Assert.AreEqual(1, result["one"]);
                 Assert.AreEqual(2, result["two"]);
@@ -79,12 +79,12 @@ namespace MongoDB.Framework.Mapping.Types
         [TestFixture]
         public class When_converting_from_a_document
         {
-            private IMongoContextImplementor mongoContext;
+            private IMongoSessionImplementor mongoSession;
 
             [SetUp]
             public void SetUp()
             {
-                mongoContext = new Mock<IMongoContextImplementor>().Object;
+                mongoSession = new Mock<IMongoSessionImplementor>().Object;
             }
 
             [Test]
@@ -93,7 +93,7 @@ namespace MongoDB.Framework.Mapping.Types
                 var collectionType = new DictionaryCollectionType();
                 var elementValueType = new Mock<IValueType>();
 
-                var result = collectionType.ConvertFromDocumentValue(elementValueType.Object, null, mongoContext);
+                var result = collectionType.ConvertFromDocumentValue(elementValueType.Object, null, mongoSession);
 
                 Assert.IsNull(result);
             }
@@ -104,9 +104,9 @@ namespace MongoDB.Framework.Mapping.Types
                 var collectionType = new DictionaryCollectionType();
                 var elementValueType = new Mock<IValueType>();
                 elementValueType.SetupGet(evt => evt.Type).Returns(typeof(int));
-                elementValueType.Setup(evt => evt.ConvertFromDocumentValue(It.IsAny<int>(), mongoContext)).Returns<int, IMongoContext>((i, mc) => i);
+                elementValueType.Setup(evt => evt.ConvertFromDocumentValue(It.IsAny<int>(), mongoSession)).Returns<int, IMongoSession>((i, mc) => i);
 
-                var result = (Dictionary<string, int>)collectionType.ConvertFromDocumentValue(elementValueType.Object, new Document().Append("one", 1).Append("two", 2).Append("three", 3), mongoContext);
+                var result = (Dictionary<string, int>)collectionType.ConvertFromDocumentValue(elementValueType.Object, new Document().Append("one", 1).Append("two", 2).Append("three", 3), mongoSession);
 
                 Assert.AreEqual(1, result["one"]);
                 Assert.AreEqual(2, result["two"]);

@@ -15,13 +15,13 @@ namespace MongoDB.Framework.Proxy.Castle
         /// </summary>
         /// <param name="entityType">Type of the entity.</param>
         /// <param name="id">The id.</param>
-        /// <param name="mongoContext">The mongo context.</param>
+        /// <param name="mongoSession">The mongo session.</param>
         /// <returns></returns>
-        public IMongoProxy GetProxy(Type entityType, object id, IMongoContextImplementor mongoContext)
+        public IMongoProxy GetProxy(Type entityType, object id, IMongoSessionImplementor mongoSession)
         {
             try
             {
-                var initializer = new CastleLazyInitializer(entityType, id, mongoContext);
+                var initializer = new CastleLazyInitializer(entityType, id, mongoSession);
 
                 object generatedProxy = generator.CreateClassProxy(entityType, new[] { typeof(IMongoProxy) }, initializer);
                 initializer.constructed = true;

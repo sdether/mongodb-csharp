@@ -63,12 +63,12 @@ namespace MongoDB.Framework.Configuration
         #region Public Methods
 
         /// <summary>
-        /// Creates the context factory.
+        /// Creates the mongo session factory.
         /// </summary>
         /// <returns></returns>
-        public IMongoContextFactory CreateContextFactory()
+        public IMongoSessionFactory CreateMongoSessionFactory()
         {
-            return new MongoContextFactory(this);
+            return new MongoSessionFactory(this);
         }
 
         #endregion

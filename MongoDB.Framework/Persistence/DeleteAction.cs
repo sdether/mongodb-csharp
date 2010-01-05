@@ -15,11 +15,11 @@ namespace MongoDB.Framework.Persistence
         /// <summary>
         /// Initializes a new instance of the <see cref="DeleteAction"/> class.
         /// </summary>
-        /// <param name="mongoContext">The mongoContext.</param>
-        /// <param name="mongoContextCache">The mongo context cache.</param>
+        /// <param name="mongoSession">The mongoSession.</param>
+        /// <param name="mongoSessionCache">The mongo session cache.</param>
         /// <param name="changeTracker">The change tracker.</param>
-        public DeleteAction(IMongoContextImplementor mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
-            : base(mongoContext, mongoContextCache, changeTracker)
+        public DeleteAction(IMongoSessionImplementor mongoSession, IMongoSessionCache mongoSessionCache, IChangeTracker changeTracker)
+            : base(mongoSession, mongoSessionCache, changeTracker)
         { }
 
         /// <summary>
@@ -31,13 +31,13 @@ namespace MongoDB.Framework.Persistence
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
-            var classMap = this.MongoContext.MappingStore.GetClassMapFor(entity.GetType());
+            var classMap = this.MongoSession.MappingStore.GetClassMapFor(entity.GetType());
 
-            var document = new DeleteDocumentMapper(this.MongoContext)
+            var document = new DeleteDocumentMapper(this.MongoSession)
                 .CreateDocument(classMap, entity);
 
             this.GetCollectionForClassMap(classMap).Delete(document);
-            this.MongoContextCache.Remove(classMap.CollectionName, entity);
+            this.MongoSessionCache.Remove(classMap.CollectionName, entity);
             this.ChangeTracker.StopTracking(entity);
         }
     }

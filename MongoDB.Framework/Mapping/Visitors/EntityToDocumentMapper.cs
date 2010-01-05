@@ -11,14 +11,14 @@ namespace MongoDB.Framework.Mapping.Visitors
     {
         private Document document;
         private object entity;
-        private IMongoContextImplementor mongoContext;
+        private IMongoSessionImplementor mongoSession;
 
-        public EntityToDocumentMapper(IMongoContextImplementor mongoContext)
+        public EntityToDocumentMapper(IMongoSessionImplementor mongoSession)
         {
-            if (mongoContext == null)
-                throw new ArgumentNullException("mongoContext");
+            if (mongoSession == null)
+                throw new ArgumentNullException("mongoSession");
 
-            this.mongoContext = mongoContext;
+            this.mongoSession = mongoSession;
         }
 
         public Document CreateDocument(object entity)
@@ -26,7 +26,7 @@ namespace MongoDB.Framework.Mapping.Visitors
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
-            var classMap = this.mongoContext.MappingStore.GetClassMapFor(entity.GetType());
+            var classMap = this.mongoSession.MappingStore.GetClassMapFor(entity.GetType());
             return this.CreateDocument(classMap, entity);
         }
 
@@ -54,8 +54,8 @@ namespace MongoDB.Framework.Mapping.Visitors
             var referenceEntity = manyToOneMap.MemberGetter(this.entity);
             if (referenceEntity != null)
             {
-                var referenceClassMap = this.mongoContext.MappingStore.GetClassMapFor(manyToOneMap.ReferenceType);
-                var id = referenceClassMap.IdMap.ValueType.ConvertToDocumentValue(referenceClassMap.GetId(referenceEntity), this.mongoContext);
+                var referenceClassMap = this.mongoSession.MappingStore.GetClassMapFor(manyToOneMap.ReferenceType);
+                var id = referenceClassMap.IdMap.ValueType.ConvertToDocumentValue(referenceClassMap.GetId(referenceEntity), this.mongoSession);
                 value = new DBRef(referenceClassMap.CollectionName, id);
             }
 
@@ -65,7 +65,7 @@ namespace MongoDB.Framework.Mapping.Visitors
         public override void ProcessMember(MemberMap memberMap)
         {
             var value = memberMap.MemberGetter(this.entity);
-            value = memberMap.ValueType.ConvertToDocumentValue(value, this.mongoContext);
+            value = memberMap.ValueType.ConvertToDocumentValue(value, this.mongoSession);
             this.document[memberMap.Key] = value;
         }
 

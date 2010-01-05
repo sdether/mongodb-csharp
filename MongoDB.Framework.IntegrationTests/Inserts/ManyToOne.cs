@@ -26,10 +26,10 @@ namespace MongoDB.Framework.Inserts
 
         protected override void AfterTest()
         {
-            using (var context = this.CreateContext())
+            using (var mongoSession = this.OpenMongoSession())
             {
-                context.Database.MetaData.DropCollection("Entity");
-                context.Database.MetaData.DropCollection("EntityRef");
+                mongoSession.Database.MetaData.DropCollection("Entity");
+                mongoSession.Database.MetaData.DropCollection("EntityRef");
             }
         }
 
@@ -39,17 +39,17 @@ namespace MongoDB.Framework.Inserts
             var reference = new EntityRef();
             var entity = new Entity();
             entity.Reference = reference;
-            using (var context = this.CreateContext())
+            using (var mongoSession = this.OpenMongoSession())
             {
-                context.InsertOnSubmit(reference);
-                context.InsertOnSubmit(entity);
-                context.SubmitChanges();
+                mongoSession.InsertOnSubmit(reference);
+                mongoSession.InsertOnSubmit(entity);
+                mongoSession.SubmitChanges();
             }
 
             Document insertedDocument;
-            using (var context = this.CreateContext())
+            using (var mongoSession = this.OpenMongoSession())
             {
-                insertedDocument = context.Database.GetCollection("Entity").FindOne(null);
+                insertedDocument = mongoSession.Database.GetCollection("Entity").FindOne(null);
             }
 
             Assert.IsNotNull(insertedDocument);

@@ -26,12 +26,12 @@ namespace MongoDB.Framework.Updates
 
         protected override void BeforeTest()
         {
-            using (var context = this.CreateContext())
+            using (var mongoSession = this.OpenMongoSession())
             {
                 var refId = Guid.NewGuid().ToString();
-                context.Database.GetCollection("EntityRef")
+                mongoSession.Database.GetCollection("EntityRef")
                     .Insert(new Document().Append("_id", refId).Append("Name", "Jack"));
-                context.Database.GetCollection("Entity")
+                mongoSession.Database.GetCollection("Entity")
                     .Insert(new Document()
                         .Append("_id", Guid.NewGuid().ToString())
                         .Append("Reference", new DBRef("EntityRef", refId)));
@@ -40,27 +40,27 @@ namespace MongoDB.Framework.Updates
 
         protected override void AfterTest()
         {
-            using (var context = this.CreateContext())
+            using (var mongoSession = this.OpenMongoSession())
             {
-                context.Database.MetaData.DropCollection("Entity");
-                context.Database.MetaData.DropCollection("EntityRef");
+                mongoSession.Database.MetaData.DropCollection("Entity");
+                mongoSession.Database.MetaData.DropCollection("EntityRef");
             }
         }
 
         [Test]
         public void Should_update()
         {
-            using (var context = this.CreateContext())
+            using (var mongoSession = this.OpenMongoSession())
             {
-                var entity = context.FindOne<Entity>(null);
+                var entity = mongoSession.FindOne<Entity>(null);
                 entity.Reference = null;
-                context.SubmitChanges();
+                mongoSession.SubmitChanges();
             }
 
             Document updatedDocument;
-            using (var context = this.CreateContext())
+            using (var mongoSession = this.OpenMongoSession())
             {
-                updatedDocument = context.Database.GetCollection("Entity").FindOne(null);
+                updatedDocument = mongoSession.Database.GetCollection("Entity").FindOne(null);
             }
 
             Assert.IsNotNull(updatedDocument);

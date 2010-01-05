@@ -15,8 +15,8 @@ namespace MongoDB.Framework.Proxy
         /// </summary>
         /// <param name="entityType">Type of the entity.</param>
         /// <param name="id">The id.</param>
-        /// <param name="mongoContext">The mongo context.</param>
+        /// <param name="mongoSession">The mongo session.</param>
         /// <returns></returns>
-        IMongoProxy GetProxy(Type entityType, object id, IMongoContextImplementor mongoContext);
+        IMongoProxy GetProxy(Type entityType, object id, IMongoSessionImplementor mongoSession);
     }
 }

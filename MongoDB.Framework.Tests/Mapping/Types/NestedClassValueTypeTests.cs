@@ -45,19 +45,19 @@ namespace MongoDB.Framework.Mapping.Types
         [TestFixture]
         public class When_converting_to_a_document
         {
-            private IMongoContextImplementor mongoContext;
+            private IMongoSessionImplementor mongoSession;
 
             [SetUp]
             public void SetUp()
             {
-                mongoContext = new Mock<IMongoContextImplementor>().Object;
+                mongoSession = new Mock<IMongoSessionImplementor>().Object;
             }
 
             [Test]
             public void should_return_MongoDBNull_when_value_is_null()
             {
                 var valueType = new NestedClassValueType(GetComplexNestedClassMap());
-                var result = valueType.ConvertToDocumentValue(null, mongoContext);
+                var result = valueType.ConvertToDocumentValue(null, mongoSession);
 
                 Assert.AreEqual(MongoDBNull.Value, result);
             }
@@ -66,7 +66,7 @@ namespace MongoDB.Framework.Mapping.Types
             public void should_return_a_document_when_value_is_not_null()
             {
                 var valueType = new NestedClassValueType(GetComplexNestedClassMap());
-                var result = (Document)valueType.ConvertToDocumentValue(new Complex() { Real = 24, Imaginary = 42 }, mongoContext);
+                var result = (Document)valueType.ConvertToDocumentValue(new Complex() { Real = 24, Imaginary = 42 }, mongoSession);
 
                 Assert.AreEqual(24, result["Real"]);
                 Assert.AreEqual(42, result["Imaginary"]);
@@ -76,19 +76,19 @@ namespace MongoDB.Framework.Mapping.Types
         [TestFixture]
         public class When_converting_from_a_document
         {
-            private IMongoContextImplementor mongoContext;
+            private IMongoSessionImplementor mongoSession;
 
             [SetUp]
             public void SetUp()
             {
-                mongoContext = new Mock<IMongoContextImplementor>().Object;
+                mongoSession = new Mock<IMongoSessionImplementor>().Object;
             }
 
             [Test]
             public void should_return_null_when_value_is_null()
             {
                 var valueType = new NestedClassValueType(GetComplexNestedClassMap());
-                var result = valueType.ConvertFromDocumentValue(null, mongoContext);
+                var result = valueType.ConvertFromDocumentValue(null, mongoSession);
 
                 Assert.IsNull(result);
             }
@@ -97,7 +97,7 @@ namespace MongoDB.Framework.Mapping.Types
             public void should_return_an_instance_when_value_is_valid()
             {
                 var valueType = new NestedClassValueType(GetComplexNestedClassMap());
-                var result = (Complex)valueType.ConvertFromDocumentValue(new Document().Append("Real", 24).Append("Imaginary", 42), mongoContext);
+                var result = (Complex)valueType.ConvertFromDocumentValue(new Document().Append("Real", 24).Append("Imaginary", 42), mongoSession);
 
                 Assert.AreEqual(24, result.Real);
                 Assert.AreEqual(42, result.Imaginary);

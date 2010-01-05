@@ -10,14 +10,14 @@ namespace MongoDB.Framework.Mapping.Visitors
     {
         private Document document;
         private object entity;
-        private IMongoContextImplementor mongoContext;
+        private IMongoSessionImplementor mongoSession;
 
-        public DeleteDocumentMapper(IMongoContextImplementor mongoContext)
+        public DeleteDocumentMapper(IMongoSessionImplementor mongoSession)
         {
-            if (mongoContext == null)
-                throw new ArgumentNullException("mongoContext");
+            if (mongoSession == null)
+                throw new ArgumentNullException("mongoSession");
 
-            this.mongoContext = mongoContext;
+            this.mongoSession = mongoSession;
         }
 
         public Document CreateDocument(ClassMap classMap, object entity)
@@ -35,7 +35,7 @@ namespace MongoDB.Framework.Mapping.Visitors
         public override void ProcessId(IdMap idMap)
         {
             var value = idMap.MemberGetter(this.entity);
-            value = idMap.ValueType.ConvertToDocumentValue(value, this.mongoContext);
+            value = idMap.ValueType.ConvertToDocumentValue(value, this.mongoSession);
             this.document[idMap.Key] = value;
         }
 

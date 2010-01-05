@@ -26,9 +26,9 @@ namespace MongoDB.Framework.Updates
 
         protected override void BeforeTest()
         {
-            using (var context = this.CreateContext())
+            using (var mongoSession = this.OpenMongoSession())
             {
-                context.Database.GetCollection("Entity")
+                mongoSession.Database.GetCollection("Entity")
                     .Insert(new Document()
                         .Append("_id", Guid.NewGuid().ToString())
                         .Append("SubEntities", new Document()
@@ -46,18 +46,18 @@ namespace MongoDB.Framework.Updates
 
         protected override void AfterTest()
         {
-            using (var context = this.CreateContext())
+            using (var mongoSession = this.OpenMongoSession())
             {
-                context.Database.MetaData.DropCollection("Entity");
+                mongoSession.Database.MetaData.DropCollection("Entity");
             }
         }
 
         [Test]
         public void Should_update()
         {
-            using (var context = this.CreateContext())
+            using (var mongoSession = this.OpenMongoSession())
             {
-                var entity = context.FindOne<Entity>(null);
+                var entity = mongoSession.FindOne<Entity>(null);
                 entity.SubEntities.Remove("two");
                 entity.SubEntities.Remove("three");
                 entity.SubEntities.Add("four", new SubEntity()
@@ -65,13 +65,13 @@ namespace MongoDB.Framework.Updates
                     Double = 4.4,
                     Integer = 4
                 });
-                context.SubmitChanges();
+                mongoSession.SubmitChanges();
             }
 
             Document insertedDocument;
-            using (var context = this.CreateContext())
+            using (var mongoSession = this.OpenMongoSession())
             {
-                insertedDocument = context.Database.GetCollection("Entity").FindOne(null);
+                insertedDocument = mongoSession.Database.GetCollection("Entity").FindOne(null);
             }
 
             Assert.IsNotNull(insertedDocument);

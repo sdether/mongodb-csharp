@@ -10,14 +10,14 @@ namespace MongoDB.Framework.Mapping.Visitors
     {
         private Document document;
         private object entity;
-        private IMongoContextImplementor mongoContext;
+        private IMongoSessionImplementor mongoSession;
 
-        public IdToEntityMapper(IMongoContextImplementor mongoContext)
+        public IdToEntityMapper(IMongoSessionImplementor mongoSession)
         {
-            if (mongoContext == null)
-                throw new ArgumentNullException("mongoContext");
+            if (mongoSession == null)
+                throw new ArgumentNullException("mongoSession");
 
-            this.mongoContext = mongoContext;
+            this.mongoSession = mongoSession;
         }
 
         public void ApplyId(ClassMap classMap, Document document, object entity)
@@ -37,7 +37,7 @@ namespace MongoDB.Framework.Mapping.Visitors
         public override void ProcessId(IdMap idMap)
         {
             var value = this.document[idMap.Key];
-            value = idMap.ValueType.ConvertFromDocumentValue(value, this.mongoContext);
+            value = idMap.ValueType.ConvertFromDocumentValue(value, this.mongoSession);
             idMap.MemberSetter(this.entity, value);
         }
 

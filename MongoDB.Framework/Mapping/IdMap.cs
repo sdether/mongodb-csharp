@@ -41,11 +41,11 @@ namespace MongoDB.Framework.Mapping
         /// Generates the specified entity.
         /// </summary>
         /// <param name="entity">The entity.</param>
-        /// <param name="mongoContext">The mongo context.</param>
+        /// <param name="mongoSession">The mongo session.</param>
         /// <returns></returns>
-        public object Generate(object entity, IMongoContextImplementor mongoContext)
+        public object Generate(object entity, IMongoSessionImplementor mongoSession)
         {
-            return this.IdGenerator.Generate(entity, mongoContext);
+            return this.IdGenerator.Generate(entity, mongoSession);
         }
 
         /// <summary>

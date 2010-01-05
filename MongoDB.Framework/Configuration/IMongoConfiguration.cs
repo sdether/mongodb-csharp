@@ -35,9 +35,9 @@ namespace MongoDB.Framework.Configuration
         IProxyGenerator ProxyGenerator { get; }
 
         /// <summary>
-        /// Creates the context factory.
+        /// Creates the mongo session factory.
         /// </summary>
         /// <returns></returns>
-        IMongoContextFactory CreateContextFactory();
+        IMongoSessionFactory CreateMongoSessionFactory();
     }
 }

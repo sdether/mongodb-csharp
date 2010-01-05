@@ -14,7 +14,7 @@ namespace MongoDB.Framework
 {
     public abstract class TestCase
     {
-        protected IMongoContextFactory contextFactory;
+        protected IMongoSessionFactory mongoSessionFactory;
 
         protected virtual string DatabaseName
         {
@@ -29,15 +29,15 @@ namespace MongoDB.Framework
             var mappingStore = new MappingStore(this.MapProvider);
             var configuration = new MongoConfiguration(this.DatabaseName, mappingStore);
             configuration.ProxyGenerator = new CastleProxyGenerator();
-            contextFactory = new MongoContextFactory(configuration);
+            mongoSessionFactory = configuration.CreateMongoSessionFactory();
         }
 
         [TestFixtureTearDown]
         public void TestFixtureTearDown()
         {
-            var mongo = contextFactory.Configuration.MongoFactory.CreateMongo();
+            var mongo = mongoSessionFactory.Configuration.MongoFactory.CreateMongo();
             mongo.Connect();
-            Database db = mongo.getDB(contextFactory.Configuration.DatabaseName);
+            Database db = mongo.getDB(mongoSessionFactory.Configuration.DatabaseName);
             db.MetaData.DropDatabase();
             mongo.Disconnect();
         }
@@ -61,10 +61,9 @@ namespace MongoDB.Framework
         protected virtual void AfterTest()
         { }
 
-        protected virtual IMongoContext CreateContext()
+        protected virtual IMongoSession OpenMongoSession()
         {
-            var context = this.contextFactory.CreateContext();
-            return context;
+            return this.mongoSessionFactory.OpenMongoSession();
         }
     }
 }

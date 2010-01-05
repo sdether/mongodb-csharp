@@ -9,7 +9,7 @@ namespace MongoDB.Framework.Mapping.IdGenerators
 {
     public class OidGenerator : IIdGenerator
     {
-        public object Generate(object entity, IMongoContextImplementor mongoContext)
+        public object Generate(object entity, IMongoSessionImplementor mongoSession)
         {
             DriverOidGenerator gen = new DriverOidGenerator();
             return BitConverter.ToString(gen.Generate().Value).Replace("-", "").ToLower();

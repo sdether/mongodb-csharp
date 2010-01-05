@@ -8,7 +8,7 @@ using MongoDB.Framework.Proxy;
 
 namespace MongoDB.Framework
 {
-    public interface IMongoContextImplementor : IMongoContext
+    public interface IMongoSessionImplementor : IMongoSession
     {
         /// <summary>
         /// Gets the proxy generator.

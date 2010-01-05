@@ -31,10 +31,10 @@ namespace MongoDB.Framework.Proxy
         bool IsInitialized { get; }
 
         /// <summary>
-        /// Gets the mongo context.
+        /// Gets the mongo session.
         /// </summary>
-        /// <value>The mongo context.</value>
-        IMongoContext MongoContext { get; }
+        /// <value>The mongo session.</value>
+        IMongoSession MongoSession { get; }
 
         /// <summary>
         /// Performs the load.
@@ -50,9 +50,9 @@ namespace MongoDB.Framework.Proxy
         /// <summary>
         /// Gets the implementation.
         /// </summary>
-        /// <param name="mongoContext">The mongo context.</param>
+        /// <param name="mongoSession">The mongo session.</param>
         /// <returns></returns>
-        object GetImplementation(IMongoContextImplementor mongoContext);
+        object GetImplementation(IMongoSessionImplementor mongoSession);
 
         /// <summary>
         /// Sets the implementation.

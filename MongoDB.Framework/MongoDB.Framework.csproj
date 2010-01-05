@@ -287,7 +287,7 @@
     <Compile Include="Proxy\IProxyGenerator.cs" />
     <Compile Include="Proxy\LazyInitializationException.cs" />
     <Compile Include="Proxy\ProxyUtil.cs" />
-    <Compile Include="IMongoContextImplementor.cs" />
+    <Compile Include="IMongoSessionImplementor.cs" />
     <Compile Include="Reflection\ReflectionUtil.cs" />
     <Compile Include="Tracking\ChangeSet.cs" />
     <Compile Include="Tracking\ChangeTracker.cs" />
@@ -302,8 +302,8 @@
     <Compile Include="DefaultMongoFactory.cs" />
     <Compile Include="Extensions\MongoDBDocumentExtensions.cs" />
     <Compile Include="Extensions\ReflectionExtensions.cs" />
-    <Compile Include="IMongoContext.cs" />
-    <Compile Include="IMongoContextFactory.cs" />
+    <Compile Include="IMongoSession.cs" />
+    <Compile Include="IMongoSessionFactory.cs" />
     <Compile Include="IMongoFactory.cs" />
     <Compile Include="Linq\ResultObjectMapping.cs" />
     <Compile Include="Linq\Visitors\ValueMapPathBuilder.cs" />
@@ -317,11 +317,11 @@
     <Compile Include="Persistence\FindOneAction.cs" />
     <Compile Include="Persistence\FindAction.cs" />
     <Compile Include="Persistence\PersistenceAction.cs" />
-    <Compile Include="MongoContext.cs" />
+    <Compile Include="MongoSession.cs" />
     <Compile Include="Linq\MongoQueryable.cs" />
     <Compile Include="Linq\MongoQueryExecutor.cs" />
     <Compile Include="Linq\MongoQuerySpecification.cs" />
-    <Compile Include="MongoContextFactory.cs" />
+    <Compile Include="MongoSessionFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\LateBoundReflection.cs" />
     <Compile Include="Linq\Visitors\MemberInfoPathBuilder.cs" />

@@ -19,9 +19,9 @@ namespace MongoDB.Framework.Mapping.Types
         /// </summary>
         /// <param name="elementValueType">Type of the element value.</param>
         /// <param name="documentValue">The document value.</param>
-        /// <param name="mongoContext">The mongo context.</param>
+        /// <param name="mongoSession">The mongo session.</param>
         /// <returns></returns>
-        public object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMongoContextImplementor mongoContext)
+        public object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMongoSessionImplementor mongoSession)
         {
             Document document = documentValue as Document;
             if (document == null)
@@ -30,7 +30,7 @@ namespace MongoDB.Framework.Mapping.Types
             var dictionary = Activator.CreateInstance(this.GetCollectionType(elementValueType));
             var addMethod = dictionary.GetType().GetMethod("Add", new[] { typeof(string), elementValueType.Type });
             foreach (string key in document.Keys)
-                addMethod.Invoke(dictionary, new[] { key, elementValueType.ConvertFromDocumentValue(document[key], mongoContext) });
+                addMethod.Invoke(dictionary, new[] { key, elementValueType.ConvertFromDocumentValue(document[key], mongoSession) });
 
             return dictionary;
         }
@@ -40,9 +40,9 @@ namespace MongoDB.Framework.Mapping.Types
         /// </summary>
         /// <param name="elementValueType">Type of the element value.</param>
         /// <param name="value">The value.</param>
-        /// <param name="mongoContext">The mongo context.</param>
+        /// <param name="mongoSession">The mongo session.</param>
         /// <returns></returns>
-        public object ConvertToDocumentValue(IValueType elementValueType, object value, IMongoContextImplementor mongoContext)
+        public object ConvertToDocumentValue(IValueType elementValueType, object value, IMongoSessionImplementor mongoSession)
         {
             Document document = new Document();
             var enumerable = value as IEnumerable;
@@ -56,7 +56,7 @@ namespace MongoDB.Framework.Mapping.Types
             {
                 document.Add(
                     (string)keyProperty.GetValue(pair, null),
-                    elementValueType.ConvertToDocumentValue(valueProperty.GetValue(pair, null), mongoContext));
+                    elementValueType.ConvertToDocumentValue(valueProperty.GetValue(pair, null), mongoSession));
             }
 
             return document;

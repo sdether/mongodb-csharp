@@ -50,7 +50,7 @@ namespace MongoDB.Framework.Tracking
 
         #region Private Fields
 
-        private IMongoContextImplementor mongoContext;
+        private IMongoSessionImplementor mongoSession;
         private List<TrackedEntity> trackedEntities;
 
         #endregion
@@ -60,13 +60,13 @@ namespace MongoDB.Framework.Tracking
         /// <summary>
         /// Initializes a new instance of the <see cref="ChangeTracker"/> class.
         /// </summary>
-        /// <param name="mongoContext">The mongo context.</param>
-        public ChangeTracker(IMongoContextImplementor mongoContext)
+        /// <param name="mongoSession">The mongo session.</param>
+        public ChangeTracker(IMongoSessionImplementor mongoSession)
         {
-            if (mongoContext == null)
-                throw new ArgumentNullException("mongoContext");
+            if (mongoSession == null)
+                throw new ArgumentNullException("mongoSession");
 
-            this.mongoContext = mongoContext;
+            this.mongoSession = mongoSession;
             this.trackedEntities = new List<TrackedEntity>();
         }
 
@@ -179,7 +179,7 @@ namespace MongoDB.Framework.Tracking
             if (trackedEntity.State != TrackedEntityState.PossiblyModified)
                 return;
 
-            var document = new EntityToDocumentMapper(this.mongoContext)
+            var document = new EntityToDocumentMapper(this.mongoSession)
                 .CreateDocument(trackedEntity.Current);
 
             if (trackedEntity.Original == null)

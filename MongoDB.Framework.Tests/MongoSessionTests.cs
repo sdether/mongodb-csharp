@@ -11,21 +11,21 @@ using NUnit.Framework;
 namespace MongoDB.Framework.Linq
 {
     [TestFixture]
-    public class MongoContextTests : IntegrationTestBase
+    public class MongoSessionTests : IntegrationTestBase
     {
-        private MongoContext context;
+        private IMongoSession mongoSession;
 
         [SetUp]
         public void SetUp()
         {
             this.SetupEnvironment();
-            this.context = this.CreateContext();
+            this.mongoSession = this.CreateMongoSession();
         }
 
         [Test]
         public void Test_root_entity_query()
         {
-            var parties = context.Find<Party>(new Document().Append("PhoneNumber.AreaCode", "111"));
+            var parties = mongoSession.Find<Party>(new Document().Append("PhoneNumber.AreaCode", "111"));
 
             Assert.AreEqual(2, parties.Count());
         }
@@ -33,7 +33,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_root_entity_query_with_a_nestedClass_condition()
         {
-            var parties = context.Find<Party>(new Document().Append("PhoneNumber", new Document().Append("AreaCode", "111").Append("Prefix", "222").Append("Number", "3333")));
+            var parties = mongoSession.Find<Party>(new Document().Append("PhoneNumber", new Document().Append("AreaCode", "111").Append("Prefix", "222").Append("Number", "3333")));
 
             Assert.AreEqual(1, parties.Count());
         }
@@ -41,7 +41,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_discriminated_entity_query()
         {
-            var orgs = context.Find<Organization>(new Document().Append("PhoneNumber.AreaCode", "111"));
+            var orgs = mongoSession.Find<Organization>(new Document().Append("PhoneNumber.AreaCode", "111"));
 
             Assert.AreEqual(1, orgs.Count());
         }
@@ -49,7 +49,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_combined_query()
         {
-            var orgs = context.Find<Organization>(new Document().Append("EmployeeCount", new Document().Append("$gt", 12).Append("$lt", 24)));
+            var orgs = mongoSession.Find<Organization>(new Document().Append("EmployeeCount", new Document().Append("$gt", 12).Append("$lt", 24)));
 
             Assert.AreEqual(1, orgs.Count());
         }
@@ -57,7 +57,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_skip_operator()
         {
-            var parties = context.FindAll<Party>(0, 1);
+            var parties = mongoSession.FindAll<Party>(0, 1);
 
             Assert.AreEqual(2, parties.Count());
         }
@@ -65,7 +65,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_take_operator()
         {
-            var parties = context.FindAll<Party>(1, 0);
+            var parties = mongoSession.FindAll<Party>(1, 0);
 
             Assert.AreEqual(1, parties.Count());
         }
@@ -73,7 +73,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_skip_and_take_operator()
         {
-            var parties = context.FindAll<Party>(2, 1);
+            var parties = mongoSession.FindAll<Party>(2, 1);
 
             Assert.AreEqual(2, parties.Count());
         }
@@ -81,7 +81,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_find_one_with_root_entity()
         {
-            var party = context.FindOne<Party>(null);
+            var party = mongoSession.FindOne<Party>(null);
 
             Assert.IsNotNull(party);
         }
@@ -89,7 +89,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_find_one_with_discriminated_entity()
         {
-            var person = context.FindOne<Person>(null);
+            var person = mongoSession.FindOne<Person>(null);
 
             Assert.IsNotNull(person);
         }
@@ -97,7 +97,7 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_ordering()
         {
-            var parties = context.FindAll<Party>(new Document().Append("Name", -1)).ToList();
+            var parties = mongoSession.FindAll<Party>(new Document().Append("Name", -1)).ToList();
 
             Assert.AreEqual("The Muffler Shop", parties[0].Name);
             Assert.AreEqual("Jane McJane", parties[1].Name);
@@ -107,21 +107,21 @@ namespace MongoDB.Framework.Linq
         [Test]
         public void Test_deleting()
         {
-            var party = context.FindOne<Party>(new Document().Append("Name", "Bob McBob"));
-            context.DeleteOnSubmit(party);
-            context.SubmitChanges();
+            var party = mongoSession.FindOne<Party>(new Document().Append("Name", "Bob McBob"));
+            mongoSession.DeleteOnSubmit(party);
+            mongoSession.SubmitChanges();
 
-            using (var context2 = this.CreateContext())
+            using (var mongoSession2 = this.CreateMongoSession())
             {
-                Assert.IsNull(context2.FindOne<Party>(new Document().Append("Name", "Bob McBob")));
+                Assert.IsNull(mongoSession2.FindOne<Party>(new Document().Append("Name", "Bob McBob")));
             }
         }
 
         [TearDown]
         public void TearDown()
         {
-            context.Dispose();
-            context = null;
+            mongoSession.Dispose();
+            mongoSession = null;
             this.TearDownEnvironment();
         }
     }

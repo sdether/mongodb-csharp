@@ -12,32 +12,32 @@ namespace MongoDB.Framework.Persistence
     public abstract class PersistenceAction
     {
         protected IChangeTracker ChangeTracker { get; private set; }
-        protected IMongoContextCache MongoContextCache { get; private set; }
-        protected IMongoContextImplementor MongoContext{ get; private set; }
+        protected IMongoSessionCache MongoSessionCache { get; private set; }
+        protected IMongoSessionImplementor MongoSession{ get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PersistenceAction"/> class.
         /// </summary>
-        /// <param name="mongoContext">The mongo context.</param>
-        /// <param name="mongoContextCache">The mongo context cache.</param>
+        /// <param name="mongoSession">The mongo session.</param>
+        /// <param name="mongoSessionCache">The mongo session cache.</param>
         /// <param name="changeTracker">The change tracker.</param>
-        public PersistenceAction(IMongoContextImplementor mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
+        public PersistenceAction(IMongoSessionImplementor mongoSession, IMongoSessionCache mongoSessionCache, IChangeTracker changeTracker)
         {
-            if (mongoContext == null)
-                throw new ArgumentNullException("mongoContext");
-            if (mongoContextCache == null)
-                throw new ArgumentNullException("mongoContextCache");
+            if (mongoSession == null)
+                throw new ArgumentNullException("mongoSession");
+            if (mongoSessionCache == null)
+                throw new ArgumentNullException("mongoSessionCache");
             if (changeTracker == null)
                 throw new ArgumentNullException("changeTracker");
 
             this.ChangeTracker = changeTracker;
-            this.MongoContextCache = mongoContextCache;
-            this.MongoContext = mongoContext;
+            this.MongoSessionCache = mongoSessionCache;
+            this.MongoSession = mongoSession;
         }
 
         protected IMongoCollection GetCollectionForClassMap(ClassMap classMap)
         {
-            var db = this.MongoContext.Database;
+            var db = this.MongoSession.Database;
             return db.GetCollection(classMap.CollectionName);
         }
     }

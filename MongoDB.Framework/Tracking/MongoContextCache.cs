@@ -5,14 +5,14 @@ using System.Text;
 
 namespace MongoDB.Framework.Tracking
 {
-    public class MongoContextCache : IMongoContextCache
+    public class MongoSessionCache : IMongoSessionCache
     {
         private readonly Dictionary<string, Dictionary<object, object>> cache;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MongoContextCache"/> class.
+        /// Initializes a new instance of the <see cref="MongoSessionCache"/> class.
         /// </summary>
-        public MongoContextCache()
+        public MongoSessionCache()
         {
             cache = new Dictionary<string, Dictionary<object, object>>();
         }

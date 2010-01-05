@@ -15,11 +15,11 @@ namespace MongoDB.Framework.Persistence
         /// <summary>
         /// Initializes a new instance of the <see cref="FindAction"/> class.
         /// </summary>
-        /// <param name="mongoContext">The mongoContext.</param>
-        /// <param name="mongoContextCache">The mongo context cache.</param>
+        /// <param name="mongoSession">The mongoSession.</param>
+        /// <param name="mongoSessionCache">The mongo session cache.</param>
         /// <param name="changeTracker">The change tracker.</param>
-        public FindAction(IMongoContextImplementor mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
-            : base(mongoContext, mongoContextCache, changeTracker)
+        public FindAction(IMongoSessionImplementor mongoSession, IMongoSessionCache mongoSessionCache, IChangeTracker changeTracker)
+            : base(mongoSession, mongoSessionCache, changeTracker)
         { }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace MongoDB.Framework.Persistence
         /// <returns></returns>
         public IEnumerable<object> Find(Type type, Document conditions, int limit, int skip, Document orderBy, Document fields)
         {
-            var classMap = this.MongoContext.MappingStore.GetClassMapFor(type);
+            var classMap = this.MongoSession.MappingStore.GetClassMapFor(type);
             return this.Find(classMap, conditions, limit, skip, orderBy, fields);
         }
 

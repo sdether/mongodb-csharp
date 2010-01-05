@@ -15,11 +15,11 @@ namespace MongoDB.Framework.Persistence
         /// <summary>
         /// Initializes a new instance of the <see cref="InsertAction"/> class.
         /// </summary>
-        /// <param name="mongoContext">The mongoContext.</param>
-        /// <param name="mongoContextCache">The mongo context cache.</param>
+        /// <param name="mongoSession">The mongoSession.</param>
+        /// <param name="mongoSessionCache">The mongo session cache.</param>
         /// <param name="changeTracker">The change tracker.</param>
-        public InsertAction(IMongoContextImplementor mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
-            : base(mongoContext, mongoContextCache, changeTracker)
+        public InsertAction(IMongoSessionImplementor mongoSession, IMongoSessionCache mongoSessionCache, IChangeTracker changeTracker)
+            : base(mongoSession, mongoSessionCache, changeTracker)
         { }
 
         /// <summary>
@@ -32,21 +32,21 @@ namespace MongoDB.Framework.Persistence
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
-            var classMap = this.MongoContext.MappingStore.GetClassMapFor(entity.GetType());
+            var classMap = this.MongoSession.MappingStore.GetClassMapFor(entity.GetType());
             if (!classMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
-            var document = new EntityToDocumentMapper(this.MongoContext)
+            var document = new EntityToDocumentMapper(this.MongoSession)
                 .CreateDocument(entity);
 
-            object id = classMap.IdMap.Generate(entity, this.MongoContext);
+            object id = classMap.IdMap.Generate(entity, this.MongoSession);
 
-            document[classMap.IdMap.Key] = classMap.IdMap.ValueType.ConvertToDocumentValue(id, this.MongoContext);
+            document[classMap.IdMap.Key] = classMap.IdMap.ValueType.ConvertToDocumentValue(id, this.MongoSession);
             this.GetCollectionForClassMap(classMap)
                 .Insert(document);
 
-            new IdToEntityMapper(this.MongoContext).ApplyId(classMap, document, entity);
-            this.MongoContextCache.Store(classMap.CollectionName, id, entity);
+            new IdToEntityMapper(this.MongoSession).ApplyId(classMap, document, entity);
+            this.MongoSessionCache.Store(classMap.CollectionName, id, entity);
             this.ChangeTracker.GetTrackedEntity(entity).MoveToPossibleModified(document);
         }
     }

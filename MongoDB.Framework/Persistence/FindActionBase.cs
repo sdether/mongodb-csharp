@@ -51,11 +51,11 @@ namespace MongoDB.Framework.Persistence
         /// <summary>
         /// Initializes a new instance of the <see cref="FindAction"/> class.
         /// </summary>
-        /// <param name="mongoContext">The mongoContext.</param>
-        /// <param name="mongoContextCache">The mongo context cache.</param>
+        /// <param name="mongoSession">The mongoSession.</param>
+        /// <param name="mongoSessionCache">The mongo session cache.</param>
         /// <param name="changeTracker">The change tracker.</param>
-        public FindActionBase(IMongoContextImplementor mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
-            : base(mongoContext, mongoContextCache, changeTracker)
+        public FindActionBase(IMongoSessionImplementor mongoSession, IMongoSessionCache mongoSessionCache, IChangeTracker changeTracker)
+            : base(mongoSession, mongoSessionCache, changeTracker)
         {  }
 
         #endregion
@@ -78,7 +78,7 @@ namespace MongoDB.Framework.Persistence
             if (IsFindById(classMap, conditions))
             {
                 var id = classMap.IdMap.ValueType.ConvertFromDocumentValue(conditions[classMap.IdMap.Key], null);
-                object entity = this.MongoContextCache.TryToFind(classMap.CollectionName, id);
+                object entity = this.MongoSessionCache.TryToFind(classMap.CollectionName, id);
                 if (entity != null)
                     return new[] { entity };
 
@@ -137,12 +137,12 @@ namespace MongoDB.Framework.Persistence
                     concreteClassMap = classMap.GetClassMapByDiscriminator(discriminator);
                 }
 
-                var entity = new DocumentToEntityMapper(this.MongoContext)
+                var entity = new DocumentToEntityMapper(this.MongoSession)
                     .CreateEntity(concreteClassMap, document.Copy());
 
                 if (trackEntities)
                 {
-                    this.MongoContextCache.Store(classMap.CollectionName, classMap.GetId(entity), entity);
+                    this.MongoSessionCache.Store(classMap.CollectionName, classMap.GetId(entity), entity);
                     this.ChangeTracker.GetTrackedEntity(entity).MoveToPossibleModified(document);
                 }
 

@@ -26,9 +26,9 @@ namespace MongoDB.Framework.Inserts
 
         protected override void AfterTest()
         {
-            using (var context = this.CreateContext())
+            using (var mongoSession = this.OpenMongoSession())
             {
-                context.Database.MetaData.DropCollection("Entity");
+                mongoSession.Database.MetaData.DropCollection("Entity");
             }
         }
 
@@ -43,16 +43,16 @@ namespace MongoDB.Framework.Inserts
                 { "three", new SubEntity() { Integer = 3, Double = 3.3 } }
             };
 
-            using (var context = this.CreateContext())
+            using (var mongoSession = this.OpenMongoSession())
             {
-                context.InsertOnSubmit(entity);
-                context.SubmitChanges();
+                mongoSession.InsertOnSubmit(entity);
+                mongoSession.SubmitChanges();
             }
 
             Document insertedDocument;
-            using (var context = this.CreateContext())
+            using (var mongoSession = this.OpenMongoSession())
             {
-                insertedDocument = context.Database.GetCollection("Entity").FindOne(null);
+                insertedDocument = mongoSession.Database.GetCollection("Entity").FindOne(null);
             }
 
             Assert.IsNotNull(insertedDocument);

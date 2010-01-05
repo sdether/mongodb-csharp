@@ -18,50 +18,50 @@ namespace MongoDB.Framework.Linq
     public class MongoQueryExecutor : IQueryExecutor
     {
         private IChangeTracker changeTracker;
-        private IMongoContextCache mongoContextCache;
-        private IMongoContextImplementor mongoContext;
+        private IMongoSessionCache mongoSessionCache;
+        private IMongoSessionImplementor mongoSession;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoQueryExecutor"/> class.
         /// </summary>
-        /// <param name="mongoContext">The mongo context.</param>
-        /// <param name="mongoContextCache">The mongo context cache.</param>
+        /// <param name="mongoSession">The mongo session.</param>
+        /// <param name="mongoSessionCache">The mongo session cache.</param>
         /// <param name="changeTracker">The change tracker.</param>
-        public MongoQueryExecutor(IMongoContextImplementor mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
+        public MongoQueryExecutor(IMongoSessionImplementor mongoSession, IMongoSessionCache mongoSessionCache, IChangeTracker changeTracker)
         {
-            if (mongoContext == null)
-                throw new ArgumentNullException("mongoContext");
-            if (mongoContextCache == null)
-                throw new ArgumentNullException("mongoContextCache");
+            if (mongoSession == null)
+                throw new ArgumentNullException("mongoSession");
+            if (mongoSessionCache == null)
+                throw new ArgumentNullException("mongoSessionCache");
             if (changeTracker == null)
                 throw new ArgumentNullException("changeTracker");
 
             this.changeTracker = changeTracker;
-            this.mongoContext = mongoContext;
-            this.mongoContextCache = mongoContextCache;
+            this.mongoSession = mongoSession;
+            this.mongoSessionCache = mongoSessionCache;
         }
 
         public IEnumerable<T> ExecuteCollection<T>(QueryModel queryModel)
         {
-            var spec = CollectionQueryModelVisitor.CreateMongoQuerySpecification(this.mongoContext, queryModel);
-            var classMap = this.mongoContext.MappingStore.GetClassMapFor(queryModel.MainFromClause.ItemType);
-            var findAction = new FindAction(this.mongoContext, this.mongoContextCache, changeTracker);
+            var spec = CollectionQueryModelVisitor.CreateMongoQuerySpecification(this.mongoSession, queryModel);
+            var classMap = this.mongoSession.MappingStore.GetClassMapFor(queryModel.MainFromClause.ItemType);
+            var findAction = new FindAction(this.mongoSession, this.mongoSessionCache, changeTracker);
             foreach (var entity in findAction.Find(classMap.Type, spec.Conditions, spec.Limit, spec.Skip, spec.OrderBy, spec.Projection.Fields))
                 yield return (T)spec.Projection.Projector(new ResultObjectMapping() { { queryModel.MainFromClause, entity } });
         }
 
         public T ExecuteScalar<T>(QueryModel queryModel)
         {
-            var scalarVisitor = new ScalarQueryModelVisitor(this.mongoContext);
+            var scalarVisitor = new ScalarQueryModelVisitor(this.mongoSession);
             scalarVisitor.VisitQueryModel(queryModel);
 
             var itemType = queryModel.MainFromClause.ItemType;
-            var classMap = this.mongoContext.MappingStore.GetClassMapFor(itemType);
+            var classMap = this.mongoSession.MappingStore.GetClassMapFor(itemType);
             if (classMap.IsPolymorphic && classMap.Discriminator != null)
                 scalarVisitor.Query[classMap.DiscriminatorKey] = classMap.Discriminator;
 
             //TODO: Convert to PersistenceAction
-            var collection = this.mongoContext.Database.GetCollection(classMap.CollectionName);
+            var collection = this.mongoSession.Database.GetCollection(classMap.CollectionName);
 
             if (scalarVisitor.IsCount)
             {

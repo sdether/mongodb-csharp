@@ -10,7 +10,7 @@ using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework
 {
-    public class MongoContextFactory : IMongoContextFactory
+    public class MongoSessionFactory : IMongoSessionFactory
     {
         #region Private Fields
 
@@ -32,11 +32,11 @@ namespace MongoDB.Framework
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MongoContextFactory"/> class.
+        /// Initializes a new instance of the <see cref="MongoSessionFactory"/> class.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <param name="mongo">The mongo.</param>
-        public MongoContextFactory(IMongoConfiguration configuration)
+        public MongoSessionFactory(IMongoConfiguration configuration)
         {
             if (configuration == null)
                 throw new ArgumentNullException("configuration");
@@ -50,10 +50,10 @@ namespace MongoDB.Framework
         #region Public Methods
 
         /// <summary>
-        /// Creates the context.
+        /// Opens the mongo session.
         /// </summary>
         /// <returns></returns>
-        public MongoContext CreateContext()
+        public IMongoSession OpenMongoSession()
         {
             var mongo = this.Configuration.MongoFactory.CreateMongo();
             mongo.Connect();
@@ -72,7 +72,7 @@ namespace MongoDB.Framework
                 }
             }
 
-            return new MongoContext(
+            return new MongoSession(
                 new IndexingMappingStore(this.Configuration.MappingStore, database), 
                 this.Configuration.ProxyGenerator,
                 mongo, 

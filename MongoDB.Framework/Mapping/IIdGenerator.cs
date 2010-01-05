@@ -11,8 +11,8 @@ namespace MongoDB.Framework.Mapping
         /// Generates the specified entity.
         /// </summary>
         /// <param name="entity">The entity.</param>
-        /// <param name="mongoContext">The mongo context.</param>
+        /// <param name="mongoSession">The mongo session.</param>
         /// <returns></returns>
-        object Generate(object entity, IMongoContextImplementor mongoContext);
+        object Generate(object entity, IMongoSessionImplementor mongoSession);
     }
 }

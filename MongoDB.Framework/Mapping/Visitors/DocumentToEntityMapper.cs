@@ -12,14 +12,14 @@ namespace MongoDB.Framework.Mapping.Visitors
     {
         private Document document;
         private object entity;
-        private IMongoContextImplementor mongoContext;
+        private IMongoSessionImplementor mongoSession;
 
-        public DocumentToEntityMapper(IMongoContextImplementor mongoContext)
+        public DocumentToEntityMapper(IMongoSessionImplementor mongoSession)
         {
-            if (mongoContext == null)
-                throw new ArgumentNullException("mongoContext");
+            if (mongoSession == null)
+                throw new ArgumentNullException("mongoSession");
 
-            this.mongoContext = mongoContext;
+            this.mongoSession = mongoSession;
         }
 
         public object CreateEntity(ClassMap classMap, Document document)
@@ -46,7 +46,7 @@ namespace MongoDB.Framework.Mapping.Visitors
         public override void ProcessMember(MemberMap memberMap)
         {
             var value = document[memberMap.Key];
-            value = memberMap.ValueType.ConvertFromDocumentValue(value, this.mongoContext);
+            value = memberMap.ValueType.ConvertFromDocumentValue(value, this.mongoSession);
             memberMap.MemberSetter(this.entity, value);
             this.document.Remove(memberMap.Key);
         }
@@ -58,17 +58,17 @@ namespace MongoDB.Framework.Mapping.Visitors
             if (value == null)
                 return;
 
-            var referenceClassMap = this.mongoContext.MappingStore.GetClassMapFor(manyToOneMap.ReferenceType);
-            var id = referenceClassMap.IdMap.ValueType.ConvertFromDocumentValue(value.Id, this.mongoContext);
+            var referenceClassMap = this.mongoSession.MappingStore.GetClassMapFor(manyToOneMap.ReferenceType);
+            var id = referenceClassMap.IdMap.ValueType.ConvertFromDocumentValue(value.Id, this.mongoSession);
 
             object referencedEntity = null;
             if (!manyToOneMap.IsLazy)
             {
-                referencedEntity = this.mongoContext.GetById(manyToOneMap.ReferenceType, id);
+                referencedEntity = this.mongoSession.GetById(manyToOneMap.ReferenceType, id);
             }
             else
             {
-                referencedEntity = this.mongoContext.ProxyGenerator.GetProxy(referenceClassMap.Type, id, this.mongoContext);
+                referencedEntity = this.mongoSession.ProxyGenerator.GetProxy(referenceClassMap.Type, id, this.mongoSession);
             }
 
 

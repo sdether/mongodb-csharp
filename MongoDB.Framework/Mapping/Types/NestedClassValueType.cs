@@ -30,11 +30,11 @@ namespace MongoDB.Framework.Mapping.Types
         /// Converts from document value.
         /// </summary>
         /// <param name="documentValue">The document value.</param>
-        /// <param name="mappingContext">The mapping context.</param>
+        /// <param name="mongoSession">The mongo session.</param>
         /// <returns></returns>
-        public override object ConvertFromDocumentValue(object documentValue, IMongoContextImplementor mongoContext)
+        public override object ConvertFromDocumentValue(object documentValue, IMongoSessionImplementor mongoSession)
         {
-            documentValue = base.ConvertFromDocumentValue(documentValue, mongoContext);
+            documentValue = base.ConvertFromDocumentValue(documentValue, mongoSession);
             var document = documentValue as Document;
             if(document == null)
                 return null;
@@ -46,7 +46,7 @@ namespace MongoDB.Framework.Mapping.Types
                 concreteClassMap = concreteClassMap.GetClassMapByDiscriminator(discriminator);
             }
 
-            var mapper = new DocumentToEntityMapper(mongoContext);
+            var mapper = new DocumentToEntityMapper(mongoSession);
             return mapper.CreateEntity(concreteClassMap, document);
         }
 
@@ -54,15 +54,15 @@ namespace MongoDB.Framework.Mapping.Types
         /// Converts to document value.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <param name="mongoContext">The mongo context.</param>
+        /// <param name="mongoSession">The mongo session.</param>
         /// <returns></returns>
-        public override object ConvertToDocumentValue(object value, IMongoContextImplementor mongoContext)
+        public override object ConvertToDocumentValue(object value, IMongoSessionImplementor mongoSession)
         {
-            value = base.ConvertToDocumentValue(value, mongoContext);
+            value = base.ConvertToDocumentValue(value, mongoSession);
             if (value == MongoDBNull.Value)
                 return value;
 
-            var mapper = new EntityToDocumentMapper(mongoContext);
+            var mapper = new EntityToDocumentMapper(mongoSession);
             return mapper.CreateDocument(this.NestedClassMap, value);
         }
     }

@@ -4,7 +4,7 @@ using MongoDB.Framework.Configuration;
 
 namespace MongoDB.Framework
 {
-    public interface IMongoContextFactory
+    public interface IMongoSessionFactory
     {
         /// <summary>
         /// Gets the configuration.
@@ -13,9 +13,9 @@ namespace MongoDB.Framework
         IMongoConfiguration Configuration { get; }
 
         /// <summary>
-        /// Creates the context.
+        /// Opens the mongo session.
         /// </summary>
         /// <returns></returns>
-        MongoContext CreateContext();
+        IMongoSession OpenMongoSession();
     }
 }

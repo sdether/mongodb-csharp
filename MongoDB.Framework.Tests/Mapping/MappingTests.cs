@@ -11,6 +11,7 @@ using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Mapping.Visitors;
 
 using NUnit.Framework;
+using MongoDB.Framework.Proxy.Castle;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
@@ -25,6 +26,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             var mappingStore = new MappingStore(fluentMapProvider);
 
             var configuration = new MongoConfiguration("tests", mappingStore);
+            configuration.ProxyGenerator = new CastleProxyGenerator();
             var document = new Document()
                 .Append("_id", new Oid("4b27b9f1cf24000000002aa0"))
                 .Append("Name", "Bob McBob")
@@ -46,9 +48,9 @@ namespace MongoDB.Framework.Configuration.Mapping
                 .Append("BirthDate", new DateTime(1900, 1, 1))
                 .Append("not-mapped", true);
 
-            var mongoContext = configuration.CreateContextFactory().CreateContext();
+            var mongoSession = configuration.CreateMongoSessionFactory().OpenMongoSession();
             var classMap = mappingStore.GetClassMapFor<Person>();
-            var person = (Person)new DocumentToEntityMapper(mongoContext)
+            var person = (Person)new DocumentToEntityMapper((IMongoSessionImplementor)mongoSession)
                 .CreateEntity(classMap, document);
             Assert.IsNotNull(person);
             Assert.AreEqual("4b27b9f1cf24000000002aa0", person.Id);
@@ -70,6 +72,7 @@ namespace MongoDB.Framework.Configuration.Mapping
                 .AddMapsFromAssemblyContaining<PartyMap>();
             var mappingStore = new MappingStore(fluentMapProvider);
             var configuration = new MongoConfiguration("tests", mappingStore);
+            configuration.ProxyGenerator = new CastleProxyGenerator();
 
             var person = new Person()
             {
@@ -96,9 +99,9 @@ namespace MongoDB.Framework.Configuration.Mapping
             person.Aliases.Add("Dopey");
             person.Aliases.Add("Sleepy");
 
-            var mongoContext = configuration.CreateContextFactory().CreateContext();
+            var mongoSession = configuration.CreateMongoSessionFactory().OpenMongoSession();
             var classMap = mappingStore.GetClassMapFor<Person>();
-            var document = new EntityToDocumentMapper(mongoContext)
+            var document = new EntityToDocumentMapper((IMongoSessionImplementor)mongoSession)
                 .CreateDocument(person);
 
             Assert.AreEqual(new Oid("4b27b9f1cf24000000002aa0"), document["_id"]);

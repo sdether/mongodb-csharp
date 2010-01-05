@@ -24,9 +24,9 @@ namespace MongoDB.Framework.Mapping.Types
         /// </summary>
         /// <param name="elementValueType">Type of the element value.</param>
         /// <param name="documentValue">The document value.</param>
-        /// <param name="mongoContext">The mongo context.</param>
+        /// <param name="mongoSession">The mongo session.</param>
         /// <returns></returns>
-        public object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMongoContextImplementor mongoContext)
+        public object ConvertFromDocumentValue(IValueType elementValueType, object documentValue, IMongoSessionImplementor mongoSession)
         {
             Array array = documentValue as Array;
             if (array == null)
@@ -35,7 +35,7 @@ namespace MongoDB.Framework.Mapping.Types
             var list = Activator.CreateInstance(this.GetCollectionType(elementValueType));
             var addMethod = list.GetType().GetMethod("Add", new[] { elementValueType.Type });
             foreach (var element in array)
-                addMethod.Invoke(list, new[] { elementValueType.ConvertFromDocumentValue(element, mongoContext) });
+                addMethod.Invoke(list, new[] { elementValueType.ConvertFromDocumentValue(element, mongoSession) });
 
             return list;
         }
@@ -47,14 +47,14 @@ namespace MongoDB.Framework.Mapping.Types
         /// <param name="value">The value.</param>
         /// <param name="mappingContext"></param>
         /// <returns></returns>
-        public object ConvertToDocumentValue(IValueType elementValueType, object value, IMongoContextImplementor mongoContext)
+        public object ConvertToDocumentValue(IValueType elementValueType, object value, IMongoSessionImplementor mongoSession)
         {
             var enumerableValue = value as IEnumerable;
             if (enumerableValue == null)
                 return null;
 
             return enumerableValue.OfType<object>()
-                .Select(e => elementValueType.ConvertToDocumentValue(e, mongoContext))
+                .Select(e => elementValueType.ConvertToDocumentValue(e, mongoSession))
                 .ToArray();
         }
     }

@@ -15,11 +15,11 @@ namespace MongoDB.Framework.Persistence
         /// <summary>
         /// Initializes a new instance of the <see cref="UpdateAction"/> class.
         /// </summary>
-        /// <param name="mongoContext">The mongoContext.</param>
-        /// <param name="mongoContextCache">The mongo context cache.</param>
+        /// <param name="mongoSession">The mongoSession.</param>
+        /// <param name="mongoSessionCache">The mongo session cache.</param>
         /// <param name="changeTracker">The change tracker.</param>
-        public UpdateAction(IMongoContextImplementor mongoContext, IMongoContextCache mongoContextCache, IChangeTracker changeTracker)
-            : base(mongoContext, mongoContextCache, changeTracker)
+        public UpdateAction(IMongoSessionImplementor mongoSession, IMongoSessionCache mongoSessionCache, IChangeTracker changeTracker)
+            : base(mongoSession, mongoSessionCache, changeTracker)
         { }
 
         /// <summary>
@@ -31,14 +31,14 @@ namespace MongoDB.Framework.Persistence
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
-            var classMap = this.MongoContext.MappingStore.GetClassMapFor(entity.GetType());
+            var classMap = this.MongoSession.MappingStore.GetClassMapFor(entity.GetType());
             if (!classMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
-            var mapper = new EntityToDocumentMapper(this.MongoContext);
+            var mapper = new EntityToDocumentMapper(this.MongoSession);
             var document = mapper.CreateDocument(entity);
             this.GetCollectionForClassMap(classMap).Update(document);
-            this.MongoContextCache.Store(classMap.CollectionName, classMap.GetId(entity), entity);
+            this.MongoSessionCache.Store(classMap.CollectionName, classMap.GetId(entity), entity);
             this.ChangeTracker.GetTrackedEntity(entity).MoveToPossibleModified(document);
         }
     }
