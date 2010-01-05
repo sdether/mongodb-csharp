@@ -97,6 +97,15 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
+        /// Gets a value indicating whether this instance is root.
+        /// </summary>
+        /// <value><c>true</c> if this instance is root; otherwise, <c>false</c>.</value>
+        public override bool IsRoot
+        {
+            get { return false; }
+        }
+
+        /// <summary>
         /// Gets the many to one maps.
         /// </summary>
         /// <value>The many to one maps.</value>

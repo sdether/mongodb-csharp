@@ -64,6 +64,15 @@ namespace MongoDB.Framework.Mapping
             get { return this.indexes; }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is root.
+        /// </summary>
+        /// <value><c>true</c> if this instance is root; otherwise, <c>false</c>.</value>
+        public override bool IsRoot
+        {
+            get { return true; }
+        }
+
         #endregion
 
         #region Constructors

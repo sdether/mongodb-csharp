@@ -84,6 +84,12 @@ namespace MongoDB.Framework.Mapping
         public abstract bool IsPolymorphic { get; }
 
         /// <summary>
+        /// Gets a value indicating whether this instance is root.
+        /// </summary>
+        /// <value><c>true</c> if this instance is root; otherwise, <c>false</c>.</value>
+        public abstract bool IsRoot { get; }
+
+        /// <summary>
         /// Gets the many to one maps.
         /// </summary>
         /// <value>The many to one maps.</value>

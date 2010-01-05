@@ -55,6 +55,15 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
+        /// Gets a value indicating whether this instance is root.
+        /// </summary>
+        /// <value><c>true</c> if this instance is root; otherwise, <c>false</c>.</value>
+        public override bool IsRoot
+        {
+            get { return false; }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="NestedClassMap"/> class.
         /// </summary>
         /// <param name="type">ValueType of the entity.</param>

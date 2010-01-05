@@ -59,14 +59,16 @@ namespace MongoDB.Framework.Mapping.Visitors
                 value = new DBRef(referenceClassMap.CollectionName, id);
             }
 
-            this.document[manyToOneMap.Key] = value;
+            if(referenceEntity != null || manyToOneMap.PersistNull)
+                this.document[manyToOneMap.Key] = value;
         }
 
         public override void ProcessMember(MemberMap memberMap)
         {
             var value = memberMap.MemberGetter(this.entity);
             value = memberMap.ValueType.ConvertToDocumentValue(value, this.mongoSession);
-            this.document[memberMap.Key] = value;
+            if(value != MongoDBNull.Value || memberMap.PersistNull)
+                this.document[memberMap.Key] = value;
         }
 
         public override void ProcessExtendedProperties(ExtendedPropertiesMap extendedPropertiesMap)
