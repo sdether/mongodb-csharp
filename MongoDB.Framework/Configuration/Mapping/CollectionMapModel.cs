@@ -5,7 +5,7 @@ using System.Text;
 
 using MongoDB.Framework.Mapping;
 
-namespace MongoDB.Framework.Configuration.Mapping.Models
+namespace MongoDB.Framework.Configuration.Mapping
 {
     public class CollectionMapModel : MemberMapModelBase
     {

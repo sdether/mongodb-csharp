@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace MongoDB.Framework.Configuration.Mapping.Models
+namespace MongoDB.Framework.Configuration.Mapping
 {
     public abstract class MemberMapModelBase : MapModel
     {

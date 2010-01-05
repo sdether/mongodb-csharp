@@ -11,7 +11,7 @@ using MongoDB.Framework.Mapping.IdGenerators;
 using MongoDB.Framework.Mapping.Types;
 using MongoDB.Framework.Reflection;
 
-namespace MongoDB.Framework.Configuration.Mapping.Models
+namespace MongoDB.Framework.Configuration.Mapping
 {
     public class ModelledMapProvider : IMapProvider
     {

@@ -169,47 +169,47 @@
     <Compile Include="Mapping\MemberMapPath.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Models\ClassMapModel.cs">
+    <Compile Include="Configuration\Mapping\ClassMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Models\CollectionMapModel.cs" />
-    <Compile Include="Configuration\Mapping\Models\ExtendedPropertiesMapModel.cs">
+    <Compile Include="Configuration\Mapping\CollectionMapModel.cs" />
+    <Compile Include="Configuration\Mapping\ExtendedPropertiesMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Models\IdMapModel.cs">
+    <Compile Include="Configuration\Mapping\IdMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Models\IMapModelVisitor.cs">
+    <Compile Include="Configuration\Mapping\IMapModelVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Models\IndexModel.cs">
+    <Compile Include="Configuration\Mapping\IndexModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Models\ManyToOneMapModel.cs" />
-    <Compile Include="Configuration\Mapping\Models\MapModel.cs">
+    <Compile Include="Configuration\Mapping\ManyToOneMapModel.cs" />
+    <Compile Include="Configuration\Mapping\MapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Models\MemberMapModelBase.cs" />
-    <Compile Include="Configuration\Mapping\Models\ModelledMapProvider.cs">
+    <Compile Include="Configuration\Mapping\MemberMapModelBase.cs" />
+    <Compile Include="Configuration\Mapping\ModelledMapProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Models\NestedClassMapModel.cs">
+    <Compile Include="Configuration\Mapping\NestedClassMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Models\RootClassMapModel.cs">
+    <Compile Include="Configuration\Mapping\RootClassMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Models\SubClassMapModel.cs">
+    <Compile Include="Configuration\Mapping\SubClassMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Models\SuperClassMapModel.cs">
+    <Compile Include="Configuration\Mapping\SuperClassMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Models\ValueMapModel.cs" />
-    <Compile Include="Configuration\Mapping\Models\Visitors\DefaultMapModelVisitor.cs">
+    <Compile Include="Configuration\Mapping\ValueMapModel.cs" />
+    <Compile Include="Configuration\Mapping\Visitors\DefaultMapModelVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Models\Visitors\NullMapModelVisitor.cs">
+    <Compile Include="Configuration\Mapping\Visitors\NullMapModelVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\NestedClassMap.cs">

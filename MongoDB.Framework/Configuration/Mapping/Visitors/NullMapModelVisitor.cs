@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MongoDB.Framework.Configuration.Mapping.Models.Visitors
+namespace MongoDB.Framework.Configuration.Mapping.Visitors
 {
     public abstract class NullMapModelVisitor : IMapModelVisitor
     {

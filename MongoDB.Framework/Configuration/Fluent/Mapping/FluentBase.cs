@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MongoDB.Framework.Configuration.Mapping.Models;
+using MongoDB.Framework.Configuration.Mapping;
 using System.Reflection;
 using MongoDB.Framework.Linq.Visitors;
 
