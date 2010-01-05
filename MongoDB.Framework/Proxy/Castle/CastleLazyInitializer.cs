@@ -5,7 +5,7 @@ using System.Text;
 using Castle.Core.Interceptor;
 using System.Reflection;
 
-namespace MongoDB.Framework.Configuration.Proxy.Castle
+namespace MongoDB.Framework.Proxy.Castle
 {
     /// <remarks>
     /// This was wholesale ripped out of NHibernate.

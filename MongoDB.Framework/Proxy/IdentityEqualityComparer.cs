@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 
-namespace MongoDB.Framework.Configuration.Proxy
+namespace MongoDB.Framework.Proxy
 {
     public static class IdentityEqualityComparer
     {

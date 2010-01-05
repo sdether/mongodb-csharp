@@ -112,8 +112,8 @@
     <Compile Include="Configuration\Fluent\Mapping\FluentSuperClass.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Proxy\Castle\CastleProxyGenerator.cs" />
-    <Compile Include="Configuration\Proxy\IdentityEqualityComparer.cs" />
+    <Compile Include="Proxy\Castle\CastleProxyGenerator.cs" />
+    <Compile Include="Proxy\IdentityEqualityComparer.cs" />
     <Compile Include="Mapping\IdGenerators\AssignedGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -279,14 +279,14 @@
     <Compile Include="Mapping\Visitors\NullMapVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Proxy\AbstractLazyInitializer.cs" />
-    <Compile Include="Configuration\Proxy\BasicLazyInitializer.cs" />
-    <Compile Include="Configuration\Proxy\Castle\CastleLazyInitializer.cs" />
-    <Compile Include="Configuration\Proxy\ILazyInitializer.cs" />
-    <Compile Include="Configuration\Proxy\IMongoProxy.cs" />
-    <Compile Include="Configuration\Proxy\IProxyGenerator.cs" />
-    <Compile Include="Configuration\Proxy\LazyInitializationException.cs" />
-    <Compile Include="Configuration\Proxy\ProxyUtil.cs" />
+    <Compile Include="Proxy\AbstractLazyInitializer.cs" />
+    <Compile Include="Proxy\BasicLazyInitializer.cs" />
+    <Compile Include="Proxy\Castle\CastleLazyInitializer.cs" />
+    <Compile Include="Proxy\ILazyInitializer.cs" />
+    <Compile Include="Proxy\IMongoProxy.cs" />
+    <Compile Include="Proxy\IProxyGenerator.cs" />
+    <Compile Include="Proxy\LazyInitializationException.cs" />
+    <Compile Include="Proxy\ProxyUtil.cs" />
     <Compile Include="IMongoContextImplementor.cs" />
     <Compile Include="Reflection\ReflectionUtil.cs" />
     <Compile Include="Tracking\ChangeSet.cs" />

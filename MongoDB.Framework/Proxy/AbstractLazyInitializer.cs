@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MongoDB.Framework.Configuration.Proxy
+namespace MongoDB.Framework.Proxy
 {
     /// <remarks>
     /// This was wholesale ripped out of NHibernate.

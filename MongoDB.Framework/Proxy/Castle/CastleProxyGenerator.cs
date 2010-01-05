@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Castle.DynamicProxy;
 
-namespace MongoDB.Framework.Configuration.Proxy.Castle
+namespace MongoDB.Framework.Proxy.Castle
 {
     public class CastleProxyGenerator : IProxyGenerator
     {

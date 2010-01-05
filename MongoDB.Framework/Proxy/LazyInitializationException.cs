@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MongoDB.Framework.Configuration.Proxy
+namespace MongoDB.Framework.Proxy
 {
     [global::System.Serializable]
     public class LazyInitializationException : Exception

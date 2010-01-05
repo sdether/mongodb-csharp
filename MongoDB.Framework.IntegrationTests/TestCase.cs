@@ -5,7 +5,7 @@ using System.Text;
 
 using MongoDB.Driver;
 using MongoDB.Framework.Configuration;
-using MongoDB.Framework.Configuration.Proxy.Castle;
+using MongoDB.Framework.Proxy.Castle;
 using MongoDB.Framework.Mapping;
 
 using NUnit.Framework;

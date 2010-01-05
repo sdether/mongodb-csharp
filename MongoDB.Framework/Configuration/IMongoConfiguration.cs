@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Framework.Mapping;
-using MongoDB.Framework.Configuration.Proxy;
+using MongoDB.Framework.Proxy;
 
 namespace MongoDB.Framework.Configuration
 {
@@ -38,6 +38,6 @@ namespace MongoDB.Framework.Configuration
         /// Creates the context factory.
         /// </summary>
         /// <returns></returns>
-        MongoContextFactory CreateContextFactory();
+        IMongoContextFactory CreateContextFactory();
     }
 }

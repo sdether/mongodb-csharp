@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Reflection;
 using MongoDB.Framework.Configuration.Mapping;
 
-namespace MongoDB.Framework.Configuration.Proxy
+namespace MongoDB.Framework.Proxy
 {
     /// <remarks>
     /// This was wholesale ripped out of NHibernate.

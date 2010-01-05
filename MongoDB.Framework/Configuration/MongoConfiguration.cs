@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Driver;
-using MongoDB.Framework.Configuration.Proxy;
+using MongoDB.Framework.Proxy;
 using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Configuration
@@ -66,7 +66,7 @@ namespace MongoDB.Framework.Configuration
         /// Creates the context factory.
         /// </summary>
         /// <returns></returns>
-        public MongoContextFactory CreateContextFactory()
+        public IMongoContextFactory CreateContextFactory()
         {
             return new MongoContextFactory(this);
         }
