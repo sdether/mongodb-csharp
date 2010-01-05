@@ -23,9 +23,10 @@ namespace MongoDB.Framework.Mapping
         /// <param name="memberName">Name of the member.</param>
         /// <param name="memberGetter">The member getter.</param>
         /// <param name="memberSetter">The member setter.</param>
+        /// <param name="persistNull">if set to <c>true</c> [persist nulls].</param>
         /// <param name="valueType">Type of the value.</param>
-        public MemberMap(string key, string memberName, Func<object, object> memberGetter, Action<object, object> memberSetter, IValueType valueType)
-            : base(key, memberName, memberGetter, memberSetter)
+        public MemberMap(string key, string memberName, Func<object, object> memberGetter, Action<object, object> memberSetter, bool persistNull, IValueType valueType)
+            : base(key, memberName, memberGetter, memberSetter, persistNull)
         {
             if (valueType == null)
                 throw new ArgumentNullException("valueType");

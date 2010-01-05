@@ -32,13 +32,20 @@ namespace MongoDB.Framework.Mapping
         public Action<object, object> MemberSetter { get; private set; }
 
         /// <summary>
+        /// Gets a value indicating whether null should be persisted.
+        /// </summary>
+        /// <value><c>true</c> if [persist null]; otherwise, <c>false</c>.</value>
+        public bool PersistNull { get; private set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MemberMapBase"/> class.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="memberName">Name of the member.</param>
         /// <param name="memberGetter">The member getter.</param>
         /// <param name="memberSetter">The member setter.</param>
-        protected MemberMapBase(string key, string memberName, Func<object, object> memberGetter, Action<object, object> memberSetter)
+        /// <param name="persistNull">if set to <c>true</c> [persist null].</param>
+        protected MemberMapBase(string key, string memberName, Func<object, object> memberGetter, Action<object, object> memberSetter, bool persistNull)
         {
             if (key == null)
                 throw new ArgumentException("Cannot be null or empty.", "key");
@@ -53,6 +60,7 @@ namespace MongoDB.Framework.Mapping
             this.MemberName = memberName;
             this.MemberGetter = memberGetter;
             this.MemberSetter = memberSetter;
+            this.PersistNull = persistNull;
         }
     }
 }

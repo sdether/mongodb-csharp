@@ -22,10 +22,11 @@ namespace MongoDB.Framework.Mapping
         /// <param name="memberName">Name of the member.</param>
         /// <param name="memberGetter">The member getter.</param>
         /// <param name="memberSetter">The member setter.</param>
+        /// <param name="persistNull">if set to <c>true</c> [persist nulls].</param>
         /// <param name="referenceType">Type of the reference.</param>
-        /// <param name="cascade">The cascade.</param>
-        public ManyToOneMap(string key, string memberName, Func<object, object> memberGetter, Action<object, object> memberSetter, Type referenceType, bool isLazy)
-            : base(key, memberName, memberGetter, memberSetter)
+        /// <param name="isLazy">if set to <c>true</c> [is lazy].</param>
+        public ManyToOneMap(string key, string memberName, Func<object, object> memberGetter, Action<object, object> memberSetter, bool persistNull, Type referenceType, bool isLazy)
+            : base(key, memberName, memberGetter, memberSetter, persistNull)
         {
             if (referenceType == null)
                 throw new ArgumentNullException("referenceType");

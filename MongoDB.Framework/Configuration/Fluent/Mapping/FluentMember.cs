@@ -19,5 +19,11 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
             this.Model.Key = key;
             return this.Fluent;
         }
+
+        public TFluent PersistNull(bool value)
+        {
+            this.Model.PersistNull = value;
+            return this.Fluent;
+        }
     }
 }

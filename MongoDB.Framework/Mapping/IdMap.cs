@@ -28,7 +28,7 @@ namespace MongoDB.Framework.Mapping
         /// <param name="valueType">Type of the value.</param>
         /// <param name="idGenerator">The id generator.</param>
         public IdMap(string memberName, Func<object, object> memberGetter, Action<object, object> memberSetter, IValueType valueType, IIdGenerator idGenerator, object unsavedValue)
-            : base("_id", memberName, memberGetter, memberSetter, valueType)
+            : base("_id", memberName, memberGetter, memberSetter, true, valueType)
         {
             if (idGenerator == null)
                 throw new ArgumentNullException("idGenerator");

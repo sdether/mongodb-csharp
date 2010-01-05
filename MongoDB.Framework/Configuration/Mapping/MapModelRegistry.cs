@@ -213,12 +213,13 @@ namespace MongoDB.Framework.Configuration.Mapping
             string name = model.Getter.Name;
             string key = model.Key ?? name;
             var memberValueType = ReflectionUtil.GetMemberValueType(model.Getter);
+            var persistNull = model.PersistNull;
             bool isLazy = model.IsLazy;
 
             if (memberValueType.IsSealed)
                 isLazy = false;
             
-            return new ManyToOneMap(key, name, getter, setter, memberValueType, isLazy);
+            return new ManyToOneMap(key, name, getter, setter, persistNull, memberValueType, isLazy);
         }
 
         private MemberMap BuildMemberMap(MemberMapModelBase model)
@@ -228,6 +229,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             string name = model.Getter.Name;
             string key = model.Key ?? name;
             var memberValueType = ReflectionUtil.GetMemberValueType(model.Getter);
+            var persistNull = model.PersistNull;
             IValueType valueType;
 
             if (model is ValueMapModel)
@@ -247,6 +249,7 @@ namespace MongoDB.Framework.Configuration.Mapping
                 name,
                 getter,
                 setter,
+                persistNull,
                 valueType);
         }
 

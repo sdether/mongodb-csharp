@@ -13,5 +13,7 @@ namespace MongoDB.Framework.Configuration.Mapping
         public MemberInfo Getter { get; set; }
 
         public MemberInfo Setter { get; set; }
+
+        public bool PersistNull { get; set; }
     }
 }

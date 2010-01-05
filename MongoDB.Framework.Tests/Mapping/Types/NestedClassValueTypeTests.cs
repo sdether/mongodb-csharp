@@ -25,12 +25,14 @@ namespace MongoDB.Framework.Mapping.Types
                 "Real",
                 LateBoundReflection.GetGetter(typeof(Complex).GetProperty("Real")),
                 LateBoundReflection.GetSetter(typeof(Complex).GetProperty("Real")),
+                true,
                 new NullSafeValueType(typeof(int)));
 
             var imaginaryMemberMap = new MemberMap("Imaginary",
                 "Imaginary",
                 LateBoundReflection.GetGetter(typeof(Complex).GetProperty("Imaginary")),
                 LateBoundReflection.GetSetter(typeof(Complex).GetProperty("Imaginary")),
+                true,
                 new NullSafeValueType(typeof(int)));
 
             return new NestedClassMap(typeof(Complex),
