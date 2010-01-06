@@ -37,6 +37,7 @@ namespace MongoDB.Framework
             IMongoCollection collection = db.GetCollection(collectionName);
 
             var party1 = new Document()
+                .Append("_id", Guid.NewGuid().ToString())
                 .Append("Type", "Person")
                 .Append("Name", "Bob McBob")
                 .Append("BirthDate", new DateTime(1900, 1, 1))
@@ -47,6 +48,7 @@ namespace MongoDB.Framework
                 .Append("Aliases", new [] { "Grumpy", "Dopey", "Sleepy" })
                 .Append("not-mapped", true);
             var party2 = new Document()
+                .Append("_id", Guid.NewGuid().ToString())
                 .Append("Type", "Person")
                 .Append("Name", "Jane McJane")
                 .Append("BirthDate", new DateTime(2000, 2, 2))
@@ -56,6 +58,7 @@ namespace MongoDB.Framework
                     .Append("Number", "3333"))
                 .Append("not-mapped", true);
             var party3 = new Document()
+                .Append("_id", Guid.NewGuid().ToString())
                 .Append("Type", "Organization")
                 .Append("Name", "The Muffler Shop")
                 .Append("EmployeeCount", 23)

@@ -15,10 +15,9 @@ namespace MongoDB.Framework.Mapping.IdGenerators
         public void Should_generate_a_non_empty_guid()
         {
             var generator = new OidGenerator();
-            var oid = (string)generator.Generate(null, null);
+            var oid = generator.Generate(null, null);
 
             Assert.IsNotNull(oid);
-            Assert.IsNotEmpty(oid);
         }
     }
 }

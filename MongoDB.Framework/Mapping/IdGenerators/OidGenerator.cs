@@ -12,7 +12,7 @@ namespace MongoDB.Framework.Mapping.IdGenerators
         public object Generate(object entity, IMongoSessionImplementor mongoSession)
         {
             DriverOidGenerator gen = new DriverOidGenerator();
-            return BitConverter.ToString(gen.Generate().Value).Replace("-", "").ToLower();
+            return gen.Generate();
         }
     }
 }

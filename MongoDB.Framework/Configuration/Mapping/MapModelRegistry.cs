@@ -10,6 +10,7 @@ using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Mapping.IdGenerators;
 using MongoDB.Framework.Mapping.Types;
 using MongoDB.Framework.Reflection;
+using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
@@ -180,14 +181,9 @@ namespace MongoDB.Framework.Configuration.Mapping
             object unsavedValue = model.UnsavedValue;
 
             var memberType = ReflectionUtil.GetMemberValueType(model.Getter);
-            if (memberType == typeof(string) && generator == null)
+            if (memberType == typeof(Oid) && generator == null)
             {
-                if (generator == null)
-                {
-                    generator = new OidGenerator();
-                    if (valueType == null)
-                        valueType = new OidValueType();
-                }
+                generator = new MongoDB.Framework.Mapping.IdGenerators.OidGenerator();
             }
             else if (memberType == typeof(Guid) && generator == null)
                 generator = new GuidGenerator();

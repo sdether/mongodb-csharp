@@ -245,9 +245,6 @@
     <Compile Include="Mapping\Types\NullSafeValueType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Types\OidValueType.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Mapping\Types\SetCollectionType.cs">
       <SubType>Code</SubType>
     </Compile>

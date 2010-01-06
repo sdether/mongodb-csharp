@@ -81,7 +81,6 @@
     <Compile Include="Mapping\Types\DictionaryCollectionTypeTests.cs" />
     <Compile Include="Mapping\Types\SetCollectionTypeTests.cs" />
     <Compile Include="Mapping\Types\ListCollectionTypeTests.cs" />
-    <Compile Include="Mapping\Types\OidValueTypeTests.cs" />
     <Compile Include="Mapping\Types\GuidValueTypeTests.cs" />
     <Compile Include="Mapping\Types\NullSafeValueTypeTests.cs" />
     <Compile Include="Linq\MongoQueryableTests.cs">

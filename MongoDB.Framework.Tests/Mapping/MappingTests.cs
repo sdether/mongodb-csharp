@@ -25,8 +25,9 @@ namespace MongoDB.Framework.Configuration.Mapping
                 .AddMapsFromAssemblyContaining<PartyMap>();
             var configuration = new MongoConfiguration("tests", fluentMapModelRegistry);
 
+            Guid id = Guid.NewGuid();
             var document = new Document()
-                .Append("_id", new Oid("4b27b9f1cf24000000002aa0"))
+                .Append("_id", id.ToString())
                 .Append("Name", "Bob McBob")
                 .Append("PhoneNumber", new Document()
                     .Append("AreaCode", "123")
@@ -51,7 +52,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             var person = (Person)new DocumentToEntityMapper(mongoSession)
                 .CreateEntity(classMap, document);
             Assert.IsNotNull(person);
-            Assert.AreEqual("4b27b9f1cf24000000002aa0", person.Id);
+            Assert.AreEqual(id, person.Id);
             Assert.AreEqual("Bob McBob", person.Name);
             Assert.AreEqual("123", person.PhoneNumber.AreaCode);
             Assert.AreEqual("456", person.PhoneNumber.Prefix);
@@ -72,7 +73,7 @@ namespace MongoDB.Framework.Configuration.Mapping
 
             var person = new Person()
             {
-                Id = "4b27b9f1cf24000000002aa0",
+                Id = Guid.NewGuid(),
                 Name = "Bob McBob",
                 BirthDate = new DateTime(1900, 1, 1),
                 PhoneNumber = new PhoneNumber()
@@ -100,7 +101,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             var document = new EntityToDocumentMapper(mongoSession)
                 .CreateDocument(person);
 
-            Assert.AreEqual(new Oid("4b27b9f1cf24000000002aa0"), document["_id"]);
+            Assert.AreEqual(person.Id.ToString(), document["_id"]);
             Assert.AreEqual("Bob McBob", document["Name"]);
             Assert.AreEqual("Person", document["Type"]);
             Assert.AreEqual(new DateTime(1900, 1, 1), document["BirthDate"]);
