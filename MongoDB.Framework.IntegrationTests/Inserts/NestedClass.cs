@@ -56,6 +56,7 @@ namespace MongoDB.Framework.Inserts
 
             Assert.IsNotNull(insertedDocument);
             Assert.AreEqual(entity.Id, new Guid((string)insertedDocument["_id"]));
+            Assert.AreEqual(entity.SubEntity.Id, new Guid((string)((Document)insertedDocument["SubEntity"])["_id"]));
             Assert.AreEqual(42, ((Document)insertedDocument["SubEntity"])["Integer"]);
             Assert.AreEqual(123.456, ((Document)insertedDocument["SubEntity"])["Double"]);
         }
@@ -69,6 +70,8 @@ namespace MongoDB.Framework.Inserts
 
         public class SubEntity
         {
+            public Guid Id { get; private set; }
+
             public double Double { get; set; }
 
             public int Integer { get; set; }
@@ -87,6 +90,7 @@ namespace MongoDB.Framework.Inserts
         {
             public SubEntityMap()
             {
+                Id(x => x.Id);
                 Map(x => x.Double);
                 Map(x => x.Integer);
             }

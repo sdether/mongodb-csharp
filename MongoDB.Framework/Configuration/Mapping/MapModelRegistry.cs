@@ -186,7 +186,7 @@ namespace MongoDB.Framework.Configuration.Mapping
                 generator = new MongoDB.Framework.Mapping.IdGenerators.OidGenerator();
             }
             else if (memberType == typeof(Guid) && generator == null)
-                generator = new GuidGenerator();
+                generator = new GuidCombGenerator();
 
             if (valueType == null)
                 valueType = this.GetValueTypeFromType(memberType);

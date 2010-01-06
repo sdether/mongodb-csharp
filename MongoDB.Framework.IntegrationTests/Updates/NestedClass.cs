@@ -33,6 +33,7 @@ namespace MongoDB.Framework.Updates
                     .Insert(new Document()
                         .Append("_id", Guid.NewGuid().ToString())
                         .Append("SubEntity", new Document()
+                            .Append("_id", Guid.NewGuid().ToString())
                             .Append("Integer", 42)
                             .Append("Double", 123.456)));
             }
@@ -49,9 +50,11 @@ namespace MongoDB.Framework.Updates
         [Test]
         public void Should_update()
         {
+            Guid subEntityId;
             using (var mongoSession = this.OpenMongoSession())
             {
                 var entity = mongoSession.FindOne<Entity>(null);
+                subEntityId = entity.SubEntity.Id;
                 entity.SubEntity.Integer = 43;
                 entity.SubEntity.Double = 654.321;
                 mongoSession.SubmitChanges();
@@ -64,6 +67,7 @@ namespace MongoDB.Framework.Updates
             }
 
             Assert.IsNotNull(updatedDocument);
+            Assert.AreEqual(subEntityId, new Guid((string)((Document)updatedDocument["SubEntity"])["_id"]));
             Assert.AreEqual(43, ((Document)updatedDocument["SubEntity"])["Integer"]);
             Assert.AreEqual(654.321, ((Document)updatedDocument["SubEntity"])["Double"]);
         }
@@ -77,6 +81,7 @@ namespace MongoDB.Framework.Updates
 
         public class SubEntity
         {
+            public Guid Id { get; private set; }
             public double Double { get; set; }
 
             public int Integer { get; set; }
@@ -95,6 +100,7 @@ namespace MongoDB.Framework.Updates
         {
             public SubEntityMap()
             {
+                Id(x => x.Id);
                 Map(x => x.Double);
                 Map(x => x.Integer);
             }

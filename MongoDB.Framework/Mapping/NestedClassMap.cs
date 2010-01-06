@@ -28,15 +28,6 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
-        /// Gets the id map.
-        /// </summary>
-        /// <value>The id map.</value>
-        public override IdMap IdMap
-        {
-            get { throw new InvalidOperationException("NestedClasses cannot have ids."); }
-        }
-
-        /// <summary>
         /// Gets the indexes.
         /// </summary>
         /// <value>The indexes.</value>
