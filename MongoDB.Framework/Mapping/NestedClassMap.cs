@@ -59,16 +59,5 @@ namespace MongoDB.Framework.Mapping
         public NestedClassMap(Type type, IdMap idMap, IEnumerable<MemberMap> memberMaps, IEnumerable<ManyToOneMap> manyToOneMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap)
             : base(type, idMap, memberMaps, manyToOneMaps, discriminatorKey, discriminator, subClassMaps, extendedPropertiesMap)
         { }
-
-        /// <summary>
-        /// Accepts the specified visitor.
-        /// </summary>
-        /// <param name="visitor">The visitor.</param>
-        public override void Accept(IMapVisitor visitor)
-        {
-            visitor.ProcessNestedClass(this);
-
-            base.Accept(visitor);
-        }
     }
 }

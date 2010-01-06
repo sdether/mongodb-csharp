@@ -113,6 +113,7 @@
     <Compile Include="Configuration\Fluent\Mapping\FluentSuperClass.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Mapping\MemberMap.cs" />
     <Compile Include="Mapping\Visitors\IdGenerator.cs" />
     <Compile Include="Proxy\Castle\CastleProxyGenerator.cs" />
     <Compile Include="Proxy\IdentityEqualityComparer.cs" />
@@ -140,9 +141,6 @@
     <Compile Include="Mapping\IMappingStore.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\IMapProvider.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Mapping\IMapVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -159,9 +157,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\MappingStore.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Mapping\MemberMap.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\MemberMapBase.cs" />
@@ -267,9 +262,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\Visitors\EntityToDocumentMapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Mapping\Visitors\IdToEntityMapper.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\Visitors\NullMapVisitor.cs">
