@@ -37,13 +37,15 @@ namespace MongoDB.Framework.Mapping.Visitors
             return entity;
         }
 
-        public override void ProcessClass(ClassMap classMap)
+        public override void Visit(ClassMap classMap)
         {
             if (classMap.IsPolymorphic)
                 document.Remove(classMap.DiscriminatorKey);
+
+            base.Visit(classMap);
         }
 
-        public override void ProcessMember(MemberMap memberMap)
+        public override void Visit(MemberMap memberMap)
         {
             var value = document[memberMap.Key];
             value = memberMap.ValueType.ConvertFromDocumentValue(value, this.mongoSession);
@@ -51,7 +53,7 @@ namespace MongoDB.Framework.Mapping.Visitors
             this.document.Remove(memberMap.Key);
         }
 
-        public override void ProcessManyToOne(ManyToOneMap manyToOneMap)
+        public override void Visit(ManyToOneMap manyToOneMap)
         {
             var value = document[manyToOneMap.Key] as DBRef;
             this.document.Remove(manyToOneMap.Key);
@@ -75,7 +77,7 @@ namespace MongoDB.Framework.Mapping.Visitors
             manyToOneMap.MemberSetter(this.entity, referencedEntity);
         }
 
-        public override void ProcessExtendedProperties(ExtendedPropertiesMap extendedPropertiesMap)
+        public override void Visit(ExtendedPropertiesMap extendedPropertiesMap)
         {
             var dictionary = this.document.ToDictionary();
             extendedPropertiesMap.MemberSetter(this.entity, dictionary);

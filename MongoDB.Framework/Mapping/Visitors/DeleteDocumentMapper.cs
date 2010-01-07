@@ -32,7 +32,7 @@ namespace MongoDB.Framework.Mapping.Visitors
             return this.document;
         }
 
-        public override void ProcessId(IdMap idMap)
+        public override void Visit(IdMap idMap)
         {
             var value = idMap.MemberGetter(this.entity);
             value = idMap.ValueType.ConvertToDocumentValue(value, this.mongoSession);

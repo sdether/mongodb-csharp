@@ -149,25 +149,7 @@ namespace MongoDB.Framework.Mapping
         /// <param name="visitor">The visitor.</param>
         public override void Accept(IMapVisitor visitor)
         {
-            visitor.ProcessClass(this);
-
-            if (this.HasId)
-                visitor.Visit(this.IdMap);
-
-            foreach (var memberMap in this.MemberMaps)
-                visitor.Visit(memberMap);
-
-            foreach (var manyToOneMap in this.ManyToOneMaps)
-                visitor.Visit(manyToOneMap);
-
-            if (this.HasExtendedProperties)
-                visitor.Visit(this.ExtendedPropertiesMap);
-
-            if (this.HasIndexes)
-            {
-                foreach (var index in this.Indexes)
-                    visitor.Visit(index);
-            }
+            visitor.Visit(this);
         }
 
         /// <summary>

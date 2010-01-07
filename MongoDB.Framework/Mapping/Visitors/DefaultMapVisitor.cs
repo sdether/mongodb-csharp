@@ -9,32 +9,23 @@ namespace MongoDB.Framework.Mapping.Visitors
     {
         public override void Visit(ClassMap classMap)
         {
-            classMap.Accept(this);
-        }
+            if (classMap.HasId)
+                classMap.IdMap.Accept(this);
 
-        public override void Visit(IdMap idMap)
-        {
-            idMap.Accept(this);
-        }
+            foreach (var memberMap in classMap.MemberMaps)
+                memberMap.Accept(this);
 
-        public override void Visit(MemberMap memberMap)
-        {
-            memberMap.Accept(this);
-        }
+            foreach (var manyToOneMap in classMap.ManyToOneMaps)
+                manyToOneMap.Accept(this);
 
-        public override void Visit(ManyToOneMap manyToOneMap)
-        {
-            manyToOneMap.Accept(this);
-        }
+            if (classMap.HasExtendedProperties)
+                classMap.ExtendedPropertiesMap.Accept(this);
 
-        public override void Visit(ExtendedPropertiesMap extendedPropertiesMap)
-        {
-            extendedPropertiesMap.Accept(this);
-        }
-
-        public override void Visit(Index indexMap)
-        {
-            indexMap.Accept(this);
+            if (classMap.HasIndexes)
+            {
+                foreach (var index in classMap.Indexes)
+                    index.Accept(this);
+            }
         }
     }
 }

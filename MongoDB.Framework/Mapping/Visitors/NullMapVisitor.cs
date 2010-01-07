@@ -7,24 +7,6 @@ namespace MongoDB.Framework.Mapping.Visitors
 {
     public abstract class NullMapVisitor : IMapVisitor
     {
-        public virtual void ProcessClass(ClassMap classMap)
-        { }
-
-        public virtual void ProcessId(IdMap idMap)
-        { }
-
-        public virtual void ProcessMember(MemberMap memberMap)
-        { }
-
-        public virtual void ProcessManyToOne(ManyToOneMap manyToOneMap)
-        { }
-
-        public virtual void ProcessExtendedProperties(ExtendedPropertiesMap extendedPropertiesMap)
-        { }
-
-        public virtual void ProcessIndex(Index indexMap)
-        { }
-
         public virtual void Visit(ClassMap classMap)
         { }
 

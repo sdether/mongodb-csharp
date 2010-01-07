@@ -37,7 +37,7 @@ namespace MongoDB.Framework.Mapping
 
         public override void Accept(IMapVisitor visitor)
         {
-            visitor.ProcessManyToOne(this);
+            visitor.Visit(this);
         }
     }
 }

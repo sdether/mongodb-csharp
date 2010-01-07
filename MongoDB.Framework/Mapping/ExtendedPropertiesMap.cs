@@ -29,7 +29,7 @@ namespace MongoDB.Framework.Mapping
 
         public override void Accept(IMapVisitor visitor)
         {
-            visitor.ProcessExtendedProperties(this);
+            visitor.Visit(this);
         }
     }
 }

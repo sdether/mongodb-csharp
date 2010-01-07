@@ -54,9 +54,7 @@ namespace MongoDB.Framework.Mapping
         /// <param name="visitor">The visitor.</param>
         public override void Accept(IMapVisitor visitor)
         {
-            visitor.ProcessId(this);
-
-            base.Accept(visitor);
+            visitor.Visit(this);
         }
     }
 }
