@@ -16,3 +16,5 @@
 bin
 obj
 test-results
+/_UpgradeReport_Files/*
+MongoDB.Driver.Benchmark/ProfilingSessions/*
