@@ -11,6 +11,7 @@ namespace MongoDB.Framework.Mapping.Visitors
     {
         private Document document;
         private object entity;
+        private object value;
         private IMongoSessionImplementor mongoSession;
 
         public EntityToDocumentMapper(IMongoSessionImplementor mongoSession)
@@ -50,27 +51,21 @@ namespace MongoDB.Framework.Mapping.Visitors
             base.Visit(classMap);
         }
 
-        //public override void Visit(ManyToOneMap manyToOneMap)
-        //{
-        //    object value = MongoDBNull.Value;
-        //    var referenceEntity = manyToOneMap.MemberGetter(this.entity);
-        //    if (referenceEntity != null)
-        //    {
-        //        var referenceClassMap = this.mongoSession.MappingStore.GetClassMapFor(manyToOneMap.ReferenceType);
-        //        var id = referenceClassMap.IdMap.ValueType.ConvertToDocumentValue(referenceClassMap.GetId(referenceEntity), this.mongoSession);
-        //        value = new DBRef(referenceClassMap.CollectionName, id);
-        //    }
-
-        //    if(referenceEntity != null || manyToOneMap.PersistNull)
-        //        this.document[manyToOneMap.Key] = value;
-        //}
+        public override void Visit(IdMap idMap)
+        {
+            var value = idMap.MemberGetter(this.entity);
+            value = idMap.ValueConverter.ToDocument(value);
+            this.document[idMap.Key] = value;
+        }
 
         public override void Visit(MemberMap memberMap)
         {
-            //var value = memberMap.MemberGetter(this.entity);
-            //value = memberMap.ValueType.ConvertToDocumentValue(value, this.mongoSession);
-            //if(value != MongoDBNull.Value || memberMap.PersistNull)
-            //    this.document[memberMap.Key] = value;
+            var oldValue = this.value;
+            this.value = memberMap.MemberGetter(this.entity);
+            base.Visit(memberMap);
+            if(this.value != MongoDBNull.Value || memberMap.PersistNull)
+                this.document[memberMap.Key] = this.value;
+            this.value = oldValue;
         }
 
         public override void Visit(ExtendedPropertiesMap extendedPropertiesMap)
@@ -79,6 +74,48 @@ namespace MongoDB.Framework.Mapping.Visitors
 
             dictionary.ToDocument()
                 .CopyTo(this.document);
+        }
+
+        public override void Visit(SimpleValueType simpleValueType)
+        {
+            this.value = simpleValueType.ValueConverter.ToDocument(this.value);
+        }
+
+        public override void Visit(NestedClassValueType nestedClassValueType)
+        {
+            var oldEntity = this.entity;
+            var oldDocument = this.document;
+            
+            this.entity = this.value;
+            this.document = new Document();
+
+            nestedClassValueType.NestedClassMap.Accept(this);
+
+            this.value = this.document;
+            this.entity = oldEntity;
+            this.document = oldDocument;
+        }
+
+        public override void Visit(CollectionValueType collectionValueType)
+        {
+            var collectionElements = collectionValueType.CollectionType.BreakCollectionIntoElements(collectionValueType.ElementValueType.Type, this.value);
+            foreach (var collectionElement in collectionElements)
+            {
+                this.value = collectionElement.Element;
+                collectionValueType.ElementValueType.Accept(this);
+                collectionElement.Element = this.value;
+            }
+
+            this.value = collectionValueType.CollectionType.CreateDocumentValueFromElements(collectionElements);
+        }
+
+        public override void Visit(ManyToOneValueType manyToOneValueType)
+        {
+            var referenceClassMap = this.mongoSession.MappingStore.GetClassMapFor(manyToOneValueType.ReferenceType);
+            if (this.value != null)
+                this.value = new DBRef(referenceClassMap.CollectionName, referenceClassMap.GetId(this.value));
+            else
+                this.value = MongoDBNull.Value;
         }
     }
 }

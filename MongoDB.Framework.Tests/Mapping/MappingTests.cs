@@ -101,7 +101,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             var document = new EntityToDocumentMapper(mongoSession)
                 .CreateDocument(person);
 
-            Assert.AreEqual(person.Id.ToString(), document["_id"]);
+            Assert.AreEqual(person.Id.ToString("N"), document["_id"]);
             Assert.AreEqual("Bob McBob", document["Name"]);
             Assert.AreEqual("Person", document["Type"]);
             Assert.AreEqual(new DateTime(1900, 1, 1), document["BirthDate"]);

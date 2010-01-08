@@ -45,7 +45,7 @@ namespace MongoDB.Framework.Mapping.CollectionTypes
         /// <returns></returns>
         public object CreateDocumentValueFromElements(IEnumerable<CollectionElement> elements)
         {
-            return elements.ToArray();
+            return elements.Select(e => e.Element).ToArray();
         }
 
         /// <summary>
