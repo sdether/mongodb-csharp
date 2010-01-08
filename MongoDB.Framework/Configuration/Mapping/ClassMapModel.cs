@@ -5,13 +5,13 @@ using System.Text;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
-    public abstract class ClassMapModel : MapModel
+    public abstract class ClassMapModel : ModelNode
     {
         /// <summary>
         /// Gets the collection maps.
         /// </summary>
         /// <value>The collections.</value>
-        public List<CollectionMapModel> CollectionMaps { get; private set; }
+        public List<CollectionMemberMapModel> CollectionMaps { get; private set; }
 
         /// <summary>
         /// Gets or sets the discriminator.
@@ -29,7 +29,7 @@ namespace MongoDB.Framework.Configuration.Mapping
         /// Gets the value maps.
         /// </summary>
         /// <value>The value maps.</value>
-        public List<ValueMapModel> ValueMaps { get; private set; }
+        public List<MemberMapModel> ValueMaps { get; private set; }
 
         /// <summary>
         /// Gets the type.
@@ -43,9 +43,9 @@ namespace MongoDB.Framework.Configuration.Mapping
         /// <param name="type">The type.</param>
         public ClassMapModel(Type type)
         {
-            this.CollectionMaps = new List<CollectionMapModel>();
+            this.CollectionMaps = new List<CollectionMemberMapModel>();
             this.ManyToOneMaps = new List<ManyToOneMapModel>();
-            this.ValueMaps = new List<ValueMapModel>();
+            this.ValueMaps = new List<MemberMapModel>();
             this.Type = type;
         }
 

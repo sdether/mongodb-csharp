@@ -77,7 +77,7 @@ namespace MongoDB.Framework.Persistence
             IEnumerable<Document> documents;
             if (IsFindById(classMap, conditions))
             {
-                var id = classMap.IdMap.ValueType.ConvertFromDocumentValue(conditions[classMap.IdMap.Key], null);
+                var id = classMap.IdMap.ValueConverter.FromDocument(conditions[classMap.IdMap.Key]);
                 object entity = this.MongoSessionCache.TryToFind(classMap.CollectionName, id);
                 if (entity != null)
                     return new[] { entity };

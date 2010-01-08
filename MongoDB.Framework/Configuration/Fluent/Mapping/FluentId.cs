@@ -25,14 +25,14 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
             return this;
         }
 
-        public FluentId CustomTypeIs<TValueType>() where TValueType : IValueType, new()
+        public FluentId CustomConverterIs<TConverter>() where TConverter : IValueConverter, new()
         {
-            return this.CustomTypeIs(new TValueType());
+            return this.CustomConverterIs(new TConverter());
         }
 
-        public FluentId CustomTypeIs(IValueType valueType)
+        public FluentId CustomConverterIs(IValueConverter valueConverter)
         {
-            this.Model.CustomValueType = valueType;
+            this.Model.ValueConverter = valueConverter;
             return this;
         }
     }

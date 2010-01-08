@@ -15,8 +15,8 @@ namespace MongoDB.Framework.Mapping.IdGenerators
         public void Should_return_entity_id_when_set()
         {
             var generator = new AssignedGenerator();
-            var idMap = new IdMap("Id", x => 42, (x, y) => { }, new Mock<IValueType>().Object, generator, null);
-            var mockClassMap = new Mock<ClassMap>(typeof(int), Enumerable.Empty<MemberMap>(), Enumerable.Empty<ManyToOneMap>(), null);
+            var idMap = new IdMap("Id", x => 42, (x, y) => { }, generator, new Mock<IValueConverter>().Object, null);
+            var mockClassMap = new Mock<ClassMap>(typeof(int), Enumerable.Empty<MemberMap>(), null);
             var mockMongoSession = new Mock<IMongoSessionImplementor>();
             mockMongoSession.Setup(x => x.MappingStore.GetClassMapFor(It.IsAny<Type>())).Returns(mockClassMap.Object);
             mockClassMap.SetupGet(x => x.IdMap).Returns(idMap);
@@ -30,8 +30,8 @@ namespace MongoDB.Framework.Mapping.IdGenerators
         public void Should_throw_id_generation_exception_when_id_has_not_been_assigned()
         {
             var generator = new AssignedGenerator();
-            var idMap = new IdMap("Id", x => null, (x, y) => { }, new Mock<IValueType>().Object, generator, null);
-            var mockClassMap = new Mock<ClassMap>(typeof(int), Enumerable.Empty<MemberMap>(), Enumerable.Empty<ManyToOneMap>(), null);
+            var idMap = new IdMap("Id", x => null, (x, y) => { }, generator, new Mock<IValueConverter>().Object, null);
+            var mockClassMap = new Mock<ClassMap>(typeof(int), Enumerable.Empty<MemberMap>(), null);
             var mockMongoSession = new Mock<IMongoSessionImplementor>();
             mockMongoSession.Setup(x => x.MappingStore.GetClassMapFor(It.IsAny<Type>())).Returns(mockClassMap.Object);
             mockClassMap.SetupGet(x => x.IdMap).Returns(idMap);

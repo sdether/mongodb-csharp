@@ -7,7 +7,6 @@ using System.Text;
 
 using MongoDB.Framework.Configuration.Mapping;
 using MongoDB.Framework.Linq.Visitors;
-using MongoDB.Framework.Mapping.Types;
 using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping

@@ -8,7 +8,7 @@ using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
-    public class FluentCollection : FluentMember<CollectionMapModel, FluentCollection>
+    public class FluentCollection : FluentMember<CollectionMemberMapModel, FluentCollection>
     {
         protected override FluentCollection Fluent
         {
@@ -16,7 +16,7 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         }
 
         public FluentCollection()
-            : base(new CollectionMapModel())
+            : base(new CollectionMemberMapModel())
         { }
 
         public FluentCollection CollectionTypeIs<TCollection>() where TCollection : ICollectionType, new()
@@ -34,17 +34,6 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         public FluentCollection ElementTypeIs<TElement>()
         {
             this.Model.ElementType = typeof(TElement);
-            return this;
-        }
-
-        public FluentCollection ElementValueTypeIs<TElementValueType>() where TElementValueType : IValueType, new()
-        {
-            return this.ElementValueTypeIs(new TElementValueType());
-        }
-
-        public FluentCollection ElementValueTypeIs(IValueType elementValueType)
-        {
-            this.Model.ElementValueType = elementValueType;
             return this;
         }
     }

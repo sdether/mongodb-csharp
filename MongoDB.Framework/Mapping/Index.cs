@@ -6,7 +6,7 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Mapping
 {
-    public class Index : Map
+    public class Index : MapNode
     {
         /// <summary>
         /// Gets or sets the name.

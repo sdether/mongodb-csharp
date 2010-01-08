@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
-    public abstract class MapModel
+    public abstract class ModelNode
     {
         /// <summary>
         /// Accepts the specified visitor.

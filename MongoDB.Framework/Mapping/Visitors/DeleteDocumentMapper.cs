@@ -35,7 +35,7 @@ namespace MongoDB.Framework.Mapping.Visitors
         public override void Visit(IdMap idMap)
         {
             var value = idMap.MemberGetter(this.entity);
-            value = idMap.ValueType.ConvertToDocumentValue(value, this.mongoSession);
+            value = idMap.ValueConverter.ToDocument(value);
             this.document[idMap.Key] = value;
         }
 

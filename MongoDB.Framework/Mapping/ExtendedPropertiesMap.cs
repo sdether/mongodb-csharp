@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping
 {
-    public sealed class ExtendedPropertiesMap : Map
+    public sealed class ExtendedPropertiesMap : MapNode
     {
         public string MemberName { get; private set; }
 

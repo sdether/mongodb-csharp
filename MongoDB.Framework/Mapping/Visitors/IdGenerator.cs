@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using MongoDB.Framework.Mapping.Types;
-
 namespace MongoDB.Framework.Mapping.Visitors
 {
     public class IdGenerator : DefaultMapVisitor
@@ -29,10 +27,8 @@ namespace MongoDB.Framework.Mapping.Visitors
             this.Visit(classMap);
         }
 
-        public override void ProcessMember(MemberMap memberMap)
+        public override void Visit(MemberMap memberMap)
         {
-            base.ProcessMember(memberMap);
-
             if (memberMap.ValueType is NestedClassValueType)
             {
                 var vt = (NestedClassValueType)memberMap.ValueType;
@@ -48,10 +44,8 @@ namespace MongoDB.Framework.Mapping.Visitors
             }
         }
 
-        public override void ProcessId(IdMap idMap)
+        public override void Visit(IdMap idMap)
         {
-            base.ProcessId(idMap);
-
             var id = idMap.MemberGetter(this.currentEntity);
             if(!Object.Equals(id, idMap.UnsavedValue))
                 return;

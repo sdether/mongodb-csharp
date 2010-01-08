@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping
 {
-    public abstract class MemberMapBase : Map
+    public abstract class MemberMapBase : MapNode
     {
         /// <summary>
         /// Gets the key.

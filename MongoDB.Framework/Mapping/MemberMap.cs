@@ -8,13 +8,11 @@ namespace MongoDB.Framework.Mapping
 {
     public class MemberMap : MemberMapBase
     {
-        
-
         /// <summary>
         /// Gets the type of the value.
         /// </summary>
         /// <value>The type of the value.</value>
-        public IValueType ValueType { get; private set; }
+        public ValueTypeBase ValueType { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MemberMap"/> class.
@@ -25,7 +23,7 @@ namespace MongoDB.Framework.Mapping
         /// <param name="memberSetter">The member setter.</param>
         /// <param name="persistNull">if set to <c>true</c> [persist nulls].</param>
         /// <param name="valueType">Type of the value.</param>
-        public MemberMap(string key, string memberName, Func<object, object> memberGetter, Action<object, object> memberSetter, bool persistNull, IValueType valueType)
+        public MemberMap(string key, string memberName, Func<object, object> memberGetter, Action<object, object> memberSetter, bool persistNull, ValueTypeBase valueType)
             : base(key, memberName, memberGetter, memberSetter, persistNull)
         {
             if (valueType == null)

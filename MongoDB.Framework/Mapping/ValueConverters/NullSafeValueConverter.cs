@@ -4,21 +4,21 @@ using System.Linq;
 using System.Text;
 using MongoDB.Driver;
 
-namespace MongoDB.Framework.Mapping.Types
+namespace MongoDB.Framework.Mapping.Converters
 {
-    public class NullSafeValueType : IValueType
+    public class NullSafeValueConverter : IValueConverter
     {
         /// <summary>
-        /// Gets the type.
+        /// Gets or sets the type.
         /// </summary>
         /// <value>The type.</value>
         public Type Type { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NullSafeValueType"/> class.
+        /// Initializes a new instance of the <see cref="NullSafeValueConverter"/> class.
         /// </summary>
         /// <param name="type">The type.</param>
-        public NullSafeValueType(Type type)
+        public NullSafeValueConverter(Type type)
         {
             if (type == null)
                 throw new ArgumentNullException("type");
@@ -27,26 +27,24 @@ namespace MongoDB.Framework.Mapping.Types
         }
 
         /// <summary>
-        /// Converts from document value.
+        /// Froms the document.
         /// </summary>
-        /// <param name="documentValue">The document value.</param>
-        /// <param name="mongoSession">The mongo session.</param>
+        /// <param name="value">The value.</param>
         /// <returns></returns>
-        public virtual object ConvertFromDocumentValue(object documentValue, IMongoSessionImplementor mongoSession)
+        public virtual object FromDocument(object value)
         {
-            if (documentValue == null || documentValue == MongoDBNull.Value)
+            if (value == MongoDBNull.Value)
                 return this.Type.IsValueType ? Activator.CreateInstance(this.Type) : null;
 
-            return documentValue;
+            return value;
         }
 
         /// <summary>
-        /// Converts to document value.
+        /// Toes the document.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <param name="mongoSession">The mongo session.</param>
         /// <returns></returns>
-        public virtual object ConvertToDocumentValue(object value, IMongoSessionImplementor mongoSession)
+        public virtual object ToDocument(object value)
         {
             if (value == null)
                 return MongoDBNull.Value;

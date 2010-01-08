@@ -50,27 +50,27 @@ namespace MongoDB.Framework.Mapping.Visitors
             base.Visit(classMap);
         }
 
-        public override void Visit(ManyToOneMap manyToOneMap)
-        {
-            object value = MongoDBNull.Value;
-            var referenceEntity = manyToOneMap.MemberGetter(this.entity);
-            if (referenceEntity != null)
-            {
-                var referenceClassMap = this.mongoSession.MappingStore.GetClassMapFor(manyToOneMap.ReferenceType);
-                var id = referenceClassMap.IdMap.ValueType.ConvertToDocumentValue(referenceClassMap.GetId(referenceEntity), this.mongoSession);
-                value = new DBRef(referenceClassMap.CollectionName, id);
-            }
+        //public override void Visit(ManyToOneMap manyToOneMap)
+        //{
+        //    object value = MongoDBNull.Value;
+        //    var referenceEntity = manyToOneMap.MemberGetter(this.entity);
+        //    if (referenceEntity != null)
+        //    {
+        //        var referenceClassMap = this.mongoSession.MappingStore.GetClassMapFor(manyToOneMap.ReferenceType);
+        //        var id = referenceClassMap.IdMap.ValueType.ConvertToDocumentValue(referenceClassMap.GetId(referenceEntity), this.mongoSession);
+        //        value = new DBRef(referenceClassMap.CollectionName, id);
+        //    }
 
-            if(referenceEntity != null || manyToOneMap.PersistNull)
-                this.document[manyToOneMap.Key] = value;
-        }
+        //    if(referenceEntity != null || manyToOneMap.PersistNull)
+        //        this.document[manyToOneMap.Key] = value;
+        //}
 
         public override void Visit(MemberMap memberMap)
         {
-            var value = memberMap.MemberGetter(this.entity);
-            value = memberMap.ValueType.ConvertToDocumentValue(value, this.mongoSession);
-            if(value != MongoDBNull.Value || memberMap.PersistNull)
-                this.document[memberMap.Key] = value;
+            //var value = memberMap.MemberGetter(this.entity);
+            //value = memberMap.ValueType.ConvertToDocumentValue(value, this.mongoSession);
+            //if(value != MongoDBNull.Value || memberMap.PersistNull)
+            //    this.document[memberMap.Key] = value;
         }
 
         public override void Visit(ExtendedPropertiesMap extendedPropertiesMap)

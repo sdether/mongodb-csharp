@@ -7,13 +7,13 @@ using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
-    public class ValueMapModel : MemberMapModelBase
+    public class MemberMapModel : MemberMapModelBase
     {
-        public IValueType CustomValueType { get; set; }
+        public IValueConverter ValueConverter { get; set; }
 
         public override void Accept(IMapModelVisitor visitor)
         {
-            visitor.ProcessValue(this);
+            visitor.ProcessMember(this);
         }
     }
 }

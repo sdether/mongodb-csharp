@@ -5,7 +5,6 @@ using System.Text;
 using System.Reflection;
 
 using MongoDB.Driver;
-using MongoDB.Framework.Mapping.Types;
 using MongoDB.Framework.Persistence;
 
 namespace MongoDB.Framework.Mapping
@@ -18,7 +17,7 @@ namespace MongoDB.Framework.Mapping
         private IMappingStore mappingStore;
         private IEnumerable<string> memberNames;
 
-        private List<MemberMap> memberMaps;
+        private List<MemberMapBase> memberMaps;
 
         #endregion
 
@@ -96,7 +95,7 @@ namespace MongoDB.Framework.Mapping
         public object ConvertToDocumentValue(object value, IMongoSessionImplementor mongoSession)
         {
             var lastMemberMap = this.memberMaps[this.memberMaps.Count - 1];
-            return lastMemberMap.ValueType.ConvertToDocumentValue(value, mongoSession);
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -109,12 +108,12 @@ namespace MongoDB.Framework.Mapping
         /// <param name="memberNames">The member names.</param>
         private void Initialize(IEnumerable<string> memberNames)
         {
-            this.memberMaps = new List<MemberMap>();
+            this.memberMaps = new List<MemberMapBase>();
             var classMap = this.mappingStore.GetClassMapFor(this.type);
 
             var memberNamesEnumerator = memberNames.GetEnumerator();
             memberNamesEnumerator.MoveNext();
-            var currentMemberMap = classMap.GetMemberMapFromMemberName(memberNamesEnumerator.Current);
+            var currentMemberMap = classMap.GetMemberMapBaseFromMemberName(memberNamesEnumerator.Current);
             this.Key = currentMemberMap.Key;
             this.memberMaps.Add(currentMemberMap);
 
@@ -133,15 +132,16 @@ namespace MongoDB.Framework.Mapping
         /// <param name="currentMemberMap">The current member map.</param>
         /// <param name="nextMemberName">Name of the next member.</param>
         /// <returns></returns>
-        private MemberMap GetNextMemberMap(MemberMap currentMemberMap, string nextMemberName)
+        private MemberMapBase GetNextMemberMap(MemberMapBase currentMemberMap, string nextMemberName)
         {
-            if (currentMemberMap.ValueType is NestedClassValueType)
+            var memberMap = currentMemberMap as MemberMap;
+            if (memberMap != null && memberMap.ValueType is NestedClassValueType)
             {
-                var nestedClassMAp = ((NestedClassValueType)currentMemberMap.ValueType).NestedClassMap;
-                return nestedClassMAp.GetMemberMapFromMemberName(nextMemberName);
+                var nestedClassMap = ((NestedClassValueType)memberMap.ValueType).NestedClassMap;
+                return nestedClassMap.GetMemberMapBaseFromMemberName(nextMemberName);
             }
 
-            throw new NotSupportedException(string.Format("The value type {0} must occur last.", currentMemberMap.ValueType.GetType()));
+            throw new NotSupportedException(string.Format("The value type {0} must occur last.", currentMemberMap));
         }
 
         #endregion

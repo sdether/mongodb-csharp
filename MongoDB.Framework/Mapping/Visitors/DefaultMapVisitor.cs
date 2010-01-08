@@ -15,9 +15,6 @@ namespace MongoDB.Framework.Mapping.Visitors
             foreach (var memberMap in classMap.MemberMaps)
                 memberMap.Accept(this);
 
-            foreach (var manyToOneMap in classMap.ManyToOneMaps)
-                manyToOneMap.Accept(this);
-
             if (classMap.HasExtendedProperties)
                 classMap.ExtendedPropertiesMap.Accept(this);
 
@@ -26,6 +23,11 @@ namespace MongoDB.Framework.Mapping.Visitors
                 foreach (var index in classMap.Indexes)
                     index.Accept(this);
             }
+        }
+
+        public override void Visit(MemberMap memberMap)
+        {
+            memberMap.ValueType.Accept(this);
         }
     }
 }

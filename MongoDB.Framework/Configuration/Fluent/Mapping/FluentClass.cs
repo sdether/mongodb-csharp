@@ -7,7 +7,6 @@ using System.Text;
 
 using MongoDB.Framework.Configuration.Mapping;
 using MongoDB.Framework.Linq.Visitors;
-using MongoDB.Framework.Mapping.Types;
 using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
@@ -41,16 +40,16 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
             return this.Collection(memberInfo);
         }
 
-        public FluentValue Map(string memberName)
+        public FluentMap Map(string memberName)
         {
             var memberInfo = ReflectionUtil.GetSingleMember<TEntity>(memberName);
             return this.Map(memberInfo);
         }
 
-        public FluentValue Map(MemberInfo memberInfo)
+        public FluentMap Map(MemberInfo memberInfo)
         {
             var memberType = ReflectionUtil.GetMemberValueType(memberInfo);
-            var value = new FluentValue();
+            var value = new FluentMap();
             value.Model.Getter = memberInfo;
             value.Model.Setter = memberInfo;
 
@@ -58,7 +57,7 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
             return value;
         }
 
-        public FluentValue Map(Expression<Func<TEntity, object>> member)
+        public FluentMap Map(Expression<Func<TEntity, object>> member)
         {
             var memberInfo = ReflectionUtil.GetSingleMember(member);
             return this.Map(memberInfo);

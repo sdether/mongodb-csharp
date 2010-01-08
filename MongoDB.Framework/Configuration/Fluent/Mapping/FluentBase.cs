@@ -8,7 +8,7 @@ using MongoDB.Framework.Linq.Visitors;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
-    public abstract class FluentBase<TModel> where TModel : MapModel
+    public abstract class FluentBase<TModel> where TModel : ModelNode
     {
         public TModel Model { get; private set; }
 

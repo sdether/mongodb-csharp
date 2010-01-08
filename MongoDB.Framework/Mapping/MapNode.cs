@@ -6,7 +6,7 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Mapping
 {
-    public abstract class Map
+    public abstract class MapNode
     {
         /// <summary>
         /// Accepts the specified visitor.

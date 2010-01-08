@@ -6,7 +6,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
-    public class ExtendedPropertiesMapModel : MapModel
+    public class ExtendedPropertiesMapModel : ModelNode
     {
         public MemberInfo Getter { get; set; }
 

@@ -76,13 +76,6 @@
     <Compile Include="Mapping\IdGenerators\GuidCombGeneratorTests.cs" />
     <Compile Include="Mapping\IdGenerators\GuidGeneratorTests.cs" />
     <Compile Include="Mapping\MappingTests.cs" />
-    <Compile Include="Mapping\Types\CollectionValueTypeTests.cs" />
-    <Compile Include="Mapping\Types\NestedClassValueTypeTests.cs" />
-    <Compile Include="Mapping\Types\DictionaryCollectionTypeTests.cs" />
-    <Compile Include="Mapping\Types\SetCollectionTypeTests.cs" />
-    <Compile Include="Mapping\Types\ListCollectionTypeTests.cs" />
-    <Compile Include="Mapping\Types\GuidValueTypeTests.cs" />
-    <Compile Include="Mapping\Types\NullSafeValueTypeTests.cs" />
     <Compile Include="Linq\MongoQueryableTests.cs">
       <SubType>Code</SubType>
     </Compile>

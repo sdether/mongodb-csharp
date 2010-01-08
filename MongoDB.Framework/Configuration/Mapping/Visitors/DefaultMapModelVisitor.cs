@@ -22,14 +22,14 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
             idMapModel.Accept(this);
         }
 
-        public override void Visit(ValueMapModel valueMapModel)
+        public override void Visit(MemberMapModel memberMapModel)
         {
-            valueMapModel.Accept(this);
+            memberMapModel.Accept(this);
         }
 
-        public override void Visit(CollectionMapModel collectionMapModel)
+        public override void Visit(CollectionMemberMapModel collectionMemberMapModel)
         {
-            collectionMapModel.Accept(this);
+            collectionMemberMapModel.Accept(this);
         }
 
         public override void Visit(ManyToOneMapModel manyToOneMapModel)

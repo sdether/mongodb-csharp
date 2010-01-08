@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace MongoDB.Framework.Mapping.CollectionTypes
+{
+    public class HashSetCollectionType : ArrayCollectionTypeBase
+    {
+        public override object CreateCollection(Type elementType, IEnumerable<object> elements)
+        {
+            var instance = Activator.CreateInstance(this.GetCollectionType(elementType));
+
+            var method = instance.GetType().GetMethod("Add", new Type[] { elementType });
+
+            foreach (var element in elements)
+                method.Invoke(instance, new[] { element });
+
+            return instance;
+        }
+
+        public override Type GetCollectionType(Type elementType)
+        {
+            return typeof(HashSet<>).MakeGenericType(elementType);
+        }
+    }
+}

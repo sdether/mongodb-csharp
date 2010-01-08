@@ -51,13 +51,12 @@ namespace MongoDB.Framework.Mapping
         /// <param name="type">ValueType of the entity.</param>
         /// <param name="idMap">The id map.</param>
         /// <param name="memberMaps">The member maps.</param>
-        /// <param name="manyToOneMaps">The many to one maps.</param>
         /// <param name="discriminatorKey">The discriminator key.</param>
         /// <param name="discriminator">The discriminator.</param>
         /// <param name="subClassMaps">The sub class maps.</param>
         /// <param name="extendedPropertiesMap">The extended properties map.</param>
-        public NestedClassMap(Type type, IdMap idMap, IEnumerable<MemberMap> memberMaps, IEnumerable<ManyToOneMap> manyToOneMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap)
-            : base(type, idMap, memberMaps, manyToOneMaps, discriminatorKey, discriminator, subClassMaps, extendedPropertiesMap)
+        public NestedClassMap(Type type, IdMap idMap, IEnumerable<MemberMap> memberMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap)
+            : base(type, idMap, memberMaps, discriminatorKey, discriminator, subClassMaps, extendedPropertiesMap)
         { }
     }
 }

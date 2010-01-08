@@ -6,11 +6,10 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Mapping
 {
-    public abstract class ClassMap : Map
+    public abstract class ClassMap : MapNode
     {
         #region Private Fields
 
-        private readonly List<ManyToOneMap> manyToOneMaps;
         private readonly List<MemberMap> memberMaps;
 
         #endregion
@@ -90,15 +89,6 @@ namespace MongoDB.Framework.Mapping
         public abstract bool IsRoot { get; }
 
         /// <summary>
-        /// Gets the many to one maps.
-        /// </summary>
-        /// <value>The many to one maps.</value>
-        public virtual IEnumerable<ManyToOneMap> ManyToOneMaps
-        {
-            get { return this.manyToOneMaps; }
-        }
-
-        /// <summary>
         /// Gets the member maps.
         /// </summary>
         /// <value>The simple member maps.</value>
@@ -122,19 +112,15 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="memberMaps">The member maps.</param>
-        /// <param name="manyToOneMaps">The many to one maps.</param>
         /// <param name="discriminator">The discriminator.</param>
-        protected ClassMap(Type type, IEnumerable<MemberMap> memberMaps, IEnumerable<ManyToOneMap> manyToOneMaps, object discriminator)
+        protected ClassMap(Type type, IEnumerable<MemberMap> memberMaps, object discriminator)
         {
             if (type == null)
                 throw new ArgumentNullException("type");
             if (memberMaps == null)
                 throw new ArgumentNullException("memberMaps");
-            if (manyToOneMaps == null)
-                throw new ArgumentNullException("manyToOneMaps");
 
             this.Discriminator = discriminator;
-            this.manyToOneMaps = manyToOneMaps.ToList();
             this.memberMaps = memberMaps.ToList();
             this.Type = type;
         }
@@ -177,7 +163,7 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="memberName">Name of the member.</param>
         /// <returns></returns>
-        public MemberMap GetMemberMapFromMemberName(string memberName)
+        public MemberMapBase GetMemberMapBaseFromMemberName(string memberName)
         {
             if (this.HasId && this.IdMap.MemberName == memberName)
                 return this.IdMap;

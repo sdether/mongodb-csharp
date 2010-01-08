@@ -10,8 +10,11 @@ namespace MongoDB.Framework.Mapping
         void Visit(ClassMap classMap);
         void Visit(IdMap idMap);
         void Visit(MemberMap memberMap);
-        void Visit(ManyToOneMap manyToOneMap);
         void Visit(ExtendedPropertiesMap extendedPropertiesMap);
-        void Visit(Index indexMap);
+        void Visit(SimpleValueType simpleValueType);
+        void Visit(NestedClassValueType nestedClassValueType);
+        void Visit(CollectionValueType collectionValueType);
+        void Visit(ManyToOneValueType manyToOneValueType);
+        void Visit(Index index);
     }
 }

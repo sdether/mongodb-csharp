@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping
 {
-    public class IdMap : MemberMap
+    public class IdMap : MemberMapBase
     {
         /// <summary>
         /// Gets the id generator.
@@ -20,6 +20,12 @@ namespace MongoDB.Framework.Mapping
         public object UnsavedValue { get; private set; }
 
         /// <summary>
+        /// Gets the value converter.
+        /// </summary>
+        /// <value>The value converter.</value>
+        public IValueConverter ValueConverter { get; private set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="IdMap"/> class.
         /// </summary>
         /// <param name="memberName">Name of the member.</param>
@@ -27,14 +33,15 @@ namespace MongoDB.Framework.Mapping
         /// <param name="memberSetter">The member setter.</param>
         /// <param name="valueType">Type of the value.</param>
         /// <param name="idGenerator">The id generator.</param>
-        public IdMap(string memberName, Func<object, object> memberGetter, Action<object, object> memberSetter, IValueType valueType, IIdGenerator idGenerator, object unsavedValue)
-            : base("_id", memberName, memberGetter, memberSetter, true, valueType)
+        public IdMap(string memberName, Func<object, object> memberGetter, Action<object, object> memberSetter, IIdGenerator idGenerator, IValueConverter valueConverter, object unsavedValue)
+            : base("_id", memberName, memberGetter, memberSetter, true)
         {
             if (idGenerator == null)
                 throw new ArgumentNullException("idGenerator");
 
             this.IdGenerator = idGenerator;
             this.UnsavedValue = unsavedValue;
+            this.ValueConverter = valueConverter;
         }
 
         /// <summary>

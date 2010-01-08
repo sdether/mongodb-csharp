@@ -6,7 +6,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
-    public abstract class MemberMapModelBase : MapModel
+    public abstract class MemberMapModelBase : ModelNode
     {
         public string Key { get; set; }
 

@@ -7,7 +7,7 @@ using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
-    public class IndexModel : MapModel
+    public class IndexModel : ModelNode
     {
         public List<KeyValuePair<string, IndexDirection>> Parts { get; private set; }
 

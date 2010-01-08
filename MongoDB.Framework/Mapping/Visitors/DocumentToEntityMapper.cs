@@ -12,6 +12,8 @@ namespace MongoDB.Framework.Mapping.Visitors
     {
         private Document document;
         private object entity;
+
+        private object value;
         private IMongoSessionImplementor mongoSession;
 
         public DocumentToEntityMapper(IMongoSessionImplementor mongoSession)
@@ -30,57 +32,101 @@ namespace MongoDB.Framework.Mapping.Visitors
                 throw new ArgumentNullException("document");
 
             this.document = document;
-            this.entity = Activator.CreateInstance(classMap.Type);
 
             classMap.Accept(this);
 
-            return entity;
+            return this.entity;
         }
 
         public override void Visit(ClassMap classMap)
         {
+            this.entity = Activator.CreateInstance(classMap.Type);
+
             if (classMap.IsPolymorphic)
                 document.Remove(classMap.DiscriminatorKey);
 
             base.Visit(classMap);
         }
 
-        public override void Visit(MemberMap memberMap)
+        public override void Visit(IdMap idMap)
         {
-            var value = document[memberMap.Key];
-            value = memberMap.ValueType.ConvertFromDocumentValue(value, this.mongoSession);
-            memberMap.MemberSetter(this.entity, value);
-            this.document.Remove(memberMap.Key);
+            var value = this.document[idMap.Key];
+            value = idMap.ValueConverter.FromDocument(value);
+            idMap.MemberSetter(this.entity, value);
+            this.document.Remove(idMap.Key);
         }
 
-        public override void Visit(ManyToOneMap manyToOneMap)
+        public override void Visit(MemberMap memberMap)
         {
-            var value = document[manyToOneMap.Key] as DBRef;
-            this.document.Remove(manyToOneMap.Key);
-            if (value == null)
-                return;
-
-            var referenceClassMap = this.mongoSession.MappingStore.GetClassMapFor(manyToOneMap.ReferenceType);
-            var id = referenceClassMap.IdMap.ValueType.ConvertFromDocumentValue(value.Id, this.mongoSession);
-
-            object referencedEntity = null;
-            if (!manyToOneMap.IsLazy)
-            {
-                referencedEntity = this.mongoSession.GetById(manyToOneMap.ReferenceType, id);
-            }
-            else
-            {
-                referencedEntity = this.mongoSession.ProxyGenerator.GetProxy(referenceClassMap.Type, id, this.mongoSession);
-            }
-
-
-            manyToOneMap.MemberSetter(this.entity, referencedEntity);
+            var oldValue = this.value;
+            this.value = this.document[memberMap.Key];
+            base.Visit(memberMap);
+            memberMap.MemberSetter(this.entity, this.value);
+            this.value = oldValue;
+            this.document.Remove(memberMap.Key);
         }
 
         public override void Visit(ExtendedPropertiesMap extendedPropertiesMap)
         {
             var dictionary = this.document.ToDictionary();
             extendedPropertiesMap.MemberSetter(this.entity, dictionary);
+        }
+
+        public override void Visit(SimpleValueType simpleValueType)
+        {
+            this.value = simpleValueType.ValueConverter.FromDocument(this.value);
+        }
+
+        public override void Visit(NestedClassValueType nestedClassValueType)
+        {
+            var doc = this.value as Document;
+            if (doc == null)
+            {
+                this.value = null;
+                return;
+            }
+
+            var oldEntity = this.entity;
+            var oldDocument = this.document;
+
+            this.document = doc;
+            nestedClassValueType.NestedClassMap.Accept(this);
+            
+            this.value = this.entity;
+            this.entity = oldEntity;
+            this.document = oldDocument;
+        }
+
+        public override void Visit(CollectionValueType collectionValueType)
+        {
+            var documentElements = collectionValueType.CollectionType.BreakDocumentValueIntoElements(this.value);
+            var convertedElements = new List<object>();
+            foreach (var documentElement in documentElements)
+            {
+                this.value = documentElement;
+                collectionValueType.ElementValueType.Accept(this);
+                convertedElements.Add(this.value);
+            }
+
+            this.value = collectionValueType.CollectionType.CreateCollection(collectionValueType.ElementValueType.Type, convertedElements);
+        }
+
+        public override void Visit(ManyToOneValueType manyToOneValueType)
+        {
+            var dbRef = this.value as DBRef;
+            if (dbRef == null)
+            {
+                this.value = null;
+                return;
+            }
+
+            var referenceClassMap = this.mongoSession.MappingStore.GetClassMapFor(manyToOneValueType.ReferenceType);
+            var id = referenceClassMap.IdMap.ValueConverter.FromDocument(dbRef.Id);
+
+            if (!manyToOneValueType.IsLazy)
+                this.value = this.mongoSession.GetById(manyToOneValueType.ReferenceType, id);
+            else
+                this.value = this.mongoSession.ProxyGenerator.GetProxy(referenceClassMap.Type, id, this.mongoSession);
         }
     }
 }

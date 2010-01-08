@@ -30,7 +30,7 @@ namespace MongoDB.Framework.Persistence
         public object GetById(Type type, object id)
         {
             var classMap = this.MongoSession.MappingStore.GetClassMapFor(type);
-            var idValue = classMap.IdMap.ValueType.ConvertToDocumentValue(id, null);
+            var idValue = classMap.IdMap.ValueConverter.ToDocument(id);
             var conditions = new Document().Append("_id", idValue);
             var entity = this.Find(classMap, conditions, 1, 0, null, null).SingleOrDefault();
             if(entity == null)

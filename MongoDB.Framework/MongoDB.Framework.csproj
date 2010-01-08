@@ -69,6 +69,18 @@
     <Compile Include="Mapping\ClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Mapping\CollectionTypes\ArrayCollectionTypeBase.cs" />
+    <Compile Include="Mapping\CollectionTypes\GenericDictionaryCollectionType.cs" />
+    <Compile Include="Mapping\CollectionTypes\HashSetCollectionType.cs" />
+    <Compile Include="Mapping\CollectionTypes\GenericListCollectionType.cs" />
+    <Compile Include="Mapping\CollectionValueType.cs" />
+    <Compile Include="Mapping\GenericStringKeyValueConverter.cs" />
+    <Compile Include="Mapping\ValueConverters\GuidValueConverter.cs" />
+    <Compile Include="Mapping\ValueConverters\StringKeyValueConverter.cs" />
+    <Compile Include="Mapping\ValueConverters\NullSafeValueConverter.cs" />
+    <Compile Include="Mapping\ManyToOneValueType.cs" />
+    <Compile Include="Mapping\NestedClassValueType.cs" />
+    <Compile Include="Mapping\IValueConverter.cs" />
     <Compile Include="Mapping\ExtendedPropertiesMap.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -84,7 +96,7 @@
     <Compile Include="Configuration\Fluent\Mapping\FluentCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Fluent\Mapping\FluentValue.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentMap.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Fluent\Mapping\FluentGeneratedBy.cs">
@@ -114,6 +126,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\MemberMap.cs" />
+    <Compile Include="Mapping\SimpleValueType.cs" />
+    <Compile Include="Mapping\ValueTypeBase.cs" />
     <Compile Include="Mapping\Visitors\IdGenerator.cs" />
     <Compile Include="Proxy\Castle\CastleProxyGenerator.cs" />
     <Compile Include="Proxy\IdentityEqualityComparer.cs" />
@@ -150,10 +164,7 @@
     <Compile Include="Mapping\IndexDirection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\IValueType.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Mapping\Map.cs">
+    <Compile Include="Mapping\MapNode.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\MappingStore.cs">
@@ -166,7 +177,7 @@
     <Compile Include="Configuration\Mapping\ClassMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\CollectionMapModel.cs" />
+    <Compile Include="Configuration\Mapping\CollectionMemberMapModel.cs" />
     <Compile Include="Configuration\Mapping\ExtendedPropertiesMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -180,7 +191,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Mapping\ManyToOneMapModel.cs" />
-    <Compile Include="Configuration\Mapping\MapModel.cs">
+    <Compile Include="Configuration\Mapping\ModelNode.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Mapping\MemberMapModelBase.cs" />
@@ -199,7 +210,7 @@
     <Compile Include="Configuration\Mapping\SuperClassMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\ValueMapModel.cs" />
+    <Compile Include="Configuration\Mapping\MemberMapModel.cs" />
     <Compile Include="Configuration\Mapping\Visitors\DefaultMapModelVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -209,7 +220,6 @@
     <Compile Include="Mapping\NestedClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\ManyToOneMap.cs" />
     <Compile Include="Mapping\RootClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -219,28 +229,7 @@
     <Compile Include="Mapping\SuperClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\Types\CollectionValueType.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Mapping\Types\DictionaryCollectionType.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Mapping\Types\GuidValueType.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Mapping\Types\ICollectionType.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Mapping\Types\ListCollectionType.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Mapping\Types\NestedClassValueType.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Mapping\Types\NullSafeValueType.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Mapping\Types\SetCollectionType.cs">
+    <Compile Include="Mapping\ICollectionType.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\UnmappedDiscriminiatorException.cs">
