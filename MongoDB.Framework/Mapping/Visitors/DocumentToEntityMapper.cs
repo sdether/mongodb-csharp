@@ -99,16 +99,15 @@ namespace MongoDB.Framework.Mapping.Visitors
 
         public override void Visit(CollectionValueType collectionValueType)
         {
-            var documentElements = collectionValueType.CollectionType.BreakDocumentValueIntoElements(this.value);
-            var convertedElements = new List<object>();
-            foreach (var documentElement in documentElements)
+            var collectionElements = collectionValueType.CollectionType.BreakDocumentValueIntoElements(this.value);
+            foreach (var collectionElement in collectionElements)
             {
-                this.value = documentElement;
+                this.value = collectionElement.Element;
                 collectionValueType.ElementValueType.Accept(this);
-                convertedElements.Add(this.value);
+                collectionElement.Element = this.value;
             }
 
-            this.value = collectionValueType.CollectionType.CreateCollection(collectionValueType.ElementValueType.Type, convertedElements);
+            this.value = collectionValueType.CollectionType.CreateCollection(collectionValueType.ElementValueType.Type, collectionElements);
         }
 
         public override void Visit(ManyToOneValueType manyToOneValueType)

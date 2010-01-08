@@ -69,14 +69,14 @@
     <Compile Include="Mapping\ClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Mapping\CollectionElement.cs" />
     <Compile Include="Mapping\CollectionTypes\ArrayCollectionTypeBase.cs" />
-    <Compile Include="Mapping\CollectionTypes\GenericDictionaryCollectionType.cs" />
+    <Compile Include="Mapping\CollectionTypes\GenericStringDictionaryCollectionType.cs" />
     <Compile Include="Mapping\CollectionTypes\HashSetCollectionType.cs" />
     <Compile Include="Mapping\CollectionTypes\GenericListCollectionType.cs" />
     <Compile Include="Mapping\CollectionValueType.cs" />
     <Compile Include="Mapping\GenericStringKeyValueConverter.cs" />
     <Compile Include="Mapping\ValueConverters\GuidValueConverter.cs" />
-    <Compile Include="Mapping\ValueConverters\StringKeyValueConverter.cs" />
     <Compile Include="Mapping\ValueConverters\NullSafeValueConverter.cs" />
     <Compile Include="Mapping\ManyToOneValueType.cs" />
     <Compile Include="Mapping\NestedClassValueType.cs" />

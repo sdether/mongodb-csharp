@@ -7,14 +7,14 @@ namespace MongoDB.Framework.Mapping.CollectionTypes
 {
     public class HashSetCollectionType : ArrayCollectionTypeBase
     {
-        public override object CreateCollection(Type elementType, IEnumerable<object> elements)
+        public override object CreateCollection(Type elementType, IEnumerable<CollectionElement> elements)
         {
             var instance = Activator.CreateInstance(this.GetCollectionType(elementType));
 
             var method = instance.GetType().GetMethod("Add", new Type[] { elementType });
 
             foreach (var element in elements)
-                method.Invoke(instance, new[] { element });
+                method.Invoke(instance, new[] { element.Element });
 
             return instance;
         }

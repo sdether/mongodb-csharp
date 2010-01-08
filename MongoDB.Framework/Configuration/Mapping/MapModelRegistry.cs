@@ -8,11 +8,10 @@ using System.Text.RegularExpressions;
 
 using MongoDB.Driver;
 using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Mapping.CollectionTypes;
 using MongoDB.Framework.Mapping.Converters;
 using MongoDB.Framework.Mapping.IdGenerators;
 using MongoDB.Framework.Reflection;
-using MongoDB.Framework.Mapping.CollectionTypes;
-using MongoDB.Framework.Mapping.ValueConverters;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
@@ -297,14 +296,6 @@ namespace MongoDB.Framework.Configuration.Mapping
                 //TODO: create a regex value type
             }
 
-            if (type.IsGenericType)
-            {
-                if (type.GetGenericTypeDefinition() == typeof(KeyValuePair<,>) && type.GetGenericArguments()[0] == typeof(string))
-                {
-                    return (IValueConverter)Activator.CreateInstance(typeof(StringKeyValueConverter<>).MakeGenericType(type.GetGenericArguments()[1]));
-                }
-            }
-
             return new NullSafeValueConverter(type);
         }
 
@@ -332,7 +323,7 @@ namespace MongoDB.Framework.Configuration.Mapping
                 if (genType == typeof(IList<>) || genType == typeof(List<>) || genType == typeof(ICollection<>) || genType == typeof(HashSet<>))
                     return memberType.GetGenericArguments()[0];
                 if (genType == typeof(IDictionary<,>) || genType == typeof(Dictionary<,>) && memberType.GetGenericArguments()[0] == typeof(string))
-                    return typeof(KeyValuePair<,>).MakeGenericType(typeof(string), memberType.GetGenericArguments()[1]);
+                    return memberType.GetGenericArguments()[1];
             }
 
             throw new NotSupportedException(string.Format("Could not discover element type from {0}.", memberType));
@@ -347,8 +338,8 @@ namespace MongoDB.Framework.Configuration.Mapping
                     return new GenericListCollectionType();
                 if (genType == typeof(HashSet<>))
                     return new HashSetCollectionType();
-                if (genType == typeof(IDictionary<,>) || genType == typeof(Dictionary<,>))
-                    return new GenericDictionaryCollectionType();
+                if (genType == typeof(IDictionary<,>) || genType == typeof(Dictionary<,>) && memberType.GetGenericArguments()[0] == typeof(string))
+                    return new GenericStringDictionaryCollectionType();
             }
 
             throw new NotSupportedException(string.Format("Could not create collection type from {0}.", memberType));
