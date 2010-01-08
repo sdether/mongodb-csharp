@@ -79,6 +79,8 @@
     <Compile Include="Linq\MongoQueryableTests.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Mapping\ValueConverters\GuidValueConverterTests.cs" />
+    <Compile Include="Mapping\ValueConverters\NullSafeValueConverterTests.cs" />
     <Compile Include="MongoSessionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\LateBoundReflectionTests.cs" />
@@ -94,6 +96,9 @@
       <Project>{B125BBA6-BFFD-44FA-9254-9B1754CD8AF3}</Project>
       <Name>MongoDB.Driver</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mapping\CollectionTypes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

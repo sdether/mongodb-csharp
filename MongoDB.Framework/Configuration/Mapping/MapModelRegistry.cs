@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using MongoDB.Driver;
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Mapping.CollectionTypes;
-using MongoDB.Framework.Mapping.Converters;
+using MongoDB.Framework.Mapping.ValueConverters;
 using MongoDB.Framework.Mapping.IdGenerators;
 using MongoDB.Framework.Reflection;
 

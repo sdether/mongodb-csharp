@@ -99,21 +99,25 @@ namespace MongoDB.Framework.Mapping.Visitors
         public override void Visit(CollectionValueType collectionValueType)
         {
             var collectionElements = collectionValueType.CollectionType.BreakCollectionIntoElements(collectionValueType.ElementValueType.Type, this.value);
+            var convertedElements = new List<CollectionElement>();
             foreach (var collectionElement in collectionElements)
             {
                 this.value = collectionElement.Element;
                 collectionValueType.ElementValueType.Accept(this);
-                collectionElement.Element = this.value;
+                convertedElements.Add(new CollectionElement() { Element = this.value, CustomData = collectionElement.CustomData });
             }
 
-            this.value = collectionValueType.CollectionType.CreateDocumentValueFromElements(collectionElements);
+            this.value = collectionValueType.CollectionType.CreateDocumentValueFromElements(convertedElements);
         }
 
         public override void Visit(ManyToOneValueType manyToOneValueType)
         {
             var referenceClassMap = this.mongoSession.MappingStore.GetClassMapFor(manyToOneValueType.ReferenceType);
             if (this.value != null)
-                this.value = new DBRef(referenceClassMap.CollectionName, referenceClassMap.GetId(this.value));
+            {
+                var id = referenceClassMap.IdMap.ValueConverter.ToDocument(referenceClassMap.GetId(this.value));
+                this.value = new DBRef(referenceClassMap.CollectionName, id);
+            }
             else
                 this.value = MongoDBNull.Value;
         }

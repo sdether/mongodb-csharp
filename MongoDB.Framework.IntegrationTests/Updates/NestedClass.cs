@@ -31,9 +31,9 @@ namespace MongoDB.Framework.Updates
             {
                 mongoSession.Database.GetCollection("Entity")
                     .Insert(new Document()
-                        .Append("_id", Guid.NewGuid().ToString())
+                        .Append("_id", Guid.NewGuid().ToString("N"))
                         .Append("SubEntity", new Document()
-                            .Append("_id", Guid.NewGuid().ToString())
+                            .Append("_id", Guid.NewGuid().ToString("N"))
                             .Append("Integer", 42)
                             .Append("Double", 123.456)));
             }

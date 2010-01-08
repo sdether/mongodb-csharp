@@ -129,6 +129,7 @@
     <Compile Include="Mapping\SimpleValueType.cs" />
     <Compile Include="Mapping\ValueTypeBase.cs" />
     <Compile Include="Mapping\Visitors\IdGenerator.cs" />
+    <Compile Include="Mapping\Visitors\ValueToDocumentValueMapper.cs" />
     <Compile Include="Proxy\Castle\CastleProxyGenerator.cs" />
     <Compile Include="Proxy\IdentityEqualityComparer.cs" />
     <Compile Include="Mapping\IdGenerators\AssignedGenerator.cs">

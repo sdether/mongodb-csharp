@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using MongoDB.Driver;
 
-namespace MongoDB.Framework.Mapping.Converters
+namespace MongoDB.Framework.Mapping.ValueConverters
 {
     public class NullSafeValueConverter : IValueConverter
     {
@@ -33,7 +33,7 @@ namespace MongoDB.Framework.Mapping.Converters
         /// <returns></returns>
         public virtual object FromDocument(object value)
         {
-            if (value == MongoDBNull.Value)
+            if (value == null || value == MongoDBNull.Value)
                 return this.Type.IsValueType ? Activator.CreateInstance(this.Type) : null;
 
             return value;

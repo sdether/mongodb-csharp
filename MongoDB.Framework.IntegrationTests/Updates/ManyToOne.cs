@@ -29,12 +29,12 @@ namespace MongoDB.Framework.Updates
         {
             using (var mongoSession = this.OpenMongoSession())
             {
-                var refId = Guid.NewGuid().ToString();
+                var refId = Guid.NewGuid().ToString("N");
                 mongoSession.Database.GetCollection("EntityRef")
                     .Insert(new Document().Append("_id", refId).Append("Name", "Jack"));
                 mongoSession.Database.GetCollection("Entity")
                     .Insert(new Document()
-                        .Append("_id", Guid.NewGuid().ToString())
+                        .Append("_id", Guid.NewGuid().ToString("N"))
                         .Append("Reference", new DBRef("EntityRef", refId)));
             }
         }

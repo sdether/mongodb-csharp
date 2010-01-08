@@ -6,6 +6,7 @@ using System.Reflection;
 
 using MongoDB.Driver;
 using MongoDB.Framework.Persistence;
+using MongoDB.Framework.Mapping.Visitors;
 
 namespace MongoDB.Framework.Mapping
 {
@@ -95,7 +96,8 @@ namespace MongoDB.Framework.Mapping
         public object ConvertToDocumentValue(object value, IMongoSessionImplementor mongoSession)
         {
             var lastMemberMap = this.memberMaps[this.memberMaps.Count - 1];
-            throw new NotImplementedException();
+            var mapper = new ValueToDocumentValueMapper(mongoSession);
+            return mapper.CreateDocumentValue(lastMemberMap, value);
         }
 
         #endregion

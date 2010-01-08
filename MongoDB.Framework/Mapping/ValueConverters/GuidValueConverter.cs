@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using MongoDB.Driver;
 
-namespace MongoDB.Framework.Mapping.Converters
+namespace MongoDB.Framework.Mapping.ValueConverters
 {
     public class GuidValueConverter : IValueConverter
     {

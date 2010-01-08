@@ -8,9 +8,9 @@ using MongoDB.Driver;
 using Moq;
 using NUnit.Framework;
 
-namespace MongoDB.Framework.Mapping.Types
+namespace MongoDB.Framework.Mapping.ValueConverters
 {
-    public class GuidValueTypeTests
+    public class GuidValueConverterTests
     {
         [TestFixture]
         public class When_converting_to_a_document
@@ -26,8 +26,8 @@ namespace MongoDB.Framework.Mapping.Types
             [Test]
             public void should_return_MongoDBNull_when_value_is_null()
             {
-                var valueType = new GuidValueType();
-                var result = valueType.ConvertToDocumentValue(null, mongoSession);
+                var converter = new GuidValueConverter();
+                var result = converter.ToDocument(null);
 
                 Assert.AreEqual(MongoDBNull.Value, result);
             }
@@ -35,10 +35,10 @@ namespace MongoDB.Framework.Mapping.Types
             [Test]
             public void should_return_string_when_value_is_not_null()
             {
-                var valueType = new GuidValueType();
-                var result = valueType.ConvertToDocumentValue(Guid.Empty, mongoSession);
+                var converter = new GuidValueConverter();
+                var result = converter.ToDocument(Guid.Empty);
 
-                Assert.AreEqual(Guid.Empty.ToString(), result);
+                Assert.AreEqual(Guid.Empty.ToString("N"), result);
             }
         }
 
@@ -56,8 +56,8 @@ namespace MongoDB.Framework.Mapping.Types
             [Test]
             public void should_return_an_empty_guid_when_value_is_null()
             {
-                var valueType = new GuidValueType();
-                var result = valueType.ConvertFromDocumentValue(null, mongoSession);
+                var converter = new GuidValueConverter();
+                var result = converter.FromDocument(null);
 
                 Assert.AreEqual(Guid.Empty, result);
             }
@@ -66,8 +66,8 @@ namespace MongoDB.Framework.Mapping.Types
             public void should_return_a_guid_when_value_is_valid()
             {
                 var guid = Guid.NewGuid();
-                var valueType = new GuidValueType();
-                var result = valueType.ConvertFromDocumentValue(guid.ToString(), mongoSession);
+                var converter = new GuidValueConverter();
+                var result = converter.FromDocument(guid.ToString());
 
                 Assert.AreEqual(guid, result);
             }

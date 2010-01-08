@@ -30,7 +30,7 @@ namespace MongoDB.Framework.Updates
             {
                 mongoSession.Database.GetCollection("Entity")
                     .Insert(new Document()
-                        .Append("_id", Guid.NewGuid().ToString())
+                        .Append("_id", Guid.NewGuid().ToString("N"))
                         .Append("Integers", new Document()
                             .Append("one", 1)
                             .Append("two", 2)
