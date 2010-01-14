@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 
 namespace MongoDB.Driver
 {
@@ -10,8 +11,7 @@ namespace MongoDB.Driver
     {
         internal static DateTime epoch = new DateTime(1970,1,1,0,0,0,DateTimeKind.Utc);
         
-        private int inc;
-        private object inclock =  new object();
+        private volatile int inc;
         
         private byte[] machineHash;
         private byte[] procID;
@@ -53,9 +53,7 @@ namespace MongoDB.Driver
         }
         
         private int GenerateInc(){
-            lock(this.inclock){
-                return ++inc;    
-            }
+        	return Interlocked.Increment(ref inc);
         }
         
         private void GenerateConstants(){
