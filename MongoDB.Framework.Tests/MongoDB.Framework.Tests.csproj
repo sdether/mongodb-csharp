@@ -65,27 +65,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DomainModels\PartyDomainModel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="IntegrationTestBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Mapping\IdGenerators\AssignedGeneratorTests.cs" />
     <Compile Include="Mapping\IdGenerators\OidGeneratorTests.cs" />
     <Compile Include="Mapping\IdGenerators\GuidCombGeneratorTests.cs" />
     <Compile Include="Mapping\IdGenerators\GuidGeneratorTests.cs" />
     <Compile Include="Mapping\MappingTests.cs" />
-    <Compile Include="Linq\MongoQueryableTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Mapping\ValueConverters\GuidValueConverterTests.cs" />
     <Compile Include="Mapping\ValueConverters\NullSafeValueConverterTests.cs" />
-    <Compile Include="MongoSessionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\LateBoundReflectionTests.cs" />
     <Compile Include="Linq\Visitors\MemberInfoPathExpressionTreeVisitorTests.cs" />
-    <Compile Include="DomainModels\BlogDomainModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MongoDB.Framework\MongoDB.Framework.csproj">

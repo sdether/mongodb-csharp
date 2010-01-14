@@ -60,7 +60,24 @@
     <Compile Include="Inserts\SimpleList.cs" />
     <Compile Include="Inserts\NestedClassList.cs" />
     <Compile Include="Inserts\Simple.cs" />
+    <Compile Include="IntegrationTestBase.cs" />
+    <Compile Include="MongoSessionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queries\Projection.cs" />
+    <Compile Include="Queries\Ordering.cs" />
+    <Compile Include="Queries\First.cs" />
+    <Compile Include="Queries\Count.cs" />
+    <Compile Include="Queries\SkipAndTake.cs" />
+    <Compile Include="Queries\Take.cs" />
+    <Compile Include="Queries\MultiCondition.cs" />
+    <Compile Include="Queries\NestedClassCondition.cs" />
+    <Compile Include="Queries\NestedClassMemberCondition.cs" />
+    <Compile Include="Queries\Discriminators\Discriminated.cs" />
+    <Compile Include="Queries\Discriminators\DiscriminatedQueryTestCase.cs" />
+    <Compile Include="Queries\Discriminators\Root.cs" />
+    <Compile Include="Queries\QueryTestCase.cs" />
+    <Compile Include="Queries\Skip.cs" />
+    <Compile Include="Queries\TopLevelCondition.cs" />
     <Compile Include="TestCase.cs" />
     <Compile Include="Updates\ManyToOne.cs" />
     <Compile Include="Updates\NestedClass.cs" />
@@ -82,7 +99,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Mapping\" />
-    <Folder Include="Queries\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

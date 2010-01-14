@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 
 using MongoDB.Driver;
-using MongoDB.Framework.DomainModels;
 
 using NUnit.Framework;
 
