@@ -70,7 +70,7 @@ namespace MongoDB.Driver
             foreach(Document result in c.Documents){            
                 Assert.IsNotNull(result);
                 Object j = result["j"];
-                Assert.IsTrue((double)j % 2 == 0);
+                Assert.IsTrue(Convert.ToDouble(j) % 2 == 0);
             }                       
         }
         
@@ -80,7 +80,7 @@ namespace MongoDB.Driver
             foreach(Document result in c.Documents){            
                 Assert.IsNotNull(result);
                 Object j = result["j"];
-                Assert.IsTrue((double)j % 2 == 0);
+                Assert.IsTrue(Convert.ToDouble(j) % 2 == 0);
             }                       
         }        
 
