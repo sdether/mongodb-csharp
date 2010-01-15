@@ -30,7 +30,7 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         /// <param name="assembly">The assembly.</param>
         public FluentMapModelRegistry AddMapsFromAssembly(Assembly assembly)
         {
-            foreach (var type in assembly.GetTypes())
+            foreach (var type in assembly.GetTypes().Where(t => !t.IsInterface && !t.IsAbstract))
             {
                 var baseType = type.BaseType;
                 if (!baseType.IsGenericType)
