@@ -73,22 +73,23 @@ namespace MongoDB.Framework.Tracking
         }
 
         /// <summary>
-        /// Tries to find.
+        /// Tries to find the entity.
         /// </summary>
         /// <param name="collectionName">Name of the collection.</param>
         /// <param name="id">The id.</param>
+        /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        public object TryToFind(string collectionName, object id)
+        public bool TryToFind(string collectionName, object id, out object entity)
         {
+            entity = null;
             Dictionary<object, object> idCache;
             if (!cache.TryGetValue(collectionName, out idCache))
-                return null;
+                return false;
 
-            object entity;
             if (!idCache.TryGetValue(id, out entity))
-                return null;
+                return false;
 
-            return entity;
+            return true;
         }
     }
 }

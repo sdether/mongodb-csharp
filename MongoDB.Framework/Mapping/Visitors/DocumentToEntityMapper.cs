@@ -123,6 +123,9 @@ namespace MongoDB.Framework.Mapping.Visitors
             var referenceClassMap = this.mongoSession.MappingStore.GetClassMapFor(manyToOneValueType.ReferenceType);
             var id = referenceClassMap.IdMap.ValueConverter.FromDocument(dbRef.Id);
 
+            if (this.mongoSession.SessionCache.TryToFind(referenceClassMap.CollectionName, id, out this.value))
+                return;
+
             if (!manyToOneValueType.IsLazy)
                 this.value = this.mongoSession.GetById(manyToOneValueType.ReferenceType, id);
             else

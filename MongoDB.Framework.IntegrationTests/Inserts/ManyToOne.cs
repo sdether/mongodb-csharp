@@ -75,7 +75,7 @@ namespace MongoDB.Framework.Inserts
             public EntityMap()
             {
                 Id(x => x.Id);
-                References(x => x.Reference);
+                Reference(x => x.Reference);
             }
         }
 

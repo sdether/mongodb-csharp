@@ -30,19 +30,22 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         /// <param name="assembly">The assembly.</param>
         public FluentMapModelRegistry AddMapsFromAssembly(Assembly assembly)
         {
-            foreach (var type in assembly.GetTypes().Where(t => !t.IsInterface && !t.IsAbstract))
-            {
-                var baseType = type.BaseType;
-                if (!baseType.IsGenericType)
-                    continue;
+            var types = from t in assembly.GetTypes()
+                        where !t.IsInterface
+                            && !t.IsAbstract
+                            && t.BaseType != null
+                            && t.BaseType.IsGenericType
+                        select t;
 
-                if(typeof(FluentRootClass<>).IsAssignableFrom(baseType.GetGenericTypeDefinition()))
+            foreach (var type in types)
+            {
+                if(typeof(FluentRootClass<>).IsAssignableFrom(type.BaseType.GetGenericTypeDefinition()))
                 {
                     var fluentRootClassMap = Activator.CreateInstance(type);
                     this.AddRootClassMapModel((RootClassMapModel)rootModelPropertyInfo.GetValue(fluentRootClassMap, null));
                     continue;
                 }
-                else if (typeof(FluentNestedClass<>).IsAssignableFrom(baseType.GetGenericTypeDefinition()))
+                else if (typeof(FluentNestedClass<>).IsAssignableFrom(type.BaseType.GetGenericTypeDefinition()))
                 {
                     var fluentNestedClassMap = Activator.CreateInstance(type);
                     this.AddNestedClassMapModel((NestedClassMapModel)nestedModelPropertyInfo.GetValue(fluentNestedClassMap, null));

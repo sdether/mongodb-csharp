@@ -17,12 +17,12 @@ namespace MongoDB.Framework
     {
         #region Private Fields
 
-        private IMongoSessionCache cache;
         private IChangeTracker changeTracker;
         private Database database;
         private Mongo mongo;
         private IMappingStore mappingStore;
         private IProxyGenerator proxyGenerator;
+        private IMongoSessionCache sessionCache;
 
         #endregion
 
@@ -53,6 +53,16 @@ namespace MongoDB.Framework
                 this.EnsureNotDisposed();
 
                 return this.proxyGenerator;
+            }
+        }
+
+        IMongoSessionCache IMongoSessionImplementor.SessionCache
+        {
+            get
+            {
+                this.EnsureNotDisposed();
+
+                return this.sessionCache;
             }
         }
 
@@ -96,7 +106,7 @@ namespace MongoDB.Framework
             if (database == null)
                 throw new ArgumentNullException("database");
 
-            this.cache = new MongoSessionCache();
+            this.sessionCache = new MongoSessionCache();
             this.changeTracker = new ChangeTracker(this);
             this.database = database;
             this.mappingStore = mappingStore;
@@ -184,7 +194,7 @@ namespace MongoDB.Framework
         {
             this.EnsureNotDisposed();
 
-            var findOneAction = new FindOneAction(this, this.cache, this.changeTracker);
+            var findOneAction = new FindOneAction(this, this.sessionCache, this.changeTracker);
             return findOneAction.FindOne(entityType, conditions);
         }
 
@@ -281,7 +291,7 @@ namespace MongoDB.Framework
         /// <returns></returns>
         public IEnumerable<TEntity> Find<TEntity>(Document conditions, int limit, int skip, Document orderBy)
         {
-            var findAction = new FindAction(this, this.cache, this.changeTracker);
+            var findAction = new FindAction(this, this.sessionCache, this.changeTracker);
             return findAction.Find(typeof(TEntity), conditions, limit, skip, orderBy, null).Cast<TEntity>();
         }
 
@@ -306,7 +316,7 @@ namespace MongoDB.Framework
         {
             this.EnsureNotDisposed();
 
-            var getByIdAction = new GetByIdAction(this, this.cache, this.changeTracker);
+            var getByIdAction = new GetByIdAction(this, this.sessionCache, this.changeTracker);
             return getByIdAction.GetById(entityType, id);
         }
 
@@ -354,7 +364,7 @@ namespace MongoDB.Framework
         {
             this.EnsureNotDisposed();
 
-            return new MongoQueryable<TEntity>(this, this.cache, this.changeTracker);
+            return new MongoQueryable<TEntity>(this, this.sessionCache, this.changeTracker);
         }
 
         /// <summary>
@@ -384,8 +394,8 @@ namespace MongoDB.Framework
             if (!disposing)
                 return;
 
-            this.cache.Clear();
-            this.cache = null;
+            this.sessionCache.Clear();
+            this.sessionCache = null;
             this.changeTracker.Dispose();
             this.changeTracker = null;
             this.mappingStore = null;
@@ -406,13 +416,13 @@ namespace MongoDB.Framework
 
         protected virtual void PerformInsert(object entity)
         {
-            var action = new InsertAction(this, this.cache, this.changeTracker);
+            var action = new InsertAction(this, this.sessionCache, this.changeTracker);
             action.Insert(entity);
         }
 
         protected virtual void PerformUpdate(object entity)
         {
-            var action = new UpdateAction(this, this.cache, this.changeTracker);
+            var action = new UpdateAction(this, this.sessionCache, this.changeTracker);
             action.Update(entity);
         }
 
@@ -422,7 +432,7 @@ namespace MongoDB.Framework
         /// <param name="entity">The entity.</param>
         protected virtual void PerformDelete(object entity)
         {
-            var action = new DeleteAction(this, this.cache, this.changeTracker);
+            var action = new DeleteAction(this, this.sessionCache, this.changeTracker);
             action.Delete(entity);
         }
 

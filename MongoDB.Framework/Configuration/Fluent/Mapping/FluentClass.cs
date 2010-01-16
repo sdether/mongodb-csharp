@@ -63,13 +63,13 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
             return this.Map(memberInfo);
         }
 
-        public FluentReference References(string memberName)
+        public FluentReference Reference(string memberName)
         {
             var memberInfo = ReflectionUtil.GetSingleMember<TEntity>(memberName);
-            return this.References(memberInfo);
+            return this.Reference(memberInfo);
         }
 
-        public FluentReference References(MemberInfo memberInfo)
+        public FluentReference Reference(MemberInfo memberInfo)
         {
             var memberType = ReflectionUtil.GetMemberValueType(memberInfo);
             var reference = new FluentReference();
@@ -80,10 +80,10 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
             return reference;
         }
 
-        public FluentReference References(Expression<Func<TEntity, object>> member)
+        public FluentReference Reference(Expression<Func<TEntity, object>> member)
         {
             var memberInfo = ReflectionUtil.GetSingleMember(member);
-            return this.References(memberInfo);
+            return this.Reference(memberInfo);
         }
     }
 }

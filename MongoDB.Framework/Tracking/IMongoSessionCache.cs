@@ -32,7 +32,8 @@ namespace MongoDB.Framework.Tracking
         /// </summary>
         /// <param name="collectionName">Name of the collection.</param>
         /// <param name="id">The id.</param>
+        /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        object TryToFind(string collectionName, object id);
+        bool TryToFind(string collectionName, object id, out object entity);
     }
 }

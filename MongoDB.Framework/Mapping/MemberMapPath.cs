@@ -122,7 +122,6 @@ namespace MongoDB.Framework.Mapping
             while (memberNamesEnumerator.MoveNext())
             {
                 currentMemberMap = this.GetNextMemberMap(currentMemberMap, memberNamesEnumerator.Current);
-                this.Key += "." + currentMemberMap.Key;
                 this.memberMaps.Add(currentMemberMap);
             }
         }
@@ -140,7 +139,21 @@ namespace MongoDB.Framework.Mapping
             if (memberMap != null && memberMap.ValueType is NestedClassValueType)
             {
                 var nestedClassMap = ((NestedClassValueType)memberMap.ValueType).NestedClassMap;
-                return nestedClassMap.GetMemberMapBaseFromMemberName(nextMemberName);
+                currentMemberMap = nestedClassMap.GetMemberMapBaseFromMemberName(nextMemberName);
+                this.Key += currentMemberMap.Key;
+                return currentMemberMap;
+            }
+            else if (memberMap != null && memberMap.ValueType is ManyToOneValueType)
+            {
+                var refType = ((ManyToOneValueType)memberMap.ValueType).ReferenceType;
+                var classMap = this.mappingStore.GetClassMapFor(refType);
+                if (classMap.IdMap.MemberName == nextMemberName)
+                {
+                    this.Key += ".$id";
+                    return classMap.IdMap;
+                }
+                else
+                    throw new NotSupportedException("Id is the only supported condition across a reference.");
             }
 
             throw new NotSupportedException(string.Format("The value type {0} must occur last.", currentMemberMap));
