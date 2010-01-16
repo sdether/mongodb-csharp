@@ -68,8 +68,8 @@ namespace MongoDB.Framework.Queries
         {
             using (var mongoSession = this.OpenMongoSession())
             {
-                mongoSession.Database.MetaData.DropCollection("Blog");
-                mongoSession.Database.MetaData.DropCollection("BlogEntry");
+                mongoSession.Database.MetaData.DropCollection("blogs");
+                mongoSession.Database.MetaData.DropCollection("entries");
             }
         }
 
