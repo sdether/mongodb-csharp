@@ -8,8 +8,6 @@ namespace MongoDB.Framework.Mapping.ValueConverters
 {
     public class GuidValueConverter : IValueConverter
     {
-        private string format;
-
         /// <summary>
         /// Gets the type.
         /// </summary>
@@ -20,36 +18,33 @@ namespace MongoDB.Framework.Mapping.ValueConverters
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GuidValueConverter"/> class.
+        /// Froms the document.
         /// </summary>
-        public GuidValueConverter()
-            : this("N")
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GuidValueConverter"/> class.
-        /// </summary>
-        /// <param name="format">The format.</param>
-        public GuidValueConverter(string format)
-        {
-            this.format = format ?? "N";
-        }
-
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public object FromDocument(object value)
         {
-            var str = value as string;
-            if (str != null)
-                return new Guid(str);
+            var bin = value as Binary;
+            if (bin != null)
+                return new Guid(bin.Bytes);
 
             return Guid.Empty;
         }
 
+        /// <summary>
+        /// Toes the document.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public object ToDocument(object value)
         {
             if (value == null)
                 return MongoDBNull.Value;
 
-            return ((Guid)value).ToString(this.format);
+            return new Binary(((Guid)value).ToByteArray())
+            {
+                Subtype = Binary.TypeCode.Uuid
+            };
         }
     }
 }

@@ -13,6 +13,7 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
     {
         private static readonly PropertyInfo rootModelPropertyInfo = typeof(FluentBase<RootClassMapModel>).GetProperty("Model");
         private static readonly PropertyInfo nestedModelPropertyInfo = typeof(FluentBase<NestedClassMapModel>).GetProperty("Model");
+        private static readonly PropertyInfo subModelPropertyInfo = typeof(FluentBase<SubClassMapModel>).GetProperty("Model");
 
         /// <summary>
         /// Adds the maps from assembly containing the specified type.
@@ -39,17 +40,22 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
 
             foreach (var type in types)
             {
-                if(typeof(FluentRootClass<>).IsAssignableFrom(type.BaseType.GetGenericTypeDefinition()))
+                var genDef = type.BaseType.GetGenericTypeDefinition();
+
+                if (typeof(FluentRootClass<>).IsAssignableFrom(genDef))
                 {
                     var fluentRootClassMap = Activator.CreateInstance(type);
                     this.AddRootClassMapModel((RootClassMapModel)rootModelPropertyInfo.GetValue(fluentRootClassMap, null));
-                    continue;
                 }
-                else if (typeof(FluentNestedClass<>).IsAssignableFrom(type.BaseType.GetGenericTypeDefinition()))
+                else if (typeof(FluentNestedClass<>).IsAssignableFrom(genDef))
                 {
                     var fluentNestedClassMap = Activator.CreateInstance(type);
                     this.AddNestedClassMapModel((NestedClassMapModel)nestedModelPropertyInfo.GetValue(fluentNestedClassMap, null));
-                    continue;
+                }
+                else if (typeof(FluentSubClass<>).IsAssignableFrom(genDef))
+                {
+                    var fluentSubClassMap = Activator.CreateInstance(type);
+                    this.AddSubClassMapModel((SubClassMapModel)subModelPropertyInfo.GetValue(fluentSubClassMap, null));
                 }
             }
             return this;

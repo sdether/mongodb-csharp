@@ -20,25 +20,25 @@ namespace MongoDB.Framework.Mapping
         /// Gets the name of the collection.
         /// </summary>
         /// <value>The name of the collection.</value>
-        public abstract string CollectionName { get; }
+        public abstract string CollectionName { get; internal set; }
 
         /// <summary>
         /// Gets or sets the discriminator.
         /// </summary>
         /// <value>The discriminator.</value>
-        public object Discriminator { get; private set; }
+        public object Discriminator { get; internal set; }
 
         /// <summary>
         /// Gets or sets the discriminator key.
         /// </summary>
         /// <value>The discriminator key.</value>
-        public abstract string DiscriminatorKey { get; }
+        public abstract string DiscriminatorKey { get; internal set; }
 
         /// <summary>
         /// Gets the extended properties map.
         /// </summary>
         /// <value>The extended properties map.</value>
-        public abstract ExtendedPropertiesMap ExtendedPropertiesMap { get; }
+        public abstract ExtendedPropertiesMap ExtendedPropertiesMap { get; internal set; }
 
         /// <summary>
         /// Gets a value indicating whether this instance has extended properties.
@@ -66,7 +66,7 @@ namespace MongoDB.Framework.Mapping
         /// Gets the id map.
         /// </summary>
         /// <value>The id map.</value>
-        public abstract IdMap IdMap { get; }
+        public abstract IdMap IdMap { get; internal set; }
 
         /// <summary>
         /// Gets the indexes.
@@ -113,15 +113,12 @@ namespace MongoDB.Framework.Mapping
         /// <param name="type">The type.</param>
         /// <param name="memberMaps">The member maps.</param>
         /// <param name="discriminator">The discriminator.</param>
-        protected ClassMap(Type type, IEnumerable<MemberMap> memberMaps, object discriminator)
+        protected ClassMap(Type type)
         {
             if (type == null)
                 throw new ArgumentNullException("type");
-            if (memberMaps == null)
-                throw new ArgumentNullException("memberMaps");
 
-            this.Discriminator = discriminator;
-            this.memberMaps = memberMaps.ToList();
+            this.memberMaps = new List<MemberMap>();
             this.Type = type;
         }
 
@@ -172,6 +169,34 @@ namespace MongoDB.Framework.Mapping
                 return memberMap;
 
             throw new UnmappedMemberException(string.Format("The member {0} has not been mapped.", memberName));
+        }
+
+        #endregion
+
+        #region Internal Methods
+
+        /// <summary>
+        /// Adds the member map.
+        /// </summary>
+        /// <param name="memberMap">The member map.</param>
+        internal void AddMemberMap(MemberMap memberMap)
+        {
+            if (memberMap == null)
+                throw new ArgumentNullException("memberMap");
+
+            this.memberMaps.Add(memberMap);
+        }
+
+        /// <summary>
+        /// Adds the member maps.
+        /// </summary>
+        /// <param name="memberMaps">The member maps.</param>
+        internal void AddMemberMaps(IEnumerable<MemberMap> memberMaps)
+        {
+            if (memberMaps == null)
+                throw new ArgumentNullException("memberMaps");
+
+            this.memberMaps.AddRange(memberMaps);
         }
 
         #endregion

@@ -10,7 +10,7 @@ namespace MongoDB.Framework.Mapping
         #region Private Fields
 
         private string collectionName;
-        private IEnumerable<Index> indexes;
+        private readonly List<Index> indexes;
 
 	    #endregion
 
@@ -23,6 +23,7 @@ namespace MongoDB.Framework.Mapping
         public override string CollectionName
         {
             get { return this.collectionName; }
+            internal set { this.collectionName = value; }
         }
 
         /// <summary>
@@ -62,24 +63,38 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="RootClassMap"/> class.
         /// </summary>
         /// <param name="type">The type.</param>
-        /// <param name="collectionName">Name of the collection.</param>
-        /// <param name="idMap">The id map.</param>
-        /// <param name="memberMaps">The member maps.</param>
-        /// <param name="discriminatorKey">The discriminator key.</param>
-        /// <param name="discriminator">The discriminator.</param>
-        /// <param name="subClassMaps">The sub class maps.</param>
-        /// <param name="extendedPropertiesMap">The extended properties map.</param>
-        /// <param name="indexes">The indexes.</param>
-        public RootClassMap(Type type, string collectionName, IdMap idMap, IEnumerable<MemberMap> memberMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap, IEnumerable<Index> indexes)
-            : base(type, idMap, memberMaps, discriminatorKey, discriminator, subClassMaps, extendedPropertiesMap)
+        public RootClassMap(Type type)
+            : base(type)
         {
-            if (collectionName == null)
-                throw new ArgumentException("Cannot be null or empty.", "collectionName");
-            if (idMap == null)
-                throw new ArgumentNullException("idMap");
+            this.indexes = new List<Index>();
+        }
 
-            this.collectionName = collectionName;
-            this.indexes = indexes ?? Enumerable.Empty<Index>();
+        #endregion
+
+        #region Internal Methods
+
+        /// <summary>
+        /// Adds the index.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        public void AddIndex(Index index)
+        {
+            if (index == null)
+                throw new ArgumentNullException("index");
+
+            this.indexes.Add(index);
+        }
+
+        /// <summary>
+        /// Adds the indices.
+        /// </summary>
+        /// <param name="indices">The indices.</param>
+        public void AddIndices(IEnumerable<Index> indices)
+        {
+            if (indices == null)
+                throw new ArgumentNullException("indices");
+
+            this.indexes.AddRange(indices);
         }
 
         #endregion

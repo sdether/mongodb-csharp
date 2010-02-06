@@ -44,8 +44,8 @@ namespace MongoDB.Driver
             
             }
         }
-        
         protected void WriteBadMessage(Connection conn){
+#if DEBUG
             //Write a bad message to the socket to force mongo to shut down our connection.
             BinaryWriter writer = new BinaryWriter(conn.Tcpclnt.GetStream());
             System.Text.UTF8Encoding  encoding=new System.Text.UTF8Encoding(); 
@@ -56,6 +56,7 @@ namespace MongoDB.Driver
             writer.Write(1001);
             writer.Write(msg);
             writer.Write((byte)0);
+#endif
         }
         
         protected QueryMessage generateQueryMessage(){

@@ -57,7 +57,7 @@ namespace MongoDB.Framework.Inserts
             }
 
             Assert.IsNotNull(insertedDocument);
-            Assert.AreEqual(entity.Id, new Guid((string)insertedDocument["_id"]));
+            Assert.AreEqual(entity.Id, new Guid(((Binary)insertedDocument["_id"]).Bytes));
             var subEntities = (Document[])insertedDocument["SubEntities"];
             Assert.AreEqual(3, subEntities.Length);
             Assert.AreEqual(1, subEntities[0]["Integer"]);

@@ -14,6 +14,7 @@ namespace MongoDB.Framework.Mapping
         public override string CollectionName
         {
             get { throw new InvalidOperationException("NestedClasses cannot have collections."); }
+            internal set { throw new NotSupportedException(); }
         }
 
         /// <summary>
@@ -49,14 +50,8 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="NestedClassMap"/> class.
         /// </summary>
         /// <param name="type">ValueType of the entity.</param>
-        /// <param name="idMap">The id map.</param>
-        /// <param name="memberMaps">The member maps.</param>
-        /// <param name="discriminatorKey">The discriminator key.</param>
-        /// <param name="discriminator">The discriminator.</param>
-        /// <param name="subClassMaps">The sub class maps.</param>
-        /// <param name="extendedPropertiesMap">The extended properties map.</param>
-        public NestedClassMap(Type type, IdMap idMap, IEnumerable<MemberMap> memberMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap)
-            : base(type, idMap, memberMaps, discriminatorKey, discriminator, subClassMaps, extendedPropertiesMap)
+        public NestedClassMap(Type type)
+            : base(type)
         { }
     }
 }

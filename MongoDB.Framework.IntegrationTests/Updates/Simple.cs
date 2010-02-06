@@ -29,7 +29,7 @@ namespace MongoDB.Framework.Updates
             {
                 mongoSession.Database.GetCollection("Entity")
                     .Insert(new Document()
-                        .Append("_id", Guid.NewGuid().ToString("N"))
+                        .Append("_id", new Binary(Guid.NewGuid().ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
                         .Append("String", "s"));
             }
         }

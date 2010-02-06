@@ -26,6 +26,7 @@ namespace MongoDB.Framework.Mapping
         public override string DiscriminatorKey
         {
             get { return this.discriminatorKey; }
+            internal set { this.discriminatorKey = value; }
         }
 
         /// <summary>
@@ -35,6 +36,7 @@ namespace MongoDB.Framework.Mapping
         public override ExtendedPropertiesMap ExtendedPropertiesMap
         {
             get { return this.extendedPropertiesMap; }
+            internal set { this.extendedPropertiesMap = value; }
         }
 
         /// <summary>
@@ -64,6 +66,7 @@ namespace MongoDB.Framework.Mapping
         public override IdMap IdMap
         {
             get { return this.idMap; }
+            internal set { this.idMap = value; }
         }
 
         /// <summary>
@@ -95,21 +98,10 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="SuperClassMap"/> class.
         /// </summary>
         /// <param name="type">ValueType of the entity.</param>
-        /// <param name="idMap">The id map.</param>
-        /// <param name="memberMaps">The member maps.</param>
-        /// <param name="discriminatorKey">The discriminator key.</param>
-        /// <param name="discriminator">The discriminator.</param>
-        /// <param name="subClassMaps">The sub class maps.</param>
-        /// <param name="extendedPropertiesMap">The extended properties map.</param>
-        protected SuperClassMap(Type type, IdMap idMap, IEnumerable<MemberMap> memberMaps, string discriminatorKey, object discriminator, IEnumerable<SubClassMap> subClassMaps, ExtendedPropertiesMap extendedPropertiesMap)
-            : base(type, memberMaps, discriminator)
+        protected SuperClassMap(Type type)
+            : base(type)
         {
-            this.discriminatorKey = discriminatorKey;
-            this.extendedPropertiesMap = extendedPropertiesMap;
-            this.idMap = idMap;
-            this.subClassMaps = new List<SubClassMap>(subClassMaps ?? new SubClassMap[0]);
-            foreach (var subClassMap in this.subClassMaps)
-                subClassMap.SetSuperClass(this);
+            this.subClassMaps = new List<SubClassMap>();
         }
 
         #endregion
@@ -136,6 +128,36 @@ namespace MongoDB.Framework.Mapping
                     return subClassMap;
 
             throw new UnmappedDiscriminatorException(string.Format("The discriminator {0} has not been mapped.", discriminator));
+        }
+
+        #endregion
+
+        #region Internal Methods
+
+        /// <summary>
+        /// Adds the sub class map.
+        /// </summary>
+        /// <param name="subClassMap">The sub class map.</param>
+        internal void AddSubClassMap(SubClassMap subClassMap)
+        {
+            if (subClassMap == null)
+                throw new ArgumentNullException("subClassMap");
+
+            this.subClassMaps.Add(subClassMap);
+            subClassMap.SuperClassMap = this;
+        }
+
+        /// <summary>
+        /// Adds the sub class maps.
+        /// </summary>
+        /// <param name="subClassMaps">The sub class maps.</param>
+        internal void AddSubClassMaps(IEnumerable<SubClassMap> subClassMaps)
+        {
+            if (subClassMaps == null)
+                throw new ArgumentNullException("subClassMaps");
+
+            foreach (var subClassMap in subClassMaps)
+                this.AddSubClassMap(subClassMap);
         }
 
         #endregion

@@ -16,6 +16,7 @@ namespace MongoDB.Framework.Mapping
         public override string CollectionName
         {
             get { return this.SuperClassMap.CollectionName; }
+            internal set { throw new NotSupportedException(); }
         }
 
         /// <summary>
@@ -25,6 +26,7 @@ namespace MongoDB.Framework.Mapping
         public override string DiscriminatorKey
         {
             get { return this.SuperClassMap.DiscriminatorKey; }
+            internal set { throw new NotSupportedException(); }
         }
 
         /// <summary>
@@ -34,6 +36,7 @@ namespace MongoDB.Framework.Mapping
         public override ExtendedPropertiesMap ExtendedPropertiesMap
         {
             get { return this.SuperClassMap.ExtendedPropertiesMap; }
+            internal set { throw new NotSupportedException(); }
         }
 
         /// <summary>
@@ -74,6 +77,7 @@ namespace MongoDB.Framework.Mapping
         public override IdMap IdMap
         {
             get { return this.SuperClassMap.IdMap; }
+            internal set { throw new NotSupportedException(); }
         }
 
         /// <summary>
@@ -122,7 +126,7 @@ namespace MongoDB.Framework.Mapping
         /// Gets the super class map.
         /// </summary>
         /// <value>The super class map.</value>
-        public SuperClassMap SuperClassMap { get; private set; }
+        public SuperClassMap SuperClassMap { get; internal set; }
 
         #endregion
 
@@ -132,10 +136,8 @@ namespace MongoDB.Framework.Mapping
         /// Initializes a new instance of the <see cref="SubClassMap"/> class.
         /// </summary>
         /// <param name="type">ValueType of the entity.</param>
-        /// <param name="memberMaps">The member maps.</param>
-        /// <param name="discriminator">The discriminator.</param>
-        public SubClassMap(Type type, IEnumerable<MemberMap> memberMaps, object discriminator)
-            : base(type, memberMaps,  discriminator)
+        public SubClassMap(Type type)
+            : base(type)
         {  }
 
         #endregion
@@ -153,19 +155,6 @@ namespace MongoDB.Framework.Mapping
                 throw new InvalidOperationException(string.Format("The discriminator specified does not belong to the entity {0}.", this.Type));
 
             return this;
-        }
-
-        #endregion
-
-        #region Internal Methods
-
-        /// <summary>
-        /// Sets the super class.
-        /// </summary>
-        /// <param name="superClassMap">The super class map.</param>
-        internal void SetSuperClass(SuperClassMap superClassMap)
-        {
-            this.SuperClassMap = superClassMap;
         }
 
         #endregion

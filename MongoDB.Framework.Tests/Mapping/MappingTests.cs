@@ -26,7 +26,7 @@ namespace MongoDB.Framework.Configuration.Mapping
 
             Guid id = Guid.NewGuid();
             var document = new Document()
-                .Append("_id", id.ToString())
+                .Append("_id", new Binary(id.ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
                 .Append("Name", "Bob McBob")
                 .Append("PhoneNumber", new Document()
                     .Append("AreaCode", "123")
@@ -41,7 +41,7 @@ namespace MongoDB.Framework.Configuration.Mapping
                         .Append("AreaCode", "444")
                         .Append("Prefix", "555")
                         .Append("Number", "6666")))
-                .Append("Aliases", new [] { "Grumpy", "Dopey", "Sleepy" })
+                .Append("Aliases", new[] { "Grumpy", "Dopey", "Sleepy" })
                 .Append("Type", "Person")
                 .Append("BirthDate", new DateTime(1900, 1, 1))
                 .Append("not-mapped", true);
@@ -100,7 +100,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             var document = new EntityToDocumentMapper(mongoSession)
                 .CreateDocument(person);
 
-            Assert.AreEqual(person.Id.ToString("N"), document["_id"]);
+            Assert.AreEqual(person.Id.ToByteArray(), ((Binary)document["_id"]).Bytes);
             Assert.AreEqual("Bob McBob", document["Name"]);
             Assert.AreEqual("Person", document["Type"]);
             Assert.AreEqual(new DateTime(1900, 1, 1), document["BirthDate"]);

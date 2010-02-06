@@ -23,6 +23,7 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         private Dictionary<Type, RootClassMapModel> rootClassMapModels;
         private Dictionary<Type, NestedClassMapModel> nestedClassMapModels;
+        private Dictionary<Type, SubClassMapModel> subClassMapModels;
 
         private Dictionary<Type, RootClassMap> rootClassMaps;
 
@@ -50,6 +51,7 @@ namespace MongoDB.Framework.Configuration.Mapping
         {
             this.rootClassMapModels = new Dictionary<Type, RootClassMapModel>();
             this.nestedClassMapModels = new Dictionary<Type, NestedClassMapModel>();
+            this.subClassMapModels = new Dictionary<Type, SubClassMapModel>();
         }
 
         #endregion
@@ -83,6 +85,18 @@ namespace MongoDB.Framework.Configuration.Mapping
         }
 
         /// <summary>
+        /// Adds the sub class map model.
+        /// </summary>
+        /// <param name="subClassMapModel">The sub class map model.</param>
+        public void AddSubClassMapModel(SubClassMapModel subClassMapModel)
+        {
+            if (subClassMapModel == null)
+                throw new ArgumentNullException("subClassMapModel");
+
+            this.subClassMapModels.Add(subClassMapModel.Type, subClassMapModel);
+        }
+
+        /// <summary>
         /// Builds the mapping store.
         /// </summary>
         /// <returns></returns>
@@ -96,8 +110,36 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         #region Private Methods
 
+        private void AssociateFreeSubClassMapsWithRoots()
+        {
+            Func<Type, Type> getRootClassType = null;
+            getRootClassType = (type) =>
+            {
+                var baseType = type.BaseType;
+                if(baseType == typeof(object))
+                    return null;
+
+                if(this.rootClassMapModels.ContainsKey(baseType))
+                    return baseType;
+
+                return getRootClassType(baseType);
+            };
+
+            var subs = new List<SubClassMapModel>(this.subClassMapModels.Values);
+            foreach(var sub in subs)
+            {
+                var rootClassType = getRootClassType(sub.Type);
+                if (rootClassType == null)
+                    continue;
+
+                this.rootClassMapModels[rootClassType].SubClassMaps.Add(sub);
+                this.subClassMapModels.Remove(sub.Type);
+            }
+        }
+
         private void BuildRootClassMaps()
         {
+            this.AssociateFreeSubClassMapsWithRoots();
             this.rootClassMaps = new Dictionary<Type, RootClassMap>();
 
             foreach (var rootClassMapModel in this.rootClassMapModels.Values)
@@ -120,18 +162,20 @@ namespace MongoDB.Framework.Configuration.Mapping
 
             var subClassMaps = model.SubClassMaps.Select(sc => this.BuildSubClassMap(sc));
 
-            var indexes = model.Indexes.Select(i => this.BuildIndex(i));
+            var indices = model.Indexes.Select(i => this.BuildIndex(i));
 
-            var rootClassMap = new RootClassMap(
-                model.Type,
-                collectionName,
-                idMap,
-                memberMaps,
-                model.DiscriminatorKey,
-                model.Discriminator,
-                subClassMaps,
-                extPropMap,
-                indexes);
+            var rootClassMap = new RootClassMap(model.Type)
+            {
+                CollectionName = collectionName,
+                IdMap = idMap,
+                Discriminator = model.Discriminator,
+                DiscriminatorKey = model.DiscriminatorKey,
+                ExtendedPropertiesMap = extPropMap,
+            };
+
+            rootClassMap.AddMemberMaps(memberMaps);
+            rootClassMap.AddSubClassMaps(subClassMaps);
+            rootClassMap.AddIndices(indices);
 
             return rootClassMap;
         }
@@ -149,14 +193,16 @@ namespace MongoDB.Framework.Configuration.Mapping
                 idMap = this.BuildIdMap(model.IdMap);
             var subClassMaps = model.SubClassMaps.Select(sc => this.BuildSubClassMap(sc));
 
-            var nestedClassMap = new NestedClassMap(
-                model.Type,
-                idMap,
-                memberMaps,
-                model.DiscriminatorKey,
-                model.Discriminator,
-                subClassMaps,
-                extPropMap);
+            var nestedClassMap = new NestedClassMap(model.Type)
+            {
+                IdMap = idMap,
+                Discriminator = model.Discriminator,
+                DiscriminatorKey = model.DiscriminatorKey,
+                ExtendedPropertiesMap = extPropMap
+            };
+
+            nestedClassMap.AddMemberMaps(memberMaps);
+            nestedClassMap.AddSubClassMaps(subClassMaps);
 
             return nestedClassMap;
         }
@@ -257,10 +303,14 @@ namespace MongoDB.Framework.Configuration.Mapping
                             .Concat(model.ManyToOneMaps.Select(mto => this.BuildMemberMap(mto)))
                             .ToList(); 
             
-            return new SubClassMap(
-                model.Type,
-                memberMaps,
-                model.Discriminator);
+            var subClassMap = new SubClassMap(model.Type)
+            {
+                Discriminator = model.Discriminator
+            };
+
+            subClassMap.AddMemberMaps(memberMaps);
+
+            return subClassMap;
         }
 
         private bool IsCollection(Type type)

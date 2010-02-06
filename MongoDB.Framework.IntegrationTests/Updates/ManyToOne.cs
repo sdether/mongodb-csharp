@@ -30,12 +30,12 @@ namespace MongoDB.Framework.Updates
         {
             using (var mongoSession = this.OpenMongoSession())
             {
-                var refId = Guid.NewGuid().ToString("N");
+                var refId = new Binary(Guid.NewGuid().ToByteArray()) { Subtype = Binary.TypeCode.Uuid };
                 mongoSession.Database.GetCollection("EntityRef")
                     .Insert(new Document().Append("_id", refId).Append("Name", "Jack"));
                 mongoSession.Database.GetCollection("Entity")
                     .Insert(new Document()
-                        .Append("_id", Guid.NewGuid().ToString("N"))
+                        .Append("_id", new Binary(Guid.NewGuid().ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
                         .Append("Reference", new DBRef("EntityRef", refId)));
             }
         }
@@ -50,7 +50,6 @@ namespace MongoDB.Framework.Updates
         }
 
         [Test]
-        [Ignore("when run in batch, something is happening out of order and the BeforeTest is not getting the entities inserted.")]
         public void Should_update()
         {
             using (var mongoSession = this.OpenMongoSession())

@@ -36,9 +36,10 @@ namespace MongoDB.Framework.Mapping.ValueConverters
             public void should_return_string_when_value_is_not_null()
             {
                 var converter = new GuidValueConverter();
-                var result = converter.ToDocument(Guid.Empty);
+                var result = (Binary)converter.ToDocument(Guid.Empty);
 
-                Assert.AreEqual(Guid.Empty.ToString("N"), result);
+                Assert.AreEqual(Guid.Empty.ToByteArray(), result.Bytes);
+                Assert.AreEqual(Binary.TypeCode.Uuid, result.Subtype);
             }
         }
 
@@ -67,7 +68,7 @@ namespace MongoDB.Framework.Mapping.ValueConverters
             {
                 var guid = Guid.NewGuid();
                 var converter = new GuidValueConverter();
-                var result = converter.FromDocument(guid.ToString());
+                var result = converter.FromDocument(new Binary(guid.ToByteArray()) { Subtype = Binary.TypeCode.Uuid });
 
                 Assert.AreEqual(guid, result);
             }

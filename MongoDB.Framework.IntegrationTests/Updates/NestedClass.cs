@@ -31,9 +31,9 @@ namespace MongoDB.Framework.Updates
             {
                 mongoSession.Database.GetCollection("Entity")
                     .Insert(new Document()
-                        .Append("_id", Guid.NewGuid().ToString("N"))
+                        .Append("_id", new Binary(Guid.NewGuid().ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
                         .Append("SubEntity", new Document()
-                            .Append("_id", Guid.NewGuid().ToString("N"))
+                            .Append("_id", new Binary(Guid.NewGuid().ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
                             .Append("Integer", 42)
                             .Append("Double", 123.456)));
             }
@@ -67,7 +67,7 @@ namespace MongoDB.Framework.Updates
             }
 
             Assert.IsNotNull(updatedDocument);
-            Assert.AreEqual(subEntityId, new Guid((string)((Document)updatedDocument["SubEntity"])["_id"]));
+            Assert.AreEqual(subEntityId, new Guid(((Binary)((Document)updatedDocument["SubEntity"])["_id"]).Bytes));
             Assert.AreEqual(43, ((Document)updatedDocument["SubEntity"])["Integer"]);
             Assert.AreEqual(654.321, ((Document)updatedDocument["SubEntity"])["Double"]);
         }
