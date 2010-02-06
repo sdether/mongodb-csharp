@@ -110,36 +110,43 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         #region Private Methods
 
-        private void AssociateFreeSubClassMapsWithRoots()
+        private void AssociateFreeSubClassMapsWithSupers()
         {
-            Func<Type, Type> getRootClassType = null;
-            getRootClassType = (type) =>
+            Func<Type, Func<Type, bool>, Type> getSuperClassType = null;
+            getSuperClassType = (type, containsKey) =>
             {
                 var baseType = type.BaseType;
                 if(baseType == typeof(object))
                     return null;
 
-                if(this.rootClassMapModels.ContainsKey(baseType))
+                if(containsKey(baseType))
                     return baseType;
 
-                return getRootClassType(baseType);
+                return getSuperClassType(baseType, containsKey);
             };
 
             var subs = new List<SubClassMapModel>(this.subClassMapModels.Values);
             foreach(var sub in subs)
             {
-                var rootClassType = getRootClassType(sub.Type);
-                if (rootClassType == null)
+                var superClassType = getSuperClassType(sub.Type, this.rootClassMapModels.ContainsKey);
+                if (superClassType != null)
+                {
+                    this.rootClassMapModels[superClassType].SubClassMaps.Add(sub);
+                    this.subClassMapModels.Remove(sub.Type);
                     continue;
-
-                this.rootClassMapModels[rootClassType].SubClassMaps.Add(sub);
-                this.subClassMapModels.Remove(sub.Type);
+                }
+                superClassType = getSuperClassType(sub.Type, this.nestedClassMapModels.ContainsKey);
+                if (superClassType != null)
+                {
+                    this.nestedClassMapModels[superClassType].SubClassMaps.Add(sub);
+                    this.subClassMapModels.Remove(sub.Type);
+                }
             }
         }
 
         private void BuildRootClassMaps()
         {
-            this.AssociateFreeSubClassMapsWithRoots();
+            this.AssociateFreeSubClassMapsWithSupers();
             this.rootClassMaps = new Dictionary<Type, RootClassMap>();
 
             foreach (var rootClassMapModel in this.rootClassMapModels.Values)

@@ -40,6 +40,11 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
             return this.Collection(memberInfo);
         }
 
+        public void DiscriminatorValue(object value)
+        {
+            this.Model.Discriminator = value;
+        }
+
         public FluentMap Map(string memberName)
         {
             var memberInfo = ReflectionUtil.GetSingleMember<TEntity>(memberName);

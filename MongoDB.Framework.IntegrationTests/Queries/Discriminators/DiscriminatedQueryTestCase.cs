@@ -14,7 +14,9 @@ namespace MongoDB.Framework.Queries
             get
             {
                 return new FluentMapModelRegistry()
-                    .AddMap(new PartyMap());
+                    .AddMap(new PartyMap())
+                    .AddMap(new PersonMap())
+                    .AddMap(new OrganizationMap());
             }
         }
 
@@ -58,15 +60,25 @@ namespace MongoDB.Framework.Queries
                 Id(x => x.Id);
                 Map(x => x.Name);
 
-                DiscriminateSubClassesOnKey<string>("Type")
-                    .SubClass<Person>(PartyType.Person.ToString(), m =>
-                    {
-                        m.Map(x => x.BirthDate);
-                    })
-                    .SubClass<Organization>(PartyType.Organization.ToString(), m =>
-                    {
-                        m.Map(x => x.EmployeeCount);
-                    });
+                DiscriminateSubClassesOnKey("Type");
+            }
+        }
+
+        public class PersonMap : FluentSubClass<Person>
+        {
+            public PersonMap()
+            {
+                DiscriminatorValue("Person");
+                Map(x => x.BirthDate);
+            }
+        }
+
+        public class OrganizationMap : FluentSubClass<Organization>
+        {
+            public OrganizationMap()
+            {
+                DiscriminatorValue("Organization");
+                Map(x => x.EmployeeCount);
             }
         }
 

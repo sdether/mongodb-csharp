@@ -128,17 +128,27 @@ namespace MongoDB.Framework.Configuration.Mapping
                 Collection(x => x.AlternatePhoneNumbers);
                 Collection(x => x.Aliases);
 
-                DiscriminateSubClassesOnKey<string>("Type")
-                    .SubClass<Person>(PartyType.Person.ToString(), m =>
-                    {
-                        m.Map(x => x.BirthDate);
-                    })
-                    .SubClass<Organization>(PartyType.Organization.ToString(), m =>
-                    {
-                        m.Map(x => x.EmployeeCount);
-                    });
+                DiscriminateSubClassesOnKey("Type");
 
                 ExtendedProperties(x => x.ExtendedProperties);
+            }
+        }
+
+        public class PersonMap : FluentSubClass<Person>
+        {
+            public PersonMap()
+            {
+                DiscriminatorValue("Person");
+                Map(x => x.BirthDate);
+            }
+        }
+
+        public class OrganizationMap : FluentSubClass<Organization>
+        {
+            public OrganizationMap()
+            {
+                DiscriminatorValue("Organization");
+                Map(x => x.EmployeeCount);
             }
         }
 

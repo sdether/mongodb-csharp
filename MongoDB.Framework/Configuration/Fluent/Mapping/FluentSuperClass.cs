@@ -17,17 +17,9 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
             : base(model)
         { }
 
-        public FluentDiscriminator<TDiscriminator> DiscriminateSubClassesOnKey<TDiscriminator>(string key)
+        public void DiscriminateSubClassesOnKey(string key)
         {
-            var fluentDiscriminatorMap = new FluentDiscriminator<TDiscriminator>(this.Model);
             this.Model.DiscriminatorKey = key;
-            return fluentDiscriminatorMap;
-        }
-
-        public FluentDiscriminator<TDiscriminator> DiscriminateSubClassesOnKey<TDiscriminator>(string key, TDiscriminator rootDiscriminatorValue)
-        {
-            this.Model.Discriminator = rootDiscriminatorValue;
-            return this.DiscriminateSubClassesOnKey<TDiscriminator>(key);
         }
 
         public void ExtendedProperties(string memberName)

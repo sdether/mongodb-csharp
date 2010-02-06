@@ -83,7 +83,19 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         {
             this.AddNestedClassMapModel(nestedClassMap.Model);
             return this;
-        } 
+        }
+
+        /// <summary>
+        /// Adds the map.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="subClassMap">The sub class map.</param>
+        /// <returns></returns>
+        public FluentMapModelRegistry AddMap<T>(FluentSubClass<T> subClassMap)
+        {
+            this.AddSubClassMapModel(subClassMap.Model);
+            return this;
+        }
 
     }
 }

@@ -90,9 +90,6 @@
     <Compile Include="Configuration\Fluent\Mapping\FluentClass.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Fluent\Mapping\FluentDiscriminator.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Configuration\Fluent\Mapping\FluentCollection.cs">
       <SubType>Code</SubType>
     </Compile>
