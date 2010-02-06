@@ -90,7 +90,14 @@ namespace MongoDB.Framework.Mapping.Visitors
             var oldDocument = this.document;
 
             this.document = doc;
-            nestedClassValueType.NestedClassMap.Accept(this);
+            ClassMap concreteClassMap = nestedClassValueType.NestedClassMap;
+            if (nestedClassValueType.NestedClassMap.IsPolymorphic)
+            {
+                object discriminator = this.document[nestedClassValueType.NestedClassMap.DiscriminatorKey];
+                concreteClassMap = nestedClassValueType.NestedClassMap.GetClassMapByDiscriminator(discriminator);
+            }
+
+            concreteClassMap.Accept(this);
             
             this.value = this.entity;
             this.entity = oldEntity;

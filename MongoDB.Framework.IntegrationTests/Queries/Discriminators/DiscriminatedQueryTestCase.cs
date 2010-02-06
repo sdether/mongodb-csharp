@@ -57,10 +57,10 @@ namespace MongoDB.Framework.Queries
         {
             public PartyMap()
             {
+                DiscrimatorKey = "Type";
                 Id(x => x.Id);
                 Map(x => x.Name);
 
-                DiscriminateSubClassesOnKey("Type");
             }
         }
 
@@ -68,7 +68,7 @@ namespace MongoDB.Framework.Queries
         {
             public PersonMap()
             {
-                DiscriminatorValue("Person");
+                Discriminator = "Person";
                 Map(x => x.BirthDate);
             }
         }
@@ -77,7 +77,7 @@ namespace MongoDB.Framework.Queries
         {
             public OrganizationMap()
             {
-                DiscriminatorValue("Organization");
+                Discriminator = "Organization";
                 Map(x => x.EmployeeCount);
             }
         }

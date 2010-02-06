@@ -91,8 +91,10 @@ namespace MongoDB.Framework
         {
             public PartyMap()
             {
-                UseCollection("parties");
-                Index().Ascending("Name");
+                CollectionName = "parties";
+                HasIndex().Ascending("Name");
+
+                DiscrimatorKey = "Type";
 
                 Id(x => x.Id);
 
@@ -102,8 +104,6 @@ namespace MongoDB.Framework
                 Collection(x => x.AlternatePhoneNumbers);
                 Collection(x => x.Aliases);
 
-                DiscriminateSubClassesOnKey("Type");
-
                 ExtendedProperties(x => x.ExtendedProperties);
             }
         }
@@ -112,7 +112,7 @@ namespace MongoDB.Framework
         {
             public PersonMap()
             {
-                DiscriminatorValue("Person");
+                Discriminator = "Person";
                 Map(x => x.BirthDate);
             }
         }
@@ -121,7 +121,7 @@ namespace MongoDB.Framework
         {
             public OrganizationMap()
             {
-                DiscriminatorValue("Organization");
+                Discriminator = "Organization";
                 Map(x => x.EmployeeCount);
             }
         }

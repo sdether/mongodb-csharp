@@ -77,7 +77,7 @@ namespace MongoDB.Framework.Queries
         {
             public BlogMap()
             {
-                UseCollection("blogs");
+                CollectionName = "blogs";
 
                 Id(x => x.Id);
                 Map(x => x.Name).Key("name");
@@ -89,7 +89,7 @@ namespace MongoDB.Framework.Queries
         {
             public BlogEntryMap()
             {
-                UseCollection("entries");
+                CollectionName = "entries";
 
                 Id(x => x.Id);
 

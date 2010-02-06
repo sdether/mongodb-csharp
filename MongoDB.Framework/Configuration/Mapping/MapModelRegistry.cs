@@ -68,8 +68,6 @@ namespace MongoDB.Framework.Configuration.Mapping
                 throw new ArgumentNullException("rootClassMapModel");
 
             this.rootClassMapModels.Add(rootClassMapModel.Type, rootClassMapModel);
-            foreach (var subClassMapModel in rootClassMapModel.SubClassMaps)
-                this.rootClassMapModels.Add(subClassMapModel.Type, rootClassMapModel);
         }
 
         /// <summary>
@@ -139,6 +137,7 @@ namespace MongoDB.Framework.Configuration.Mapping
                 if (superClassType != null)
                 {
                     this.nestedClassMapModels[superClassType].SubClassMaps.Add(sub);
+                    this.nestedClassMapModels.Add(sub.Type, nestedClassMapModels[superClassType]);
                     this.subClassMapModels.Remove(sub.Type);
                 }
             }

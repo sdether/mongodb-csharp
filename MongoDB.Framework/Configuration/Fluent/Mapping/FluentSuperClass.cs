@@ -13,14 +13,15 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
     public abstract class FluentSuperClass<TModel, TClass> : FluentClass<TModel, TClass> where TModel : SuperClassMapModel
     {
+        public string DiscrimatorKey
+        {
+            get { return this.Model.DiscriminatorKey; }
+            set { this.Model.DiscriminatorKey = value; }
+        }
+
         public FluentSuperClass(TModel model)
             : base(model)
         { }
-
-        public void DiscriminateSubClassesOnKey(string key)
-        {
-            this.Model.DiscriminatorKey = key;
-        }
 
         public void ExtendedProperties(string memberName)
         {

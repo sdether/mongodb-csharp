@@ -13,6 +13,12 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
     public abstract class FluentClass<TModel, TEntity> : FluentBase<TModel> where TModel : ClassMapModel
     {
+        public object Discriminator
+        {
+            get { return this.Model.Discriminator; }
+            set { this.Model.Discriminator = value; }
+        }
+
         public FluentClass(TModel model)
             : base(model)
         { }
@@ -38,11 +44,6 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         {
             var memberInfo = ReflectionUtil.GetSingleMember(member);
             return this.Collection(memberInfo);
-        }
-
-        public void DiscriminatorValue(object value)
-        {
-            this.Model.Discriminator = value;
         }
 
         public FluentMap Map(string memberName)

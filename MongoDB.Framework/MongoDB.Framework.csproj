@@ -76,6 +76,7 @@
     <Compile Include="Mapping\CollectionTypes\GenericListCollectionType.cs" />
     <Compile Include="Mapping\CollectionValueType.cs" />
     <Compile Include="Mapping\GenericStringKeyValueConverter.cs" />
+    <Compile Include="Mapping\ValueConverters\GuidAsStringConverter.cs" />
     <Compile Include="Mapping\ValueConverters\GuidValueConverter.cs" />
     <Compile Include="Mapping\ValueConverters\NullSafeValueConverter.cs" />
     <Compile Include="Mapping\ManyToOneValueType.cs" />

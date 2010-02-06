@@ -83,13 +83,17 @@ namespace MongoDB.Framework.Mapping.Visitors
 
         public override void Visit(NestedClassValueType nestedClassValueType)
         {
+            if (this.value == null)
+                this.value = MongoDBNull.Value;
+
             var oldEntity = this.entity;
             var oldDocument = this.document;
             
             this.entity = this.value;
             this.document = new Document();
 
-            nestedClassValueType.NestedClassMap.Accept(this);
+            var concreteClassMap = nestedClassValueType.NestedClassMap.GetClassMapFor(this.entity.GetType());
+            concreteClassMap.Accept(this);
 
             this.value = this.document;
             this.entity = oldEntity;

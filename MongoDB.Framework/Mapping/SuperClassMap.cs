@@ -108,6 +108,23 @@ namespace MongoDB.Framework.Mapping
 
         #region Public Methods
 
+        public ClassMap GetClassMapFor(Type type)
+        {
+            if (type == null)
+                throw new ArgumentNullException("type");
+
+            if (this.Type == type)
+                return this;
+
+            foreach (var subClassMap in this.subClassMaps)
+            {
+                if (subClassMap.Type == type)
+                    return subClassMap;
+            }
+
+            throw new InvalidOperationException();
+        }
+
         /// <summary>
         /// Gets the class map by discriminator.
         /// </summary>
