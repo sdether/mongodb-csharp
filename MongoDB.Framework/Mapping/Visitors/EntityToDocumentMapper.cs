@@ -43,19 +43,18 @@ namespace MongoDB.Framework.Mapping.Visitors
             return this.document;
         }
 
-        public override void Visit(ClassMap classMap)
-        {
-            if (classMap.IsPolymorphic)
-                document[classMap.DiscriminatorKey] = classMap.Discriminator;
-
-            base.Visit(classMap);
-        }
-
         public override void Visit(IdMap idMap)
         {
             var value = idMap.MemberGetter(this.entity);
             value = idMap.ValueConverter.ToDocument(value);
             this.document[idMap.Key] = value;
+        }
+
+        public override void Visit(string discriminatorKey, object discriminator)
+        {
+            base.Visit(discriminatorKey, discriminator);
+
+            document[discriminatorKey] = discriminator;
         }
 
         public override void Visit(MemberMap memberMap)

@@ -42,9 +42,6 @@ namespace MongoDB.Framework.Mapping.Visitors
         {
             this.entity = Activator.CreateInstance(classMap.Type);
 
-            if (classMap.IsPolymorphic)
-                document.Remove(classMap.DiscriminatorKey);
-
             base.Visit(classMap);
         }
 
@@ -54,6 +51,13 @@ namespace MongoDB.Framework.Mapping.Visitors
             value = idMap.ValueConverter.FromDocument(value);
             idMap.MemberSetter(this.entity, value);
             this.document.Remove(idMap.Key);
+        }
+
+        public override void Visit(string discriminatorKey, object discriminator)
+        {
+            base.Visit(discriminatorKey, discriminator);
+
+            document.Remove(discriminatorKey);
         }
 
         public override void Visit(MemberMap memberMap)

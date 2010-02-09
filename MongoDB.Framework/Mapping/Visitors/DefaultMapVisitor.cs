@@ -12,6 +12,9 @@ namespace MongoDB.Framework.Mapping.Visitors
             if (classMap.HasId)
                 classMap.IdMap.Accept(this);
 
+            if (classMap.IsPolymorphic)
+                this.Visit(classMap.DiscriminatorKey, classMap.Discriminator);
+
             foreach (var memberMap in classMap.MemberMaps)
                 memberMap.Accept(this);
 
@@ -24,6 +27,9 @@ namespace MongoDB.Framework.Mapping.Visitors
                     index.Accept(this);
             }
         }
+
+        public virtual void Visit(string discriminatorKey, object discriminator)
+        { }
 
         public override void Visit(MemberMap memberMap)
         {
