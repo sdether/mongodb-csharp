@@ -41,7 +41,11 @@ namespace MongoDB.Framework.Queries
                             .Append("body", "boring!!!"),
                         new Document()
                             .Append("email", "b@bdc.com")
-                            .Append("body", "hmm!!!")});
+                            .Append("body", "hmm!!!")
+                            .Append("comments", new Document[1] {
+                                new Document()
+                                    .Append("email", "c@cde.com")
+                                    .Append("body", "i iz nested")})});
 
                 var entry2 = new Document()
                     .Append("_id", new Binary(Guid.NewGuid().ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
@@ -108,7 +112,7 @@ namespace MongoDB.Framework.Queries
             {
                 Map(x => x.CommenterEmail).Key("email");
                 Map(x => x.Comment).Key("body");
-                //Map(x => x.Comments).Key("comments");
+                Collection(x => x.Comments).Key("comments");
             }
         }
 
@@ -147,11 +151,11 @@ namespace MongoDB.Framework.Queries
 
             public string Comment { get; set; }
 
-            //public IList<BlogEntryComment> Comments { get; private set; }
+            public IList<BlogEntryComment> Comments { get; private set; }
 
             public BlogEntryComment()
             {
-                //this.Comments = new List<BlogEntryComment>();
+                this.Comments = new List<BlogEntryComment>();
             }
         }
     }
