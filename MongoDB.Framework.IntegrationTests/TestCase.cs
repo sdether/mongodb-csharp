@@ -19,7 +19,7 @@ namespace MongoDB.Framework
 
         protected virtual string DatabaseName
         {
-            get { return "tests"; }
+            get { return this.GetType().Name.ToLower(); }
         }
 
         protected abstract IMapModelRegistry MapModelRegistry { get; }
