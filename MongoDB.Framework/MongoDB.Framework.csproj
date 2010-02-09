@@ -39,17 +39,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\redist\Castle.DynamicProxy2.dll</HintPath>
     </Reference>
-    <Reference Include="Remotion, Version=1.13.33.1, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\redist\Remotion.dll</HintPath>
-    </Reference>
     <Reference Include="Remotion.Data.Linq, Version=1.13.33.1, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\redist\Remotion.Data.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="Remotion.Interfaces, Version=1.13.33.1, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\redist\Remotion.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
