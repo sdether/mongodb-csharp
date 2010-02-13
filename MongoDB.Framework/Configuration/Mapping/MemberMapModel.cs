@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
-
-using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
-    public class MemberMapModel : MemberMapModelBase
+    public abstract class MemberMapModel : ModelNode
     {
-        public IValueConverter ValueConverter { get; set; }
+        public MemberInfo Getter { get; set; }
 
-        public override void Accept(IMapModelVisitor visitor)
-        {
-            visitor.ProcessMember(this);
-        }
+        public MemberInfo Setter { get; set; }
     }
 }

@@ -203,6 +203,9 @@ namespace MongoDB.Framework.Configuration.Mapping
                 .Concat(model.CollectionMaps.Select(c => this.BuildMemberMap(c)))
                 .Concat(model.ManyToOneMaps.Select(mto => this.BuildMemberMap(mto)))
                 .ToList();
+            if (model.ParentMap != null)
+                memberMaps.Add(this.BuildParentMemberMap(model.ParentMap));
+
             var subClassMaps = model.SubClassMaps.Select(sc => this.BuildSubClassMap(sc));
 
             nestedClassMap.AddMemberMaps(memberMaps);
@@ -254,7 +257,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             return new Index(model.Name, model.Parts, model.IsUnique);
         }
 
-        private MemberMap BuildMemberMap(MemberMapModelBase model)
+        private MemberMap BuildMemberMap(PersistentMemberMapModel model)
         {
             var getter = LateBoundReflection.GetGetter(model.Getter);
             var setter = LateBoundReflection.GetSetter(model.Setter);
@@ -265,9 +268,9 @@ namespace MongoDB.Framework.Configuration.Mapping
 
             ValueTypeBase valueType = null;
 
-            if (model is MemberMapModel)
+            if (model is ConvertibleMemberMapModel)
             {
-                var memberMapModel = (MemberMapModel)model;
+                var memberMapModel = (ConvertibleMemberMapModel)model;
                 if (memberMapModel.ValueConverter != null)
                     valueType = new SimpleValueType(memberValueType, memberMapModel.ValueConverter ?? this.GetValueConverterForType(memberValueType));
                 else
@@ -289,7 +292,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             else
                 throw new NotSupportedException("Unknown MemberMapModelBase.");
 
-            return new MemberMap(
+            return new ValueTypeMemberMap(
                 key,
                 name,
                 getter,
@@ -301,9 +304,9 @@ namespace MongoDB.Framework.Configuration.Mapping
         private SubClassMap BuildSubClassMap(SubClassMapModel model)
         {
             var memberMaps = model.ValueMaps.Select(v => this.BuildMemberMap(v))
-                            .Concat(model.CollectionMaps.Select(c => this.BuildMemberMap(c)))
-                            .Concat(model.ManyToOneMaps.Select(mto => this.BuildMemberMap(mto)))
-                            .ToList(); 
+                .Concat(model.CollectionMaps.Select(c => this.BuildMemberMap(c)))
+                .Concat(model.ManyToOneMaps.Select(mto => this.BuildMemberMap(mto)))
+                .ToList(); 
             
             var subClassMap = new SubClassMap(model.Type)
             {
@@ -313,6 +316,15 @@ namespace MongoDB.Framework.Configuration.Mapping
             subClassMap.AddMemberMaps(memberMaps);
 
             return subClassMap;
+        }
+
+        private ParentMemberMap BuildParentMemberMap(ParentMemberMapModel model)
+        {
+            var getter = LateBoundReflection.GetGetter(model.Getter);
+            var setter = LateBoundReflection.GetSetter(model.Setter);
+            string name = model.Getter.Name;
+
+            return new ParentMemberMap(name, getter, setter);
         }
 
         private bool IsCollection(Type type)

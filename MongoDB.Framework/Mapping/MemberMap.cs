@@ -2,43 +2,47 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MongoDB.Driver;
 
 namespace MongoDB.Framework.Mapping
 {
-    public class MemberMap : MemberMapBase
+    public abstract class MemberMap : MapNode
     {
         /// <summary>
-        /// Gets the type of the value.
+        /// Gets the name of the member.
         /// </summary>
-        /// <value>The type of the value.</value>
-        public ValueTypeBase ValueType { get; private set; }
+        /// <value>The name of the member.</value>
+        public string MemberName { get; private set; }
+
+        /// <summary>
+        /// Gets the member getter.
+        /// </summary>
+        /// <value>The member getter.</value>
+        public Func<object, object> MemberGetter { get; private set; }
+
+        /// <summary>
+        /// Gets the member setter.
+        /// </summary>
+        /// <value>The member setter.</value>
+        public Action<object, object> MemberSetter { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MemberMap"/> class.
         /// </summary>
-        /// <param name="key">The key.</param>
         /// <param name="memberName">Name of the member.</param>
         /// <param name="memberGetter">The member getter.</param>
         /// <param name="memberSetter">The member setter.</param>
-        /// <param name="persistNull">if set to <c>true</c> [persist nulls].</param>
-        /// <param name="valueType">Type of the value.</param>
-        public MemberMap(string key, string memberName, Func<object, object> memberGetter, Action<object, object> memberSetter, bool persistNull, ValueTypeBase valueType)
-            : base(key, memberName, memberGetter, memberSetter, persistNull)
+        public MemberMap(string memberName, Func<object, object> memberGetter, Action<object, object> memberSetter)
         {
-            if (valueType == null)
-                throw new ArgumentNullException("valueType");
-            
-            this.ValueType = valueType;
-        }
+            if (memberName == null)
+                throw new ArgumentException("Cannot be null or empty.", "memberName");
+            if (memberGetter == null)
+                throw new ArgumentNullException("memberGetter");
+            if (memberSetter == null)
+                throw new ArgumentNullException("memberSetter");
 
-        /// <summary>
-        /// Accepts the specified visitor.
-        /// </summary>
-        /// <param name="visitor">The visitor.</param>
-        public override void Accept(IMapVisitor visitor)
-        {
-            visitor.Visit(this);
+            this.MemberName = memberName;
+            this.MemberGetter = memberGetter;
+            this.MemberSetter = memberSetter;
         }
     }
 }

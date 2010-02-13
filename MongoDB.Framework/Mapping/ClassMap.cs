@@ -160,7 +160,7 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="memberName">Name of the member.</param>
         /// <returns></returns>
-        public MemberMapBase GetMemberMapBaseFromMemberName(string memberName)
+        public MemberMap GetMemberMapBaseFromMemberName(string memberName)
         {
             if (this.HasId && this.IdMap.MemberName == memberName)
                 return this.IdMap;

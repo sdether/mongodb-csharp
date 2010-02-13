@@ -11,6 +11,7 @@ namespace MongoDB.Framework.Mapping.Visitors
     public class DocumentToEntityMapper : DefaultMapVisitor
     {
         private Document document;
+        private object parentEntity;
         private object entity;
 
         private object value;
@@ -60,7 +61,7 @@ namespace MongoDB.Framework.Mapping.Visitors
             document.Remove(discriminatorKey);
         }
 
-        public override void Visit(MemberMap memberMap)
+        public override void Visit(ValueTypeMemberMap memberMap)
         {
             var oldValue = this.value;
             this.value = this.document[memberMap.Key];
@@ -74,6 +75,11 @@ namespace MongoDB.Framework.Mapping.Visitors
         {
             var dictionary = this.document.ToDictionary();
             extendedPropertiesMap.MemberSetter(this.entity, dictionary);
+        }
+
+        public override void Visit(ParentMemberMap parentMemberMap)
+        {
+            parentMemberMap.MemberSetter(this.entity, this.parentEntity);
         }
 
         public override void Visit(SimpleValueType simpleValueType)
@@ -90,7 +96,8 @@ namespace MongoDB.Framework.Mapping.Visitors
                 return;
             }
 
-            var oldEntity = this.entity;
+            var oldParentEntity = this.parentEntity;
+            this.parentEntity = this.entity;
             var oldDocument = this.document;
 
             this.document = doc;
@@ -104,7 +111,8 @@ namespace MongoDB.Framework.Mapping.Visitors
             concreteClassMap.Accept(this);
             
             this.value = this.entity;
-            this.entity = oldEntity;
+            this.entity = this.parentEntity;
+            this.parentEntity = oldParentEntity;
             this.document = oldDocument;
         }
 

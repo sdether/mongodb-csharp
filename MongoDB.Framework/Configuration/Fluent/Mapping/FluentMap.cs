@@ -11,7 +11,7 @@ using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
-    public class FluentMap : FluentMember<MemberMapModel, FluentMap>
+    public class FluentMap : FluentMember<ConvertibleMemberMapModel, FluentMap>
     {
         protected override FluentMap Fluent
         {
@@ -19,7 +19,7 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         }
 
         public FluentMap()
-            : base(new MemberMapModel())
+            : base(new ConvertibleMemberMapModel())
         { }
 
         public FluentMap CustomConverterIs<TConverter>() where TConverter : IValueConverter, new()

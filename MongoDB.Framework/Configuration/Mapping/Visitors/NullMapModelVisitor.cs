@@ -25,7 +25,7 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
         public virtual void ProcessId(IdMapModel idMapModel)
         { }
 
-        public virtual void ProcessMember(MemberMapModel memberMapModel)
+        public virtual void ProcessMember(ConvertibleMemberMapModel memberMapModel)
         { }
 
         public virtual void ProcessCollectionMember(CollectionMemberMapModel collectionMemberMapModel)
@@ -35,6 +35,9 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
         { }
 
         public virtual void ProcessExtendedProperties(ExtendedPropertiesMapModel extendedPropertiesMapModel)
+        { }
+
+        public virtual void ProcessParentMember(ParentMemberMapModel parentMemberMapModel)
         { }
 
         public virtual void ProcessIndex(IndexModel indexModel)
@@ -58,7 +61,7 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
         public virtual void Visit(IdMapModel idMapModel)
         { }
 
-        public virtual void Visit(MemberMapModel memberMapModel)
+        public virtual void Visit(ConvertibleMemberMapModel memberMapModel)
         { }
 
         public virtual void Visit(CollectionMemberMapModel collectionMemberMapModel)
@@ -68,6 +71,9 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
         { }
 
         public virtual void Visit(ExtendedPropertiesMapModel extendedPropertiesMapModel)
+        { }
+
+        public virtual void Visit(ParentMemberMapModel parentMemberMapModel)
         { }
 
         public virtual void Visit(IndexModel indexModel)

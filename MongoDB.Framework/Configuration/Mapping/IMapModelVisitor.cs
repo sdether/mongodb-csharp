@@ -13,10 +13,11 @@ namespace MongoDB.Framework.Configuration.Mapping
         void ProcessSuperClass(SuperClassMapModel superClassMapModel);
         void ProcessClass(ClassMapModel classMapModel);
         void ProcessId(IdMapModel idMapModel);
-        void ProcessMember(MemberMapModel memberMapModel);
+        void ProcessMember(ConvertibleMemberMapModel memberMapModel);
         void ProcessCollectionMember(CollectionMemberMapModel collectionMemberMapModel);
         void ProcessManyToOne(ManyToOneMapModel manyToOneMapModel);
         void ProcessExtendedProperties(ExtendedPropertiesMapModel extendedPropertiesMapModel);
+        void ProcessParentMember(ParentMemberMapModel parentMemberMapModel);
         void ProcessIndex(IndexModel indexModel);
 
         void Visit(RootClassMapModel rootClassMapModel);
@@ -25,10 +26,11 @@ namespace MongoDB.Framework.Configuration.Mapping
         void Visit(SuperClassMapModel superClassMapModel);
         void Visit(ClassMapModel classMapModel);
         void Visit(IdMapModel idMapModel);
-        void Visit(MemberMapModel memberMapModel);
+        void Visit(ConvertibleMemberMapModel memberMapModel);
         void Visit(CollectionMemberMapModel collectionMemberMapModel);
         void Visit(ManyToOneMapModel manyToOneMapModel);
         void Visit(ExtendedPropertiesMapModel extendedPropertiesMapModel);
+        void Visit(ParentMemberMapModel parentMemberMapModel);
         void Visit(IndexModel indexModel);
     }
 }

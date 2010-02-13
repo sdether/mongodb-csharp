@@ -31,7 +31,7 @@ namespace MongoDB.Framework.Mapping.Visitors
         public virtual void Visit(string discriminatorKey, object discriminator)
         { }
 
-        public override void Visit(MemberMap memberMap)
+        public override void Visit(ValueTypeMemberMap memberMap)
         {
             memberMap.ValueType.Accept(this);
         }

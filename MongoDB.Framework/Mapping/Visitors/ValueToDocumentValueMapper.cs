@@ -20,7 +20,7 @@ namespace MongoDB.Framework.Mapping.Visitors
             this.mongoSession = mongoSession;
         }
 
-        public object CreateDocumentValue(MemberMapBase memberMapBase, object value)
+        public object CreateDocumentValue(PersistentMemberMap memberMapBase, object value)
         {
             if (memberMapBase == null)
 	            throw new ArgumentNullException("memberMapBase");

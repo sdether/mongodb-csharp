@@ -7,7 +7,7 @@ using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
-    public class IdMapModel : MemberMapModel
+    public class IdMapModel : ConvertibleMemberMapModel
     {
         /// <summary>
         /// Gets or sets the generator.

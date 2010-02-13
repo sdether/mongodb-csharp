@@ -5,18 +5,11 @@ using System.Text;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
-    public class ManyToOneMapModel : PersistentMemberMapModel
+    public class ParentMemberMapModel : MemberMapModel
     {
-        public bool IsLazy { get; set; }
-
-        public ManyToOneMapModel()
-        {
-            this.IsLazy = true;
-        }
-
         public override void Accept(IMapModelVisitor visitor)
         {
-            visitor.ProcessManyToOne(this);
+            visitor.ProcessParentMember(this);
         }
     }
 }

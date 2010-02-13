@@ -13,10 +13,13 @@ namespace MongoDB.Framework.Mapping.Visitors
         public virtual void Visit(IdMap idMap)
         { }
 
-        public virtual void Visit(MemberMap memberMap)
+        public virtual void Visit(ValueTypeMemberMap memberMap)
         { }
 
         public virtual void Visit(ExtendedPropertiesMap extendedPropertiesMap)
+        { }
+
+        public virtual void Visit(ParentMemberMap parentMemberMap)
         { }
 
         public virtual void Visit(SimpleValueType simpleValueType)

@@ -27,7 +27,7 @@ namespace MongoDB.Framework.Mapping.Visitors
             this.Visit(classMap);
         }
 
-        public override void Visit(MemberMap memberMap)
+        public override void Visit(ValueTypeMemberMap memberMap)
         {
             if (memberMap.ValueType is NestedClassValueType)
             {

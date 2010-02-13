@@ -6,7 +6,7 @@ using MongoDB.Framework.Configuration.Mapping;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
-    public abstract class FluentMember<TModel, TFluent> : FluentBase<TModel> where TModel : MemberMapModelBase
+    public abstract class FluentMember<TModel, TFluent> : FluentBase<TModel> where TModel : PersistentMemberMapModel
     {
         protected abstract TFluent Fluent { get; }
 

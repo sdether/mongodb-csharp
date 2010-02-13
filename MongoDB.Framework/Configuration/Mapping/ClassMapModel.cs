@@ -29,7 +29,7 @@ namespace MongoDB.Framework.Configuration.Mapping
         /// Gets the value maps.
         /// </summary>
         /// <value>The value maps.</value>
-        public List<MemberMapModel> ValueMaps { get; private set; }
+        public List<ConvertibleMemberMapModel> ValueMaps { get; private set; }
 
         /// <summary>
         /// Gets the type.
@@ -45,7 +45,7 @@ namespace MongoDB.Framework.Configuration.Mapping
         {
             this.CollectionMaps = new List<CollectionMemberMapModel>();
             this.ManyToOneMaps = new List<ManyToOneMapModel>();
-            this.ValueMaps = new List<MemberMapModel>();
+            this.ValueMaps = new List<ConvertibleMemberMapModel>();
             this.Type = type;
         }
 

@@ -9,8 +9,9 @@ namespace MongoDB.Framework.Mapping
     {
         void Visit(ClassMap classMap);
         void Visit(IdMap idMap);
-        void Visit(MemberMap memberMap);
+        void Visit(ValueTypeMemberMap memberMap);
         void Visit(ExtendedPropertiesMap extendedPropertiesMap);
+        void Visit(ParentMemberMap parentMemberMap);
         void Visit(SimpleValueType simpleValueType);
         void Visit(NestedClassValueType nestedClassValueType);
         void Visit(CollectionValueType collectionValueType);

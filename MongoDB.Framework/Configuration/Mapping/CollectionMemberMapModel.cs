@@ -7,7 +7,7 @@ using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
-    public class CollectionMemberMapModel : MemberMapModelBase
+    public class CollectionMemberMapModel : PersistentMemberMapModel
     {
         public ICollectionType CollectionType { get; set; }
 

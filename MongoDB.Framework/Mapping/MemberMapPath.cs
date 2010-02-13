@@ -18,7 +18,7 @@ namespace MongoDB.Framework.Mapping
         private IMappingStore mappingStore;
         private IEnumerable<string> memberNames;
 
-        private List<MemberMapBase> memberMaps;
+        private List<PersistentMemberMap> memberMaps;
 
         #endregion
 
@@ -110,12 +110,14 @@ namespace MongoDB.Framework.Mapping
         /// <param name="memberNames">The member names.</param>
         private void Initialize(IEnumerable<string> memberNames)
         {
-            this.memberMaps = new List<MemberMapBase>();
+            this.memberMaps = new List<PersistentMemberMap>();
             var classMap = this.mappingStore.GetClassMapFor(this.type);
 
             var memberNamesEnumerator = memberNames.GetEnumerator();
             memberNamesEnumerator.MoveNext();
-            var currentMemberMap = classMap.GetMemberMapBaseFromMemberName(memberNamesEnumerator.Current);
+            var currentMemberMap = classMap.GetMemberMapBaseFromMemberName(memberNamesEnumerator.Current) as PersistentMemberMap;
+            if (currentMemberMap == null)
+                throw new InvalidOperationException("Only persistent member maps are allowed.");
             this.Key = currentMemberMap.Key;
             this.memberMaps.Add(currentMemberMap);
 
@@ -133,13 +135,15 @@ namespace MongoDB.Framework.Mapping
         /// <param name="currentMemberMap">The current member map.</param>
         /// <param name="nextMemberName">Name of the next member.</param>
         /// <returns></returns>
-        private MemberMapBase GetNextMemberMap(MemberMapBase currentMemberMap, string nextMemberName)
+        private PersistentMemberMap GetNextMemberMap(PersistentMemberMap currentMemberMap, string nextMemberName)
         {
-            var memberMap = currentMemberMap as MemberMap;
+            var memberMap = currentMemberMap as ValueTypeMemberMap;
             if (memberMap != null && memberMap.ValueType is NestedClassValueType)
             {
                 var nestedClassMap = ((NestedClassValueType)memberMap.ValueType).NestedClassMap;
-                currentMemberMap = nestedClassMap.GetMemberMapBaseFromMemberName(nextMemberName);
+                currentMemberMap = nestedClassMap.GetMemberMapBaseFromMemberName(nextMemberName) as PersistentMemberMap;
+                if (currentMemberMap == null)
+                    throw new InvalidOperationException("Only persistent member maps are allowed.");
                 this.Key += currentMemberMap.Key;
                 return currentMemberMap;
             }

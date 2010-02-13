@@ -57,7 +57,7 @@ namespace MongoDB.Framework.Mapping.Visitors
             document[discriminatorKey] = discriminator;
         }
 
-        public override void Visit(MemberMap memberMap)
+        public override void Visit(ValueTypeMemberMap memberMap)
         {
             var oldValue = this.value;
             this.value = memberMap.MemberGetter(this.entity);

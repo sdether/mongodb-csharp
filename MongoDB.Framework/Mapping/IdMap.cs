@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping
 {
-    public class IdMap : MemberMapBase
+    public class IdMap : PersistentMemberMap
     {
         /// <summary>
         /// Gets the id generator.

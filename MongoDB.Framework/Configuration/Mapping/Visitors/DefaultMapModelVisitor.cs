@@ -22,7 +22,7 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
             idMapModel.Accept(this);
         }
 
-        public override void Visit(MemberMapModel memberMapModel)
+        public override void Visit(ConvertibleMemberMapModel memberMapModel)
         {
             memberMapModel.Accept(this);
         }
@@ -40,6 +40,11 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
         public override void Visit(NestedClassMapModel nestedClassMapModel)
         {
             nestedClassMapModel.Accept(this);
+        }
+
+        public override void Visit(ParentMemberMapModel parentMemberMapModel)
+        {
+            parentMemberMapModel.Accept(this);
         }
 
         public override void Visit(RootClassMapModel rootClassMapModel)
