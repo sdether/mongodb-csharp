@@ -25,7 +25,7 @@ namespace MongoDB.Framework.Reflection
 
         public static MemberInfo GetSingleMember<TEntity>(string memberName)
         {
-            var members = typeof(TEntity).GetMember(memberName);
+            var members = typeof(TEntity).GetMember(memberName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             if (members.Length > 1)
                 throw new InvalidOperationException(string.Format("More than one member found with memberName {0}.", memberName));
 

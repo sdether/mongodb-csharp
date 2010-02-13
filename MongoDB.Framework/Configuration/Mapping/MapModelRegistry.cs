@@ -138,7 +138,6 @@ namespace MongoDB.Framework.Configuration.Mapping
                 if (superClassType != null)
                 {
                     this.nestedClassMapModels[superClassType].SubClassMaps.Add(sub);
-                    this.nestedClassMapModels.Add(sub.Type, nestedClassMapModels[superClassType]);
                     this.subClassMapModels.Remove(sub.Type);
                 }
             }
