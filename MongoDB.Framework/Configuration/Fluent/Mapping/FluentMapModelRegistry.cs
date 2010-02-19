@@ -11,54 +11,19 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
     public class FluentMapModelRegistry : MapModelRegistry
     {
-        private static readonly PropertyInfo rootModelPropertyInfo = typeof(FluentBase<RootClassMapModel>).GetProperty("Model");
-        private static readonly PropertyInfo nestedModelPropertyInfo = typeof(FluentBase<NestedClassMapModel>).GetProperty("Model");
-        private static readonly PropertyInfo subModelPropertyInfo = typeof(FluentBase<SubClassMapModel>).GetProperty("Model");
-
-        /// <summary>
-        /// Adds the maps from assembly containing the specified type.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        public FluentMapModelRegistry AddMapsFromAssemblyContaining<T>()
+        public FluentAssemblyHelper WithAssemblyContainingType<T>()
         {
-            this.AddMapsFromAssembly(typeof(T).Assembly);
-            return this;
+            return this.WithAssembly(typeof(T).Assembly);
         }
 
         /// <summary>
-        /// Adds the maps from assembly.
+        /// Withes the assembly.
         /// </summary>
         /// <param name="assembly">The assembly.</param>
-        public FluentMapModelRegistry AddMapsFromAssembly(Assembly assembly)
+        /// <returns></returns>
+        public FluentAssemblyHelper WithAssembly(Assembly assembly)
         {
-            var types = from t in assembly.GetTypes()
-                        where !t.IsInterface
-                            && !t.IsAbstract
-                            && t.BaseType != null
-                            && t.BaseType.IsGenericType
-                        select t;
-
-            foreach (var type in types)
-            {
-                var genDef = type.BaseType.GetGenericTypeDefinition();
-
-                if (typeof(FluentRootClass<>).IsAssignableFrom(genDef))
-                {
-                    var fluentRootClassMap = Activator.CreateInstance(type);
-                    this.AddRootClassMapModel((RootClassMapModel)rootModelPropertyInfo.GetValue(fluentRootClassMap, null));
-                }
-                else if (typeof(FluentNestedClass<>).IsAssignableFrom(genDef))
-                {
-                    var fluentNestedClassMap = Activator.CreateInstance(type);
-                    this.AddNestedClassMapModel((NestedClassMapModel)nestedModelPropertyInfo.GetValue(fluentNestedClassMap, null));
-                }
-                else if (typeof(FluentSubClass<>).IsAssignableFrom(genDef))
-                {
-                    var fluentSubClassMap = Activator.CreateInstance(type);
-                    this.AddSubClassMapModel((SubClassMapModel)subModelPropertyInfo.GetValue(fluentSubClassMap, null));
-                }
-            }
-            return this;
+            return new FluentAssemblyHelper(this, assembly);
         }
 
         /// <summary>

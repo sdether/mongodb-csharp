@@ -5,78 +5,99 @@ using System.Text;
 
 namespace MongoDB.Framework.Configuration.Mapping.Visitors
 {
-    public abstract class NullMapModelVisitor : IMapModelVisitor
+    public abstract class NullMapModelVisitor
     {
-        public virtual void ProcessRootClass(RootClassMapModel rootClassMapModel)
-        { }
+        private Dictionary<Type, Func<ModelNode, ModelNode>> funcs;
 
-        public virtual void ProcessNestedClass(NestedClassMapModel nestedClassMapModel)
-        { }
+        public NullMapModelVisitor()
+        {
+            this.funcs = new Dictionary<Type, Func<ModelNode, ModelNode>>()
+            {
+                { typeof(RootClassMapModel), m => VisitRootClass((RootClassMapModel)m) },
+                { typeof(NestedClassMapModel), m => VisitNestedClass((NestedClassMapModel)m) },
+                { typeof(SubClassMapModel), m => VisitSubClass((SubClassMapModel)m) },
+                { typeof(IdMapModel), m => VisitId((IdMapModel)m) },
+                { typeof(ExtendedPropertiesMapModel), m => VisitExtendedProperties((ExtendedPropertiesMapModel)m) },
+                { typeof(ConvertibleMemberMapModel), m => VisitConvertibleMember((ConvertibleMemberMapModel)m) },
+                { typeof(CollectionMemberMapModel), m => VisitCollectionMember((CollectionMemberMapModel)m) },
+                { typeof(PersistentMemberMapModel), m => VisitPersistentMember((PersistentMemberMapModel)m) },
+                { typeof(ManyToOneMapModel), m => VisitManyToOneMember((ManyToOneMapModel)m) },
+                { typeof(ParentMemberMapModel), m => VisitParentMember((ParentMemberMapModel)m) },
+                { typeof(IndexModel), m => VisitIndex((IndexModel)m) }
+            };
+        }
 
-        public virtual void ProcessSubClass(SubClassMapModel subClassMapModel)
-        { }
+        protected virtual ModelNode Visit(ModelNode modelNode)
+        {
+            if (modelNode == null)
+                return null;
 
-        public virtual void ProcessSuperClass(SuperClassMapModel superClassMapModel)
-        { }
+            Func<ModelNode, ModelNode> func;
+            if(!funcs.TryGetValue(modelNode.GetType(), out func))
+                throw new NotSupportedException();
 
-        public virtual void ProcessClass(ClassMapModel classMapModel)
-        { }
+            return func(modelNode);
+        }
 
-        public virtual void ProcessId(IdMapModel idMapModel)
-        { }
+        protected virtual RootClassMapModel VisitRootClass(RootClassMapModel model)
+        {
+            return model;
+        }
 
-        public virtual void ProcessMember(ConvertibleMemberMapModel memberMapModel)
-        { }
+        protected virtual NestedClassMapModel VisitNestedClass(NestedClassMapModel model)
+        {
+            return model;
+        }
 
-        public virtual void ProcessCollectionMember(CollectionMemberMapModel collectionMemberMapModel)
-        { }
+        protected virtual SubClassMapModel VisitSubClass(SubClassMapModel model)
+        {
+            return model;
+        }
 
-        public virtual void ProcessManyToOne(ManyToOneMapModel manyToOneMapModel)
-        { }
+        protected virtual IdMapModel VisitId(IdMapModel model)
+        {
+            return model;
+        }
 
-        public virtual void ProcessExtendedProperties(ExtendedPropertiesMapModel extendedPropertiesMapModel)
-        { }
+        protected virtual ExtendedPropertiesMapModel VisitExtendedProperties(ExtendedPropertiesMapModel model)
+        {
+            return model;
+        }
 
-        public virtual void ProcessParentMember(ParentMemberMapModel parentMemberMapModel)
-        { }
+        protected virtual ConvertibleMemberMapModel VisitConvertibleMember(ConvertibleMemberMapModel model)
+        {
+            return model;
+        }
 
-        public virtual void ProcessIndex(IndexModel indexModel)
-        { }
+        protected virtual CollectionMemberMapModel VisitCollectionMember(CollectionMemberMapModel model)
+        {
+            return model;
+        }
 
-        public virtual void Visit(RootClassMapModel rootClassMapModel)
-        { }
+        protected virtual ManyToOneMapModel VisitManyToOneMember(ManyToOneMapModel model)
+        {
+            return model;
+        }
 
-        public virtual void Visit(NestedClassMapModel nestedClassMapModel)
-        { }
+        protected virtual PersistentMemberMapModel VisitPersistentMember(PersistentMemberMapModel model)
+        {
+            return model;
+        }
 
-        public virtual void Visit(SubClassMapModel subClassMapModel)
-        { }
+        protected virtual ParentMemberMapModel VisitParentMember(ParentMemberMapModel model)
+        {
+            return model;
+        }
 
-        public virtual void Visit(SuperClassMapModel superClassMapModel)
-        { }
+        protected virtual IndexModel VisitIndex(IndexModel model)
+        {
+            return model;
+        }
 
-        public virtual void Visit(ClassMapModel classMapModel)
-        { }
-
-        public virtual void Visit(IdMapModel idMapModel)
-        { }
-
-        public virtual void Visit(ConvertibleMemberMapModel memberMapModel)
-        { }
-
-        public virtual void Visit(CollectionMemberMapModel collectionMemberMapModel)
-        { }
-
-        public virtual void Visit(ManyToOneMapModel manyToOneMapModel)
-        { }
-
-        public virtual void Visit(ExtendedPropertiesMapModel extendedPropertiesMapModel)
-        { }
-
-        public virtual void Visit(ParentMemberMapModel parentMemberMapModel)
-        { }
-
-        public virtual void Visit(IndexModel indexModel)
-        { }
+        protected void VisitList<T>(List<T> list) where T : ModelNode
+        {
+            for(int i = 0; i < list.Count; i++)
+                list[i] = (T)this.Visit(list[i]);
+        }
     }
 }

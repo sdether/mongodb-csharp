@@ -100,9 +100,9 @@ namespace MongoDB.Framework.Queries
                 Map(x => x.Title).Key("title");
                 Map(x => x.Body).Key("body");
                 Map(x => x.PostDate).Key("date");
-                Collection(x => x.Comments).Key("comments");
+                Map(x => x.Comments).Key("comments");
 
-                Reference(x => x.Blog).Key("blogRef");
+                Map(x => x.Blog).Key("blogRef");
             }
         }
 
@@ -112,7 +112,7 @@ namespace MongoDB.Framework.Queries
             {
                 Map(x => x.CommenterEmail).Key("email");
                 Map(x => x.Comment).Key("body");
-                Collection(x => x.Comments).Key("comments");
+                Map(x => x.Comments).Key("comments");
             }
         }
 

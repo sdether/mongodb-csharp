@@ -7,9 +7,6 @@ namespace MongoDB.Framework.Configuration.Mapping
 {
     public class ParentMemberMapModel : MemberMapModel
     {
-        public override void Accept(IMapModelVisitor visitor)
-        {
-            visitor.ProcessParentMember(this);
-        }
+
     }
 }

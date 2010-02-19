@@ -19,10 +19,5 @@ namespace MongoDB.Framework.Configuration.Mapping
         {
             this.Parts = new List<KeyValuePair<string, IndexDirection>>();
         }
-
-        public override void Accept(IMapModelVisitor visitor)
-        {
-            visitor.ProcessIndex(this);
-        }
     }
 }

@@ -101,8 +101,8 @@ namespace MongoDB.Framework
                 Map(x => x.Name);
                 Map(x => x.PhoneNumber);
 
-                Collection(x => x.AlternatePhoneNumbers);
-                Collection(x => x.Aliases);
+                Map(x => x.AlternatePhoneNumbers);
+                Map(x => x.Aliases);
 
                 ExtendedProperties(x => x.ExtendedProperties);
             }

@@ -10,12 +10,5 @@ namespace MongoDB.Framework.Configuration.Mapping
         public SubClassMapModel(Type type)
             : base(type)
         { }
-
-        public override void Accept(IMapModelVisitor visitor)
-        {
-            visitor.ProcessSubClass(this);
-
-            base.Accept(visitor);
-        }
     }
 }

@@ -87,7 +87,7 @@ namespace MongoDB.Framework.Updates
             public EntityMap()
             {
                 Id(x => x.Id);
-                Reference(x => x.Reference).NotLazy();
+                Map(x => x.Reference).AsReference().NotLazy();
             }
         }
 

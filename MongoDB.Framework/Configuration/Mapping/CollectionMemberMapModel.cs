@@ -14,10 +14,5 @@ namespace MongoDB.Framework.Configuration.Mapping
         public Type ElementType { get; set; }
 
         public ValueTypeBase ElementValueType { get; set; }
-
-        public override void Accept(IMapModelVisitor visitor)
-        {
-            visitor.ProcessCollectionMember(this);
-        }
     }
 }

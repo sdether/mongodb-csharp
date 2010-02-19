@@ -7,64 +7,35 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
 {
     public abstract class DefaultMapModelVisitor : NullMapModelVisitor
     {
-        public override void Visit(ClassMapModel classMapModel)
+        protected override RootClassMapModel VisitRootClass(RootClassMapModel model)
         {
-            classMapModel.Accept(this);
+            this.VisitList(model.Indexes);
+            if(model.IdMap != null)
+                model.IdMap = (IdMapModel)this.Visit(model.IdMap);
+            if(model.ExtendedPropertiesMap != null)
+                model.ExtendedPropertiesMap = (ExtendedPropertiesMapModel)this.Visit(model.ExtendedPropertiesMap);
+            this.VisitList(model.PersistentMemberMaps);
+            this.VisitList(model.SubClassMaps);
+            return model;
         }
 
-        public override void Visit(ExtendedPropertiesMapModel extendedPropertiesMapModel)
+        protected override NestedClassMapModel VisitNestedClass(NestedClassMapModel model)
         {
-            extendedPropertiesMapModel.Accept(this);
+            if(model.ParentMap != null)
+                model.ParentMap = (ParentMemberMapModel)this.Visit(model.ParentMap);
+            if (model.IdMap != null)
+                model.IdMap = (IdMapModel)this.Visit(model.IdMap);
+            if (model.ExtendedPropertiesMap != null)
+                model.ExtendedPropertiesMap = (ExtendedPropertiesMapModel)this.Visit(model.ExtendedPropertiesMap);
+            this.VisitList(model.PersistentMemberMaps);
+            this.VisitList(model.SubClassMaps);
+            return model;
         }
 
-        public override void Visit(IdMapModel idMapModel)
+        protected override SubClassMapModel VisitSubClass(SubClassMapModel model)
         {
-            idMapModel.Accept(this);
-        }
-
-        public override void Visit(ConvertibleMemberMapModel memberMapModel)
-        {
-            memberMapModel.Accept(this);
-        }
-
-        public override void Visit(CollectionMemberMapModel collectionMemberMapModel)
-        {
-            collectionMemberMapModel.Accept(this);
-        }
-
-        public override void Visit(ManyToOneMapModel manyToOneMapModel)
-        {
-            manyToOneMapModel.Accept(this);
-        }
-
-        public override void Visit(NestedClassMapModel nestedClassMapModel)
-        {
-            nestedClassMapModel.Accept(this);
-        }
-
-        public override void Visit(ParentMemberMapModel parentMemberMapModel)
-        {
-            parentMemberMapModel.Accept(this);
-        }
-
-        public override void Visit(RootClassMapModel rootClassMapModel)
-        {
-            rootClassMapModel.Accept(this);
-        }
-
-        public override void Visit(SubClassMapModel subClassMapModel)
-        {
-            subClassMapModel.Accept(this);
-        }
-
-        public override void Visit(SuperClassMapModel superClassMapModel)
-        {
-            superClassMapModel.Accept(this);
-        }
-
-        public override void Visit(IndexModel indexModel)
-        {
-            indexModel.Accept(this);
+            this.VisitList(model.PersistentMemberMaps);
+            return model;
         }
     }
 }

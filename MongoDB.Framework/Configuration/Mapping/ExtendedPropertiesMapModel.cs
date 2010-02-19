@@ -11,10 +11,5 @@ namespace MongoDB.Framework.Configuration.Mapping
         public MemberInfo Getter { get; set; }
 
         public MemberInfo Setter { get; set; }
-
-        public override void Accept(IMapModelVisitor visitor)
-        {
-            visitor.ProcessExtendedProperties(this);
-        }
     }
 }

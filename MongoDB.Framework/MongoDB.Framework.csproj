@@ -57,9 +57,52 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\Fluent\Mapping\Auto\FluentAutoDiscriminator.cs" />
+    <Compile Include="Configuration\Fluent\Mapping\FluentConvertibleMember.cs" />
+    <Compile Include="Configuration\Fluent\Mapping\FluentMember.cs" />
+    <Compile Include="Configuration\Mapping\AutoMapModel.cs" />
+    <Compile Include="Configuration\Fluent\Mapping\FluentAssemblyHelper.cs" />
+    <Compile Include="Configuration\Fluent\Mapping\Auto\FluentAutoMap.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\CamelCaseMemberKeyConvention.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\Mapping\Conventions\ConventionBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\Mapping\Conventions\TypeNameCollectionNameConvention.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\DefaultCollectionConvention.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\DefaultValueConverterConvention.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\CustomDiscriminatorConvention.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\Mapping\Conventions\ICollectionConvention.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\ICollectionNameConvention.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\IConvention.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\Mapping\Conventions\IDiscriminatorConvention.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\Mapping\Conventions\IExtendedPropertiesConvention.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\IIdConvention.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\IMemberKeyConvention.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\Mapping\Conventions\IValueConverterConvention.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\MemberNameMemberKeyConvention.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\Mapping\Conventions\NullDiscriminatorConvention.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\NullExtendedPropertiesConvention.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\CamelCaseCollectionNameConvention.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\NullIdMapConvention.cs" />
     <Compile Include="Configuration\Mapping\IMapModelRegistry.cs" />
+    <Compile Include="Configuration\Mapping\Inflector.cs" />
+    <Compile Include="Configuration\Mapping\MapModelRegistry2.cs" />
     <Compile Include="Configuration\Mapping\MemberMapModel.cs" />
     <Compile Include="Configuration\Mapping\ParentMemberMapModel.cs" />
+    <Compile Include="Configuration\Mapping\Visitors\DefaultMapModelVisitor.cs" />
+    <Compile Include="Configuration\Mapping\Visitors\MapModelConventionFiller.cs" />
     <Compile Include="Mapping\ClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -90,9 +133,6 @@
     <Compile Include="Configuration\Fluent\Mapping\FluentCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Fluent\Mapping\FluentMap.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Configuration\Fluent\Mapping\FluentGeneratedBy.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -105,7 +145,7 @@
     <Compile Include="Configuration\Fluent\Mapping\FluentMapModelRegistry.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Fluent\Mapping\FluentMember.cs" />
+    <Compile Include="Configuration\Fluent\Mapping\FluentPersistentMember.cs" />
     <Compile Include="Configuration\Fluent\Mapping\FluentNestedClass.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -206,9 +246,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Mapping\ConvertibleMemberMapModel.cs" />
-    <Compile Include="Configuration\Mapping\Visitors\DefaultMapModelVisitor.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Configuration\Mapping\Visitors\NullMapModelVisitor.cs">
       <SubType>Code</SubType>
     </Compile>

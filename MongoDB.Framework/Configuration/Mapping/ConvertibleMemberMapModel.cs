@@ -10,10 +10,5 @@ namespace MongoDB.Framework.Configuration.Mapping
     public class ConvertibleMemberMapModel : PersistentMemberMapModel
     {
         public IValueConverter ValueConverter { get; set; }
-
-        public override void Accept(IMapModelVisitor visitor)
-        {
-            visitor.ProcessMember(this);
-        }
     }
 }

@@ -20,19 +20,5 @@ namespace MongoDB.Framework.Configuration.Mapping
         {
             this.Indexes = new List<IndexModel>();
         }
-
-        /// <summary>
-        /// Accepts the specified visitor.
-        /// </summary>
-        /// <param name="visitor">The visitor.</param>
-        public override void Accept(IMapModelVisitor visitor)
-        {
-            visitor.ProcessRootClass(this);
-
-            foreach (var index in this.Indexes)
-                visitor.Visit(index);
-
-            base.Accept(visitor);
-        }
     }
 }

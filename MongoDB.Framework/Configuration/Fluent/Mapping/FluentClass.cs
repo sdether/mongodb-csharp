@@ -23,73 +23,27 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
             : base(model)
         { }
 
-        public FluentCollection Collection(string memberName)
-        {
-            var memberInfo = ReflectionUtil.GetSingleMember<TEntity>(memberName);
-            return this.Collection(memberInfo);
-        }
-
-        public FluentCollection Collection(MemberInfo memberInfo)
-        {
-            var memberType = ReflectionUtil.GetMemberValueType(memberInfo);
-            var collection = new FluentCollection();
-            collection.Model.Getter = memberInfo;
-            collection.Model.Setter = memberInfo;
-
-            this.Model.CollectionMaps.Add(collection.Model);
-            return collection;
-        }
-
-        public FluentCollection Collection(Expression<Func<TEntity, object>> member)
-        {
-            var memberInfo = ReflectionUtil.GetSingleMember(member);
-            return this.Collection(memberInfo);
-        }
-
-        public FluentMap Map(string memberName)
+        public FluentMember Map(string memberName)
         {
             var memberInfo = ReflectionUtil.GetSingleMember<TEntity>(memberName);
             return this.Map(memberInfo);
         }
 
-        public FluentMap Map(MemberInfo memberInfo)
+        public FluentMember Map(MemberInfo memberInfo)
         {
             var memberType = ReflectionUtil.GetMemberValueType(memberInfo);
-            var value = new FluentMap();
+            var value = new FluentMember(this.Model);
             value.Model.Getter = memberInfo;
             value.Model.Setter = memberInfo;
 
-            this.Model.ValueMaps.Add(value.Model);
+            this.Model.PersistentMemberMaps.Add(value.Model);
             return value;
         }
 
-        public FluentMap Map(Expression<Func<TEntity, object>> member)
+        public FluentMember Map(Expression<Func<TEntity, object>> member)
         {
             var memberInfo = ReflectionUtil.GetSingleMember(member);
             return this.Map(memberInfo);
-        }
-
-        public FluentReference Reference(string memberName)
-        {
-            var memberInfo = ReflectionUtil.GetSingleMember<TEntity>(memberName);
-            return this.Reference(memberInfo);
-        }
-
-        public FluentReference Reference(MemberInfo memberInfo)
-        {
-            var memberType = ReflectionUtil.GetMemberValueType(memberInfo);
-            var reference = new FluentReference();
-            reference.Model.Getter = memberInfo;
-            reference.Model.Setter = memberInfo;
-
-            this.Model.ManyToOneMaps.Add(reference.Model);
-            return reference;
-        }
-
-        public FluentReference Reference(Expression<Func<TEntity, object>> member)
-        {
-            var memberInfo = ReflectionUtil.GetSingleMember(member);
-            return this.Reference(memberInfo);
         }
     }
 }

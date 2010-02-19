@@ -1,29 +1,74 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
+
 using MongoDB.Framework.Configuration.Mapping;
+using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
-    public abstract class FluentMember<TModel, TFluent> : FluentBase<TModel> where TModel : PersistentMemberMapModel
+    public class FluentMember : FluentPersistentMember<PersistentMemberMapModel, FluentMember>
     {
-        protected abstract TFluent Fluent { get; }
+        private ClassMapModel classMapModel;
 
-        public FluentMember(TModel model)
-            : base(model)
-        { }
-
-        public TFluent Key(string key)
+        protected override FluentMember Fluent
         {
-            this.Model.Key = key;
-            return this.Fluent;
+            get { return this; }
         }
 
-        public TFluent PersistNull(bool value)
+        public FluentMember(ClassMapModel classMapModel)
+            : base(new PersistentMemberMapModel())
         {
-            this.Model.PersistNull = value;
-            return this.Fluent;
+            this.classMapModel = classMapModel;
+        }
+
+        public FluentCollection AsCollection()
+        {
+            var value = new FluentCollection();
+            value.Model.Getter = this.Model.Getter;
+            value.Model.Setter = this.Model.Setter;
+            value.Model.Key = this.Model.Key;
+            value.Model.PersistNull = this.Model.PersistNull;
+
+            classMapModel.PersistentMemberMaps.Remove(this.Model);
+            classMapModel.PersistentMemberMaps.Add(value.Model);
+            return value;
+        }
+
+        public FluentReference AsReference()
+        {
+            var value = new FluentReference();
+            value.Model.Getter = this.Model.Getter;
+            value.Model.Setter = this.Model.Setter;
+            value.Model.Key = this.Model.Key;
+            value.Model.PersistNull = this.Model.PersistNull;
+
+            classMapModel.PersistentMemberMaps.Remove(this.Model);
+            classMapModel.PersistentMemberMaps.Add(value.Model);
+            return value;
+        }
+
+        public FluentConvertibleMember ConvertWith<TConverter>() where TConverter : IValueConverter, new()
+        {
+            return this.ConvertWith(new TConverter());
+        }
+
+        public FluentConvertibleMember ConvertWith(IValueConverter valueConverter)
+        {
+            var value = new FluentConvertibleMember();
+            value.Model.Getter = this.Model.Getter;
+            value.Model.Setter = this.Model.Setter;
+            value.Model.Key = this.Model.Key;
+            value.Model.PersistNull = this.Model.PersistNull;
+            value.Model.ValueConverter = valueConverter;
+
+            classMapModel.PersistentMemberMaps.Remove(this.Model);
+            classMapModel.PersistentMemberMaps.Add(value.Model);
+            return value;
         }
     }
 }

@@ -14,16 +14,25 @@ namespace MongoDB.Framework.Mapping
         public NestedClassMap NestedClassMap { get; private set; }
 
         /// <summary>
+        /// Gets or sets the value converter.
+        /// </summary>
+        /// <value>The value converter.</value>
+        public IValueConverter ValueConverter { get; private set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="NestedClassValueType"/> class.
         /// </summary>
         /// <param name="nestedClassMap">The nested class map.</param>
-        public NestedClassValueType(NestedClassMap nestedClassMap)
+        public NestedClassValueType(NestedClassMap nestedClassMap, IValueConverter valueConverter)
             : base(nestedClassMap.Type)
         {
             if (nestedClassMap == null)
                 throw new ArgumentNullException("nestedClassMap");
+            if (valueConverter == null)
+                throw new ArgumentNullException("valueConverter");
 
             this.NestedClassMap = nestedClassMap;
+            this.ValueConverter = valueConverter;
         }
 
         /// <summary>

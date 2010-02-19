@@ -11,23 +11,25 @@ using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
-    public class FluentMap : FluentMember<ConvertibleMemberMapModel, FluentMap>
+    public class FluentConvertibleMember : FluentPersistentMember<ConvertibleMemberMapModel, FluentConvertibleMember>
     {
-        protected override FluentMap Fluent
+        private ClassMapModel classMapModel;
+
+        protected override FluentConvertibleMember Fluent
         {
             get { return this; }
         }
 
-        public FluentMap()
+        public FluentConvertibleMember()
             : base(new ConvertibleMemberMapModel())
         { }
 
-        public FluentMap CustomConverterIs<TConverter>() where TConverter : IValueConverter, new()
+        public FluentConvertibleMember ConvertWith<TConverter>() where TConverter : IValueConverter, new()
         {
-            return this.CustomConverterIs(new TConverter());
+            return this.ConvertWith(new TConverter());
         }
 
-        public FluentMap CustomConverterIs(IValueConverter valueConverter)
+        public FluentConvertibleMember ConvertWith(IValueConverter valueConverter)
         {
             this.Model.ValueConverter = valueConverter;
             return this;

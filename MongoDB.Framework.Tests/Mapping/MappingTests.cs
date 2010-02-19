@@ -21,7 +21,8 @@ namespace MongoDB.Framework.Configuration.Mapping
         public void Should_map_from_document_to_entity()
         {
             var fluentMapModelRegistry = new FluentMapModelRegistry()
-                .AddMapsFromAssemblyContaining<PartyMap>();
+                .WithAssemblyContainingType<PartyMap>().AddMaps();
+
             var configuration = new MongoConfiguration("tests", fluentMapModelRegistry);
 
             Guid id = Guid.NewGuid();
@@ -68,7 +69,8 @@ namespace MongoDB.Framework.Configuration.Mapping
         public void Should_map_from_entity_to_document()
         {
             var fluentMapModelRegistry = new FluentMapModelRegistry()
-                .AddMapsFromAssemblyContaining<PartyMap>();
+                .WithAssemblyContainingType<PartyMap>().AddMaps();
+
             var configuration = new MongoConfiguration("tests", fluentMapModelRegistry);
 
             var person = new Person()
@@ -128,9 +130,8 @@ namespace MongoDB.Framework.Configuration.Mapping
                 Map(x => x.Name);
                 Map(x => x.PhoneNumber);
 
-                Collection(x => x.AlternatePhoneNumbers);
-                Collection(x => x.Aliases);
-
+                Map(x => x.AlternatePhoneNumbers).AsCollection();
+                Map(x => x.Aliases);
 
                 ExtendedProperties(x => x.ExtendedProperties);
             }

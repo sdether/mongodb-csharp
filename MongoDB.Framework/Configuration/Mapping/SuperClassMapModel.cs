@@ -20,23 +20,5 @@ namespace MongoDB.Framework.Configuration.Mapping
         {
             this.SubClassMaps = new List<SubClassMapModel>();
         }
-
-        /// <summary>
-        /// Accepts the specified visitor.
-        /// </summary>
-        /// <param name="visitor">The visitor.</param>
-        public override void Accept(IMapModelVisitor visitor)
-        {
-            visitor.ProcessSuperClass(this);
-
-            visitor.Visit(this.IdMap);
-
-            foreach (var subClassMap in this.SubClassMaps)
-                visitor.Visit(subClassMap);
-
-            visitor.Visit(this.ExtendedPropertiesMap);
-
-            base.Accept(visitor);
-        }
     }
 }
