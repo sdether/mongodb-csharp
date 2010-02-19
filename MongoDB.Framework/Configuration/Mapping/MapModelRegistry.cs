@@ -157,7 +157,7 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         private void ApplyConventions()
         {
-            var conventionFiller = new MapModelConventionFiller(this.rootClassMapModels.Keys);
+            var conventionFiller = new MapModelConventionRunner(this.rootClassMapModels.Keys);
             foreach (var rootClassMapModel in this.rootClassMapModels.Values)
                 conventionFiller.ApplyConventions(rootClassMapModel.ClassMapModel, rootClassMapModel.AutoMapModel);
 

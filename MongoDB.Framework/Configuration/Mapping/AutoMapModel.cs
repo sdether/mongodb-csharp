@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 
 using MongoDB.Framework.Configuration.Mapping.Conventions;
+using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
@@ -89,6 +90,8 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         #endregion
 
+        #region Public Properties
+
         public ICollectionConvention CollectionConvention { get; set; }
 
         public ICollectionNameConvention CollectionNameConvention { get; set; }
@@ -103,12 +106,19 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         public IValueConverterConvention ValueConverterConvention { get; set; }
 
+        #endregion
+
+        #region Public Methods
+
         public ICollectionConvention GetCollectionConvention(Type type)
         {
+            var conventions = new List<ICollectionConvention>();
             if (this.CollectionConvention != null && this.CollectionConvention.Matches(type))
-                return this.CollectionConvention;
+                conventions.Add(this.CollectionConvention);
 
-            return globalCollectionConventions.First(c => c.Matches(type));
+            conventions.AddRange(globalCollectionConventions.Where(c => c.Matches(type)));
+
+            return new CompositeCollectionConvention(conventions);
         }
 
         public ICollectionNameConvention GetCollectionNameConvention(Type type)
@@ -121,26 +131,35 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         public IDiscriminatorConvention GetDiscriminatorConvention(Type type)
         {
+            var conventions = new List<IDiscriminatorConvention>();
             if (this.DiscriminatorConvention != null && this.DiscriminatorConvention.Matches(type))
-                return this.DiscriminatorConvention;
+                conventions.Add(this.DiscriminatorConvention);
 
-            return globalDiscriminatorConventions.First(c => c.Matches(type));
+            conventions.AddRange(globalDiscriminatorConventions.Where(c => c.Matches(type)));
+
+            return new CompositeDiscriminatorConvention(conventions);
         }
 
         public IExtendedPropertiesConvention GetExtendedPropertiesConvention(Type type)
         {
+            var conventions = new List<IExtendedPropertiesConvention>();
             if (this.ExtendedPropertiesConvention != null && this.ExtendedPropertiesConvention.Matches(type))
-                return this.ExtendedPropertiesConvention;
+                conventions.Add(this.ExtendedPropertiesConvention);
 
-            return globalExtendedPropertiesConventions.First(c => c.Matches(type));
+            conventions.AddRange(globalExtendedPropertiesConventions.Where(c => c.Matches(type)));
+
+            return new CompositeExtendedPropertiesConvention(conventions);
         }
 
         public IIdConvention GetIdConvention(Type type)
         {
+            var conventions = new List<IIdConvention>();
             if (this.IdConvention != null && this.IdConvention.Matches(type))
-                return this.IdConvention;
+                conventions.Add(this.IdConvention);
 
-            return globalIdConventions.First(c => c.Matches(type));
+            conventions.AddRange(globalIdConventions.Where(c => c.Matches(type)));
+
+            return new CompositeIdConvention(conventions);
         }
 
         public IMemberKeyConvention GetMemberKeyConvention(MemberInfo member)
@@ -158,5 +177,104 @@ namespace MongoDB.Framework.Configuration.Mapping
 
             return globalValueConverterConventions.First(c => c.Matches(member));
         }
+
+        #endregion
+
+        #region Private Nested Classes
+
+        private abstract class CompositeConvention<TCollection, TConvention> : IConvention<TConvention> where TCollection : IConvention<TConvention>
+        {
+            protected readonly IEnumerable<TCollection> conventions;
+
+            public CompositeConvention(IEnumerable<TCollection> conventions)
+            {
+                this.conventions = conventions;
+            }
+
+            public bool Matches(TConvention topic)
+            {
+                return true;
+            }
+        }
+
+        private class CompositeCollectionConvention : CompositeConvention<ICollectionConvention, Type>, ICollectionConvention
+        {
+            public CompositeCollectionConvention(IEnumerable<ICollectionConvention> conventions)
+                : base(conventions)
+            { }
+
+            public ICollectionType GetCollectionType(Type type)
+            {
+                return this.conventions.First(c => c.IsCollection(type)).GetCollectionType(type);
+            }
+
+            public Type GetElementType(Type type)
+            {
+                return this.conventions.First(c => c.IsCollection(type)).GetElementType(type);
+            }
+
+            public bool IsCollection(Type type)
+            {
+                return this.conventions.Any(c => c.IsCollection(type));
+            }
+        }
+
+        private class CompositeDiscriminatorConvention : CompositeConvention<IDiscriminatorConvention, Type>, IDiscriminatorConvention
+        {
+            public CompositeDiscriminatorConvention(IEnumerable<IDiscriminatorConvention> conventions)
+                : base(conventions)
+            { }
+
+            public string GetDiscriminatorKey(Type type)
+            {
+                return this.conventions.First(c => c.HasDiscriminator(type)).GetDiscriminatorKey(type);
+            }
+
+            public object GetDiscriminator(Type type)
+            {
+                return this.conventions.First(c => c.HasDiscriminator(type)).GetDiscriminator(type);
+            }
+
+            public bool HasDiscriminator(Type type)
+            {
+                return this.conventions.Any(c => c.HasDiscriminator(type));
+            }
+        }
+
+        private class CompositeExtendedPropertiesConvention : CompositeConvention<IExtendedPropertiesConvention, Type>, IExtendedPropertiesConvention
+        {
+            public CompositeExtendedPropertiesConvention(IEnumerable<IExtendedPropertiesConvention> conventions)
+                : base(conventions)
+            { }
+
+            public ExtendedPropertiesMapModel GetExtendedPropertiesMapModel(Type type)
+            {
+                return this.conventions.First(c => c.HasExtendedProperties(type)).GetExtendedPropertiesMapModel(type);
+            }
+
+            public bool HasExtendedProperties(Type type)
+            {
+                return this.conventions.Any(c => c.HasExtendedProperties(type));
+            }
+        }
+
+        private class CompositeIdConvention : CompositeConvention<IIdConvention, Type>, IIdConvention
+        {
+            public CompositeIdConvention(IEnumerable<IIdConvention> conventions)
+                : base(conventions)
+            { }
+
+            public IdMapModel GetIdMapModel(Type type)
+            {
+                return this.conventions.First(c => c.HasId(type)).GetIdMapModel(type);
+            }
+
+            public bool HasId(Type type)
+            {
+                return this.conventions.Any(c => c.HasId(type));
+            }
+        }
+
+        #endregion
     }
 }

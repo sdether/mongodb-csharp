@@ -102,7 +102,7 @@
     <Compile Include="Configuration\Mapping\MemberMapModel.cs" />
     <Compile Include="Configuration\Mapping\ParentMemberMapModel.cs" />
     <Compile Include="Configuration\Mapping\Visitors\DefaultMapModelVisitor.cs" />
-    <Compile Include="Configuration\Mapping\Visitors\MapModelConventionFiller.cs" />
+    <Compile Include="Configuration\Mapping\Visitors\MapModelConventionRunner.cs" />
     <Compile Include="Mapping\ClassMap.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -7,12 +7,12 @@ using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration.Mapping.Visitors
 {
-    public class MapModelConventionFiller : DefaultMapModelVisitor
+    public class MapModelConventionRunner : DefaultMapModelVisitor
     {
         private AutoMapModel autoMapModel;
         private HashSet<Type> rootClassTypes;
 
-        public MapModelConventionFiller(IEnumerable<Type> rootClassTypes)
+        public MapModelConventionRunner(IEnumerable<Type> rootClassTypes)
         {
             if (rootClassTypes == null)
                 throw new ArgumentNullException("rootClassTypes");
