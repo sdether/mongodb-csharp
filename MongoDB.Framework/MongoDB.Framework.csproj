@@ -57,11 +57,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\Fluent\Mapping\Auto\FluentAutoId.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\FilteredMemberFinder.cs" />
     <Compile Include="Configuration\Fluent\Mapping\Auto\FluentAutoDiscriminator.cs" />
+    <Compile Include="Configuration\Fluent\Mapping\Auto\FluentAutoMemberFinder.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\IMemberFinder.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\NamedIdConvention.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\DefaultMemberFinder.cs" />
     <Compile Include="Configuration\Fluent\Mapping\FluentConvertibleMember.cs" />
     <Compile Include="Configuration\Fluent\Mapping\FluentMember.cs" />
     <Compile Include="Configuration\Mapping\AutoMapModel.cs" />
-    <Compile Include="Configuration\Fluent\Mapping\FluentAssemblyHelper.cs" />
+    <Compile Include="Configuration\Fluent\Mapping\FluentAssembly.cs" />
     <Compile Include="Configuration\Fluent\Mapping\Auto\FluentAutoMap.cs" />
     <Compile Include="Configuration\Mapping\Conventions\CamelCaseMemberKeyConvention.cs">
       <SubType>Code</SubType>
@@ -98,8 +104,8 @@
     <Compile Include="Configuration\Mapping\Conventions\NullIdMapConvention.cs" />
     <Compile Include="Configuration\Mapping\IMapModelRegistry.cs" />
     <Compile Include="Configuration\Mapping\Inflector.cs" />
-    <Compile Include="Configuration\Mapping\MapModelRegistry2.cs" />
     <Compile Include="Configuration\Mapping\MemberMapModel.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\NullMemberFinder.cs" />
     <Compile Include="Configuration\Mapping\ParentMemberMapModel.cs" />
     <Compile Include="Configuration\Mapping\Visitors\DefaultMapModelVisitor.cs" />
     <Compile Include="Configuration\Mapping\Visitors\MapModelConventionRunner.cs" />

@@ -6,14 +6,15 @@ using System.Reflection;
 
 using MongoDB.Framework.Configuration.Mapping;
 using MongoDB.Framework.Reflection;
+using MongoDB.Framework.Configuration.Fluent.Mapping.Auto;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
     public class FluentMapModelRegistry : MapModelRegistry
     {
-        public FluentAssemblyHelper WithAssemblyContainingType<T>()
+        public FluentMapModelRegistry WithAssemblyContainingType<T>(Action<FluentAssembly> config)
         {
-            return this.WithAssembly(typeof(T).Assembly);
+            return this.WithAssembly(typeof(T).Assembly, config);
         }
 
         /// <summary>
@@ -21,9 +22,23 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         /// </summary>
         /// <param name="assembly">The assembly.</param>
         /// <returns></returns>
-        public FluentAssemblyHelper WithAssembly(Assembly assembly)
+        public FluentMapModelRegistry WithAssembly(Assembly assembly, Action<FluentAssembly> config)
         {
-            return new FluentAssemblyHelper(this, assembly);
+            config(new FluentAssembly(this, assembly));
+            return this;
+        }
+
+        /// <summary>
+        /// Autoes the map as root class.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public FluentMapModelRegistry AutoMapAsRootClass<T>(Action<FluentAutoMap> config)
+        {
+            var model = new RootClassMapModel(typeof(T));
+            config(new FluentAutoMap(model.AutoMap));
+            this.AddRootClassMapModel(model);
+            return this;
         }
 
         /// <summary>

@@ -20,9 +20,9 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
             this.rootClassTypes = new HashSet<Type>(rootClassTypes);
         }
 
-        public void ApplyConventions(ClassMapModel classMapModel, AutoMapModel autoMapModel)
+        public void ApplyConventions(ClassMapModel classMapModel)
         {
-            this.autoMapModel = autoMapModel;
+            this.autoMapModel = classMapModel.AutoMap;
             this.Visit(classMapModel);
         }
 

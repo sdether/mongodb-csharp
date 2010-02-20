@@ -18,6 +18,7 @@ namespace MongoDB.Framework.Configuration.Mapping
         private readonly static Stack<IDiscriminatorConvention> globalDiscriminatorConventions = new Stack<IDiscriminatorConvention>();
         private readonly static Stack<IExtendedPropertiesConvention> globalExtendedPropertiesConventions = new Stack<IExtendedPropertiesConvention>();
         private readonly static Stack<IIdConvention> globalIdConventions = new Stack<IIdConvention>();
+        private readonly static Stack<IMemberFinder> globalMemberFinders = new Stack<IMemberFinder>();
         private readonly static Stack<IMemberKeyConvention> globalMemberKeyConventions = new Stack<IMemberKeyConvention>();
         private readonly static Stack<IValueConverterConvention> globalValueConverterConventions = new Stack<IValueConverterConvention>();
 
@@ -72,6 +73,14 @@ namespace MongoDB.Framework.Configuration.Mapping
             globalIdConventions.Push(convention);
         }
 
+        public static void AddMemberFinder(IMemberFinder memberFinder)
+        {
+            if (memberFinder == null)
+                throw new ArgumentNullException("memberFinder");
+
+            globalMemberFinders.Push(memberFinder);
+        }
+
         public static void AddMemberKeyConvention(IMemberKeyConvention convention)
         {
             if (convention == null)
@@ -101,6 +110,8 @@ namespace MongoDB.Framework.Configuration.Mapping
         public IExtendedPropertiesConvention ExtendedPropertiesConvention { get; set; }
 
         public IIdConvention IdConvention { get; set; }
+
+        public IMemberFinder MemberFinder { get; set; }
 
         public IMemberKeyConvention MemberKeyConvention { get; set; }
 
@@ -160,6 +171,17 @@ namespace MongoDB.Framework.Configuration.Mapping
             conventions.AddRange(globalIdConventions.Where(c => c.Matches(type)));
 
             return new CompositeIdConvention(conventions);
+        }
+
+        public IMemberFinder GetMemberFinder(Type type)
+        {
+            var finders = new List<IMemberFinder>();
+            if (this.MemberFinder != null && this.MemberFinder.Matches(type))
+                finders.Add(this.MemberFinder);
+
+            finders.AddRange(globalMemberFinders.Where(f => f.Matches(type)));
+
+            return new CompositeMemberFinder(finders);
         }
 
         public IMemberKeyConvention GetMemberKeyConvention(MemberInfo member)
@@ -272,6 +294,18 @@ namespace MongoDB.Framework.Configuration.Mapping
             public bool HasId(Type type)
             {
                 return this.conventions.Any(c => c.HasId(type));
+            }
+        }
+
+        private class CompositeMemberFinder : CompositeConvention<IMemberFinder, Type>, IMemberFinder
+        {
+            public CompositeMemberFinder(IEnumerable<IMemberFinder> memberFinders)
+                : base(memberFinders)
+            { }
+
+            public IEnumerable<MemberInfo> FindMembers(Type type)
+            {
+                return this.conventions.SelectMany(c => c.FindMembers(type));
             }
         }
 

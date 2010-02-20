@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MongoDB.Framework.Configuration.Mapping.Conventions;
+using MongoDB.Framework.Configuration.Mapping;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping.Auto
 {
     public class FluentAutoDiscriminator
     {
-        private FluentAutoMap fluentAutoMap;
+        private AutoMapModel autoMapModel;
         private Func<Type, string> key;
 
-        public FluentAutoDiscriminator(FluentAutoMap fluentAutoMap)
+        public FluentAutoDiscriminator(AutoMapModel autoMapModel)
         {
-            this.fluentAutoMap = fluentAutoMap;
+            this.autoMapModel = autoMapModel;
         }
 
         public FluentAutoDiscriminator KeyIs(string key)
@@ -27,11 +28,10 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping.Auto
             return this;
         }
 
-        public FluentAutoMap AndValueIs(Func<Type, object> value)
+        public void ValueIs(Func<Type, object> value)
         {
-            //TODP: fix with type...
-            this.fluentAutoMap.Model.DiscriminatorConvention = new CustomDiscriminatorConvention(t => true, t => true, key, value);
-            return fluentAutoMap;
+            //TODO: fix with type...
+            this.autoMapModel.DiscriminatorConvention = new CustomDiscriminatorConvention(t => true, t => true, key, value);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace MongoDB.Framework.Configuration.Mapping
         public void Should_map_from_document_to_entity()
         {
             var fluentMapModelRegistry = new FluentMapModelRegistry()
-                .WithAssemblyContainingType<PartyMap>().AddMaps();
+                .WithAssemblyContainingType<PartyMap>(assembly => assembly.AddMaps());
 
             var configuration = new MongoConfiguration("tests", fluentMapModelRegistry);
 
@@ -69,7 +69,7 @@ namespace MongoDB.Framework.Configuration.Mapping
         public void Should_map_from_entity_to_document()
         {
             var fluentMapModelRegistry = new FluentMapModelRegistry()
-                .WithAssemblyContainingType<PartyMap>().AddMaps();
+                .WithAssemblyContainingType<PartyMap>(assembly => assembly.AddMaps());
 
             var configuration = new MongoConfiguration("tests", fluentMapModelRegistry);
 

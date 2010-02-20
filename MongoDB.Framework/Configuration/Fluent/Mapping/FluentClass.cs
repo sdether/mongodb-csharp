@@ -5,14 +5,19 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
+using MongoDB.Framework.Configuration.Fluent.Mapping.Auto;
 using MongoDB.Framework.Configuration.Mapping;
-using MongoDB.Framework.Linq.Visitors;
 using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
     public abstract class FluentClass<TModel, TEntity> : FluentBase<TModel> where TModel : ClassMapModel
     {
+        public FluentAutoMap AutoMap
+        {
+            get { return new FluentAutoMap(this.Model.AutoMap); }
+        }
+
         public object Discriminator
         {
             get { return this.Model.Discriminator; }

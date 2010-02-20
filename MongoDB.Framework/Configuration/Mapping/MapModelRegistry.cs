@@ -21,11 +21,9 @@ namespace MongoDB.Framework.Configuration.Mapping
     {
         #region Private Fields
 
-        private Dictionary<Type, Func<Type, Type>> elementTypeFactories = new Dictionary<Type, Func<Type, Type>>()        {            { typeof(ICollection<>), mt => mt.GetGenericArguments()[0] },            { typeof(IList<>), mt => mt.GetGenericArguments()[0] },            { typeof(List<>), mt => mt.GetGenericArguments()[0] },            { typeof(HashSet<>), mt => mt.GetGenericArguments()[0] },            { typeof(IDictionary<,>), mt => mt.GetGenericArguments()[1] },            { typeof(Dictionary<,>), mt => mt.GetGenericArguments()[1] },        };
-
-        private Dictionary<Type, ModelWithAutoMapPair<RootClassMapModel>> rootClassMapModels;
-        private Dictionary<Type, ModelWithAutoMapPair<NestedClassMapModel>> nestedClassMapModels;
-        private Dictionary<Type, ModelWithAutoMapPair<SubClassMapModel>> subClassMapModels;
+        private Dictionary<Type, RootClassMapModel> rootClassMapModels;
+        private Dictionary<Type, NestedClassMapModel> nestedClassMapModels;
+        private Dictionary<Type, SubClassMapModel> subClassMapModels;
 
         private Dictionary<Type, RootClassMap> rootClassMaps;
         private Dictionary<Type, NestedClassMap> nestedClassMaps;
@@ -39,30 +37,21 @@ namespace MongoDB.Framework.Configuration.Mapping
         /// </summary>
         public MapModelRegistry()
         {
-            this.rootClassMapModels = new Dictionary<Type, ModelWithAutoMapPair<RootClassMapModel>>();
-            this.nestedClassMapModels = new Dictionary<Type, ModelWithAutoMapPair<NestedClassMapModel>>();
-            this.subClassMapModels = new Dictionary<Type, ModelWithAutoMapPair<SubClassMapModel>>();
+            this.rootClassMapModels = new Dictionary<Type, RootClassMapModel>();
+            this.nestedClassMapModels = new Dictionary<Type, NestedClassMapModel>();
+            this.subClassMapModels = new Dictionary<Type, SubClassMapModel>();
         }
 
         #endregion
 
         #region Public Methods
 
-        /// <summary>
-        /// Adds the root class map model.
-        /// </summary>
-        /// <param name="rootClassMapModel">The root class map model.</param>
         public void AddRootClassMapModel(RootClassMapModel rootClassMapModel)
-        {
-            this.AddRootClassMapModel(rootClassMapModel, null);
-        }
-
-        public void AddRootClassMapModel(RootClassMapModel rootClassMapModel, AutoMapModel autoMapModel)
         {
             if (rootClassMapModel == null)
                 throw new ArgumentNullException("rootClassMapModel");
 
-            this.rootClassMapModels.Add(rootClassMapModel.Type, new ModelWithAutoMapPair<RootClassMapModel>(rootClassMapModel, autoMapModel ?? new AutoMapModel()));
+            this.rootClassMapModels.Add(rootClassMapModel.Type, rootClassMapModel);
         }
 
         /// <summary>
@@ -71,19 +60,10 @@ namespace MongoDB.Framework.Configuration.Mapping
         /// <param name="nestedClassMapModel">The nested class map model.</param>
         public void AddNestedClassMapModel(NestedClassMapModel nestedClassMapModel)
         {
-            this.AddNestedClassMapModel(nestedClassMapModel, null);
-        }
-
-        /// <summary>
-        /// Adds the nested class map model.
-        /// </summary>
-        /// <param name="nestedClassMapModel">The nested class map model.</param>
-        public void AddNestedClassMapModel(NestedClassMapModel nestedClassMapModel, AutoMapModel autoMapModel)
-        {
             if (nestedClassMapModel == null)
                 throw new ArgumentNullException("nestedClassMapModel");
 
-            this.nestedClassMapModels.Add(nestedClassMapModel.Type, new ModelWithAutoMapPair<NestedClassMapModel>(nestedClassMapModel, autoMapModel ?? new AutoMapModel()));
+            this.nestedClassMapModels.Add(nestedClassMapModel.Type, nestedClassMapModel);
         }
 
         /// <summary>
@@ -92,19 +72,10 @@ namespace MongoDB.Framework.Configuration.Mapping
         /// <param name="subClassMapModel">The sub class map model.</param>
         public void AddSubClassMapModel(SubClassMapModel subClassMapModel)
         {
-            this.AddSubClassMapModel(subClassMapModel, null);
-        }
-
-        /// <summary>
-        /// Adds the sub class map model.
-        /// </summary>
-        /// <param name="subClassMapModel">The sub class map model.</param>
-        public void AddSubClassMapModel(SubClassMapModel subClassMapModel, AutoMapModel autoMapModel)
-        {
             if (subClassMapModel == null)
                 throw new ArgumentNullException("subClassMapModel");
 
-            this.subClassMapModels.Add(subClassMapModel.Type, new ModelWithAutoMapPair<SubClassMapModel>(subClassMapModel, autoMapModel ?? new AutoMapModel()));
+            this.subClassMapModels.Add(subClassMapModel.Type, subClassMapModel);
         }
 
         /// <summary>
@@ -118,6 +89,7 @@ namespace MongoDB.Framework.Configuration.Mapping
         }
 
         #endregion
+
 
         #region Private Methods
 
@@ -136,20 +108,20 @@ namespace MongoDB.Framework.Configuration.Mapping
                 return getSuperClassType(baseType, containsKey);
             };
 
-            var subs = new List<SubClassMapModel>(this.subClassMapModels.Values.Select(x => x.ClassMapModel));
+            var subs = new List<SubClassMapModel>(this.subClassMapModels.Values);
             foreach (var sub in subs)
             {
                 var superClassType = getSuperClassType(sub.Type, this.rootClassMapModels.ContainsKey);
                 if (superClassType != null)
                 {
-                    this.rootClassMapModels[superClassType].ClassMapModel.SubClassMaps.Add(sub);
+                    this.rootClassMapModels[superClassType].SubClassMaps.Add(sub);
                     this.subClassMapModels.Remove(sub.Type);
                     continue;
                 }
                 superClassType = getSuperClassType(sub.Type, this.nestedClassMapModels.ContainsKey);
                 if (superClassType != null)
                 {
-                    this.nestedClassMapModels[superClassType].ClassMapModel.SubClassMaps.Add(sub);
+                    this.nestedClassMapModels[superClassType].SubClassMaps.Add(sub);
                     this.subClassMapModels.Remove(sub.Type);
                 }
             }
@@ -157,15 +129,15 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         private void ApplyConventions()
         {
-            var conventionFiller = new MapModelConventionRunner(this.rootClassMapModels.Keys);
-            foreach (var rootClassMapModel in this.rootClassMapModels.Values)
-                conventionFiller.ApplyConventions(rootClassMapModel.ClassMapModel, rootClassMapModel.AutoMapModel);
+            var runner = new MapModelConventionRunner(this.rootClassMapModels.Keys);
+            foreach (var rootClassMapModel in this.rootClassMapModels.Values.Where(m => m.AutoMap != null))
+                runner.ApplyConventions(rootClassMapModel);
 
-            foreach (var nestedClassMapModel in this.nestedClassMapModels.Values)
-                conventionFiller.ApplyConventions(nestedClassMapModel.ClassMapModel, nestedClassMapModel.AutoMapModel);
+            foreach (var nestedClassMapModel in this.nestedClassMapModels.Values.Where(m => m.AutoMap != null))
+                runner.ApplyConventions(nestedClassMapModel);
 
-            foreach (var subClassMapModel in this.subClassMapModels.Values)
-                conventionFiller.ApplyConventions(subClassMapModel.ClassMapModel, subClassMapModel.AutoMapModel);
+            foreach (var subClassMapModel in this.subClassMapModels.Values.Where(m => m.AutoMap != null))
+                runner.ApplyConventions(subClassMapModel);
         }
 
         private void BuildRootClassMaps()
@@ -176,7 +148,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             this.nestedClassMaps = new Dictionary<Type, NestedClassMap>();
 
             foreach (var rootClassMapModel in this.rootClassMapModels.Values)
-                this.BuildRootClassMap(rootClassMapModel.ClassMapModel);
+                this.BuildRootClassMap(rootClassMapModel);
         }
 
         private void BuildRootClassMap(RootClassMapModel model)
@@ -335,11 +307,11 @@ namespace MongoDB.Framework.Configuration.Mapping
             if (this.nestedClassMaps.TryGetValue(type, out nestedClassMap))
                 return nestedClassMap;
 
-            ModelWithAutoMapPair<NestedClassMapModel> nestedClassMapModel;
+            NestedClassMapModel nestedClassMapModel;
             if (!this.nestedClassMapModels.TryGetValue(type, out nestedClassMapModel))
                 return null;
 
-            this.BuildNestedClassMap(nestedClassMapModel.ClassMapModel);
+            this.BuildNestedClassMap(nestedClassMapModel);
             return this.nestedClassMaps[type];
         }
 
@@ -356,23 +328,6 @@ namespace MongoDB.Framework.Configuration.Mapping
         {
             var elementType = this.GetValueType(new NullSafeValueConverter(model.ElementType), model.ElementType);
             return new CollectionValueType(model.CollectionType, elementType);
-        }
-
-        #endregion
-
-        #region Private Classes
-
-        private class ModelWithAutoMapPair<T> where T : ClassMapModel
-        {
-            public T ClassMapModel { get; private set; }
-
-            public AutoMapModel AutoMapModel { get; private set; }
-
-            public ModelWithAutoMapPair(T classMapModel, AutoMapModel autoMapModel)
-            {
-                this.ClassMapModel = classMapModel;
-                this.AutoMapModel = autoMapModel;
-            }
         }
 
         #endregion

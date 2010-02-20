@@ -8,6 +8,12 @@ namespace MongoDB.Framework.Configuration.Mapping
     public abstract class ClassMapModel : ModelNode
     {
         /// <summary>
+        /// Gets or sets the auto map.
+        /// </summary>
+        /// <value>The auto map.</value>
+        public AutoMapModel AutoMap { get; set; }
+
+        /// <summary>
         /// Gets or sets the discriminator.
         /// </summary>
         /// <value>The discriminator.</value>
@@ -31,6 +37,7 @@ namespace MongoDB.Framework.Configuration.Mapping
         /// <param name="type">The type.</param>
         public ClassMapModel(Type type)
         {
+            this.AutoMap = new AutoMapModel();
             this.PersistentMemberMaps = new List<PersistentMemberMapModel>();
             this.Type = type;
         }
