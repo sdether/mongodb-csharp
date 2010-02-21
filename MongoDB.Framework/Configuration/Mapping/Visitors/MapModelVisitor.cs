@@ -5,11 +5,11 @@ using System.Text;
 
 namespace MongoDB.Framework.Configuration.Mapping.Visitors
 {
-    public abstract class NullMapModelVisitor
+    public abstract class MapModelVisitor
     {
         private Dictionary<Type, Func<ModelNode, ModelNode>> funcs;
 
-        public NullMapModelVisitor()
+        public MapModelVisitor()
         {
             this.funcs = new Dictionary<Type, Func<ModelNode, ModelNode>>()
             {

@@ -9,31 +9,29 @@ using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
-    public class AutoMapModel
+    public class MappingConventions
     {
         #region Static
 
         private readonly static Stack<ICollectionConvention> globalCollectionConventions = new Stack<ICollectionConvention>();
         private readonly static Stack<ICollectionNameConvention> globalCollectionNameConventions = new Stack<ICollectionNameConvention>();
-        private readonly static Stack<IDiscriminatorConvention> globalDiscriminatorConventions = new Stack<IDiscriminatorConvention>();
         private readonly static Stack<IExtendedPropertiesConvention> globalExtendedPropertiesConventions = new Stack<IExtendedPropertiesConvention>();
         private readonly static Stack<IIdConvention> globalIdConventions = new Stack<IIdConvention>();
         private readonly static Stack<IMemberFinder> globalMemberFinders = new Stack<IMemberFinder>();
         private readonly static Stack<IMemberKeyConvention> globalMemberKeyConventions = new Stack<IMemberKeyConvention>();
         private readonly static Stack<IValueConverterConvention> globalValueConverterConventions = new Stack<IValueConverterConvention>();
 
-        static AutoMapModel()
+        static MappingConventions()
         {
-            AddCollectionConvention(DefaultCollectionConvention.AlwaysMatching);
-            AddCollectionNameConvention(TypeNameCollectionNameConvention.AlwaysMatching);
-            AddDiscriminatorConvention(NullDiscriminatorConvention.AlwaysMatching);
-            AddExtendedPropertiesConvention(NullExtendedPropertiesConvention.AlwaysMatching);
-            AddIdConvention(NullIdConvention.AlwaysMatching);
-            AddMemberKeyConvention(MemberNameMemberKeyConvention.AlwaysMatching);
-            AddValueConverterConvention(DefaultValueConverterConvention.AlwaysMatching);
+            AddGlobalCollectionConvention(DefaultCollectionConvention.AlwaysMatching);
+            AddGlobalCollectionNameConvention(DefaultCollectionNameConvention.AlwaysMatching);
+            AddGlobalExtendedPropertiesConvention(DefaultExtendedPropertiesConvention.AlwaysMatching);
+            AddGlobalIdConvention(DefaultIdConvention.AlwaysMatching);
+            AddGlobalMemberKeyConvention(DefaultMemberKeyConvention.AlwaysMatching);
+            AddGlobalValueConverterConvention(DefaultValueConverterConvention.AlwaysMatching);
         }
 
-        public static void AddCollectionConvention(ICollectionConvention convention)
+        public static void AddGlobalCollectionConvention(ICollectionConvention convention)
         {
             if (convention == null)
                 throw new ArgumentNullException("convention");
@@ -41,7 +39,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             globalCollectionConventions.Push(convention);
         }
 
-        public static void AddCollectionNameConvention(ICollectionNameConvention convention)
+        public static void AddGlobalCollectionNameConvention(ICollectionNameConvention convention)
         {
             if (convention == null)
                 throw new ArgumentNullException("convention");
@@ -49,15 +47,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             globalCollectionNameConventions.Push(convention);
         }
 
-        public static void AddDiscriminatorConvention(IDiscriminatorConvention convention)
-        {
-            if (convention == null)
-                throw new ArgumentNullException("convention");
-
-            globalDiscriminatorConventions.Push(convention);
-        }
-
-        public static void AddExtendedPropertiesConvention(IExtendedPropertiesConvention convention)
+        public static void AddGlobalExtendedPropertiesConvention(IExtendedPropertiesConvention convention)
         {
             if (convention == null)
                 throw new ArgumentNullException("convention");
@@ -65,7 +55,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             globalExtendedPropertiesConventions.Push(convention);
         }
 
-        public static void AddIdConvention(IIdConvention convention)
+        public static void AddGlobalIdConvention(IIdConvention convention)
         {
             if (convention == null)
                 throw new ArgumentNullException("convention");
@@ -73,7 +63,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             globalIdConventions.Push(convention);
         }
 
-        public static void AddMemberFinder(IMemberFinder memberFinder)
+        public static void AddGlobalMemberFinder(IMemberFinder memberFinder)
         {
             if (memberFinder == null)
                 throw new ArgumentNullException("memberFinder");
@@ -81,7 +71,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             globalMemberFinders.Push(memberFinder);
         }
 
-        public static void AddMemberKeyConvention(IMemberKeyConvention convention)
+        public static void AddGlobalMemberKeyConvention(IMemberKeyConvention convention)
         {
             if (convention == null)
                 throw new ArgumentNullException("convention");
@@ -89,7 +79,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             globalMemberKeyConventions.Push(convention);
         }
 
-        public static void AddValueConverterConvention(IValueConverterConvention convention)
+        public static void AddGlobalValueConverterConvention(IValueConverterConvention convention)
         {
             if (convention == null)
                 throw new ArgumentNullException("convention");
@@ -105,8 +95,6 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         public ICollectionNameConvention CollectionNameConvention { get; set; }
 
-        public IDiscriminatorConvention DiscriminatorConvention { get; set; }
-
         public IExtendedPropertiesConvention ExtendedPropertiesConvention { get; set; }
 
         public IIdConvention IdConvention { get; set; }
@@ -120,6 +108,20 @@ namespace MongoDB.Framework.Configuration.Mapping
         #endregion
 
         #region Public Methods
+
+        public MappingConventions Copy()
+        {
+            return new MappingConventions()
+            {
+                CollectionConvention = this.CollectionConvention,
+                CollectionNameConvention = this.CollectionNameConvention,
+                ExtendedPropertiesConvention = this.ExtendedPropertiesConvention,
+                IdConvention = this.IdConvention,
+                MemberFinder = this.MemberFinder,
+                MemberKeyConvention = this.MemberKeyConvention,
+                ValueConverterConvention = this.ValueConverterConvention
+            };
+        }
 
         public ICollectionConvention GetCollectionConvention(Type type)
         {
@@ -138,17 +140,6 @@ namespace MongoDB.Framework.Configuration.Mapping
                 return this.CollectionNameConvention;
 
             return globalCollectionNameConventions.First(c => c.Matches(type));
-        }
-
-        public IDiscriminatorConvention GetDiscriminatorConvention(Type type)
-        {
-            var conventions = new List<IDiscriminatorConvention>();
-            if (this.DiscriminatorConvention != null && this.DiscriminatorConvention.Matches(type))
-                conventions.Add(this.DiscriminatorConvention);
-
-            conventions.AddRange(globalDiscriminatorConventions.Where(c => c.Matches(type)));
-
-            return new CompositeDiscriminatorConvention(conventions);
         }
 
         public IExtendedPropertiesConvention GetExtendedPropertiesConvention(Type type)
@@ -238,28 +229,6 @@ namespace MongoDB.Framework.Configuration.Mapping
             public bool IsCollection(Type type)
             {
                 return this.conventions.Any(c => c.IsCollection(type));
-            }
-        }
-
-        private class CompositeDiscriminatorConvention : CompositeConvention<IDiscriminatorConvention, Type>, IDiscriminatorConvention
-        {
-            public CompositeDiscriminatorConvention(IEnumerable<IDiscriminatorConvention> conventions)
-                : base(conventions)
-            { }
-
-            public string GetDiscriminatorKey(Type type)
-            {
-                return this.conventions.First(c => c.HasDiscriminator(type)).GetDiscriminatorKey(type);
-            }
-
-            public object GetDiscriminator(Type type)
-            {
-                return this.conventions.First(c => c.HasDiscriminator(type)).GetDiscriminator(type);
-            }
-
-            public bool HasDiscriminator(Type type)
-            {
-                return this.conventions.Any(c => c.HasDiscriminator(type));
             }
         }
 

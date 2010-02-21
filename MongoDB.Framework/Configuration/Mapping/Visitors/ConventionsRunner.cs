@@ -7,38 +7,49 @@ using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration.Mapping.Visitors
 {
-    public class MapModelConventionRunner : DefaultMapModelVisitor
+    public class ConventionsRunner : DefaultMapModelVisitor
     {
-        private AutoMapModel autoMapModel;
+        private MappingConventions conventions;
         private HashSet<Type> rootClassTypes;
 
-        public MapModelConventionRunner(IEnumerable<Type> rootClassTypes)
+        public ConventionsRunner(IEnumerable<Type> rootClassTypes)
         {
-            if (rootClassTypes == null)
-                throw new ArgumentNullException("rootClassTypes");
-
-            this.rootClassTypes = new HashSet<Type>(rootClassTypes);
+            this.rootClassTypes = new HashSet<Type>(rootClassTypes ?? Type.EmptyTypes);
         }
 
         public void ApplyConventions(ClassMapModel classMapModel)
         {
-            this.autoMapModel = classMapModel.AutoMap;
+            this.conventions = classMapModel.Conventions;
             this.Visit(classMapModel);
         }
 
         protected override RootClassMapModel VisitRootClass(RootClassMapModel model)
         {
-            this.ProcessSuperClass(model);
-            this.ProcessClass(model);
-
             if (string.IsNullOrEmpty(model.CollectionName))
             {
-                model.CollectionName = this.autoMapModel
+                model.CollectionName = this.conventions
                         .GetCollectionNameConvention(model.Type)
                         .GetCollectionName(model.Type);
             }
 
+            if (model.SubClassMaps.Count == 0)
+                model.DiscriminatorKey = null;
+
+            this.ProcessSuperClass(model);
+
             return base.VisitRootClass(model);
+        }
+
+        protected override NestedClassMapModel VisitNestedClass(NestedClassMapModel model)
+        {
+            this.ProcessSuperClass(model);
+            return base.VisitNestedClass(model);
+        }
+
+        protected override SubClassMapModel VisitSubClass(SubClassMapModel model)
+        {
+            this.ProcessClass(model);
+            return base.VisitSubClass(model);
         }
 
         protected override IdMapModel VisitId(IdMapModel model)
@@ -62,9 +73,9 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
             this.ProcessMember(model);
 
             var memberType = ReflectionUtil.GetMemberValueType(model.Getter);
-            var collectionConvention = this.autoMapModel.GetCollectionConvention(memberType);
+            var collectionConvention = this.conventions.GetCollectionConvention(memberType);
 
-            if(model.CollectionType == null)
+            if (model.CollectionType == null)
                 model.CollectionType = collectionConvention.GetCollectionType(memberType);
 
             if (model.ElementType == null)
@@ -90,7 +101,7 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
         protected override PersistentMemberMapModel VisitPersistentMember(PersistentMemberMapModel model)
         {
             var memberType = ReflectionUtil.GetMemberValueType(model.Getter);
-            var collectionConvention = this.autoMapModel.GetCollectionConvention(memberType);
+            var collectionConvention = this.conventions.GetCollectionConvention(memberType);
             if (collectionConvention.IsCollection(memberType))
             {
                 var newModel = new CollectionMemberMapModel()
@@ -135,25 +146,19 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
 
         private void ProcessSuperClass(SuperClassMapModel model)
         {
+            this.ProcessClass(model);
+
             if (model.ExtendedPropertiesMap == null)
             {
-                var convention = this.autoMapModel.GetExtendedPropertiesConvention(model.Type);
+                var convention = this.conventions.GetExtendedPropertiesConvention(model.Type);
 
-                if(convention.HasExtendedProperties(model.Type))
+                if (convention.HasExtendedProperties(model.Type))
                     model.ExtendedPropertiesMap = convention.GetExtendedPropertiesMapModel(model.Type);
-            }
-
-            if(string.IsNullOrEmpty(model.DiscriminatorKey))
-            {
-                var convention = this.autoMapModel.GetDiscriminatorConvention(model.Type);
-                
-                if(convention.HasDiscriminator(model.Type))    
-                    model.DiscriminatorKey = convention.GetDiscriminatorKey(model.Type);
             }
 
             if (model.IdMap == null)
             {
-                var convention = this.autoMapModel.GetIdConvention(model.Type);
+                var convention = this.conventions.GetIdConvention(model.Type);
 
                 if (convention.HasId(model.Type))
                     model.IdMap = convention.GetIdMapModel(model.Type);
@@ -162,17 +167,17 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
 
         private void ProcessClass(ClassMapModel model)
         {
-            if (model.Discriminator == null)
+            foreach (var member in this.conventions.GetMemberFinder(model.Type).FindMembers(model.Type))
             {
-                var convention = this.autoMapModel.GetDiscriminatorConvention(model.Type);
+                var memberMapModel = new PersistentMemberMapModel()
+                {
+                    Getter = member,
+                    Setter = member
+                };
 
-                if (convention.HasDiscriminator(model.Type))
-                    model.Discriminator = convention.GetDiscriminator(model.Type);
+                model.PersistentMemberMaps.Add(memberMapModel);
             }
 
-            //find collection members?
-            //find nested class members?
-            //find value members?
             //find parent map?
         }
 
@@ -180,7 +185,7 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
         {
             if (string.IsNullOrEmpty(model.Key))
             {
-                model.Key = this.autoMapModel
+                model.Key = this.conventions
                     .GetMemberKeyConvention(model.Getter)
                     .GetKey(model.Getter);
             }
@@ -190,7 +195,7 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
         {
             if (model.ValueConverter == null)
             {
-                model.ValueConverter = this.autoMapModel
+                model.ValueConverter = this.conventions
                     .GetValueConverterConvention(model.Getter)
                     .GetValueConverter(model.Getter);
             }

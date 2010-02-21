@@ -1,30 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+
 using MongoDB.Framework.Configuration.Mapping;
 using MongoDB.Framework.Configuration.Mapping.Conventions;
-using System.Reflection;
 
-namespace MongoDB.Framework.Configuration.Fluent.Mapping.Auto
+
+namespace MongoDB.Framework.Configuration.Fluent.Mapping.Conventions
 {
     public class FluentAutoId
     {
-        private AutoMapModel autoMapModel;
+        private MappingConventions conventions;
 
-        public FluentAutoId(AutoMapModel autoMapModel)
+        public FluentAutoId(MappingConventions conventions)
         {
-            this.autoMapModel = autoMapModel;
+            this.conventions = conventions;
         }
 
         public void IsNamed(string name)
         {
-            this.autoMapModel.IdConvention = new NamedIdConvention(t => true, name);
+            this.conventions.IdConvention = new NamedIdConvention(t => true, name);
         }
 
         public void IsNamed(string name, MemberTypes memberTypes, BindingFlags bindingFlags)
         {
-            this.autoMapModel.IdConvention = new NamedIdConvention(t => true, name, memberTypes, bindingFlags);
+            this.conventions.IdConvention = new NamedIdConvention(t => true, name, memberTypes, bindingFlags);
         }
     }
 }

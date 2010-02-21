@@ -5,11 +5,11 @@ using System.Text;
 
 namespace MongoDB.Framework.Configuration.Mapping.Conventions
 {
-    public class TypeNameCollectionNameConvention : ConventionBase<Type>, ICollectionNameConvention
+    public class DefaultCollectionNameConvention : ConventionBase<Type>, ICollectionNameConvention
     {
-        public static readonly TypeNameCollectionNameConvention AlwaysMatching = new TypeNameCollectionNameConvention(t => true);
+        public static readonly DefaultCollectionNameConvention AlwaysMatching = new DefaultCollectionNameConvention(t => true);
 
-        public TypeNameCollectionNameConvention(Func<Type, bool> matcher)
+        public DefaultCollectionNameConvention(Func<Type, bool> matcher)
             : base(matcher)
         { }
 

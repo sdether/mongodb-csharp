@@ -57,36 +57,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\Fluent\Mapping\Auto\FluentAutoId.cs" />
+    <Compile Include="Configuration\Fluent\Mapping\Conventions\FluentAutoId.cs" />
+    <Compile Include="Configuration\Fluent\Mapping\FluentScopedMapModelRegistry.cs" />
+    <Compile Include="Configuration\Mapping\Auto\AssemblyTypeSource.cs" />
+    <Compile Include="Configuration\Mapping\Auto\AutoMap.cs" />
+    <Compile Include="Configuration\Mapping\Auto\AutoMappingExpressions.cs" />
+    <Compile Include="Configuration\Mapping\Auto\AutoPersistenceModel.cs" />
+    <Compile Include="Configuration\Mapping\Auto\ITypeSource.cs" />
+    <Compile Include="Configuration\Mapping\Auto\SingleTypeSource.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\NamedExtendedPropertiesConvention.cs" />
     <Compile Include="Configuration\Mapping\Conventions\FilteredMemberFinder.cs" />
-    <Compile Include="Configuration\Fluent\Mapping\Auto\FluentAutoDiscriminator.cs" />
-    <Compile Include="Configuration\Fluent\Mapping\Auto\FluentAutoMemberFinder.cs" />
+    <Compile Include="Configuration\Fluent\Mapping\Conventions\FluentMemberFinder.cs" />
     <Compile Include="Configuration\Mapping\Conventions\IMemberFinder.cs" />
     <Compile Include="Configuration\Mapping\Conventions\NamedIdConvention.cs" />
-    <Compile Include="Configuration\Mapping\Conventions\DefaultMemberFinder.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\CustomMemberFinder.cs" />
     <Compile Include="Configuration\Fluent\Mapping\FluentConvertibleMember.cs" />
     <Compile Include="Configuration\Fluent\Mapping\FluentMember.cs" />
-    <Compile Include="Configuration\Mapping\AutoMapModel.cs" />
-    <Compile Include="Configuration\Fluent\Mapping\FluentAssembly.cs" />
-    <Compile Include="Configuration\Fluent\Mapping\Auto\FluentAutoMap.cs" />
+    <Compile Include="Configuration\Mapping\MappingConventions.cs" />
+    <Compile Include="Configuration\Fluent\Mapping\FluentConventions.cs" />
     <Compile Include="Configuration\Mapping\Conventions\CamelCaseMemberKeyConvention.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Mapping\Conventions\ConventionBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Conventions\TypeNameCollectionNameConvention.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\DefaultCollectionNameConvention.cs" />
     <Compile Include="Configuration\Mapping\Conventions\DefaultCollectionConvention.cs" />
     <Compile Include="Configuration\Mapping\Conventions\DefaultValueConverterConvention.cs" />
-    <Compile Include="Configuration\Mapping\Conventions\CustomDiscriminatorConvention.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Configuration\Mapping\Conventions\ICollectionConvention.cs" />
     <Compile Include="Configuration\Mapping\Conventions\ICollectionNameConvention.cs" />
     <Compile Include="Configuration\Mapping\Conventions\IConvention.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Configuration\Mapping\Conventions\IDiscriminatorConvention.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Mapping\Conventions\IExtendedPropertiesConvention.cs" />
@@ -95,20 +95,21 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Mapping\Conventions\IValueConverterConvention.cs" />
-    <Compile Include="Configuration\Mapping\Conventions\MemberNameMemberKeyConvention.cs">
+    <Compile Include="Configuration\Mapping\Conventions\DefaultMemberKeyConvention.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\Conventions\NullDiscriminatorConvention.cs" />
-    <Compile Include="Configuration\Mapping\Conventions\NullExtendedPropertiesConvention.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\DefaultExtendedPropertiesConvention.cs" />
     <Compile Include="Configuration\Mapping\Conventions\CamelCaseCollectionNameConvention.cs" />
-    <Compile Include="Configuration\Mapping\Conventions\NullIdMapConvention.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\DefaultIdConvention.cs" />
+    <Compile Include="Configuration\Mapping\IClassMapModelSource.cs" />
     <Compile Include="Configuration\Mapping\IMapModelRegistry.cs" />
     <Compile Include="Configuration\Mapping\Inflector.cs" />
     <Compile Include="Configuration\Mapping\MemberMapModel.cs" />
-    <Compile Include="Configuration\Mapping\Conventions\NullMemberFinder.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\DefaultMemberFinder.cs" />
     <Compile Include="Configuration\Mapping\ParentMemberMapModel.cs" />
     <Compile Include="Configuration\Mapping\Visitors\DefaultMapModelVisitor.cs" />
-    <Compile Include="Configuration\Mapping\Visitors\MapModelConventionRunner.cs" />
+    <Compile Include="Configuration\Mapping\Visitors\ConventionsRunner.cs" />
+    <Compile Include="Configuration\Mapping\Visitors\DuplicateMembersFinder.cs" />
     <Compile Include="Mapping\ClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -252,7 +253,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Mapping\ConvertibleMemberMapModel.cs" />
-    <Compile Include="Configuration\Mapping\Visitors\NullMapModelVisitor.cs">
+    <Compile Include="Configuration\Mapping\Visitors\MapModelVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\NestedClassMap.cs">

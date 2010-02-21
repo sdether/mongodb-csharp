@@ -46,36 +46,55 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         #region Public Methods
 
-        public void AddRootClassMapModel(RootClassMapModel rootClassMapModel)
+        public void AddModel(RootClassMapModel model)
         {
-            if (rootClassMapModel == null)
-                throw new ArgumentNullException("rootClassMapModel");
+            if (model == null)
+                throw new ArgumentNullException("model");
 
-            this.rootClassMapModels.Add(rootClassMapModel.Type, rootClassMapModel);
+            this.rootClassMapModels.Add(model.Type, model);
         }
 
         /// <summary>
         /// Adds the nested class map model.
         /// </summary>
         /// <param name="nestedClassMapModel">The nested class map model.</param>
-        public void AddNestedClassMapModel(NestedClassMapModel nestedClassMapModel)
+        public void AddModel(NestedClassMapModel model)
         {
-            if (nestedClassMapModel == null)
-                throw new ArgumentNullException("nestedClassMapModel");
+            if (model == null)
+                throw new ArgumentNullException("model");
 
-            this.nestedClassMapModels.Add(nestedClassMapModel.Type, nestedClassMapModel);
+            this.nestedClassMapModels.Add(model.Type, model);
         }
 
         /// <summary>
         /// Adds the sub class map model.
         /// </summary>
         /// <param name="subClassMapModel">The sub class map model.</param>
-        public void AddSubClassMapModel(SubClassMapModel subClassMapModel)
+        public void AddModel(SubClassMapModel model)
         {
-            if (subClassMapModel == null)
-                throw new ArgumentNullException("subClassMapModel");
+            if (model == null)
+                throw new ArgumentNullException("model");
 
-            this.subClassMapModels.Add(subClassMapModel.Type, subClassMapModel);
+            this.subClassMapModels.Add(model.Type, model);
+        }
+
+        /// <summary>
+        /// Adds the source.
+        /// </summary>
+        /// <param name="classMapModelSource">The class map model source.</param>
+        public void AddSource(IClassMapModelSource classMapModelSource)
+        {
+            foreach (var model in classMapModelSource.GetClassMapModels())
+            {
+                if (model is RootClassMapModel)
+                    this.AddModel((RootClassMapModel)model);
+                else if (model is NestedClassMapModel)
+                    this.AddModel((NestedClassMapModel)model);
+                else if (model is SubClassMapModel)
+                    this.AddModel((SubClassMapModel)model);
+                else
+                    throw new NotSupportedException();
+            }
         }
 
         /// <summary>
@@ -89,7 +108,6 @@ namespace MongoDB.Framework.Configuration.Mapping
         }
 
         #endregion
-
 
         #region Private Methods
 
@@ -129,14 +147,14 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         private void ApplyConventions()
         {
-            var runner = new MapModelConventionRunner(this.rootClassMapModels.Keys);
-            foreach (var rootClassMapModel in this.rootClassMapModels.Values.Where(m => m.AutoMap != null))
+            var runner = new ConventionsRunner(this.rootClassMapModels.Keys);
+            foreach (var rootClassMapModel in this.rootClassMapModels.Values.Where(m => m.Conventions != null))
                 runner.ApplyConventions(rootClassMapModel);
 
-            foreach (var nestedClassMapModel in this.nestedClassMapModels.Values.Where(m => m.AutoMap != null))
+            foreach (var nestedClassMapModel in this.nestedClassMapModels.Values.Where(m => m.Conventions != null))
                 runner.ApplyConventions(nestedClassMapModel);
 
-            foreach (var subClassMapModel in this.subClassMapModels.Values.Where(m => m.AutoMap != null))
+            foreach (var subClassMapModel in this.subClassMapModels.Values.Where(m => m.Conventions != null))
                 runner.ApplyConventions(subClassMapModel);
         }
 
@@ -153,6 +171,9 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         private void BuildRootClassMap(RootClassMapModel model)
         {
+            new DuplicateMembersFinder()
+                .FindAndClean(model);
+
             var rootClassMap = new RootClassMap(model.Type)
             {
                 CollectionName = model.CollectionName,
@@ -175,6 +196,9 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         private void BuildNestedClassMap(NestedClassMapModel model)
         {
+            new DuplicateMembersFinder()
+                .FindAndClean(model);
+
             var extPropMap = this.BuildExtendedPropertiesMap(model.ExtendedPropertiesMap);
             IdMap idMap = null;
             if(model.IdMap != null)

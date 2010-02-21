@@ -6,11 +6,11 @@ using System.Reflection;
 
 namespace MongoDB.Framework.Configuration.Mapping.Conventions
 {
-    public class MemberNameMemberKeyConvention : ConventionBase<MemberInfo>, IMemberKeyConvention
+    public class DefaultMemberKeyConvention : ConventionBase<MemberInfo>, IMemberKeyConvention
     {
-        public static readonly MemberNameMemberKeyConvention AlwaysMatching = new MemberNameMemberKeyConvention(m => true);
+        public static readonly DefaultMemberKeyConvention AlwaysMatching = new DefaultMemberKeyConvention(m => true);
 
-        public MemberNameMemberKeyConvention(Func<MemberInfo, bool> matcher)
+        public DefaultMemberKeyConvention(Func<MemberInfo, bool> matcher)
             : base(matcher)
         { }
 

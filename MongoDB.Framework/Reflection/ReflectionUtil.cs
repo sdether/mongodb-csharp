@@ -10,6 +10,37 @@ namespace MongoDB.Framework.Reflection
 {
     public static class ReflectionUtil
     {
+        public static bool CanRead(MemberInfo memberInfo)
+        {
+            switch (memberInfo.MemberType)
+            {
+                case MemberTypes.Field:
+                    return true;
+                case MemberTypes.Property:
+                    return ((PropertyInfo)memberInfo).CanRead;
+            }
+
+            throw new NotSupportedException();
+        }
+
+        public static bool CanReadAndWrite(MemberInfo memberInfo)
+        {
+            return CanRead(memberInfo) && CanWrite(memberInfo);
+        }
+
+        public static bool CanWrite(MemberInfo memberInfo)
+        {
+            switch (memberInfo.MemberType)
+            {
+                case MemberTypes.Field:
+                    return !((FieldInfo)memberInfo).IsInitOnly && !((FieldInfo)memberInfo).IsLiteral;
+                case MemberTypes.Property:
+                    return ((PropertyInfo)memberInfo).CanWrite;
+            }
+
+            throw new NotSupportedException();
+        }
+
         public static Type GetMemberValueType(MemberInfo memberInfo)
         {
             switch (memberInfo.MemberType)

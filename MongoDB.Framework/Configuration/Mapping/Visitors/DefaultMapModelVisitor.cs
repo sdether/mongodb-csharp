@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Configuration.Mapping.Visitors
 {
-    public abstract class DefaultMapModelVisitor : NullMapModelVisitor
+    public abstract class DefaultMapModelVisitor : MapModelVisitor
     {
         protected override RootClassMapModel VisitRootClass(RootClassMapModel model)
         {

@@ -6,11 +6,11 @@ using System.Reflection;
 
 namespace MongoDB.Framework.Configuration.Mapping.Conventions
 {
-    public class NullExtendedPropertiesConvention : ConventionBase<Type>, IExtendedPropertiesConvention
+    public class DefaultExtendedPropertiesConvention : ConventionBase<Type>, IExtendedPropertiesConvention
     {
-        public static readonly NullExtendedPropertiesConvention AlwaysMatching = new NullExtendedPropertiesConvention();
+        public static readonly DefaultExtendedPropertiesConvention AlwaysMatching = new DefaultExtendedPropertiesConvention();
 
-        private NullExtendedPropertiesConvention()
+        private DefaultExtendedPropertiesConvention()
             : base(t => true)
         { }
 

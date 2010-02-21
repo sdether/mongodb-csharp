@@ -6,38 +6,80 @@ using System.Reflection;
 
 using MongoDB.Framework.Configuration.Mapping;
 using MongoDB.Framework.Reflection;
-using MongoDB.Framework.Configuration.Fluent.Mapping.Auto;
+using MongoDB.Framework.Configuration.Fluent.Mapping.Conventions;
+using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
-    public class FluentMapModelRegistry : MapModelRegistry
+    public class FluentMapModelRegistry : IMapModelRegistry
     {
-        public FluentMapModelRegistry WithAssemblyContainingType<T>(Action<FluentAssembly> config)
+        #region Private Static Fields
+
+        private static readonly PropertyInfo rootModelPropertyInfo = typeof(FluentBase<RootClassMapModel>).GetProperty("Model");
+        private static readonly PropertyInfo nestedModelPropertyInfo = typeof(FluentBase<NestedClassMapModel>).GetProperty("Model");
+        private static readonly PropertyInfo subModelPropertyInfo = typeof(FluentBase<SubClassMapModel>).GetProperty("Model");
+
+        #endregion
+
+        #region Private Fields
+
+        private MapModelRegistry registry;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FluentMapModelRegistry"/> class.
+        /// </summary>
+        public FluentMapModelRegistry()
         {
-            return this.WithAssembly(typeof(T).Assembly, config);
+            this.registry = new MapModelRegistry();
         }
 
         /// <summary>
-        /// Withes the assembly.
+        /// Initializes a new instance of the <see cref="FluentMapModelRegistry"/> class.
         /// </summary>
-        /// <param name="assembly">The assembly.</param>
-        /// <returns></returns>
-        public FluentMapModelRegistry WithAssembly(Assembly assembly, Action<FluentAssembly> config)
+        /// <param name="registry">The registry.</param>
+        public FluentMapModelRegistry(MapModelRegistry registry)
         {
-            config(new FluentAssembly(this, assembly));
+            if (registry == null)
+                throw new ArgumentNullException("registry");
+
+            this.registry = registry;
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Adds the model.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        public FluentMapModelRegistry AddModel(RootClassMapModel model)
+        {
+            this.registry.AddModel(model);
             return this;
         }
 
         /// <summary>
-        /// Autoes the map as root class.
+        /// Adds the nested class map model.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public FluentMapModelRegistry AutoMapAsRootClass<T>(Action<FluentAutoMap> config)
+        /// <param name="nestedClassMapModel">The nested class map model.</param>
+        public FluentMapModelRegistry AddModel(NestedClassMapModel model)
         {
-            var model = new RootClassMapModel(typeof(T));
-            config(new FluentAutoMap(model.AutoMap));
-            this.AddRootClassMapModel(model);
+            this.registry.AddModel(model);
+            return this;
+        }
+
+        /// <summary>
+        /// Adds the sub class map model.
+        /// </summary>
+        /// <param name="subClassMapModel">The sub class map model.</param>
+        public FluentMapModelRegistry AddModel(SubClassMapModel model)
+        {
+            this.registry.AddModel(model);
             return this;
         }
 
@@ -49,7 +91,7 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         /// <returns></returns>
         public FluentMapModelRegistry AddMap<T>(FluentRootClass<T> rootClassMap)
         {
-            this.AddRootClassMapModel(rootClassMap.Model);
+            this.AddModel(rootClassMap.Model);
             return this;
         }
 
@@ -61,7 +103,7 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         /// <returns></returns>
         public FluentMapModelRegistry AddMap<T>(FluentNestedClass<T> nestedClassMap)
         {
-            this.AddNestedClassMapModel(nestedClassMap.Model);
+            this.AddModel(nestedClassMap.Model);
             return this;
         }
 
@@ -73,9 +115,71 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         /// <returns></returns>
         public FluentMapModelRegistry AddMap<T>(FluentSubClass<T> subClassMap)
         {
-            this.AddSubClassMapModel(subClassMap.Model);
+            this.AddModel(subClassMap.Model);
             return this;
         }
 
+        /// <summary>
+        /// Adds the maps from assembly containing.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public FluentMapModelRegistry AddMapsFromAssemblyContaining<T>()
+        {
+            return this.AddMapsFromAssembly(typeof(T).Assembly);
+        }
+
+        /// <summary>
+        /// Adds the maps from assembly.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        public FluentMapModelRegistry AddMapsFromAssembly(Assembly assembly)
+        {
+            var types = from t in assembly.GetTypes()
+                        where t.IsClass
+                            && !t.IsAbstract
+                            && t.BaseType != null
+                            && t.BaseType.IsGenericType
+                        select t;
+
+            foreach (var type in types)
+            {
+                var genDef = type.BaseType.GetGenericTypeDefinition();
+
+                if (typeof(FluentRootClass<>).IsAssignableFrom(genDef))
+                {
+                    var fluentRootClassMap = Activator.CreateInstance(type);
+                    this.AddModel((RootClassMapModel)rootModelPropertyInfo.GetValue(fluentRootClassMap, null));
+                }
+                else if (typeof(FluentNestedClass<>).IsAssignableFrom(genDef))
+                {
+                    var fluentNestedClassMap = Activator.CreateInstance(type);
+                    this.AddModel((NestedClassMapModel)nestedModelPropertyInfo.GetValue(fluentNestedClassMap, null));
+                }
+                else if (typeof(FluentSubClass<>).IsAssignableFrom(genDef))
+                {
+                    var fluentSubClassMap = Activator.CreateInstance(type);
+                    this.AddModel((SubClassMapModel)subModelPropertyInfo.GetValue(fluentSubClassMap, null));
+                }
+            }
+            return this;
+        }
+
+        public FluentMapModelRegistry AddSource(IClassMapModelSource source)
+        {
+            this.registry.AddSource(source);
+            return this;
+        }
+
+        /// <summary>
+        /// Builds the mapping store.
+        /// </summary>
+        /// <returns></returns>
+        public IMappingStore BuildMappingStore()
+        {
+            return this.registry.BuildMappingStore();
+        }
+
+        #endregion
     }
 }

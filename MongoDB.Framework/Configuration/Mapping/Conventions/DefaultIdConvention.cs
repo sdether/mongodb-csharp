@@ -5,11 +5,11 @@ using System.Text;
 
 namespace MongoDB.Framework.Configuration.Mapping.Conventions
 {
-    public class NullIdConvention : ConventionBase<Type>, IIdConvention
+    public class DefaultIdConvention : ConventionBase<Type>, IIdConvention
     {
-        public static readonly NullIdConvention AlwaysMatching = new NullIdConvention();
+        public static readonly DefaultIdConvention AlwaysMatching = new DefaultIdConvention();
 
-        private NullIdConvention()
+        private DefaultIdConvention()
             : base(t => true)
         { }
 
