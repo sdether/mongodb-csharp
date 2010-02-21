@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using MongoDB.Framework.Configuration.Fluent.Mapping;
 using MongoDB.Framework.Configuration.Mapping.Conventions;
+using System.Reflection;
 
 namespace MongoDB.Framework.Configuration.Mapping.Auto
 {
@@ -33,19 +34,30 @@ namespace MongoDB.Framework.Configuration.Mapping.Auto
             this.typeSources = new List<ITypeSource>();
         }
 
-        public void AddTypeSource(ITypeSource typeSource)
+        public AutoPersistenceModel AddTypeSource(ITypeSource typeSource)
         {
             if (typeSource == null)
 	            throw new ArgumentNullException("typeSource");
 
             this.typeSources.Add(typeSource);
+            return this;
+        }
+
+        public AutoPersistenceModel AddAssemblyOf<T>()
+        {
+            return this.AddAssembly(typeof(T).Assembly);
+        }
+
+        public AutoPersistenceModel AddAssembly(Assembly assembly)
+        {
+            this.AddTypeSource(new AssemblyTypeSource(assembly));
+            return this;
         }
 
         public IEnumerable<ClassMapModel> GetClassMapModels()
         {
             foreach (var type in typeSources.SelectMany(x => x.GetTypes()))
             {
-
                 if(this.typeFilter != null && !this.typeFilter(type))
                     continue;
 
@@ -59,7 +71,11 @@ namespace MongoDB.Framework.Configuration.Mapping.Auto
                         Discriminator = this.expressions.DiscriminatorValue(type)
                     };
                 else if (this.expressions.IsNestedClass(type))
-                    yield return new NestedClassMapModel(type) { Conventions = this.conventions };
+                    yield return new NestedClassMapModel(type) 
+                    { 
+                        Conventions = this.conventions,
+                        DiscriminatorKey = this.expressions.DiscriminatorKey(type)
+                    };
                 else if(this.expressions.IsRootClass(type))
                     yield return new RootClassMapModel(type) 
                     { 
