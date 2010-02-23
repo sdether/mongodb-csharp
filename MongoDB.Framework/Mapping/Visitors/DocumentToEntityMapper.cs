@@ -10,19 +10,14 @@ namespace MongoDB.Framework.Mapping.Visitors
 {
     public class DocumentToEntityMapper : DefaultMapVisitor
     {
-        private Document document;
-        private object parentEntity;
-        private object entity;
+        protected Document document;
+        protected object parentEntity;
+        protected object entity;
 
-        private object value;
-        private IMongoSessionImplementor mongoSession;
+        protected object value;
 
-        public DocumentToEntityMapper(IMongoSessionImplementor mongoSession)
+        public DocumentToEntityMapper()
         {
-            if (mongoSession == null)
-                throw new ArgumentNullException("mongoSession");
-
-            this.mongoSession = mongoSession;
         }
 
         public object CreateEntity(ClassMap classMap, Document document)
@@ -132,23 +127,7 @@ namespace MongoDB.Framework.Mapping.Visitors
 
         public override void Visit(ManyToOneValueType manyToOneValueType)
         {
-            var dbRef = this.value as DBRef;
-            if (dbRef == null)
-            {
-                this.value = null;
-                return;
-            }
-
-            var referenceClassMap = this.mongoSession.MappingStore.GetClassMapFor(manyToOneValueType.ReferenceType);
-            var id = referenceClassMap.IdMap.ValueConverter.FromDocument(dbRef.Id);
-
-            if (this.mongoSession.SessionCache.TryToFind(referenceClassMap.CollectionName, id, out this.value))
-                return;
-
-            if (!manyToOneValueType.IsLazy)
-                this.value = this.mongoSession.GetById(manyToOneValueType.ReferenceType, id);
-            else
-                this.value = this.mongoSession.ProxyGenerator.GetProxy(referenceClassMap.Type, id, this.mongoSession);
+            throw new InvalidOperationException("DocumentToEntityMapper cannot be used when dbref's exist.");
         }
     }
 }

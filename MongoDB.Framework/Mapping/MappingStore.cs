@@ -67,5 +67,14 @@ namespace MongoDB.Framework.Mapping
 
             return classMap;
         }
+
+        /// <summary>
+        /// Creates the mongo mapper.
+        /// </summary>
+        /// <returns></returns>
+        public IMongoMapper CreateMongoMapper()
+        {
+            return new MongoMapper(this);
+        }
     }
 }

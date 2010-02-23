@@ -12,14 +12,14 @@ namespace MongoDB.Framework.Mapping.Visitors
         private Document document;
         private object entity;
         private object value;
-        private IMongoSessionImplementor mongoSession;
+        private IMappingStore mappingStore;
 
-        public EntityToDocumentMapper(IMongoSessionImplementor mongoSession)
+        public EntityToDocumentMapper(IMappingStore mappingStore)
         {
-            if (mongoSession == null)
-                throw new ArgumentNullException("mongoSession");
+            if (mappingStore == null)
+                throw new ArgumentNullException("mappingStore");
 
-            this.mongoSession = mongoSession;
+            this.mappingStore = mappingStore;
         }
 
         public Document CreateDocument(object entity)
@@ -27,7 +27,7 @@ namespace MongoDB.Framework.Mapping.Visitors
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
-            var classMap = this.mongoSession.MappingStore.GetClassMapFor(entity.GetType());
+            var classMap = this.mappingStore.GetClassMapFor(entity.GetType());
             return this.CreateDocument(classMap, entity);
         }
 
@@ -115,7 +115,7 @@ namespace MongoDB.Framework.Mapping.Visitors
 
         public override void Visit(ManyToOneValueType manyToOneValueType)
         {
-            var referenceClassMap = this.mongoSession.MappingStore.GetClassMapFor(manyToOneValueType.ReferenceType);
+            var referenceClassMap = this.mappingStore.GetClassMapFor(manyToOneValueType.ReferenceType);
             if (this.value != null)
             {
                 var id = referenceClassMap.IdMap.ValueConverter.ToDocument(referenceClassMap.GetId(this.value));

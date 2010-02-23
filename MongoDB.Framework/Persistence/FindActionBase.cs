@@ -137,8 +137,7 @@ namespace MongoDB.Framework.Persistence
                     concreteClassMap = classMap.GetClassMapByDiscriminator(discriminator);
                 }
 
-                var entity = new DocumentToEntityMapper(this.MongoSession)
-                    .CreateEntity(concreteClassMap, document.Copy());
+                var entity = this.MongoSession.MapToEntity(concreteClassMap, document.Copy());
 
                 if (trackEntities)
                 {

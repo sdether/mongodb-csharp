@@ -35,8 +35,7 @@ namespace MongoDB.Framework.Persistence
             if (!classMap.HasId)
                 throw new InvalidOperationException("Only entities with identifiers are persistable.");
 
-            var mapper = new EntityToDocumentMapper(this.MongoSession);
-            var document = mapper.CreateDocument(entity);
+            var document = this.MongoSession.MapToDocument(entity);
             this.GetCollectionForClassMap(classMap).Update(document);
             this.MongoSessionCache.Store(classMap.CollectionName, classMap.GetId(entity), entity);
             this.ChangeTracker.GetTrackedEntity(entity).MoveToPossibleModified(document);

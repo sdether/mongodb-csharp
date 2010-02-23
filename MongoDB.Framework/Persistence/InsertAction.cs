@@ -39,8 +39,7 @@ namespace MongoDB.Framework.Persistence
             var generator = new IdGenerator(this.MongoSession);
             generator.GenerateIdsFor(entity, classMap);
 
-            var document = new EntityToDocumentMapper(this.MongoSession)
-                .CreateDocument(entity);
+            var document = this.MongoSession.MapToDocument(entity);
 
             this.GetCollectionForClassMap(classMap)
                 .Insert(document);

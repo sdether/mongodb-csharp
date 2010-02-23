@@ -23,7 +23,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             var fluentMapModelRegistry = new FluentMapModelRegistry()
                 .AddMapsFromAssemblyContaining<PartyMap>();
 
-            var configuration = new MongoConfiguration("tests", fluentMapModelRegistry);
+            var mapper = fluentMapModelRegistry.BuildMappingStore().CreateMongoMapper();
 
             Guid id = Guid.NewGuid();
             var document = new Document()
@@ -47,10 +47,7 @@ namespace MongoDB.Framework.Configuration.Mapping
                 .Append("BirthDate", new DateTime(1900, 1, 1))
                 .Append("not-mapped", true);
 
-            var mongoSession = (IMongoSessionImplementor)configuration.CreateMongoSessionFactory().OpenMongoSession();
-            var classMap = mongoSession.MappingStore.GetClassMapFor<Person>();
-            var person = (Person)new DocumentToEntityMapper(mongoSession)
-                .CreateEntity(classMap, document);
+            var person = mapper.MapToEntity<Person>(document);
             Assert.IsNotNull(person);
             Assert.AreEqual(id, person.Id);
             Assert.AreEqual("Bob McBob", person.Name);
@@ -71,7 +68,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             var fluentMapModelRegistry = new FluentMapModelRegistry()
                 .AddMapsFromAssemblyContaining<PartyMap>();
 
-            var configuration = new MongoConfiguration("tests", fluentMapModelRegistry);
+            var mapper = fluentMapModelRegistry.BuildMappingStore().CreateMongoMapper();
 
             var person = new Person()
             {
@@ -98,10 +95,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             person.Aliases.Add("Dopey");
             person.Aliases.Add("Sleepy");
 
-            var mongoSession = (IMongoSessionImplementor)configuration.CreateMongoSessionFactory().OpenMongoSession();
-            var classMap = mongoSession.MappingStore.GetClassMapFor<Person>();
-            var document = new EntityToDocumentMapper(mongoSession)
-                .CreateDocument(person);
+            var document = mapper.MapToDocument(person);
 
             Assert.AreEqual(person.Id.ToByteArray(), ((Binary)document["_id"]).Bytes);
             Assert.AreEqual("Bob McBob", document["Name"]);
@@ -113,8 +107,6 @@ namespace MongoDB.Framework.Configuration.Mapping
             Assert.AreEqual(new[] { "Grumpy", "Dopey", "Sleepy" }, document["Aliases"]);
             Assert.AreEqual(true, document["not-mapped"]);
         }
-
-
 
         public class PartyMap : FluentRootClass<Party>
         {

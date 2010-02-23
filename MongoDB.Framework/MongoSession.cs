@@ -10,6 +10,7 @@ using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Persistence;
 using MongoDB.Framework.Proxy;
 using MongoDB.Framework.Tracking;
+using MongoDB.Framework.Mapping.Visitors;
 
 namespace MongoDB.Framework
 {
@@ -353,6 +354,55 @@ namespace MongoDB.Framework
             {
                 this.changeTracker.GetTrackedEntity(entity).MoveToInserted();
             }
+        }
+
+        /// <summary>
+        /// Maps to document.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <returns></returns>
+        public Document MapToDocument(object entity)
+        {
+            return new EntityToDocumentMapper(this.mappingStore).CreateDocument(entity);
+        }
+
+        /// <summary>
+        /// Maps to document.
+        /// </summary>
+        /// <param name="classMap">The class map.</param>
+        /// <param name="entity">The entity.</param>
+        /// <returns></returns>
+        public Document MapToDocument(ClassMap classMap, object entity)
+        {
+            return new EntityToDocumentMapper(this.mappingStore).CreateDocument(classMap, entity);
+        }
+
+        /// <summary>
+        /// Maps to entity.
+        /// </summary>
+        /// <param name="entityType">Type of the entity.</param>
+        /// <param name="document">The document.</param>
+        /// <returns></returns>
+        public object MapToEntity(Type entityType, Document document)
+        {
+            var classMap = this.mappingStore.GetClassMapFor(entityType);
+            if (classMap.IsPolymorphic)
+            {
+                var discriminator = document[classMap.DiscriminatorKey];
+                classMap = classMap.GetClassMapByDiscriminator(discriminator);
+            }
+            return this.MapToEntity(classMap, document);
+        }
+
+        /// <summary>
+        /// Maps to entity.
+        /// </summary>
+        /// <param name="classMap">The class map.</param>
+        /// <param name="document">The document.</param>
+        /// <returns></returns>
+        public object MapToEntity(ClassMap classMap, Document document)
+        {
+            return new DocumentToEntityDBRefMapper(this).CreateEntity(classMap, document);
         }
 
         /// <summary>

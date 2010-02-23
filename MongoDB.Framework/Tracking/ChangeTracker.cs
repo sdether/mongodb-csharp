@@ -179,8 +179,7 @@ namespace MongoDB.Framework.Tracking
             if (trackedEntity.State != TrackedEntityState.PossiblyModified)
                 return;
 
-            var document = new EntityToDocumentMapper(this.mongoSession)
-                .CreateDocument(trackedEntity.Current);
+            var document = this.mongoSession.MapToDocument(trackedEntity.Current);
 
             if (trackedEntity.Original == null)
             {

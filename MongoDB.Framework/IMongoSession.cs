@@ -9,7 +9,7 @@ using MongoDB.Framework.Tracking;
 
 namespace MongoDB.Framework
 {
-    public interface IMongoSession : IDisposable
+    public interface IMongoSession : IMongoMapper, IDisposable
     {
         /// <summary>
         /// Gets the database.

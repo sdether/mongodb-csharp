@@ -17,6 +17,12 @@ namespace MongoDB.Framework.Mapping
         /// <param name="type">The type.</param>
         /// <returns></returns>
         ClassMap GetClassMapFor(Type type);
+
+        /// <summary>
+        /// Creates the mongo mapper.
+        /// </summary>
+        /// <returns></returns>
+        IMongoMapper CreateMongoMapper();
     }
 
     public static class IMappingStoreExtensions
