@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NUnit.Framework;
 using MongoDB.Driver.Bson;
 
@@ -8,7 +8,7 @@ namespace MongoDB.Driver
     public class TestCollection
     {
         Mongo db = new Mongo();
-        
+
         [Test]
         public void TestFindOne(){
             Document query = new Document();
@@ -73,7 +73,28 @@ namespace MongoDB.Driver
                 Assert.IsTrue(Convert.ToDouble(j) % 2 == 0);
             }                       
         }
+        [Test]
+        public void TestFindWhereEquivalency(){
+            IMongoCollection col = db["tests"]["reads"];
+            Document lt = new Document().Append("j", new Document().Append("$lt", 5));
+            string where = "this.j < 5";
+            Document explicitWhere = new Document().Append("$where", new Code(where));
+            CodeWScope func = new CodeWScope("function() { return this.j < 5; }", new Document());
+            Document funcDoc = new Document().Append("$where", func);
+            
+            Assert.AreEqual(4, CountDocs(col.Find(lt)), "Basic find didn't return 4 docs");
+            Assert.AreEqual(4, CountDocs(col.Find(where)), "String where didn't return 4 docs");
+            Assert.AreEqual(4, CountDocs(col.Find(explicitWhere)), "Explicit where didn't return 4 docs");
+            Assert.AreEqual(4, CountDocs(col.Find(funcDoc)), "Function where didn't return 4 docs");
+        }
         
+        private int CountDocs(ICursor cur){
+            int cnt = 0;
+            foreach(Document doc in cur.Documents){
+                cnt++;
+            }
+            return cnt;
+        }
         [Test]
         public void TestWhere(){
             ICursor c = db["tests"]["reads"].Find("this.j % 2 == 0");
@@ -242,6 +263,7 @@ namespace MongoDB.Driver
             
             updates.Insert(new Document().Append("Last", "Cordr").Append("First","Sam"));
             updates.Insert(new Document().Append("Last", "Cordr").Append("First","Sam2"));
+            updates.Insert(new Document().Append("Last", "Cordr").Append("First","Sam3"));
             
             Document selector = new Document().Append("Last", "Cordr");
             ICursor results = updates.Find(selector);
@@ -251,11 +273,15 @@ namespace MongoDB.Driver
                 found = true;
             }
             Assert.IsTrue(found,"Should have found docs inserted for TestUpdateMany");
+            Assert.AreEqual(3, updates.Count(selector), "Didn't find all Documents inserted for TestUpdateMany with Selector");
             
+            //Document updateData = new Document().Append("$set", new Document().Append("Last", "Corder2"));
             Document updateData = new Document().Append("Last", "Corder2");
             updates.UpdateAll(updateData, selector);
             
             selector["Last"] = "Corder2";
+            Assert.AreEqual(3, updates.Count(selector), "Not all Cordr documents were updated");
+            
             results = updates.Find(selector);
             found = false;
             foreach(Document doc in results.Documents){

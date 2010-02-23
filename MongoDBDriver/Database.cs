@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using MongoDB.Driver.Bson;
 
 namespace MongoDB.Driver
 {
@@ -11,7 +9,7 @@ namespace MongoDB.Driver
     {
         private Connection connection;
         private IMongoCollection command;
-        
+
         private String name;
         public string Name {
             get { return name; }
@@ -19,7 +17,7 @@ namespace MongoDB.Driver
 
         private DatabaseMetaData metaData;
         public DatabaseMetaData MetaData {
-            get { 
+            get {
                 if(metaData == null){
                     metaData = new DatabaseMetaData(this.Name,this.connection);
                 }
@@ -27,6 +25,16 @@ namespace MongoDB.Driver
             }
         }
         
+        private DatabaseJS js;
+        public DatabaseJS JS {
+            get {
+                if(js == null){
+                    js = new DatabaseJS(this);
+                }
+                return js;
+            }
+        }        
+
         public Database(Connection conn, String name){
             this.connection = conn;
             this.name = name;
@@ -47,50 +55,63 @@ namespace MongoDB.Driver
             get{
                 return this.GetCollection(name);
             }
-        }   
-        
+        }
+
         public IMongoCollection GetCollection(String name){
             IMongoCollection col = new Collection(name, this.connection, this.Name);
             return col;
         }
-        
+
         public Document FollowReference(DBRef reference){
             if(reference == null) throw new ArgumentNullException("reference cannot be null");
             Document query = new Document().Append("_id", reference.Id);
             return this[reference.CollectionName].FindOne(query);
         }
-        
+
         public bool Authenticate(string username, string password){
             Document nonceResult = this.SendCommand("getnonce");
             String nonce = (String)nonceResult["nonce"];
+            
             if (nonce == null){
                 throw new MongoException("Error retrieving nonce", null);
             }
-            else {
-                string pwd = Database.Hash(username + ":mongo:" + password);
-                Document auth = new Document();
-                auth.Add("authenticate", 1.0);
-                auth.Add("user", username);
-                auth.Add("nonce", nonce);
-                auth.Add("key", Database.Hash(nonce + username + pwd));
-                try{
-                    this.SendCommand(auth);
-                    return true;
-                }catch(MongoCommandException){
-                    return false;
-                }
+            
+            string pwd = Database.Hash(username + ":mongo:" + password);
+            Document auth = new Document();
+            auth.Add("authenticate", 1.0);
+            auth.Add("user", username);
+            auth.Add("nonce", nonce);
+            auth.Add("key", Database.Hash(nonce + username + pwd));
+            try{
+                this.SendCommand(auth);
+                return true;
+            }catch(MongoCommandException){
+                return false;
             }
         }
 
         public void Logout(){
             this.SendCommand("logout");
         }
-        
-        public Document SendCommand(string str){
-            Document cmd = new Document().Append(str,1.0);
+
+        public Document Eval(string javascript){
+            return Eval(javascript, new Document());
+        }
+
+        public Document Eval(string javascript, Document scope){
+            return Eval(new CodeWScope(javascript, scope));
+        }
+
+        public Document Eval(CodeWScope cw){
+            Document cmd = new Document().Append("$eval", cw);
+            return SendCommand(cmd);
+        }
+
+        public Document SendCommand(string javascript){
+            Document cmd = new Document().Append(javascript,1.0);
             return this.SendCommand(cmd);
         }
-        
+
         public Document SendCommand(Document cmd){
             Document result = this.command.FindOne(cmd);
             double ok = (double)result["ok"];
@@ -105,7 +126,9 @@ namespace MongoDB.Driver
             }
             return result;
         }
-        
+
+
+
         internal static string Hash(string text){
             MD5 md5 = MD5.Create();
             byte[] hash = md5.ComputeHash(Encoding.Default.GetBytes(text));

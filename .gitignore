@@ -12,6 +12,8 @@
 *.userprefs
 *.usertasks
 *.test-cache
+*.orig
+*.cache
 
 bin
 obj

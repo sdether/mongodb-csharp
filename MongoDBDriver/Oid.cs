@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text.RegularExpressions;
 
 namespace MongoDB.Driver{
@@ -36,14 +36,18 @@ namespace MongoDB.Driver{
         
         public override bool Equals(object obj){
             if(obj.GetType() == typeof(Oid)){
-                string hex = ((Oid)obj).ToString();
+                string hex = obj.ToString();
                 return this.ToString().Equals(hex);
             }
             return false;
         }
+
+        public override int GetHashCode(){
+            return ToString().GetHashCode();
+        }
         
         public override string ToString() {
-            return string.Format(@"ObjectId(""{0}"")", BitConverter.ToString(value).Replace("-","").ToLower());
+            return String.Format("\"{0}\"",BitConverter.ToString(value).Replace("-","").ToLower());
         }
         
         protected void ValidateHex(string val){

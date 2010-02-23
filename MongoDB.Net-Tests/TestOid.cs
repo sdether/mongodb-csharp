@@ -58,7 +58,7 @@ namespace MongoDB.Driver
             string hex = "4a7067c30a57000000008ecb";
             Oid oid = new Oid(hex);
             
-            Assert.AreEqual("ObjectId(\"" + hex + "\")", oid.ToString());
+            Assert.AreEqual("\"" + hex + "\"", oid.ToString());
         }
         
         [Test]
@@ -73,11 +73,11 @@ namespace MongoDB.Driver
             string hex2 = "4a7067c30a57000000008ecc";
             Assert.AreNotEqual(new Oid(hex), new Oid(hex2));
             
-        }        
+        }
         
         [Test]
         public void TestDate(){
-            string hex = "958B454BD114BE541B000000";
+            string hex = "4B458B95D114BE541B000000";
             Oid oid = new Oid(hex);
             //Expected: 2010-01-07 02:24:56.633
             DateTime expected = new DateTime(2010,1,7,7,21,57,DateTimeKind.Utc);
