@@ -14,20 +14,31 @@ namespace MongoDB.Framework.Configuration.Mapping.Conventions
     {
         public static readonly DefaultValueConverterConvention AlwaysMatching = new DefaultValueConverterConvention();
 
+        private static Dictionary<Type, IValueConverter> valueConverters = new Dictionary<Type, IValueConverter>()
+        {
+            { typeof(Guid), new GuidValueConverter() }
+        };
+
+        public static void RegisterValueConverter<T>(IValueConverter valueConverter)
+        {
+            RegisterValueConverter(typeof(T), valueConverter);
+        }
+
+        public static void RegisterValueConverter(Type type, IValueConverter valueConverter)
+        {
+            valueConverters[type] = valueConverter;
+        }
+
         private DefaultValueConverterConvention()
             : base(m => true)
         { }
 
-        public IValueConverter GetValueConverter(MemberInfo memberInfo)
+        public virtual IValueConverter GetValueConverter(MemberInfo memberInfo)
         {
             var type = ReflectionUtil.GetMemberValueType(memberInfo);
-            if (type == typeof(Guid))
-                return new GuidValueConverter();
-
-            if (type == typeof(Regex))
-            {
-                //TODO: create a regex value type
-            }
+            IValueConverter valueConverter;
+            if(valueConverters.TryGetValue(type, out valueConverter))
+                return valueConverter;
 
             return new NullSafeValueConverter(type);
         }
