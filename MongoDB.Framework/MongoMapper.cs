@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using MongoDB.Driver;
+using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Mapping.Visitors;
 
-namespace MongoDB.Framework.Mapping
+namespace MongoDB.Framework
 {
     public class MongoMapper : IMongoMapper
     {

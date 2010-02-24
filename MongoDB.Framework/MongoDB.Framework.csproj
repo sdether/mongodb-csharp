@@ -120,9 +120,9 @@
     <Compile Include="Mapping\CollectionTypes\GenericListCollectionType.cs" />
     <Compile Include="Mapping\CollectionValueType.cs" />
     <Compile Include="Mapping\GenericStringKeyValueConverter.cs" />
-    <Compile Include="Mapping\IMongoMapper.cs" />
+    <Compile Include="IMongoMapper.cs" />
     <Compile Include="Mapping\MemberMap.cs" />
-    <Compile Include="Mapping\MongoMapper.cs" />
+    <Compile Include="MongoMapper.cs" />
     <Compile Include="Mapping\ParentMemberMap.cs" />
     <Compile Include="Mapping\ValueConverters\GuidAsStringConverter.cs" />
     <Compile Include="Mapping\ValueConverters\GuidValueConverter.cs" />
