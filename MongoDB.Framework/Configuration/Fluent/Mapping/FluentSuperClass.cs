@@ -64,5 +64,15 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
             var memberInfo = ReflectionUtil.GetSingleMember(idMember);
             return this.Id(memberInfo);
         }
+
+        public void UseActivator<T>()
+        {
+            this.UseActivator(typeof(T));
+        }
+
+        public void UseActivator(Type activatorType)
+        {
+            this.Model.ClassActivatorType = activatorType;
+        }
     }
 }

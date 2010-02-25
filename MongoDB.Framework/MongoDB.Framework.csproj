@@ -119,7 +119,9 @@
     <Compile Include="Mapping\CollectionTypes\HashSetCollectionType.cs" />
     <Compile Include="Mapping\CollectionTypes\GenericListCollectionType.cs" />
     <Compile Include="Mapping\CollectionValueType.cs" />
+    <Compile Include="Mapping\DefaultClassActivator.cs" />
     <Compile Include="Mapping\GenericStringKeyValueConverter.cs" />
+    <Compile Include="Mapping\IClassActivator.cs" />
     <Compile Include="Mapping\MemberMap.cs" />
     <Compile Include="Mapping\ParentMemberMap.cs" />
     <Compile Include="Mapping\ValueConverters\GuidAsStringConverter.cs" />

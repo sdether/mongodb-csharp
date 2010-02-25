@@ -183,6 +183,11 @@ namespace MongoDB.Framework.Configuration.Mapping
                 ExtendedPropertiesMap = this.BuildExtendedPropertiesMap(model.ExtendedPropertiesMap)
             };
 
+            if (model.ClassActivatorType == null)
+                rootClassMap.ClassActivator = new DefaultClassActivator();
+            else
+                rootClassMap.ClassActivator = (IClassActivator)Activator.CreateInstance(model.ClassActivatorType);
+
             this.rootClassMaps.Add(rootClassMap.Type, rootClassMap);
 
             var memberMaps = model.PersistentMemberMaps.Select(v => this.BuildMemberMap(v));

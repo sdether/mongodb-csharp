@@ -15,6 +15,8 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         public List<SubClassMapModel> SubClassMaps { get; private set; }
 
+        public Type ClassActivatorType { get; set; }
+
         public SuperClassMapModel(Type type)
             : base(type)
         {
