@@ -36,7 +36,7 @@ namespace MongoDB.Framework.Mapping.Visitors
 
         public override void Visit(ClassMap classMap)
         {
-            this.entity = Activator.CreateInstance(classMap.Type);
+            this.entity = classMap.ClassActivator.Activate(classMap.Type, this.document);
 
             base.Visit(classMap);
         }

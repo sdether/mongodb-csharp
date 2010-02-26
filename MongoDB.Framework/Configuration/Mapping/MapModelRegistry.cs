@@ -176,6 +176,7 @@ namespace MongoDB.Framework.Configuration.Mapping
 
             var rootClassMap = new RootClassMap(model.Type)
             {
+                ClassActivator = model.ClassActivator,
                 CollectionName = model.CollectionName,
                 IdMap = this.BuildIdMap(model.IdMap),
                 Discriminator = model.Discriminator,

@@ -65,6 +65,8 @@
     <Compile Include="Configuration\Mapping\Auto\AutoPersistenceModel.cs" />
     <Compile Include="Configuration\Mapping\Auto\ITypeSource.cs" />
     <Compile Include="Configuration\Mapping\Auto\SingleTypeSource.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\DefaultClassActivatorConvention.cs" />
+    <Compile Include="Configuration\Mapping\Conventions\IClassActivatorConvention.cs" />
     <Compile Include="Configuration\Mapping\Conventions\NamedExtendedPropertiesConvention.cs" />
     <Compile Include="Configuration\Mapping\Conventions\FilteredMemberFinder.cs" />
     <Compile Include="Configuration\Fluent\Mapping\Conventions\FluentMemberFinder.cs" />
@@ -119,8 +121,11 @@
     <Compile Include="Mapping\CollectionTypes\HashSetCollectionType.cs" />
     <Compile Include="Mapping\CollectionTypes\GenericListCollectionType.cs" />
     <Compile Include="Mapping\CollectionValueType.cs" />
+    <Compile Include="Mapping\DefaultClassActivator.cs" />
+    <Compile Include="Mapping\DelegateClassActivator.cs" />
     <Compile Include="Mapping\GenericStringKeyValueConverter.cs" />
     <Compile Include="IMongoMapper.cs" />
+    <Compile Include="Mapping\IClassActivator.cs" />
     <Compile Include="Mapping\MemberMap.cs" />
     <Compile Include="MongoMapper.cs" />
     <Compile Include="Mapping\ParentMemberMap.cs" />

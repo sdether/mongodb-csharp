@@ -13,6 +13,7 @@ namespace MongoDB.Framework.Configuration.Mapping
     {
         #region Static
 
+        private readonly static Stack<IClassActivatorConvention> globalClassActivatorConventions = new Stack<IClassActivatorConvention>();
         private readonly static Stack<ICollectionConvention> globalCollectionConventions = new Stack<ICollectionConvention>();
         private readonly static Stack<ICollectionNameConvention> globalCollectionNameConventions = new Stack<ICollectionNameConvention>();
         private readonly static Stack<IExtendedPropertiesConvention> globalExtendedPropertiesConventions = new Stack<IExtendedPropertiesConvention>();
@@ -23,12 +24,21 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         static MappingConventions()
         {
+            AddGlobalClassActivatorConvention(DefaultClassActivatorConvention.AlwaysMatching);
             AddGlobalCollectionConvention(DefaultCollectionConvention.AlwaysMatching);
             AddGlobalCollectionNameConvention(DefaultCollectionNameConvention.AlwaysMatching);
             AddGlobalExtendedPropertiesConvention(DefaultExtendedPropertiesConvention.AlwaysMatching);
             AddGlobalIdConvention(DefaultIdConvention.AlwaysMatching);
             AddGlobalMemberKeyConvention(DefaultMemberKeyConvention.AlwaysMatching);
             AddGlobalValueConverterConvention(DefaultValueConverterConvention.AlwaysMatching);
+        }
+
+        public static void AddGlobalClassActivatorConvention(IClassActivatorConvention convention)
+        {
+            if (convention == null)
+                throw new ArgumentNullException("convention");
+
+            globalClassActivatorConventions.Push(convention);
         }
 
         public static void AddGlobalCollectionConvention(ICollectionConvention convention)
@@ -91,6 +101,8 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         #region Public Properties
 
+        public IClassActivatorConvention ClassActivatorConvention { get; set; }
+
         public ICollectionConvention CollectionConvention { get; set; }
 
         public ICollectionNameConvention CollectionNameConvention { get; set; }
@@ -113,6 +125,7 @@ namespace MongoDB.Framework.Configuration.Mapping
         {
             return new MappingConventions()
             {
+                ClassActivatorConvention = this.ClassActivatorConvention,
                 CollectionConvention = this.CollectionConvention,
                 CollectionNameConvention = this.CollectionNameConvention,
                 ExtendedPropertiesConvention = this.ExtendedPropertiesConvention,
@@ -121,6 +134,17 @@ namespace MongoDB.Framework.Configuration.Mapping
                 MemberKeyConvention = this.MemberKeyConvention,
                 ValueConverterConvention = this.ValueConverterConvention
             };
+        }
+
+        public IClassActivatorConvention GetClassActivatorConvention(Type type)
+        {
+            var conventions = new List<IClassActivatorConvention>();
+            if (this.ClassActivatorConvention != null && this.ClassActivatorConvention.Matches(type))
+                conventions.Add(this.ClassActivatorConvention);
+
+            conventions.AddRange(globalClassActivatorConventions.Where(c => c.Matches(type)));
+
+            return new CompositeClassActivaterConvention(conventions);
         }
 
         public ICollectionConvention GetCollectionConvention(Type type)
@@ -207,6 +231,23 @@ namespace MongoDB.Framework.Configuration.Mapping
             public bool Matches(TConvention topic)
             {
                 return true;
+            }
+        }
+
+        private class CompositeClassActivaterConvention : CompositeConvention<IClassActivatorConvention, Type>, IClassActivatorConvention
+        {
+            public CompositeClassActivaterConvention(IEnumerable<IClassActivatorConvention> conventions)
+                : base(conventions)
+            { }
+
+            public bool CanCreateActivator(Type type)
+            {
+                return this.conventions.Any(c => c.CanCreateActivator(type));
+            }
+
+            public IClassActivator CreateActivator(Type type)
+            {
+                return this.conventions.First(c => c.Matches(type)).CreateActivator(type);
             }
         }
 

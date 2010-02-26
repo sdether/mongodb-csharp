@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MongoDB.Driver;
+using MongoDB.Framework.Configuration.Mapping;
 
 namespace MongoDB.Framework.Mapping
 {
@@ -103,6 +104,8 @@ namespace MongoDB.Framework.Mapping
         /// <value>The type.</value>
         public Type Type { get; private set; }
 
+        public virtual IClassActivator ClassActivator { get; set; }
+
         #endregion
 
         #region Constructors
@@ -120,6 +123,7 @@ namespace MongoDB.Framework.Mapping
 
             this.memberMaps = new List<MemberMap>();
             this.Type = type;
+            this.ClassActivator = new DefaultClassActivator();
         }
 
         #endregion

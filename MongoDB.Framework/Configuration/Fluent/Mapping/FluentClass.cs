@@ -8,6 +8,8 @@ using System.Text;
 using MongoDB.Framework.Configuration.Fluent.Mapping.Conventions;
 using MongoDB.Framework.Configuration.Mapping;
 using MongoDB.Framework.Reflection;
+using MongoDB.Framework.Mapping;
+using MongoDB.Driver;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
@@ -44,6 +46,21 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         {
             var memberInfo = ReflectionUtil.GetSingleMember(member);
             return this.Map(memberInfo);
+        }
+
+        public void ActivateWith<T>() where T : IClassActivator, new()
+        {
+            this.ActivateWith(new T());
+        }
+
+        public void ActivateWith(IClassActivator activator)
+        {
+            this.Model.ClassActivator = activator;
+        }
+
+        public void ActivateWith(Func<Type, Document, TEntity> activator)
+        {
+            this.Model.ClassActivator = new DelegateClassActivator((t, d) => activator(t, d));
         }
     }
 }

@@ -2,11 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
     public abstract class ClassMapModel : ModelNode
     {
+        /// <summary>
+        /// Gets or sets the class activator.
+        /// </summary>
+        /// <value>The class activator.</value>
+        public IClassActivator ClassActivator { get; set; }
+
         /// <summary>
         /// Gets or sets the conventions.
         /// </summary>

@@ -138,8 +138,6 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
 
                 return (ConvertibleMemberMapModel)this.Visit(newModel);
             }
-
-            return base.VisitPersistentMember(model);
         }
 
         #region Private Methods
@@ -167,6 +165,14 @@ namespace MongoDB.Framework.Configuration.Mapping.Visitors
 
         private void ProcessClass(ClassMapModel model)
         {
+            if (model.ClassActivator == null)
+            {
+                var convention = this.conventions.GetClassActivatorConvention(model.Type);
+
+                if (convention.CanCreateActivator(model.Type))
+                    model.ClassActivator = convention.CreateActivator(model.Type);
+            }
+
             foreach (var member in this.conventions.GetMemberFinder(model.Type).FindMembers(model.Type))
             {
                 var memberMapModel = new PersistentMemberMapModel()
