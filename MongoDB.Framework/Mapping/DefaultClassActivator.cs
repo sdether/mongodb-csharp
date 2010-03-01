@@ -7,17 +7,16 @@ using MongoDB.Driver;
 
 namespace MongoDB.Framework.Mapping
 {
-  public class DefaultClassActivator : IClassActivator
-  {
-    #region IClassActivator Members
-
-    public ClassMap Map { get; set; }
-
-    public object Activate(Type type, Document document)
+    public class DefaultClassActivator : IClassActivator
     {
-      return Activator.CreateInstance(type);
-    }
+        public static readonly DefaultClassActivator Instance = new DefaultClassActivator();
 
-    #endregion
-  }
+        private DefaultClassActivator()
+        { }
+
+        public object Activate(Type type, Document document)
+        {
+            return Activator.CreateInstance(type);
+        }
+    }
 }
