@@ -7,7 +7,7 @@ namespace MongoDB.Framework.Configuration.Mapping
 {
     public class ManyToOneMapModel : PersistentMemberMapModel
     {
-        public bool? IsLazy { get; set; }
+        public bool IsLazy { get; set; }
 
         public ManyToOneMapModel()
         { }

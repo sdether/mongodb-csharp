@@ -6,7 +6,6 @@ using System.Reflection;
 
 using MongoDB.Framework.Configuration.Mapping;
 using MongoDB.Framework.Reflection;
-using MongoDB.Framework.Configuration.Fluent.Mapping.Conventions;
 using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping

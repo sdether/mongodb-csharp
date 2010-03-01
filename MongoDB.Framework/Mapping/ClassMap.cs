@@ -123,7 +123,6 @@ namespace MongoDB.Framework.Mapping
 
             this.memberMaps = new List<MemberMap>();
             this.Type = type;
-            this.ClassActivator = new DefaultClassActivator();
         }
 
         #endregion

@@ -57,8 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\Fluent\Mapping\FluentAutoMapperConfigurationTests.cs" />
-	<Compile Include="Mapping\ActivationTests.cs" />
+    <Compile Include="Mapping\ActivationTests.cs" />
     <Compile Include="Mapping\IdGenerators\AssignedGeneratorTests.cs" />
     <Compile Include="Mapping\IdGenerators\OidGeneratorTests.cs" />
     <Compile Include="Mapping\IdGenerators\GuidCombGeneratorTests.cs" />

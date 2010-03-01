@@ -103,6 +103,7 @@ namespace MongoDB.Framework.Configuration.Mapping
         /// <returns></returns>
         public IMappingStore BuildMappingStore()
         {
+            this.AssociateFreeSubClassMapsWithSupers();
             this.BuildRootClassMaps();
             return new MappingStore(this.rootClassMaps.Values);
         }
@@ -145,23 +146,8 @@ namespace MongoDB.Framework.Configuration.Mapping
             }
         }
 
-        private void ApplyConventions()
-        {
-            var runner = new ConventionsRunner(this.rootClassMapModels.Keys);
-            foreach (var rootClassMapModel in this.rootClassMapModels.Values.Where(m => m.Conventions != null))
-                runner.ApplyConventions(rootClassMapModel);
-
-            foreach (var nestedClassMapModel in this.nestedClassMapModels.Values.Where(m => m.Conventions != null))
-                runner.ApplyConventions(nestedClassMapModel);
-
-            foreach (var subClassMapModel in this.subClassMapModels.Values.Where(m => m.Conventions != null))
-                runner.ApplyConventions(subClassMapModel);
-        }
-
         private void BuildRootClassMaps()
         {
-            this.AssociateFreeSubClassMapsWithSupers();
-            this.ApplyConventions();
             this.rootClassMaps = new Dictionary<Type, RootClassMap>();
             this.nestedClassMaps = new Dictionary<Type, NestedClassMap>();
 
@@ -171,13 +157,10 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         private void BuildRootClassMap(RootClassMapModel model)
         {
-            new DuplicateMembersFinder()
-                .FindAndClean(model);
-
             var rootClassMap = new RootClassMap(model.Type)
             {
-                ClassActivator = model.ClassActivator,
-                CollectionName = model.CollectionName,
+                ClassActivator = model.ClassActivator ?? DefaultClassActivator.Instance,
+                CollectionName = model.CollectionName ?? model.Type.Name,
                 IdMap = this.BuildIdMap(model.IdMap),
                 Discriminator = model.Discriminator,
                 DiscriminatorKey = model.DiscriminatorKey,
@@ -197,9 +180,6 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         private void BuildNestedClassMap(NestedClassMapModel model)
         {
-            new DuplicateMembersFinder()
-                .FindAndClean(model);
-
             var extPropMap = this.BuildExtendedPropertiesMap(model.ExtendedPropertiesMap);
             IdMap idMap = null;
             if(model.IdMap != null)
@@ -207,6 +187,7 @@ namespace MongoDB.Framework.Configuration.Mapping
 
             var nestedClassMap = new NestedClassMap(model.Type)
             {
+                ClassActivator = DefaultClassActivator.Instance,
                 IdMap = idMap,
                 Discriminator = model.Discriminator,
                 DiscriminatorKey = model.DiscriminatorKey,
@@ -230,6 +211,7 @@ namespace MongoDB.Framework.Configuration.Mapping
 
             var subClassMap = new SubClassMap(model.Type)
             {
+                ClassActivator = DefaultClassActivator.Instance,
                 Discriminator = model.Discriminator
             };
 
@@ -270,7 +252,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             if (unsavedValue == null)
                 unsavedValue = memberType.IsValueType ? Activator.CreateInstance(memberType) : null;
 
-            return new IdMap(model.Getter.Name, getter, setter, generator, model.ValueConverter, unsavedValue);
+            return new IdMap(model.Getter.Name, getter, setter, generator, model.ValueConverter ?? this.GetValueConverter(memberType), unsavedValue);
         }
 
         private Index BuildIndex(IndexModel model)
@@ -285,12 +267,48 @@ namespace MongoDB.Framework.Configuration.Mapping
         {
             var getter = LateBoundReflection.GetGetter(model.Getter);
             var setter = LateBoundReflection.GetSetter(model.Setter);
-            string name = model.Getter.Name;
-            string key = model.Key ?? name;
+            string memberName = model.Getter.Name;
+            string key = model.Key ?? memberName;
             var memberValueType = ReflectionUtil.GetMemberValueType(model.Getter);
             var persistNull = model.PersistNull;
-
             ValueTypeBase valueType = null;
+
+            //this model needs to be up-converted to a mappable model...
+            if (model.GetType() == typeof(PersistentMemberMapModel))
+            {
+                if (this.rootClassMapModels.ContainsKey(memberValueType))
+                {
+                    model = new ManyToOneMapModel()
+                    {
+                        Key = model.Key,
+                        Getter = model.Getter,
+                        Setter = model.Setter,
+                        PersistNull = model.PersistNull
+                    };
+                }
+                else if (this.IsCollection(memberValueType))
+                {
+                    model = new CollectionMemberMapModel()
+                    {
+                        Key = model.Key,
+                        Getter = model.Getter,
+                        Setter = model.Setter,
+                        PersistNull = model.PersistNull,
+                        CollectionType = this.GetCollectionType(memberValueType),
+                        ElementType = this.GetElementType(memberValueType)
+                    };
+                }
+                else
+                {
+                    model = new ConvertibleMemberMapModel()
+                    {
+                        Key = model.Key,
+                        Getter = model.Getter,
+                        Setter = model.Setter,
+                        PersistNull = model.PersistNull,
+                    };
+                }
+            }
 
             if (model is ConvertibleMemberMapModel)
             {
@@ -302,15 +320,15 @@ namespace MongoDB.Framework.Configuration.Mapping
             }
             else if (model is ManyToOneMapModel)
             {
-                bool isLazy = ((ManyToOneMapModel)model).IsLazy.Value;
+                bool isLazy = ((ManyToOneMapModel)model).IsLazy;
                 valueType = new ManyToOneValueType(memberValueType, isLazy);
             }
             else
-                throw new NotSupportedException("Unknown PersistentMemberMapModel.");
+                throw new NotSupportedException("Unknown type of PersistentMemberMapModel.");
 
             return new ValueTypeMemberMap(
                 key,
-                name,
+                memberName,
                 getter,
                 setter,
                 persistNull,
@@ -342,6 +360,8 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         private ValueTypeBase GetValueType(IValueConverter valueConverter, Type type)
         {
+            if (valueConverter == null)
+                valueConverter = this.GetValueConverter(type);
             NestedClassMap nestedClassMap = this.TryGetNestedClassMapFor(type);
             if(nestedClassMap == null)
                 return new SimpleValueType(type, valueConverter);
@@ -351,8 +371,67 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         private CollectionValueType GetCollectionValueType(CollectionMemberMapModel model)
         {
-            var elementType = this.GetValueType(new NullSafeValueConverter(model.ElementType), model.ElementType);
-            return new CollectionValueType(model.CollectionType, elementType);
+            var type = ReflectionUtil.GetMemberValueType(model.Getter);
+            if (model.CollectionType == null)
+                model.CollectionType = this.GetCollectionType(type);
+            if (model.ElementType == null)
+                model.ElementType = this.GetElementType(type);
+            if(model.ElementValueType == null)
+                model.ElementValueType = this.GetValueType(new NullSafeValueConverter(model.ElementType), model.ElementType);
+            return new CollectionValueType(model.CollectionType, model.ElementValueType);
+        }
+
+        private ICollectionType GetCollectionType(Type type)
+        {
+            if (type.IsGenericType)
+            {
+                var genType = type.GetGenericTypeDefinition();
+                if (genType == typeof(IList<>) || genType == typeof(List<>) || genType == typeof(ICollection<>))
+                    return new GenericListCollectionType();
+                if (genType == typeof(HashSet<>))
+                    return new HashSetCollectionType();
+                if (genType == typeof(IDictionary<,>) || genType == typeof(Dictionary<,>) && type.GetGenericArguments()[0] == typeof(string))
+                    return new GenericStringDictionaryCollectionType();
+            }
+
+            throw new NotSupportedException(string.Format("Could not create collection type from {0}.", type));
+        }
+
+        private Type GetElementType(Type type)
+        {
+            if (type.IsGenericType)
+            {
+                var genType = type.GetGenericTypeDefinition();
+                if (genType == typeof(IList<>) || genType == typeof(List<>) || genType == typeof(ICollection<>) || genType == typeof(HashSet<>))
+                    return type.GetGenericArguments()[0];
+                if (genType == typeof(IDictionary<,>) || genType == typeof(Dictionary<,>) && type.GetGenericArguments()[0] == typeof(string))
+                    return type.GetGenericArguments()[1];
+            }
+
+            throw new NotSupportedException(string.Format("Could not discover element type from {0}.", type));
+        }
+
+        private bool IsCollection(Type type)
+        {
+            if (type.IsGenericType)
+            {
+                var genType = type.GetGenericTypeDefinition();
+                return genType == typeof(IList<>)
+                    || genType == typeof(List<>)
+                    || genType == typeof(ICollection<>)
+                    || genType == typeof(HashSet<>)
+                    || ((genType == typeof(IDictionary<,>) || genType == typeof(Dictionary<,>)) && type.GetGenericArguments()[0] == typeof(string));
+            }
+
+            return false;
+        }
+
+        private IValueConverter GetValueConverter(Type type)
+        {
+            if (type == typeof(Guid))
+                return new GuidValueConverter();
+
+            return new NullSafeValueConverter(type);
         }
 
         #endregion

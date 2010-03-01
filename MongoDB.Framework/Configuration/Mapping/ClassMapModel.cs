@@ -15,12 +15,6 @@ namespace MongoDB.Framework.Configuration.Mapping
         public IClassActivator ClassActivator { get; set; }
 
         /// <summary>
-        /// Gets or sets the conventions.
-        /// </summary>
-        /// <value>The conventions.</value>
-        public MappingConventions Conventions { get; set; }
-
-        /// <summary>
         /// Gets or sets the discriminator.
         /// </summary>
         /// <value>The discriminator.</value>
@@ -44,7 +38,6 @@ namespace MongoDB.Framework.Configuration.Mapping
         /// <param name="type">The type.</param>
         public ClassMapModel(Type type)
         {
-            this.Conventions = new MappingConventions();
             this.PersistentMemberMaps = new List<PersistentMemberMapModel>();
             this.Type = type;
         }
