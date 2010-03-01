@@ -54,6 +54,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             Assert.AreEqual("123", person.PhoneNumber.AreaCode);
             Assert.AreEqual("456", person.PhoneNumber.Prefix);
             Assert.AreEqual("7890", person.PhoneNumber.Number);
+            Assert.AreSame(person, person.PhoneNumber.Party);
             Assert.AreEqual(2, person.AlternatePhoneNumbers.Count);
             Assert.AreEqual(3, person.Aliases.Count);
             Assert.AreEqual(new DateTime(1900, 1, 1), person.BirthDate);
@@ -150,6 +151,8 @@ namespace MongoDB.Framework.Configuration.Mapping
         {
             public PhoneNumberMap()
             {
+                Parent(x => x.Party);
+
                 Map(x => x.AreaCode);
                 Map(x => x.Prefix);
                 Map(x => x.Number);
@@ -164,6 +167,8 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         public class PhoneNumber
         {
+            public Party Party { get; set; }
+
             public string AreaCode { get; set; }
             public string Prefix { get; set; }
             public string Number { get; set; }

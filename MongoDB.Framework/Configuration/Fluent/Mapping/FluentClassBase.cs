@@ -61,5 +61,26 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
             var memberInfo = ReflectionUtil.GetSingleMember(member);
             return this.Map(memberInfo);
         }
+
+        public void Parent(string memberName)
+        {
+            var memberInfo = ReflectionUtil.GetSingleMember<TEntity>(memberName);
+            this.Parent(memberInfo);
+        }
+
+        public void Parent(MemberInfo memberInfo)
+        {
+            this.Model.ParentMemberMap = new ParentMemberMapModel()
+            {
+                Getter = memberInfo,
+                Setter = memberInfo
+            };
+        }
+
+        public void Parent(Expression<Func<TEntity, object>> member)
+        {
+            var memberInfo = ReflectionUtil.GetSingleMember(member);
+            this.Parent(memberInfo);
+        }
     }
 }

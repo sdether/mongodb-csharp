@@ -21,6 +21,12 @@ namespace MongoDB.Framework.Configuration.Mapping
         public object Discriminator { get; set; }
 
         /// <summary>
+        /// Gets or sets the parent member map.
+        /// </summary>
+        /// <value>The parent member map.</value>
+        public ParentMemberMapModel ParentMemberMap { get; set; }
+
+        /// <summary>
         /// Gets or sets the persistent member maps.
         /// </summary>
         /// <value>The persistent member maps.</value>

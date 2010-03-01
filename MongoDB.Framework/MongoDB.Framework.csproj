@@ -63,6 +63,7 @@
     <Compile Include="Configuration\Mapping\Inflector.cs" />
     <Compile Include="Configuration\Mapping\MemberMapModel.cs" />
     <Compile Include="Configuration\Mapping\ParentMemberMapModel.cs" />
+    <Compile Include="Extensions\ReflectionExtensions.cs" />
     <Compile Include="Mapping\ClassMapBase.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -74,7 +75,6 @@
     <Compile Include="Mapping\CollectionValueType.cs" />
     <Compile Include="Mapping\DefaultClassActivator.cs" />
     <Compile Include="Mapping\DelegateClassActivator.cs" />
-    <Compile Include="Mapping\GenericStringKeyValueConverter.cs" />
     <Compile Include="IMongoMapper.cs" />
     <Compile Include="Mapping\IClassActivator.cs" />
     <Compile Include="Mapping\MemberMap.cs" />
@@ -250,7 +250,6 @@
     <Compile Include="Configuration\MongoConfiguration.cs" />
     <Compile Include="DefaultMongoFactory.cs" />
     <Compile Include="Extensions\MongoDBDocumentExtensions.cs" />
-    <Compile Include="Extensions\ReflectionExtensions.cs" />
     <Compile Include="IMongoSession.cs" />
     <Compile Include="IMongoSessionFactory.cs" />
     <Compile Include="IMongoFactory.cs" />

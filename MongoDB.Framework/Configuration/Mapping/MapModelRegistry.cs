@@ -127,7 +127,10 @@ namespace MongoDB.Framework.Configuration.Mapping
 
             this.classMaps.Add(classMap.Type, classMap);
 
-            var memberMaps = model.PersistentMemberMaps.Select(v => this.BuildMemberMap(v));
+            var memberMaps = model.PersistentMemberMaps.Select(v => this.BuildMemberMap(v)).ToList();
+            if (model.ParentMemberMap != null)
+                memberMaps.Add(this.BuildParentMemberMap(model.ParentMemberMap));
+
             var subClassMaps = model.SubClassMaps.Select(sc => this.BuildSubClassMap(sc));
             var indices = model.Indexes.Select(i => this.BuildIndex(i));
 
@@ -138,15 +141,18 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         private SubClassMap BuildSubClassMap(SubClassMapModel model)
         {
-            var memberMaps = model.PersistentMemberMaps.Select(v => this.BuildMemberMap(v));
-
             var subClassMap = new SubClassMap(model.Type)
             {
                 ClassActivator = DefaultClassActivator.Instance,
                 Discriminator = model.Discriminator
             };
 
+            var memberMaps = model.PersistentMemberMaps.Select(v => this.BuildMemberMap(v)).ToList();
+            if (model.ParentMemberMap != null)
+                memberMaps.Add(this.BuildParentMemberMap(model.ParentMemberMap));
+
             subClassMap.AddMemberMaps(memberMaps);
+
 
             return subClassMap;
         }
