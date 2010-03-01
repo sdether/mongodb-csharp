@@ -114,7 +114,7 @@ namespace MongoDB.Framework.Configuration.Mapping
                 CollectionName = "parties";
                 DiscrimatorKey = "Type";
 
-                HasIndex().Ascending("Name");
+                EnsureIndex().Ascending("Name");
 
                 Id(x => x.Id);
 

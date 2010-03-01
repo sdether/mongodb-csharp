@@ -78,6 +78,7 @@
     <Compile Include="IMongoMapper.cs" />
     <Compile Include="Mapping\IClassActivator.cs" />
     <Compile Include="Mapping\MemberMap.cs" />
+    <Compile Include="Mapping\Visitors\DefaultMapVisitor.cs" />
     <Compile Include="MongoMapper.cs" />
     <Compile Include="Mapping\ParentMemberMap.cs" />
     <Compile Include="Mapping\ValueConverters\GuidAsStringConverter.cs" />
@@ -213,9 +214,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\UnmappedTypeException.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Mapping\Visitors\DefaultMapVisitor.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\Visitors\DeleteDocumentMapper.cs">

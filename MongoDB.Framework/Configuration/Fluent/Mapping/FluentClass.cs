@@ -50,7 +50,7 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
             this.ExtendedProperties(memberInfo);
         }
 
-        public FluentIndex<TClass> HasIndex()
+        public FluentIndex<TClass> EnsureIndex()
         {
             var fluentIndex = new FluentIndex<TClass>();
             this.Model.Indexes.Add(fluentIndex.Model);

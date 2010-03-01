@@ -61,6 +61,5 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
             var memberInfo = ReflectionUtil.GetSingleMember(member);
             return this.Map(memberInfo);
         }
-        
     }
 }

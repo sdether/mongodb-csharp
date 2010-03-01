@@ -92,7 +92,7 @@ namespace MongoDB.Framework
             public PartyMap()
             {
                 CollectionName = "parties";
-                HasIndex().Ascending("Name");
+                EnsureIndex().Ascending("Name");
 
                 DiscrimatorKey = "Type";
 
