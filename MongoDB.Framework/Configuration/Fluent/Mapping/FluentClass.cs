@@ -5,61 +5,77 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
-using MongoDB.Framework.Configuration.Mapping;
+using MongoDB.Framework.Linq.Visitors;
 using MongoDB.Framework.Reflection;
-using MongoDB.Framework.Mapping;
-using MongoDB.Driver;
+using MongoDB.Framework.Configuration.Mapping;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
-    public abstract class FluentClass<TModel, TEntity> : FluentBase<TModel> where TModel : ClassMapModel
+    public class FluentClass<TClass> : FluentClassBase<ClassMapModel, TClass>
     {
-        public object Discriminator
+        public string CollectionName
         {
-            get { return this.Model.Discriminator; }
-            set { this.Model.Discriminator = value; }
+            get { return this.Model.CollectionName; }
+            set { this.Model.CollectionName = value; }
         }
 
-        public FluentClass(TModel model)
-            : base(model)
+        public string DiscrimatorKey
+        {
+            get { return this.Model.DiscriminatorKey; }
+            set { this.Model.DiscriminatorKey = value; }
+        }
+
+        public FluentClass()
+            : base(new ClassMapModel(typeof(TClass)))
         { }
 
-        public FluentMember Map(string memberName)
+        public void ExtendedProperties(string memberName)
         {
-            var memberInfo = ReflectionUtil.GetSingleMember<TEntity>(memberName);
-            return this.Map(memberInfo);
+            var memberInfo = ReflectionUtil.GetSingleMember<TClass>(memberName);
+            this.ExtendedProperties(memberInfo);
         }
 
-        public FluentMember Map(MemberInfo memberInfo)
+        public void ExtendedProperties(MemberInfo memberInfo)
         {
-            var memberType = ReflectionUtil.GetMemberValueType(memberInfo);
-            var value = new FluentMember(this.Model);
-            value.Model.Getter = memberInfo;
-            value.Model.Setter = memberInfo;
-
-            this.Model.PersistentMemberMaps.Add(value.Model);
-            return value;
+            this.Model.ExtendedPropertiesMap = new ExtendedPropertiesMapModel()
+            {
+                Getter = memberInfo,
+                Setter = memberInfo
+            };
         }
 
-        public FluentMember Map(Expression<Func<TEntity, object>> member)
+        public void ExtendedProperties(Expression<Func<TClass, IDictionary<string, object>>> member)
         {
             var memberInfo = ReflectionUtil.GetSingleMember(member);
-            return this.Map(memberInfo);
+            this.ExtendedProperties(memberInfo);
         }
 
-        public void ActivateWith<T>() where T : IClassActivator, new()
+        public FluentIndex<TClass> HasIndex()
         {
-            this.ActivateWith(new T());
+            var fluentIndex = new FluentIndex<TClass>();
+            this.Model.Indexes.Add(fluentIndex.Model);
+            return fluentIndex;
         }
 
-        public void ActivateWith(IClassActivator activator)
+        public FluentId Id(string memberName)
         {
-            this.Model.ClassActivator = activator;
+            var memberInfo = ReflectionUtil.GetSingleMember<TClass>(memberName);
+            return this.Id(memberInfo);
         }
 
-        public void ActivateWith(Func<Type, Document, TEntity> activator)
+        public FluentId Id(MemberInfo memberInfo)
         {
-            this.Model.ClassActivator = new DelegateClassActivator((t, d) => activator(t, d));
+            var fluentIdMap = new FluentId();
+            fluentIdMap.Model.Getter = memberInfo;
+            fluentIdMap.Model.Setter = memberInfo;
+            this.Model.IdMap = fluentIdMap.Model;
+            return fluentIdMap;
+        }
+
+        public FluentId Id(Expression<Func<TClass, object>> idMember)
+        {
+            var memberInfo = ReflectionUtil.GetSingleMember(idMember);
+            return this.Id(memberInfo);
         }
     }
 }

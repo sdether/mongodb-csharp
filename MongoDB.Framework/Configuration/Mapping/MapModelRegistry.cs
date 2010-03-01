@@ -13,7 +13,6 @@ using MongoDB.Framework.Mapping.ValueConverters;
 using MongoDB.Framework.Mapping.IdGenerators;
 using MongoDB.Framework.Reflection;
 using MongoDB.Framework.Configuration.Fluent.Mapping;
-using MongoDB.Framework.Configuration.Mapping.Visitors;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
@@ -21,12 +20,10 @@ namespace MongoDB.Framework.Configuration.Mapping
     {
         #region Private Fields
 
-        private Dictionary<Type, RootClassMapModel> rootClassMapModels;
-        private Dictionary<Type, NestedClassMapModel> nestedClassMapModels;
+        private Dictionary<Type, ClassMapModel> classMapModels;
         private Dictionary<Type, SubClassMapModel> subClassMapModels;
 
-        private Dictionary<Type, RootClassMap> rootClassMaps;
-        private Dictionary<Type, NestedClassMap> nestedClassMaps;
+        private Dictionary<Type, ClassMap> classMaps;
 
         #endregion
 
@@ -37,8 +34,7 @@ namespace MongoDB.Framework.Configuration.Mapping
         /// </summary>
         public MapModelRegistry()
         {
-            this.rootClassMapModels = new Dictionary<Type, RootClassMapModel>();
-            this.nestedClassMapModels = new Dictionary<Type, NestedClassMapModel>();
+            this.classMapModels = new Dictionary<Type, ClassMapModel>();
             this.subClassMapModels = new Dictionary<Type, SubClassMapModel>();
         }
 
@@ -46,24 +42,12 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         #region Public Methods
 
-        public void AddModel(RootClassMapModel model)
+        public void AddModel(ClassMapModel model)
         {
             if (model == null)
                 throw new ArgumentNullException("model");
 
-            this.rootClassMapModels.Add(model.Type, model);
-        }
-
-        /// <summary>
-        /// Adds the nested class map model.
-        /// </summary>
-        /// <param name="nestedClassMapModel">The nested class map model.</param>
-        public void AddModel(NestedClassMapModel model)
-        {
-            if (model == null)
-                throw new ArgumentNullException("model");
-
-            this.nestedClassMapModels.Add(model.Type, model);
+            this.classMapModels.Add(model.Type, model);
         }
 
         /// <summary>
@@ -79,33 +63,14 @@ namespace MongoDB.Framework.Configuration.Mapping
         }
 
         /// <summary>
-        /// Adds the source.
-        /// </summary>
-        /// <param name="classMapModelSource">The class map model source.</param>
-        public void AddSource(IClassMapModelSource classMapModelSource)
-        {
-            foreach (var model in classMapModelSource.GetClassMapModels())
-            {
-                if (model is RootClassMapModel)
-                    this.AddModel((RootClassMapModel)model);
-                else if (model is NestedClassMapModel)
-                    this.AddModel((NestedClassMapModel)model);
-                else if (model is SubClassMapModel)
-                    this.AddModel((SubClassMapModel)model);
-                else
-                    throw new NotSupportedException();
-            }
-        }
-
-        /// <summary>
         /// Builds the mapping store.
         /// </summary>
         /// <returns></returns>
         public IMappingStore BuildMappingStore()
         {
             this.AssociateFreeSubClassMapsWithSupers();
-            this.BuildRootClassMaps();
-            return new MappingStore(this.rootClassMaps.Values);
+            this.BuildClassMaps();
+            return new MappingStore(this.classMaps.Values);
         }
 
         #endregion
@@ -130,34 +95,27 @@ namespace MongoDB.Framework.Configuration.Mapping
             var subs = new List<SubClassMapModel>(this.subClassMapModels.Values);
             foreach (var sub in subs)
             {
-                var superClassType = getSuperClassType(sub.Type, this.rootClassMapModels.ContainsKey);
+                var superClassType = getSuperClassType(sub.Type, this.classMapModels.ContainsKey);
                 if (superClassType != null)
                 {
-                    this.rootClassMapModels[superClassType].SubClassMaps.Add(sub);
+                    this.classMapModels[superClassType].SubClassMaps.Add(sub);
                     this.subClassMapModels.Remove(sub.Type);
                     continue;
-                }
-                superClassType = getSuperClassType(sub.Type, this.nestedClassMapModels.ContainsKey);
-                if (superClassType != null)
-                {
-                    this.nestedClassMapModels[superClassType].SubClassMaps.Add(sub);
-                    this.subClassMapModels.Remove(sub.Type);
                 }
             }
         }
 
-        private void BuildRootClassMaps()
+        private void BuildClassMaps()
         {
-            this.rootClassMaps = new Dictionary<Type, RootClassMap>();
-            this.nestedClassMaps = new Dictionary<Type, NestedClassMap>();
+            this.classMaps = new Dictionary<Type, ClassMap>();
 
-            foreach (var rootClassMapModel in this.rootClassMapModels.Values)
-                this.BuildRootClassMap(rootClassMapModel);
+            foreach (var classMapModel in this.classMapModels.Values)
+                this.BuildClassMap(classMapModel);
         }
 
-        private void BuildRootClassMap(RootClassMapModel model)
+        private void BuildClassMap(ClassMapModel model)
         {
-            var rootClassMap = new RootClassMap(model.Type)
+            var classMap = new ClassMap(model.Type)
             {
                 ClassActivator = model.ClassActivator ?? DefaultClassActivator.Instance,
                 CollectionName = model.CollectionName ?? model.Type.Name,
@@ -167,42 +125,15 @@ namespace MongoDB.Framework.Configuration.Mapping
                 ExtendedPropertiesMap = this.BuildExtendedPropertiesMap(model.ExtendedPropertiesMap)
             };
 
-            this.rootClassMaps.Add(rootClassMap.Type, rootClassMap);
+            this.classMaps.Add(classMap.Type, classMap);
 
             var memberMaps = model.PersistentMemberMaps.Select(v => this.BuildMemberMap(v));
             var subClassMaps = model.SubClassMaps.Select(sc => this.BuildSubClassMap(sc));
             var indices = model.Indexes.Select(i => this.BuildIndex(i));
 
-            rootClassMap.AddMemberMaps(memberMaps);
-            rootClassMap.AddSubClassMaps(subClassMaps);
-            rootClassMap.AddIndices(indices);
-        }
-
-        private void BuildNestedClassMap(NestedClassMapModel model)
-        {
-            var extPropMap = this.BuildExtendedPropertiesMap(model.ExtendedPropertiesMap);
-            IdMap idMap = null;
-            if(model.IdMap != null)
-                idMap = this.BuildIdMap(model.IdMap);
-
-            var nestedClassMap = new NestedClassMap(model.Type)
-            {
-                ClassActivator = DefaultClassActivator.Instance,
-                IdMap = idMap,
-                Discriminator = model.Discriminator,
-                DiscriminatorKey = model.DiscriminatorKey,
-                ExtendedPropertiesMap = extPropMap
-            };
-            this.nestedClassMaps.Add(model.Type, nestedClassMap);
-
-            var memberMaps = model.PersistentMemberMaps.Select(v => this.BuildMemberMap(v)).ToList();
-            if (model.ParentMap != null)
-                memberMaps.Add(this.BuildParentMemberMap(model.ParentMap));
-
-            var subClassMaps = model.SubClassMaps.Select(sc => this.BuildSubClassMap(sc));
-
-            nestedClassMap.AddMemberMaps(memberMaps);
-            nestedClassMap.AddSubClassMaps(subClassMaps);
+            classMap.AddMemberMaps(memberMaps);
+            classMap.AddSubClassMaps(subClassMaps);
+            classMap.AddIndices(indices);
         }
 
         private SubClassMap BuildSubClassMap(SubClassMapModel model)
@@ -234,6 +165,9 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         private IdMap BuildIdMap(IdMapModel model)
         {
+            if (model == null)
+                return null;
+
             var getter = LateBoundReflection.GetGetter(model.Getter);
             var setter = LateBoundReflection.GetSetter(model.Setter);
             IIdGenerator generator = model.Generator;
@@ -276,17 +210,7 @@ namespace MongoDB.Framework.Configuration.Mapping
             //this model needs to be up-converted to a mappable model...
             if (model.GetType() == typeof(PersistentMemberMapModel))
             {
-                if (this.rootClassMapModels.ContainsKey(memberValueType))
-                {
-                    model = new ManyToOneMapModel()
-                    {
-                        Key = model.Key,
-                        Getter = model.Getter,
-                        Setter = model.Setter,
-                        PersistNull = model.PersistNull
-                    };
-                }
-                else if (this.IsCollection(memberValueType))
+                if (this.IsCollection(memberValueType))
                 {
                     model = new CollectionMemberMapModel()
                     {
@@ -318,9 +242,9 @@ namespace MongoDB.Framework.Configuration.Mapping
             {
                 valueType = this.GetCollectionValueType((CollectionMemberMapModel)model);
             }
-            else if (model is ManyToOneMapModel)
+            else if (model is ReferenceMapModel)
             {
-                bool isLazy = ((ManyToOneMapModel)model).IsLazy;
+                bool isLazy = ((ReferenceMapModel)model).IsLazy;
                 valueType = new ManyToOneValueType(memberValueType, isLazy);
             }
             else
@@ -344,29 +268,15 @@ namespace MongoDB.Framework.Configuration.Mapping
             return new ParentMemberMap(name, getter, setter);
         }
 
-        private NestedClassMap TryGetNestedClassMapFor(Type type)
-        {
-            NestedClassMap nestedClassMap;
-            if (this.nestedClassMaps.TryGetValue(type, out nestedClassMap))
-                return nestedClassMap;
-
-            NestedClassMapModel nestedClassMapModel;
-            if (!this.nestedClassMapModels.TryGetValue(type, out nestedClassMapModel))
-                return null;
-
-            this.BuildNestedClassMap(nestedClassMapModel);
-            return this.nestedClassMaps[type];
-        }
-
         private ValueTypeBase GetValueType(IValueConverter valueConverter, Type type)
         {
             if (valueConverter == null)
                 valueConverter = this.GetValueConverter(type);
-            NestedClassMap nestedClassMap = this.TryGetNestedClassMapFor(type);
-            if(nestedClassMap == null)
-                return new SimpleValueType(type, valueConverter);
+            
+            if(this.classMaps.ContainsKey(type) || this.classMapModels.ContainsKey(type)) //TODO: deal with references directly to subclasses.
+                return new NestedClassValueType(type, valueConverter);
 
-            return new NestedClassValueType(nestedClassMap, valueConverter);
+            return new SimpleValueType(type, valueConverter);
         }
 
         private CollectionValueType GetCollectionValueType(CollectionMemberMapModel model)

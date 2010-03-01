@@ -72,7 +72,7 @@ namespace MongoDB.Framework.Updates
             public List<string> Strings { get; set; }
         }
 
-        public class EntityMap : FluentRootClass<Entity>
+        public class EntityMap : FluentClass<Entity>
         {
             public EntityMap()
             {

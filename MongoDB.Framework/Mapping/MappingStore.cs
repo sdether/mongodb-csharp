@@ -7,15 +7,15 @@ namespace MongoDB.Framework.Mapping
 {
     public class MappingStore : IMappingStore
     {
-        private Dictionary<Type, ClassMap> classMaps;
+        private Dictionary<Type, ClassMapBase> classMaps;
 
         /// <summary>
-        /// Gets the root class maps.
+        /// Gets the class maps.
         /// </summary>
-        /// <value>The root class maps.</value>
-        public IEnumerable<RootClassMap> RootClassMaps
+        /// <value>The class maps.</value>
+        public IEnumerable<ClassMap> ClassMaps
         {
-            get { return this.classMaps.Values.OfType<RootClassMap>(); }
+            get { return this.classMaps.Values.OfType<ClassMap>(); }
         }
 
         /// <summary>
@@ -28,28 +28,28 @@ namespace MongoDB.Framework.Mapping
         /// <summary>
         /// Initializes a new instance of the <see cref="IMappingStore"/> class.
         /// </summary>
-        /// <param name="rootClassMaps">The root class maps.</param>
-        public MappingStore(IEnumerable<RootClassMap> rootClassMaps)
+        /// <param name="classMaps">The class maps.</param>
+        public MappingStore(IEnumerable<ClassMap> classMaps)
         {
-            if (rootClassMaps == null)
-                throw new ArgumentNullException("rootClassMaps");
+            if (classMaps == null)
+                throw new ArgumentNullException("classMaps");
 
-            this.classMaps = new Dictionary<Type, ClassMap>();
-            foreach (var rootClassMap in rootClassMaps)
-                this.AddRootClassMap(rootClassMap);
+            this.classMaps = new Dictionary<Type, ClassMapBase>();
+            foreach (var classMap in classMaps)
+                this.AddClassMap(classMap);
         }
 
         /// <summary>
-        /// Adds the root class map.
+        /// Adds the class map.
         /// </summary>
-        /// <param name="rootClassMap">The root class map.</param>
-        public void AddRootClassMap(RootClassMap rootClassMap)
+        /// <param name="classMap">The class map.</param>
+        public void AddClassMap(ClassMap classMap)
         {
-            if (rootClassMap == null)
-                throw new ArgumentNullException("rootClassMap");
+            if (classMap == null)
+                throw new ArgumentNullException("classMap");
 
-            this.classMaps.Add(rootClassMap.Type, rootClassMap);
-            foreach (var subClassMap in rootClassMap.SubClassMaps)
+            this.classMaps.Add(classMap.Type, classMap);
+            foreach (var subClassMap in classMap.SubClassMaps)
                 this.classMaps.Add(subClassMap.Type, subClassMap);
         }
 
@@ -58,9 +58,9 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="type">ValueType of the entity.</param>
         /// <returns></returns>
-        public virtual ClassMap GetClassMapFor(Type type)
+        public virtual ClassMapBase GetClassMapFor(Type type)
         {
-            ClassMap classMap = null;
+            ClassMapBase classMap = null;
             //TODO: add hook for runtime creation of map...
             if(!this.classMaps.TryGetValue(type, out classMap))
                 throw new UnmappedTypeException(string.Format("The type {0} is unmapped.", type));

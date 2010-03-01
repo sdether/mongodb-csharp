@@ -5,11 +5,11 @@ using System.Text;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
-    public class ManyToOneMapModel : PersistentMemberMapModel
+    public class ReferenceMapModel : PersistentMemberMapModel
     {
         public bool IsLazy { get; set; }
 
-        public ManyToOneMapModel()
+        public ReferenceMapModel()
         { }
     }
 }

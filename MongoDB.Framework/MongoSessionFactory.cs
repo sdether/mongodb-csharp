@@ -119,14 +119,14 @@ namespace MongoDB.Framework
         /// </summary>
         private void CreateIndexes(Database database)
         {
-            foreach (var rootClassMap in this.mappingStore.RootClassMaps)
+            foreach (var classMap in this.mappingStore.ClassMaps)
             {
                 //getting a collection is more expensive than counting indexes, so let's make this as fast as possible...
-                if (rootClassMap.Indexes.Count() == 0)
+                if (classMap.Indexes.Count() == 0)
                     continue;
 
-                var collectionMetaData = database.GetCollection(rootClassMap.CollectionName).MetaData;
-                foreach (var index in rootClassMap.Indexes)
+                var collectionMetaData = database.GetCollection(classMap.CollectionName).MetaData;
+                foreach (var index in classMap.Indexes)
                 {
                     Document fieldsAndDirections = new Document();
                     foreach (var part in index.Parts)

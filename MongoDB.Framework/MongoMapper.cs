@@ -23,7 +23,7 @@ namespace MongoDB.Framework
 
         public Document MapToDocument(object entity)
         {
-            return new EntityToDocumentMapper(mappingStore).CreateDocument(entity);
+            return new EntityToDocumentMapper(this.mappingStore).CreateDocument(entity);
         }
 
         public object MapToEntity(Type entityType, Document document)
@@ -34,7 +34,7 @@ namespace MongoDB.Framework
                 var discriminator = document[classMap.DiscriminatorKey];
                 classMap = classMap.GetClassMapByDiscriminator(discriminator);
             }
-            return new DocumentToEntityMapper().CreateEntity(classMap, document);
+            return new DocumentToEntityMapper(this.mappingStore).CreateEntity(classMap, document);
         }
     }
 }

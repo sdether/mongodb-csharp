@@ -14,9 +14,8 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
     {
         #region Private Static Fields
 
-        private static readonly PropertyInfo rootModelPropertyInfo = typeof(FluentBase<RootClassMapModel>).GetProperty("Model");
-        private static readonly PropertyInfo nestedModelPropertyInfo = typeof(FluentBase<NestedClassMapModel>).GetProperty("Model");
-        private static readonly PropertyInfo subModelPropertyInfo = typeof(FluentBase<SubClassMapModel>).GetProperty("Model");
+        private static readonly PropertyInfo classModelPropertyInfo = typeof(FluentBase<ClassMapModel>).GetProperty("Model");
+        private static readonly PropertyInfo subClassModelPropertyInfo = typeof(FluentBase<SubClassMapModel>).GetProperty("Model");
 
         #endregion
 
@@ -53,20 +52,10 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         #region Public Methods
 
         /// <summary>
-        /// Adds the model.
-        /// </summary>
-        /// <param name="model">The model.</param>
-        public FluentMapModelRegistry AddModel(RootClassMapModel model)
-        {
-            this.registry.AddModel(model);
-            return this;
-        }
-
-        /// <summary>
         /// Adds the nested class map model.
         /// </summary>
         /// <param name="nestedClassMapModel">The nested class map model.</param>
-        public FluentMapModelRegistry AddModel(NestedClassMapModel model)
+        public FluentMapModelRegistry AddModel(ClassMapModel model)
         {
             this.registry.AddModel(model);
             return this;
@@ -86,23 +75,11 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
         /// Adds the map.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="rootClassMap">The root class map.</param>
+        /// <param name="classMap">The class map.</param>
         /// <returns></returns>
-        public FluentMapModelRegistry AddMap<T>(FluentRootClass<T> rootClassMap)
+        public FluentMapModelRegistry AddMap<T>(FluentClass<T> classMap)
         {
-            this.AddModel(rootClassMap.Model);
-            return this;
-        }
-
-        /// <summary>
-        /// Adds the map.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="nestedClassMap">The nested class map.</param>
-        /// <returns></returns>
-        public FluentMapModelRegistry AddMap<T>(FluentNestedClass<T> nestedClassMap)
-        {
-            this.AddModel(nestedClassMap.Model);
+            this.AddModel(classMap.Model);
             return this;
         }
 
@@ -145,28 +122,17 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
             {
                 var genDef = type.BaseType.GetGenericTypeDefinition();
 
-                if (typeof(FluentRootClass<>).IsAssignableFrom(genDef))
+                if (typeof(FluentClass<>).IsAssignableFrom(genDef))
                 {
                     var fluentRootClassMap = Activator.CreateInstance(type);
-                    this.AddModel((RootClassMapModel)rootModelPropertyInfo.GetValue(fluentRootClassMap, null));
-                }
-                else if (typeof(FluentNestedClass<>).IsAssignableFrom(genDef))
-                {
-                    var fluentNestedClassMap = Activator.CreateInstance(type);
-                    this.AddModel((NestedClassMapModel)nestedModelPropertyInfo.GetValue(fluentNestedClassMap, null));
+                    this.AddModel((ClassMapModel)classModelPropertyInfo.GetValue(fluentRootClassMap, null));
                 }
                 else if (typeof(FluentSubClass<>).IsAssignableFrom(genDef))
                 {
                     var fluentSubClassMap = Activator.CreateInstance(type);
-                    this.AddModel((SubClassMapModel)subModelPropertyInfo.GetValue(fluentSubClassMap, null));
+                    this.AddModel((SubClassMapModel)subClassModelPropertyInfo.GetValue(fluentSubClassMap, null));
                 }
             }
-            return this;
-        }
-
-        public FluentMapModelRegistry AddSource(IClassMapModelSource source)
-        {
-            this.registry.AddSource(source);
             return this;
         }
 

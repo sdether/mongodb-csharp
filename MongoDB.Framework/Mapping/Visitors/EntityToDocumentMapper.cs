@@ -31,7 +31,7 @@ namespace MongoDB.Framework.Mapping.Visitors
             return this.CreateDocument(classMap, entity);
         }
 
-        public Document CreateDocument(ClassMap classMap, object entity)
+        public Document CreateDocument(ClassMapBase classMap, object entity)
         {
             if (entity == null)
                 throw new ArgumentNullException("entity");
@@ -91,8 +91,8 @@ namespace MongoDB.Framework.Mapping.Visitors
             this.entity = this.value;
             this.document = new Document();
 
-            var concreteClassMap = nestedClassValueType.NestedClassMap.GetClassMapFor(this.entity.GetType());
-            concreteClassMap.Accept(this);
+            var classMap = this.mappingStore.GetClassMapFor(nestedClassValueType.Type);
+            classMap.Accept(this);
 
             this.value = this.document;
             this.entity = oldEntity;

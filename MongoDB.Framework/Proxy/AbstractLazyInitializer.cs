@@ -77,7 +77,7 @@ namespace MongoDB.Framework.Proxy
         protected AbstractLazyInitializer(Type entityType, object id, IMongoSessionImplementor mongoSession)
         {
             if (entityType == null)
-                throw new ArgumentNullException("rootClassType");
+                throw new ArgumentNullException("entityType");
             if (id == null)
                 throw new ArgumentNullException("id");
             if (mongoSession == null)

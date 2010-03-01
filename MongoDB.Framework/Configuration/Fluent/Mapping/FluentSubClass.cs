@@ -11,7 +11,7 @@ using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
-    public class FluentSubClass<TSubClass> : FluentClass<SubClassMapModel, TSubClass>
+    public class FluentSubClass<TSubClass> : FluentClassBase<SubClassMapModel, TSubClass>
     {
         public FluentSubClass()
             : base(new SubClassMapModel(typeof(TSubClass)))

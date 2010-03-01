@@ -13,7 +13,7 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
     public class FluentConvertibleMember : FluentPersistentMember<ConvertibleMemberMapModel, FluentConvertibleMember>
     {
-        private ClassMapModel classMapModel;
+        private ClassMapModelBase classMapModel;
 
         protected override FluentConvertibleMember Fluent
         {

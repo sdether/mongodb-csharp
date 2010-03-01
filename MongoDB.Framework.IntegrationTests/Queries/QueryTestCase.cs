@@ -77,7 +77,7 @@ namespace MongoDB.Framework.Queries
             }
         }
 
-        public class BlogMap : FluentRootClass<Blog>
+        public class BlogMap : FluentClass<Blog>
         {
             public BlogMap()
             {
@@ -89,7 +89,7 @@ namespace MongoDB.Framework.Queries
             }
         }
 
-        public class BlogEntryMap : FluentRootClass<BlogEntry>
+        public class BlogEntryMap : FluentClass<BlogEntry>
         {
             public BlogEntryMap()
             {
@@ -102,11 +102,11 @@ namespace MongoDB.Framework.Queries
                 Map(x => x.PostDate).Key("date");
                 Map(x => x.Comments).Key("comments");
 
-                Map(x => x.Blog).Key("blogRef");
+                Map(x => x.Blog).Key("blogRef").AsReference();
             }
         }
 
-        public class BlogEntryCommentMap : FluentNestedClass<BlogEntryComment>
+        public class BlogEntryCommentMap : FluentClass<BlogEntryComment>
         {
             public BlogEntryCommentMap()
             {

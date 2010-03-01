@@ -57,16 +57,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\Fluent\Mapping\FluentScopedMapModelRegistry.cs" />
     <Compile Include="Configuration\Fluent\Mapping\FluentConvertibleMember.cs" />
     <Compile Include="Configuration\Fluent\Mapping\FluentMember.cs" />
-    <Compile Include="Configuration\Mapping\IClassMapModelSource.cs" />
     <Compile Include="Configuration\Mapping\IMapModelRegistry.cs" />
     <Compile Include="Configuration\Mapping\Inflector.cs" />
     <Compile Include="Configuration\Mapping\MemberMapModel.cs" />
     <Compile Include="Configuration\Mapping\ParentMemberMapModel.cs" />
-    <Compile Include="Configuration\Mapping\Visitors\DefaultMapModelVisitor.cs" />
-    <Compile Include="Mapping\ClassMap.cs">
+    <Compile Include="Mapping\ClassMapBase.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\CollectionElement.cs" />
@@ -95,7 +92,7 @@
     <Compile Include="Configuration\Fluent\Mapping\FluentBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Fluent\Mapping\FluentClass.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentClassBase.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Fluent\Mapping\FluentCollection.cs">
@@ -114,17 +111,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Fluent\Mapping\FluentPersistentMember.cs" />
-    <Compile Include="Configuration\Fluent\Mapping\FluentNestedClass.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Configuration\Fluent\Mapping\FluentReference.cs" />
-    <Compile Include="Configuration\Fluent\Mapping\FluentRootClass.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Configuration\Fluent\Mapping\FluentSubClass.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Fluent\Mapping\FluentSuperClass.cs">
+    <Compile Include="Configuration\Fluent\Mapping\FluentClass.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\ValueTypeMemberMap.cs" />
@@ -178,7 +169,7 @@
     <Compile Include="Mapping\MemberMapPath.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\ClassMapModel.cs">
+    <Compile Include="Configuration\Mapping\ClassMapModelBase.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Mapping\CollectionMemberMapModel.cs" />
@@ -188,13 +179,10 @@
     <Compile Include="Configuration\Mapping\IdMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\IMapModelVisitor.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Configuration\Mapping\IndexModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\ManyToOneMapModel.cs" />
+    <Compile Include="Configuration\Mapping\ReferenceMapModel.cs" />
     <Compile Include="Configuration\Mapping\ModelNode.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -202,32 +190,17 @@
     <Compile Include="Configuration\Mapping\MapModelRegistry.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\NestedClassMapModel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Configuration\Mapping\RootClassMapModel.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Configuration\Mapping\SubClassMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Mapping\SuperClassMapModel.cs">
+    <Compile Include="Configuration\Mapping\ClassMapModel.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\Mapping\ConvertibleMemberMapModel.cs" />
-    <Compile Include="Configuration\Mapping\Visitors\MapModelVisitor.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Mapping\NestedClassMap.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Mapping\RootClassMap.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Mapping\SubClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Mapping\SuperClassMap.cs">
+    <Compile Include="Mapping\ClassMap.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Mapping\ICollectionType.cs">

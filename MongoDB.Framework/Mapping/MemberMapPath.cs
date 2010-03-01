@@ -140,8 +140,8 @@ namespace MongoDB.Framework.Mapping
             var memberMap = currentMemberMap as ValueTypeMemberMap;
             if (memberMap != null && memberMap.ValueType is NestedClassValueType)
             {
-                var nestedClassMap = ((NestedClassValueType)memberMap.ValueType).NestedClassMap;
-                currentMemberMap = nestedClassMap.GetMemberMapBaseFromMemberName(nextMemberName) as PersistentMemberMap;
+                var classMap = this.mappingStore.GetClassMapFor(((NestedClassValueType)memberMap.ValueType).Type);
+                currentMemberMap = classMap.GetMemberMapBaseFromMemberName(nextMemberName) as PersistentMemberMap;
                 if (currentMemberMap == null)
                     throw new InvalidOperationException("Only persistent member maps are allowed.");
                 this.Key += currentMemberMap.Key;

@@ -7,7 +7,7 @@ namespace MongoDB.Framework.Mapping.Visitors
 {
     public abstract class NullMapVisitor : IMapVisitor
     {
-        public virtual void Visit(ClassMap classMap)
+        public virtual void Visit(ClassMapBase classMap)
         { }
 
         public virtual void Visit(IdMap idMap)

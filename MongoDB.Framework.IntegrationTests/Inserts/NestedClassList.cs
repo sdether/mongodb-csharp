@@ -82,7 +82,7 @@ namespace MongoDB.Framework.Inserts
             public double Double { get; set; }
         }
 
-        public class EntityMap : FluentRootClass<Entity>
+        public class EntityMap : FluentClass<Entity>
         {
             public EntityMap()
             {
@@ -91,7 +91,7 @@ namespace MongoDB.Framework.Inserts
             }
         }
 
-        public class SubEntityMap : FluentNestedClass<SubEntity>
+        public class SubEntityMap : FluentClass<SubEntity>
         {
             public SubEntityMap()
             {

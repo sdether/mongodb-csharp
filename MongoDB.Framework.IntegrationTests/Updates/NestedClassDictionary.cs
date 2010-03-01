@@ -21,7 +21,7 @@ namespace MongoDB.Framework.Updates
             {
                 return new FluentMapModelRegistry()
                     .AddMap(new EntityMap())
-                    .AddMap(new SubEntityMap());
+                    .AddMap(new NestedEntityMap());
             }
         }
 
@@ -32,7 +32,7 @@ namespace MongoDB.Framework.Updates
                 mongoSession.Database.GetCollection("Entity")
                     .Insert(new Document()
                         .Append("_id", new Binary(Guid.NewGuid().ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
-                        .Append("SubEntities", new Document()
+                        .Append("NestedEntities", new Document()
                             .Append("one", new Document()
                                 .Append("Integer", 1)
                                 .Append("Double", 1.1))
@@ -59,9 +59,9 @@ namespace MongoDB.Framework.Updates
             using (var mongoSession = this.OpenMongoSession())
             {
                 var entity = mongoSession.FindOne<Entity>(null);
-                entity.SubEntities.Remove("two");
-                entity.SubEntities.Remove("three");
-                entity.SubEntities.Add("four", new SubEntity()
+                entity.NestedEntities.Remove("two");
+                entity.NestedEntities.Remove("three");
+                entity.NestedEntities.Add("four", new NestedEntity()
                 {
                     Double = 4.4,
                     Integer = 4
@@ -76,7 +76,7 @@ namespace MongoDB.Framework.Updates
             }
 
             Assert.IsNotNull(insertedDocument);
-            var subEntities = (Document)insertedDocument["SubEntities"];
+            var subEntities = (Document)insertedDocument["NestedEntities"];
             Assert.AreEqual(2, subEntities.Count);
             Assert.AreEqual(1, ((Document)subEntities["one"])["Integer"]);
             Assert.AreEqual(1.1, ((Document)subEntities["one"])["Double"]);
@@ -88,28 +88,28 @@ namespace MongoDB.Framework.Updates
         {
             public Guid Id { get; private set; }
 
-            public Dictionary<string, SubEntity> SubEntities { get; set; }
+            public Dictionary<string, NestedEntity> NestedEntities { get; set; }
         }
 
-        public class SubEntity
+        public class NestedEntity
         {
             public int Integer { get; set; }
 
             public double Double { get; set; }
         }
 
-        public class EntityMap : FluentRootClass<Entity>
+        public class EntityMap : FluentClass<Entity>
         {
             public EntityMap()
             {
                 Id(x => x.Id);
-                Map(x => x.SubEntities);
+                Map(x => x.NestedEntities);
             }
         }
 
-        public class SubEntityMap : FluentNestedClass<SubEntity>
+        public class NestedEntityMap : FluentClass<NestedEntity>
         {
-            public SubEntityMap()
+            public NestedEntityMap()
             {
                 Map(x => x.Double);
                 Map(x => x.Integer);

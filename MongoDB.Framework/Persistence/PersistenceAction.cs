@@ -35,7 +35,7 @@ namespace MongoDB.Framework.Persistence
             this.MongoSession = mongoSession;
         }
 
-        protected IMongoCollection GetCollectionForClassMap(ClassMap classMap)
+        protected IMongoCollection GetCollectionForClassMap(ClassMapBase classMap)
         {
             var db = this.MongoSession.Database;
             return db.GetCollection(classMap.CollectionName);

@@ -6,10 +6,10 @@ using MongoDB.Framework.Configuration.Mapping;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
-    public class FluentReference : FluentBase<ManyToOneMapModel>
+    public class FluentReference : FluentBase<ReferenceMapModel>
     {
         public FluentReference()
-            : base(new ManyToOneMapModel())
+            : base(new ReferenceMapModel())
         { }
 
         public FluentReference Key(string key)

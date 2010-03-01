@@ -60,7 +60,7 @@ namespace MongoDB.Framework.Mapping
         public string Title { get; set; }
     }
 
-    public class EntityWithoutConstructorMap : FluentRootClass<EntityWithoutConstructor>
+    public class EntityWithoutConstructorMap : FluentClass<EntityWithoutConstructor>
     {
         public EntityWithoutConstructorMap()
         {
@@ -84,7 +84,7 @@ namespace MongoDB.Framework.Mapping
 
     public class ActivatorForEntityWithConstructor : IClassActivator
     {
-        public ClassMap Map { get; set; }
+        public ClassMapBase Map { get; set; }
 
         public object Activate(Type type, Document doc)
         {
@@ -94,7 +94,7 @@ namespace MongoDB.Framework.Mapping
         }
     }
 
-    public class EntityWithConstructorMap : FluentRootClass<EntityWithConstructor>
+    public class EntityWithConstructorMap : FluentClass<EntityWithConstructor>
     {
         public EntityWithConstructorMap()
         {

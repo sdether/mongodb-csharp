@@ -7,7 +7,7 @@ namespace MongoDB.Framework.Mapping.Visitors
 {
     public class IdGenerator : DefaultMapVisitor
     {
-        private ClassMap currentClassMap;
+        private ClassMapBase currentClassMap;
         private object currentEntity;
         private IMongoSessionImplementor mongoSession;
 
@@ -19,7 +19,7 @@ namespace MongoDB.Framework.Mapping.Visitors
             this.mongoSession = mongoSession;
         }
 
-        public void GenerateIdsFor(object entity, ClassMap classMap)
+        public void GenerateIdsFor(object entity, ClassMapBase classMap)
         {
             this.currentClassMap = classMap;
             this.currentEntity = entity;
@@ -29,13 +29,13 @@ namespace MongoDB.Framework.Mapping.Visitors
 
         public override void Visit(ValueTypeMemberMap memberMap)
         {
-            if (memberMap.ValueType is NestedClassValueType)
+            var nestedClassValueType = memberMap.ValueType as NestedClassValueType;
+            if (nestedClassValueType != null)
             {
-                var vt = (NestedClassValueType)memberMap.ValueType;
                 var oldEntity = currentEntity;
                 var oldClassMap = currentClassMap;
                 currentEntity = memberMap.MemberGetter(this.currentEntity);
-                currentClassMap = vt.NestedClassMap;
+                currentClassMap = this.mongoSession.MappingStore.GetClassMapFor(nestedClassValueType.Type);
 
                 this.Visit(currentClassMap);
 

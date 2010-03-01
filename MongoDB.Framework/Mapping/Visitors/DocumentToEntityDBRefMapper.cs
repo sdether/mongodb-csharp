@@ -13,6 +13,7 @@ namespace MongoDB.Framework.Mapping.Visitors
         private IMongoSessionImplementor mongoSession;
 
         public DocumentToEntityDBRefMapper(IMongoSessionImplementor mongoSession)
+            : base(mongoSession.MappingStore)
         {
             if (mongoSession == null)
                 throw new ArgumentNullException("mongoSession");

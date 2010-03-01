@@ -20,7 +20,7 @@ namespace MongoDB.Framework.Mapping.Visitors
             this.mongoSession = mongoSession;
         }
 
-        public Document CreateDocument(ClassMap classMap, object entity)
+        public Document CreateDocument(ClassMapBase classMap, object entity)
         {
             if (entity == null)
                 throw new ArgumentNullException("entity");

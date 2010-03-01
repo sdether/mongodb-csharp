@@ -372,7 +372,7 @@ namespace MongoDB.Framework
         /// <param name="classMap">The class map.</param>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        public Document MapToDocument(ClassMap classMap, object entity)
+        public Document MapToDocument(ClassMapBase classMap, object entity)
         {
             return new EntityToDocumentMapper(this.mappingStore).CreateDocument(classMap, entity);
         }
@@ -400,7 +400,7 @@ namespace MongoDB.Framework
         /// <param name="classMap">The class map.</param>
         /// <param name="document">The document.</param>
         /// <returns></returns>
-        public object MapToEntity(ClassMap classMap, Document document)
+        public object MapToEntity(ClassMapBase classMap, Document document)
         {
             return new DocumentToEntityDBRefMapper(this).CreateEntity(classMap, document);
         }

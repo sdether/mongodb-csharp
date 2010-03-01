@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping
 {
-    public class SubClassMap : ClassMap
+    public class SubClassMap : ClassMapBase
     {
         #region Public Properties
 
@@ -101,15 +101,6 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is root.
-        /// </summary>
-        /// <value><c>true</c> if this instance is root; otherwise, <c>false</c>.</value>
-        public override bool IsRoot
-        {
-            get { return false; }
-        }
-
-        /// <summary>
         /// Gets the member maps.
         /// </summary>
         /// <value>The simple member maps.</value>
@@ -123,10 +114,10 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
-        /// Gets the super class map.
+        /// Gets or sets the super class map.
         /// </summary>
         /// <value>The super class map.</value>
-        public SuperClassMap SuperClassMap { get; internal set; }
+        public ClassMap SuperClassMap { get; internal set; }
 
         #endregion
 
@@ -149,7 +140,7 @@ namespace MongoDB.Framework.Mapping
         /// </summary>
         /// <param name="discriminator">The discriminator.</param>
         /// <returns></returns>
-        public override ClassMap GetClassMapByDiscriminator(object discriminator)
+        public override ClassMapBase GetClassMapByDiscriminator(object discriminator)
         {
             if (!this.Discriminator.Equals(discriminator))
                 throw new InvalidOperationException(string.Format("The discriminator specified does not belong to the entity {0}.", this.Type));

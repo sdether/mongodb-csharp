@@ -87,7 +87,7 @@ namespace MongoDB.Framework
             mongo.Disconnect();
         }
 
-        public class PartyMap : FluentRootClass<Party>
+        public class PartyMap : FluentClass<Party>
         {
             public PartyMap()
             {
@@ -126,7 +126,7 @@ namespace MongoDB.Framework
             }
         }
 
-        public class PhoneNumberMap : FluentNestedClass<PhoneNumber>
+        public class PhoneNumberMap : FluentClass<PhoneNumber>
         {
             public PhoneNumberMap()
             {

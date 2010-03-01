@@ -76,7 +76,7 @@ namespace MongoDB.Framework.Updates
             public Dictionary<string,int> Integers { get; set; }
         }
 
-        public class EntityMap : FluentRootClass<Entity>
+        public class EntityMap : FluentClass<Entity>
         {
             public EntityMap()
             {

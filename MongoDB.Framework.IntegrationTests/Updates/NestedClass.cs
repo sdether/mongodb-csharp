@@ -21,7 +21,7 @@ namespace MongoDB.Framework.Updates
             {
                 return new FluentMapModelRegistry()
                     .AddMap(new EntityMap())
-                    .AddMap(new SubEntityMap());
+                    .AddMap(new NestedEntityMap());
             }
         }
 
@@ -32,7 +32,7 @@ namespace MongoDB.Framework.Updates
                 mongoSession.Database.GetCollection("Entity")
                     .Insert(new Document()
                         .Append("_id", new Binary(Guid.NewGuid().ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
-                        .Append("SubEntity", new Document()
+                        .Append("NestedEntity", new Document()
                             .Append("_id", new Binary(Guid.NewGuid().ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
                             .Append("Integer", 42)
                             .Append("Double", 123.456)));
@@ -54,9 +54,9 @@ namespace MongoDB.Framework.Updates
             using (var mongoSession = this.OpenMongoSession())
             {
                 var entity = mongoSession.FindOne<Entity>(null);
-                subEntityId = entity.SubEntity.Id;
-                entity.SubEntity.Integer = 43;
-                entity.SubEntity.Double = 654.321;
+                subEntityId = entity.NestedEntity.Id;
+                entity.NestedEntity.Integer = 43;
+                entity.NestedEntity.Double = 654.321;
                 mongoSession.SubmitChanges();
             }
 
@@ -67,19 +67,19 @@ namespace MongoDB.Framework.Updates
             }
 
             Assert.IsNotNull(updatedDocument);
-            Assert.AreEqual(subEntityId, new Guid(((Binary)((Document)updatedDocument["SubEntity"])["_id"]).Bytes));
-            Assert.AreEqual(43, ((Document)updatedDocument["SubEntity"])["Integer"]);
-            Assert.AreEqual(654.321, ((Document)updatedDocument["SubEntity"])["Double"]);
+            Assert.AreEqual(subEntityId, new Guid(((Binary)((Document)updatedDocument["NestedEntity"])["_id"]).Bytes));
+            Assert.AreEqual(43, ((Document)updatedDocument["NestedEntity"])["Integer"]);
+            Assert.AreEqual(654.321, ((Document)updatedDocument["NestedEntity"])["Double"]);
         }
 
         public class Entity
         {
             public Guid Id { get; private set; }
 
-            public SubEntity SubEntity { get; set; }
+            public NestedEntity NestedEntity { get; set; }
         }
 
-        public class SubEntity
+        public class NestedEntity
         {
             public Guid Id { get; private set; }
             public double Double { get; set; }
@@ -87,18 +87,18 @@ namespace MongoDB.Framework.Updates
             public int Integer { get; set; }
         }
 
-        public class EntityMap : FluentRootClass<Entity>
+        public class EntityMap : FluentClass<Entity>
         {
             public EntityMap()
             {
                 Id(x => x.Id);
-                Map(x => x.SubEntity);
+                Map(x => x.NestedEntity);
             }
         }
 
-        public class SubEntityMap : FluentNestedClass<SubEntity>
+        public class NestedEntityMap : FluentClass<NestedEntity>
         {
-            public SubEntityMap()
+            public NestedEntityMap()
             {
                 Id(x => x.Id);
                 Map(x => x.Double);

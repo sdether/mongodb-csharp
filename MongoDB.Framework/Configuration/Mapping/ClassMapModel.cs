@@ -6,40 +6,25 @@ using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
-    public abstract class ClassMapModel : ModelNode
+    public class ClassMapModel : ClassMapModelBase
     {
-        /// <summary>
-        /// Gets or sets the class activator.
-        /// </summary>
-        /// <value>The class activator.</value>
-        public IClassActivator ClassActivator { get; set; }
+        public string CollectionName { get; set; }
 
-        /// <summary>
-        /// Gets or sets the discriminator.
-        /// </summary>
-        /// <value>The discriminator.</value>
-        public object Discriminator { get; set; }
+        public string DiscriminatorKey { get; set; }
 
-        /// <summary>
-        /// Gets or sets the persistent member maps.
-        /// </summary>
-        /// <value>The persistent member maps.</value>
-        public List<PersistentMemberMapModel> PersistentMemberMaps { get; private set; }
+        public ExtendedPropertiesMapModel ExtendedPropertiesMap { get; set; }
 
-        /// <summary>
-        /// Gets the type.
-        /// </summary>
-        /// <value>The type.</value>
-        public Type Type { get; private set; }
+        public IdMapModel IdMap { get; set; }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ClassMapModel"/> class.
-        /// </summary>
-        /// <param name="type">The type.</param>
+        public List<IndexModel> Indexes { get; private set; }
+
+        public List<SubClassMapModel> SubClassMaps { get; private set; }
+
         public ClassMapModel(Type type)
+            : base(type)
         {
-            this.PersistentMemberMaps = new List<PersistentMemberMapModel>();
-            this.Type = type;
+            this.Indexes = new List<IndexModel>();
+            this.SubClassMaps = new List<SubClassMapModel>();
         }
     }
 }

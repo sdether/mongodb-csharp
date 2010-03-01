@@ -13,14 +13,18 @@ namespace MongoDB.Framework.Mapping.Visitors
         protected Document document;
         protected object parentEntity;
         protected object entity;
-
         protected object value;
+        protected IMappingStore mappingStore;
 
-        public DocumentToEntityMapper()
+        public DocumentToEntityMapper(IMappingStore mappingStore)
         {
+            if (mappingStore == null)
+                throw new ArgumentNullException("mappingStore");
+
+            this.mappingStore = mappingStore;
         }
 
-        public object CreateEntity(ClassMap classMap, Document document)
+        public object CreateEntity(ClassMapBase classMap, Document document)
         {
             if (classMap == null)
                 throw new ArgumentNullException("classMap");
@@ -34,7 +38,7 @@ namespace MongoDB.Framework.Mapping.Visitors
             return this.entity;
         }
 
-        public override void Visit(ClassMap classMap)
+        public override void Visit(ClassMapBase classMap)
         {
             this.entity = classMap.ClassActivator.Activate(classMap.Type, this.document);
 
@@ -96,14 +100,14 @@ namespace MongoDB.Framework.Mapping.Visitors
             var oldDocument = this.document;
 
             this.document = doc;
-            ClassMap concreteClassMap = nestedClassValueType.NestedClassMap;
-            if (nestedClassValueType.NestedClassMap.IsPolymorphic)
+            ClassMapBase classMap = this.mappingStore.GetClassMapFor(nestedClassValueType.Type);
+            if (classMap.IsPolymorphic)
             {
-                object discriminator = this.document[nestedClassValueType.NestedClassMap.DiscriminatorKey];
-                concreteClassMap = nestedClassValueType.NestedClassMap.GetClassMapByDiscriminator(discriminator);
+                object discriminator = this.document[classMap.DiscriminatorKey];
+                classMap = classMap.GetClassMapByDiscriminator(discriminator);
             }
 
-            concreteClassMap.Accept(this);
+            classMap.Accept(this);
             
             this.value = this.entity;
             this.entity = this.parentEntity;

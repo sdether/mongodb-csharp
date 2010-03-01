@@ -13,14 +13,14 @@ namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
     public class FluentMember : FluentPersistentMember<PersistentMemberMapModel, FluentMember>
     {
-        private ClassMapModel classMapModel;
+        private ClassMapModelBase classMapModel;
 
         protected override FluentMember Fluent
         {
             get { return this; }
         }
 
-        public FluentMember(ClassMapModel classMapModel)
+        public FluentMember(ClassMapModelBase classMapModel)
             : base(new PersistentMemberMapModel())
         {
             this.classMapModel = classMapModel;

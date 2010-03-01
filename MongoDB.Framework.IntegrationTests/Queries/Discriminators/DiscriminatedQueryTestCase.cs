@@ -53,7 +53,7 @@ namespace MongoDB.Framework.Queries
             }
         }
 
-        public class PartyMap : FluentRootClass<Party>
+        public class PartyMap : FluentClass<Party>
         {
             public PartyMap()
             {

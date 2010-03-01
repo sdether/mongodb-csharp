@@ -7,7 +7,7 @@ namespace MongoDB.Framework.Mapping
 {
     public interface IMapVisitor
     {
-        void Visit(ClassMap classMap);
+        void Visit(ClassMapBase classMap);
         void Visit(IdMap idMap);
         void Visit(ValueTypeMemberMap memberMap);
         void Visit(ExtendedPropertiesMap extendedPropertiesMap);

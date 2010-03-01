@@ -37,7 +37,7 @@ namespace MongoDB.Framework
         /// <param name="classMap">The class map.</param>
         /// <param name="entity">The entity.</param>
         /// <returns></returns>
-        Document MapToDocument(ClassMap classMap, object entity);
+        Document MapToDocument(ClassMapBase classMap, object entity);
 
         /// <summary>
         /// Maps to entity.
@@ -45,6 +45,6 @@ namespace MongoDB.Framework
         /// <param name="classMap">The class map.</param>
         /// <param name="document">The document.</param>
         /// <returns></returns>
-        object MapToEntity(ClassMap classMap, Document document);
+        object MapToEntity(ClassMapBase classMap, Document document);
     }
 }

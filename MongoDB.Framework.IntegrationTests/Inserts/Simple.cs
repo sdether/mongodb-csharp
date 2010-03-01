@@ -61,7 +61,7 @@ namespace MongoDB.Framework.Inserts
             public string String { get; set; }
         }
 
-        public class EntityMap : FluentRootClass<Entity>
+        public class EntityMap : FluentClass<Entity>
         {
             public EntityMap()
             {

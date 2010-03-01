@@ -7,7 +7,7 @@ namespace MongoDB.Framework.Mapping.Visitors
 {
     public abstract class DefaultMapVisitor : NullMapVisitor
     {
-        public override void Visit(ClassMap classMap)
+        public override void Visit(ClassMapBase classMap)
         {
             if (classMap.HasId)
                 classMap.IdMap.Accept(this);

@@ -23,7 +23,7 @@ namespace MongoDB.Framework.Persistence
         /// <returns>
         /// 	<c>true</c> if [is find by id] [the specified class map]; otherwise, <c>false</c>.
         /// </returns>
-        private static bool IsFindById(ClassMap classMap, Document conditions)
+        private static bool IsFindById(ClassMapBase classMap, Document conditions)
         {
             return classMap.HasId && conditions.Count == 1 && conditions[classMap.IdMap.Key] != null;
         }
@@ -62,7 +62,7 @@ namespace MongoDB.Framework.Persistence
 
         #region Protected Methods
 
-        protected IEnumerable<object> Find(ClassMap classMap, Document conditions, int limit, int skip, Document orderBy, Document fields)
+        protected IEnumerable<object> Find(ClassMapBase classMap, Document conditions, int limit, int skip, Document orderBy, Document fields)
         {
             if (classMap == null)
                 throw new ArgumentNullException("classMap");
@@ -126,11 +126,11 @@ namespace MongoDB.Framework.Persistence
         /// <param name="classMap">The class map.</param>
         /// <param name="documents">The documents.</param>
         /// <returns></returns>
-        private IEnumerable<object> CreateEntities(ClassMap classMap, IEnumerable<Document> documents, bool trackEntities)
+        private IEnumerable<object> CreateEntities(ClassMapBase classMap, IEnumerable<Document> documents, bool trackEntities)
         {
             foreach (var document in documents)
             {
-                ClassMap concreteClassMap = classMap;
+                ClassMapBase concreteClassMap = classMap;
                 if (classMap.IsPolymorphic)
                 {
                     object discriminator = document[classMap.DiscriminatorKey];

@@ -2,16 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MongoDB.Driver;
-using MongoDB.Framework.Configuration.Mapping;
 
 namespace MongoDB.Framework.Mapping
 {
-    public abstract class ClassMap : MapNode
+    public class ClassMap : ClassMapBase
     {
         #region Private Fields
 
-        private readonly List<MemberMap> memberMaps;
+        private string collectionName;
+        private readonly List<Index> indexes;
+        private string discriminatorKey;
+        private object discriminator;
+        private ExtendedPropertiesMap extendedPropertiesMap;
+        private IdMap idMap;
+        private readonly List<SubClassMap> subClassMaps;
 
         #endregion
 
@@ -21,25 +25,31 @@ namespace MongoDB.Framework.Mapping
         /// Gets the name of the collection.
         /// </summary>
         /// <value>The name of the collection.</value>
-        public abstract string CollectionName { get; internal set; }
-
-        /// <summary>
-        /// Gets or sets the discriminator.
-        /// </summary>
-        /// <value>The discriminator.</value>
-        public object Discriminator { get; internal set; }
+        public override string CollectionName
+        {
+            get { return this.collectionName; }
+            internal set { this.collectionName = value; }
+        }
 
         /// <summary>
         /// Gets or sets the discriminator key.
         /// </summary>
         /// <value>The discriminator key.</value>
-        public abstract string DiscriminatorKey { get; internal set; }
+        public override string DiscriminatorKey
+        {
+            get { return this.discriminatorKey; }
+            internal set { this.discriminatorKey = value; }
+        }
 
         /// <summary>
         /// Gets the extended properties map.
         /// </summary>
         /// <value>The extended properties map.</value>
-        public abstract ExtendedPropertiesMap ExtendedPropertiesMap { get; internal set; }
+        public override ExtendedPropertiesMap ExtendedPropertiesMap
+        {
+            get { return this.extendedPropertiesMap; }
+            internal set { this.extendedPropertiesMap = value; }
+        }
 
         /// <summary>
         /// Gets a value indicating whether this instance has extended properties.
@@ -47,13 +57,19 @@ namespace MongoDB.Framework.Mapping
         /// <value>
         /// 	<c>true</c> if this instance has extended properties; otherwise, <c>false</c>.
         /// </value>
-        public abstract bool HasExtendedProperties { get; }
+        public override bool HasExtendedProperties
+        {
+            get { return this.extendedPropertiesMap != null; }
+        }
 
         /// <summary>
         /// Gets a value indicating whether this instance has id.
         /// </summary>
         /// <value><c>true</c> if this instance has id; otherwise, <c>false</c>.</value>
-        public abstract bool HasId { get; }
+        public override bool HasId
+        {
+            get { return this.idMap != null; }
+        }
 
         /// <summary>
         /// Gets a value indicating whether this instance has indexes.
@@ -61,19 +77,29 @@ namespace MongoDB.Framework.Mapping
         /// <value>
         /// 	<c>true</c> if this instance has indexes; otherwise, <c>false</c>.
         /// </value>
-        public abstract bool HasIndexes { get; }
-
-        /// <summary>
-        /// Gets the id map.
-        /// </summary>
-        /// <value>The id map.</value>
-        public abstract IdMap IdMap { get; internal set; }
+        public override bool HasIndexes
+        {
+            get { return this.indexes.Any(); }
+        }
 
         /// <summary>
         /// Gets the indexes.
         /// </summary>
         /// <value>The indexes.</value>
-        public abstract IEnumerable<Index> Indexes { get; }
+        public override IEnumerable<Index> Indexes
+        {
+            get { return this.indexes; }
+        }
+
+        /// <summary>
+        /// Gets the id map.
+        /// </summary>
+        /// <value>The id map.</value>
+        public override IdMap IdMap
+        {
+            get { return this.idMap; }
+            internal set { this.idMap = value; }
+        }
 
         /// <summary>
         /// Gets a value indicating whether this instance is polymorphic.
@@ -81,48 +107,34 @@ namespace MongoDB.Framework.Mapping
         /// <value>
         /// 	<c>true</c> if this instance is polymorphic; otherwise, <c>false</c>.
         /// </value>
-        public abstract bool IsPolymorphic { get; }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is root.
-        /// </summary>
-        /// <value><c>true</c> if this instance is root; otherwise, <c>false</c>.</value>
-        public abstract bool IsRoot { get; }
-
-        /// <summary>
-        /// Gets the member maps.
-        /// </summary>
-        /// <value>The simple member maps.</value>
-        public virtual IEnumerable<MemberMap> MemberMaps
+        ///
+        public override bool IsPolymorphic
         {
-            get { return this.memberMaps; }
+            get { return this.subClassMaps.Count > 0; }
         }
 
         /// <summary>
-        /// Gets the type.
+        /// Gets the sub class maps.
         /// </summary>
-        /// <value>The type.</value>
-        public Type Type { get; private set; }
-
-        public virtual IClassActivator ClassActivator { get; set; }
+        /// <value>The sub class maps.</value>
+        public IEnumerable<SubClassMap> SubClassMaps
+        {
+            get { return this.subClassMaps; }
+        }
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClassMap"/> class.
+        /// Initializes a new instance of the <see cref="SuperClassMap"/> class.
         /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="memberMaps">The member maps.</param>
-        /// <param name="discriminator">The discriminator.</param>
-        protected ClassMap(Type type)
+        /// <param name="type">ValueType of the entity.</param>
+        public ClassMap(Type type)
+            : base(type)
         {
-            if (type == null)
-                throw new ArgumentNullException("type");
-
-            this.memberMaps = new List<MemberMap>();
-            this.Type = type;
+            this.indexes = new List<Index>();
+            this.subClassMaps = new List<SubClassMap>();
         }
 
         #endregion
@@ -130,48 +142,25 @@ namespace MongoDB.Framework.Mapping
         #region Public Methods
 
         /// <summary>
-        /// Accepts the specified visitor.
-        /// </summary>
-        /// <param name="visitor">The visitor.</param>
-        public override void Accept(IMapVisitor visitor)
-        {
-            visitor.Visit(this);
-        }
-
-        /// <summary>
         /// Gets the class map by discriminator.
         /// </summary>
         /// <param name="discriminator">The discriminator.</param>
         /// <returns></returns>
-        public abstract ClassMap GetClassMapByDiscriminator(object discriminator);
-
-        /// <summary>
-        /// Gets the id.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <returns></returns>
-        public object GetId(object entity)
+        public override ClassMapBase GetClassMapByDiscriminator(object discriminator)
         {
-            if(!this.HasId)
-                throw new InvalidOperationException("Entity doesn't have an id.");
+            if (this.Discriminator == null)
+            {
+                if (discriminator == null)
+                    return this;
+            }
+            else if (this.Discriminator.Equals(discriminator))
+                return this;
 
-            return this.IdMap.MemberGetter(entity);
-        }
+            foreach (var subClassMap in this.subClassMaps)
+                if (subClassMap.Discriminator.Equals(discriminator))
+                    return subClassMap;
 
-        /// <summary>
-        /// Gets the name of the member map from member.
-        /// </summary>
-        /// <param name="memberName">Name of the member.</param>
-        /// <returns></returns>
-        public MemberMap GetMemberMapBaseFromMemberName(string memberName)
-        {
-            if (this.HasId && this.IdMap.MemberName == memberName)
-                return this.IdMap;
-            MemberMap memberMap = this.MemberMaps.FirstOrDefault(x => x.MemberName == memberName);
-            if (memberMap != null)
-                return memberMap;
-
-            throw new UnmappedMemberException(string.Format("The member {0} has not been mapped.", memberName));
+            throw new UnmappedDiscriminatorException(string.Format("The discriminator {0} has not been mapped.", discriminator));
         }
 
         #endregion
@@ -179,27 +168,53 @@ namespace MongoDB.Framework.Mapping
         #region Internal Methods
 
         /// <summary>
-        /// Adds the member map.
+        /// Adds the index.
         /// </summary>
-        /// <param name="memberMap">The member map.</param>
-        internal void AddMemberMap(MemberMap memberMap)
+        /// <param name="index">The index.</param>
+        public void AddIndex(Index index)
         {
-            if (memberMap == null)
-                throw new ArgumentNullException("memberMap");
+            if (index == null)
+                throw new ArgumentNullException("index");
 
-            this.memberMaps.Add(memberMap);
+            this.indexes.Add(index);
         }
 
         /// <summary>
-        /// Adds the member maps.
+        /// Adds the indices.
         /// </summary>
-        /// <param name="memberMaps">The member maps.</param>
-        internal void AddMemberMaps(IEnumerable<MemberMap> memberMaps)
+        /// <param name="indices">The indices.</param>
+        public void AddIndices(IEnumerable<Index> indices)
         {
-            if (memberMaps == null)
-                throw new ArgumentNullException("memberMaps");
+            if (indices == null)
+                throw new ArgumentNullException("indices");
 
-            this.memberMaps.AddRange(memberMaps);
+            this.indexes.AddRange(indices);
+        }
+
+        /// <summary>
+        /// Adds the sub class map.
+        /// </summary>
+        /// <param name="subClassMap">The sub class map.</param>
+        internal void AddSubClassMap(SubClassMap subClassMap)
+        {
+            if (subClassMap == null)
+                throw new ArgumentNullException("subClassMap");
+
+            this.subClassMaps.Add(subClassMap);
+            subClassMap.SuperClassMap = this;
+        }
+
+        /// <summary>
+        /// Adds the sub class maps.
+        /// </summary>
+        /// <param name="subClassMaps">The sub class maps.</param>
+        internal void AddSubClassMaps(IEnumerable<SubClassMap> subClassMaps)
+        {
+            if (subClassMaps == null)
+                throw new ArgumentNullException("subClassMaps");
+
+            foreach (var subClassMap in subClassMaps)
+                this.AddSubClassMap(subClassMap);
         }
 
         #endregion

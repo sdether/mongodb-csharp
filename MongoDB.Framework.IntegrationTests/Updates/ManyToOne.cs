@@ -82,7 +82,7 @@ namespace MongoDB.Framework.Updates
             public string Name { get; private set; }
         }
 
-        public class EntityMap : FluentRootClass<Entity>
+        public class EntityMap : FluentClass<Entity>
         {
             public EntityMap()
             {
@@ -91,7 +91,7 @@ namespace MongoDB.Framework.Updates
             }
         }
 
-        public class EntityRefMap : FluentRootClass<EntityRef>
+        public class EntityRefMap : FluentClass<EntityRef>
         {
             public EntityRefMap()
             {

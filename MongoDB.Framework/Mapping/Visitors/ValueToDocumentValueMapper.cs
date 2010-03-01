@@ -42,7 +42,7 @@ namespace MongoDB.Framework.Mapping.Visitors
 
         public override void Visit(NestedClassValueType nestedClassValueType)
         {
-            this.value = this.mongoSession.MapToDocument(nestedClassValueType.NestedClassMap, this.value);
+            this.value = this.mongoSession.MapToDocument(this.value);
         }
 
         public override void Visit(CollectionValueType collectionValueType)
