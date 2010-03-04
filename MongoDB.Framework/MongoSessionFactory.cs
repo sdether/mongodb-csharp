@@ -106,40 +106,7 @@ namespace MongoDB.Framework
         /// </summary>
         /// <param name="database">The database.</param>
         protected virtual void Initialize(Database database)
-        {
-            this.CreateIndexes(database);
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        /// <summary>
-        /// Creates the indexes.
-        /// </summary>
-        private void CreateIndexes(Database database)
-        {
-            foreach (var classMap in this.mappingStore.ClassMaps)
-            {
-                //getting a collection is more expensive than counting indexes, so let's make this as fast as possible...
-                if (classMap.Indexes.Count() == 0)
-                    continue;
-
-                var collectionMetaData = database.GetCollection(classMap.CollectionName).MetaData;
-                foreach (var index in classMap.Indexes)
-                {
-                    Document fieldsAndDirections = new Document();
-                    foreach (var part in index.Parts)
-                    {
-                        fieldsAndDirections.Add(
-                            part.Key,
-                            part.Value == IndexDirection.Ascending ? 1 : -1);
-                    }
-
-                    collectionMetaData.CreateIndex(index.Name, fieldsAndDirections, index.IsUnique);
-                }
-            }
-        }
+        { }
 
         #endregion
     }
