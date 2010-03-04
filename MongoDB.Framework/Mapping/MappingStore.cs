@@ -10,15 +10,6 @@ namespace MongoDB.Framework.Mapping
         private Dictionary<Type, ClassMapBase> classMaps;
 
         /// <summary>
-        /// Gets the class maps.
-        /// </summary>
-        /// <value>The class maps.</value>
-        public IEnumerable<ClassMap> ClassMaps
-        {
-            get { return this.classMaps.Values.OfType<ClassMap>(); }
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="IMappingStore"/> class.
         /// </summary>
         public MappingStore()
@@ -54,21 +45,6 @@ namespace MongoDB.Framework.Mapping
         }
 
         /// <summary>
-        /// Gets the class map for.
-        /// </summary>
-        /// <param name="type">ValueType of the entity.</param>
-        /// <returns></returns>
-        public virtual ClassMapBase GetClassMapFor(Type type)
-        {
-            ClassMapBase classMap = null;
-            //TODO: add hook for runtime creation of map...
-            if(!this.classMaps.TryGetValue(type, out classMap))
-                throw new UnmappedTypeException(string.Format("The type {0} is unmapped.", type));
-
-            return classMap;
-        }
-
-        /// <summary>
         /// Creates the mongo mapper.
         /// </summary>
         /// <returns></returns>
@@ -76,5 +52,30 @@ namespace MongoDB.Framework.Mapping
         {
             return new MongoMapper(this);
         }
+
+        /// <summary>
+        /// Gets the class map for.
+        /// </summary>
+        /// <param name="type">ValueType of the entity.</param>
+        /// <returns></returns>
+        public ClassMapBase GetClassMapFor(Type type)
+        {
+            ClassMapBase classMap = null;
+            if (!this.classMaps.TryGetValue(type, out classMap))
+                throw new UnmappedTypeException(string.Format("The type {0} is unmapped.", type));
+
+            return classMap;
+        }
+
+        /// <summary>
+        /// Tries the get class map for.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="classMap">The class map.</param>
+        /// <returns></returns>
+        public bool TryGetClassMapFor(Type type, out ClassMapBase classMap)
+        {
+            return this.classMaps.TryGetValue(type, out classMap);
+        }        
     }
 }

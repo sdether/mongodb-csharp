@@ -6,10 +6,10 @@ namespace MongoDB.Framework.Mapping
     public interface IMappingStore
     {
         /// <summary>
-        /// Gets the class maps.
+        /// Creates the mongo mapper.
         /// </summary>
-        /// <value>The class maps.</value>
-        IEnumerable<ClassMap> ClassMaps { get; }
+        /// <returns></returns>
+        IMongoMapper CreateMongoMapper();
 
         /// <summary>
         /// Gets the class map for the specified entity type.
@@ -19,10 +19,12 @@ namespace MongoDB.Framework.Mapping
         ClassMapBase GetClassMapFor(Type type);
 
         /// <summary>
-        /// Creates the mongo mapper.
+        /// Tries the get class map for.
         /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="classMap">The class map.</param>
         /// <returns></returns>
-        IMongoMapper CreateMongoMapper();
+        bool TryGetClassMapFor(Type type, out ClassMapBase classMap);
     }
 
     public static class IMappingStoreExtensions
@@ -37,5 +39,18 @@ namespace MongoDB.Framework.Mapping
         {
             return mappingStore.GetClassMapFor(typeof(TEntity));
         }
+
+        /// <summary>
+        /// Tries the get class map for.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="mappingStore">The mapping store.</param>
+        /// <param name="classMap">The class map.</param>
+        /// <returns></returns>
+        public static bool TryGetClassMapFor<TEntity>(this IMappingStore mappingStore, out ClassMapBase classMap)
+        {
+            return mappingStore.TryGetClassMapFor(typeof(TEntity), out classMap);
+        }
+
     }
 }
