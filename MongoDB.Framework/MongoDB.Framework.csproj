@@ -57,7 +57,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\Fluent\Mapping\Auto\FluentAutoMapper.cs" />
     <Compile Include="Configuration\Fluent\Mapping\FluentConvertibleMember.cs" />
     <Compile Include="Configuration\Fluent\Mapping\FluentMember.cs" />
     <Compile Include="Mapping\AutoMappingStore.cs" />
@@ -67,7 +66,10 @@
     <Compile Include="Configuration\Mapping\MemberMapModel.cs" />
     <Compile Include="Configuration\Mapping\ParentMemberMapModel.cs" />
     <Compile Include="Extensions\ReflectionExtensions.cs" />
+    <Compile Include="Mapping\Auto\AutoMapperSetup.cs" />
+    <Compile Include="Mapping\Auto\DefaultMemberFinder.cs" />
     <Compile Include="Mapping\Auto\IAutoMapper.cs" />
+    <Compile Include="Mapping\Auto\IMemberFinder.cs" />
     <Compile Include="Mapping\ClassMapBase.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -77,6 +79,25 @@
     <Compile Include="Mapping\CollectionTypes\HashSetCollectionType.cs" />
     <Compile Include="Mapping\CollectionTypes\GenericListCollectionType.cs" />
     <Compile Include="Mapping\CollectionValueType.cs" />
+    <Compile Include="Mapping\Conventions\ConventionSetup.cs" />
+    <Compile Include="Mapping\Conventions\DefaultClassActivatorConvention.cs" />
+    <Compile Include="Mapping\Conventions\DefaultIdGeneratorConvention.cs" />
+    <Compile Include="Mapping\Conventions\DefaultIdUnsavedValueConvention.cs" />
+    <Compile Include="Mapping\Conventions\DelegateExtendedPropertiesConvention.cs" />
+    <Compile Include="Mapping\Conventions\IClassActivatorConvention.cs" />
+    <Compile Include="Mapping\Conventions\IExtendedPropertiesConvention.cs" />
+    <Compile Include="Mapping\Conventions\DefaultCollectionValueTypeConvention.cs" />
+    <Compile Include="Mapping\Conventions\DefaultValueConverterConvention.cs" />
+    <Compile Include="Mapping\Conventions\DelegateIdConvention.cs" />
+    <Compile Include="Mapping\Conventions\DelegateMemberKeyConvention.cs" />
+    <Compile Include="Mapping\Conventions\DelegateCollectionNameConvention.cs" />
+    <Compile Include="Mapping\Conventions\ICollectionValueTypeConvention.cs" />
+    <Compile Include="Mapping\Conventions\ICollectionNameConvention.cs" />
+    <Compile Include="Mapping\Conventions\IIdConvention.cs" />
+    <Compile Include="Mapping\Conventions\IIdGeneratorConvention.cs" />
+    <Compile Include="Mapping\Conventions\IIdUnsavedValueConvention.cs" />
+    <Compile Include="Mapping\Conventions\IMemberKeyConvention.cs" />
+    <Compile Include="Mapping\Conventions\IValueConverterConvention.cs" />
     <Compile Include="Mapping\DefaultClassActivator.cs" />
     <Compile Include="Mapping\DelegateClassActivator.cs" />
     <Compile Include="IMongoMapper.cs" />
