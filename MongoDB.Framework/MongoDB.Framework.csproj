@@ -58,10 +58,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\Fluently.cs" />
+    <Compile Include="Configuration\Fluent\FluentMapping.cs" />
     <Compile Include="Configuration\Fluent\FluentAutoMappingProfile.cs" />
     <Compile Include="Configuration\Fluent\FluentConfiguration.cs" />
     <Compile Include="Configuration\Fluent\Mapping\FluentConvertibleMember.cs" />
     <Compile Include="Configuration\Fluent\Mapping\FluentMember.cs" />
+    <Compile Include="Configuration\IMappingStoreBuilder.cs" />
     <Compile Include="Mapping\AutoMappingStore.cs" />
     <Compile Include="Mapping\Auto\AggregateAutoMapper.cs" />
     <Compile Include="Mapping\Auto\AutoMapper.cs" />

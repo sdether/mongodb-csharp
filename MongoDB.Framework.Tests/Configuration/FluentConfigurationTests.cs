@@ -15,11 +15,11 @@ namespace MongoDB.Framework.Configuration
         {
             var sessionFactory = Fluently.Configure()
                 .Database("tests")
-                .WithAutoMappingProfile(c => 
+                .Mappings(m => m.CreateProfile(p => 
                 {
-                    c.CollectionNamesAreCamelCasedAndPlural();
-                    c.MemberKeysAreCamelCased();
-                })
+                    p.CollectionNamesAreCamelCasedAndPlural();
+                    p.MemberKeysAreCamelCased();
+                }))
                 .BuildSessionFactory();
         }
     }
