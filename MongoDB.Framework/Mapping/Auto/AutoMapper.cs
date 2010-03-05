@@ -16,20 +16,38 @@ namespace MongoDB.Framework.Mapping.Auto
 {
     public class AutoMapper : IAutoMapper
     {
-        private AutoMapperSetup setup;
+        private Func<Type, bool> filter;
+        private AutoMappingProfile profile;
 
         public AutoMapper()
-            : this(null)
+            : this(null, null)
         { }
 
-        public AutoMapper(AutoMapperSetup setup)
+        public AutoMapper(Func<Type, bool> filter)
+            : this(null, filter)
+        { }
+
+        public AutoMapper(AutoMappingProfile profile)
+            : this(profile, null)
+        { }
+
+        public AutoMapper(AutoMappingProfile profile, Func<Type, bool> filter)
         {
-            this.setup = setup ?? new AutoMapperSetup();
+            this.filter = filter ?? new Func<Type, bool>(t => true);
+            this.profile = profile ?? new AutoMappingProfile();
+        }
+
+        public bool CanCreateClassMap(Type type)
+        {
+            return this.filter(type);
         }
 
         public ClassMapBase CreateClassMap(Type type, Func<Type, ClassMapBase> existingClassMapFinder)
         {
-            if (this.setup.IsSubClass(type))
+            if (!this.filter(type))
+                throw new InvalidOperationException(string.Format("Cannot map type {0}. Ensure a call to CanCreateClassMap to avoid this exception.", type));
+
+            if (this.profile.IsSubClass(type))
                 return this.CreateSubClassMap(type, existingClassMapFinder);
             else
                 return this.CreateClassMap(type);
@@ -38,14 +56,14 @@ namespace MongoDB.Framework.Mapping.Auto
         private ClassMap CreateClassMap(Type type)
         {
             ClassMap classMap = new ClassMap(type);
-            classMap.ClassActivator = this.setup.Conventions.ClassActivatorConvention.GetClassActivator(type);
-            classMap.CollectionName = this.setup.Conventions.CollectionNameConvention.GetCollectionName(type);
+            classMap.ClassActivator = this.profile.Conventions.ClassActivatorConvention.GetClassActivator(type);
+            classMap.CollectionName = this.profile.Conventions.CollectionNameConvention.GetCollectionName(type);
 
-            foreach(var member in this.setup.MemberFinder.FindMembers(type))
+            foreach(var member in this.profile.MemberFinder.FindMembers(type))
             {
-                if (this.setup.Conventions.IdConvention.IsId(member))
+                if (this.profile.Conventions.IdConvention.IsId(member))
                     classMap.IdMap = this.BuildIdMap(member);
-                else if (this.setup.Conventions.ExtendedPropertiesConvention.IsExtendedProperties(member))
+                else if (this.profile.Conventions.ExtendedPropertiesConvention.IsExtendedProperties(member))
                     classMap.ExtendedPropertiesMap = this.BuildExtendedPropertiesMap(member);
                 else
                     classMap.AddMemberMap(this.BuildMemberMap(member));
@@ -76,16 +94,16 @@ namespace MongoDB.Framework.Mapping.Auto
                 member.Name,
                 LateBoundReflection.GetGetter(member),
                 LateBoundReflection.GetSetter(member),
-                this.setup.Conventions.IdGeneratorConvention.GetGenerator(type),
-                this.setup.Conventions.ValueConverterConvention.GetValueConverter(type),
-                this.setup.Conventions.IdUnsavedValueConvention.GetUnsavedValue(type));
+                this.profile.Conventions.IdGeneratorConvention.GetGenerator(type),
+                this.profile.Conventions.ValueConverterConvention.GetValueConverter(type),
+                this.profile.Conventions.IdUnsavedValueConvention.GetUnsavedValue(type));
         }
 
         private MemberMap BuildMemberMap(MemberInfo member)
         {
             var type = ReflectionUtil.GetMemberValueType(member);
             return new ValueTypeMemberMap(
-                this.setup.Conventions.MemberKeyConvention.GetMemberKey(member),
+                this.profile.Conventions.MemberKeyConvention.GetMemberKey(member),
                 member.Name,
                 LateBoundReflection.GetGetter(member),
                 LateBoundReflection.GetSetter(member),
@@ -99,19 +117,19 @@ namespace MongoDB.Framework.Mapping.Auto
             {
                 return new SimpleValueType(
                     type, 
-                    this.setup.Conventions.ValueConverterConvention.GetValueConverter(type));
+                    this.profile.Conventions.ValueConverterConvention.GetValueConverter(type));
             }
-            else if (this.setup.Conventions.CollectionValueTypeConvention.IsCollection(type))
+            else if (this.profile.Conventions.CollectionValueTypeConvention.IsCollection(type))
             {
                 return new CollectionValueType(
-                    this.setup.Conventions.CollectionValueTypeConvention.GetCollectionType(type),
-                    this.GetValueType(this.setup.Conventions.CollectionValueTypeConvention.GetElementType(type)));
+                    this.profile.Conventions.CollectionValueTypeConvention.GetCollectionType(type),
+                    this.GetValueType(this.profile.Conventions.CollectionValueTypeConvention.GetElementType(type)));
             }
             else 
             {
                 return new NestedClassValueType(
                     type, 
-                    this.setup.Conventions.ValueConverterConvention.GetValueConverter(type));
+                    this.profile.Conventions.ValueConverterConvention.GetValueConverter(type));
             }
 
             throw new NotSupportedException(string.Format("The type {0} could not be mapped.", type));

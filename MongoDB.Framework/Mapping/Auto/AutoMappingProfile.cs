@@ -6,7 +6,7 @@ using MongoDB.Framework.Mapping.Conventions;
 
 namespace MongoDB.Framework.Mapping.Auto
 {
-    public class AutoMapperSetup
+    public class AutoMappingProfile
     {
         private ConventionProfile conventions;
         private Func<Type, bool> isSubClass;
@@ -38,7 +38,7 @@ namespace MongoDB.Framework.Mapping.Auto
 
         public Func<Type, bool> IsSubClass
         {
-            get { return this.IsSubClass; }
+            get { return this.isSubClass; }
             set
             {
                 if (value == null)
@@ -48,7 +48,7 @@ namespace MongoDB.Framework.Mapping.Auto
             }
         }
 
-        public AutoMapperSetup()
+        public AutoMappingProfile()
         {
             this.conventions = new ConventionProfile();
             this.isSubClass = t => false;

@@ -53,6 +53,8 @@ namespace MongoDB.Framework.Configuration
             this.ProxyGenerator = new CastleProxyGenerator();
         }
 
+
+
         /// <summary>
         /// Creates the mongo session factory.
         /// </summary>
