@@ -15,7 +15,18 @@ namespace MongoDB.Framework.Mapping.Auto
 
         public IEnumerable<MemberInfo> FindMembers(Type type)
         {
-            return Enumerable.Empty<MemberInfo>();            
+            foreach (var prop in type.GetProperties())
+            {
+                if (prop.CanRead && prop.CanWrite)
+                    yield return prop;
+            }
+
+            foreach (var field in type.GetFields())
+            {
+                if (!field.IsInitOnly && !field.IsLiteral)
+                    yield return field;
+            }
         }
+
     }
 }

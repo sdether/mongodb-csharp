@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace MongoDB.Framework.Configuration.Mapping
+namespace MongoDB.Framework.Configuration.Fluent
 {
     public static class Inflector
     {

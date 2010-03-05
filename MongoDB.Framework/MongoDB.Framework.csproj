@@ -57,16 +57,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\Fluently.cs" />
+    <Compile Include="Configuration\Fluent\FluentAutoMappingProfile.cs" />
+    <Compile Include="Configuration\Fluent\FluentConfiguration.cs" />
     <Compile Include="Configuration\Fluent\Mapping\FluentConvertibleMember.cs" />
     <Compile Include="Configuration\Fluent\Mapping\FluentMember.cs" />
     <Compile Include="Mapping\AutoMappingStore.cs" />
+    <Compile Include="Mapping\Auto\AggregateAutoMapper.cs" />
     <Compile Include="Mapping\Auto\AutoMapper.cs" />
     <Compile Include="Configuration\Mapping\IMapModelRegistry.cs" />
-    <Compile Include="Configuration\Mapping\Inflector.cs" />
+    <Compile Include="Configuration\Fluent\Inflector.cs" />
     <Compile Include="Configuration\Mapping\MemberMapModel.cs" />
     <Compile Include="Configuration\Mapping\ParentMemberMapModel.cs" />
     <Compile Include="Extensions\ReflectionExtensions.cs" />
-    <Compile Include="Mapping\Auto\AutoMapperSetup.cs" />
+    <Compile Include="Mapping\Auto\AutoMappingProfile.cs" />
     <Compile Include="Mapping\Auto\DefaultMemberFinder.cs" />
     <Compile Include="Mapping\Auto\IAutoMapper.cs" />
     <Compile Include="Mapping\Auto\IMemberFinder.cs" />

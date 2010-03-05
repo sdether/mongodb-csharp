@@ -57,8 +57,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\FluentConfigurationTests.cs" />
     <Compile Include="Mapping\ActivationTests.cs" />
-    <Compile Include="Mapping\Auto\AutoMapperTests.cs" />
+    <Compile Include="Mapping\AutoMappingTests.cs" />
     <Compile Include="Mapping\IdGenerators\AssignedGeneratorTests.cs" />
     <Compile Include="Mapping\IdGenerators\OidGeneratorTests.cs" />
     <Compile Include="Mapping\IdGenerators\GuidCombGeneratorTests.cs" />
@@ -80,6 +81,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Mapping\Auto\" />
     <Folder Include="Mapping\CollectionTypes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
