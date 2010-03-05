@@ -4,19 +4,21 @@ using System.Linq;
 using System.Text;
 using MongoDB.Framework.Configuration.Fluent.Mapping;
 using MongoDB.Driver;
+using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Queries
 {
     public abstract class QueryTestCase : TestCase
     {
-        protected override MongoDB.Framework.Configuration.Mapping.IMapModelRegistry MapModelRegistry
+        protected override IMappingStore MappingStore
         {
             get
             {
                 return new FluentMapModelRegistry()
                     .AddMap(new BlogMap())
                     .AddMap(new BlogEntryMap())
-                    .AddMap(new BlogEntryCommentMap());
+                    .AddMap(new BlogEntryCommentMap())
+                    .BuildMappingStore();
             }
         }
 

@@ -67,7 +67,6 @@
     <Compile Include="Mapping\AutoMappingStore.cs" />
     <Compile Include="Mapping\Auto\AggregateAutoMapper.cs" />
     <Compile Include="Mapping\Auto\AutoMapper.cs" />
-    <Compile Include="Configuration\Mapping\IMapModelRegistry.cs" />
     <Compile Include="Configuration\Fluent\Inflector.cs" />
     <Compile Include="Configuration\Mapping\MemberMapModel.cs" />
     <Compile Include="Configuration\Mapping\ParentMemberMapModel.cs" />
@@ -89,8 +88,12 @@
     <Compile Include="Mapping\Conventions\DefaultClassActivatorConvention.cs" />
     <Compile Include="Mapping\Conventions\DefaultIdGeneratorConvention.cs" />
     <Compile Include="Mapping\Conventions\DefaultIdUnsavedValueConvention.cs" />
+    <Compile Include="Mapping\Conventions\DelegateDiscriminatorConvention.cs" />
+    <Compile Include="Mapping\Conventions\DelegateDiscriminatorKeyConvention.cs" />
     <Compile Include="Mapping\Conventions\DelegateExtendedPropertiesConvention.cs" />
     <Compile Include="Mapping\Conventions\IClassActivatorConvention.cs" />
+    <Compile Include="Mapping\Conventions\IDiscriminatorConvention.cs" />
+    <Compile Include="Mapping\Conventions\IDiscriminatorKeyConvention.cs" />
     <Compile Include="Mapping\Conventions\IExtendedPropertiesConvention.cs" />
     <Compile Include="Mapping\Conventions\DefaultCollectionValueTypeConvention.cs" />
     <Compile Include="Mapping\Conventions\DefaultValueConverterConvention.cs" />
@@ -277,7 +280,6 @@
     <Compile Include="Tracking\MongoSessionCache.cs" />
     <Compile Include="EntityNotFoundException.cs" />
     <Compile Include="Persistence\GetByIdAction.cs" />
-    <Compile Include="Configuration\IMongoConfiguration.cs" />
     <Compile Include="Configuration\MongoConfiguration.cs" />
     <Compile Include="DefaultMongoFactory.cs" />
     <Compile Include="Extensions\MongoDBDocumentExtensions.cs" />

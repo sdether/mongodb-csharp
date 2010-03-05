@@ -10,7 +10,7 @@ using MongoDB.Framework.Mapping;
 
 namespace MongoDB.Framework.Configuration.Fluent.Mapping
 {
-    public class FluentMapModelRegistry : IMapModelRegistry
+    public class FluentMapModelRegistry : IMappingStoreBuilder
     {
         #region Private Static Fields
 

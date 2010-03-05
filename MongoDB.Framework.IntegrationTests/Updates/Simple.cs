@@ -14,12 +14,13 @@ namespace MongoDB.Framework.Updates
     [TestFixture]
     public class Simple : TestCase
     {
-        protected override IMapModelRegistry MapModelRegistry
+        protected override IMappingStore MappingStore
         {
             get 
             {
                 return new FluentMapModelRegistry()
-                    .AddMap(new EntityMap());
+                    .AddMap(new EntityMap())
+                    .BuildMappingStore();
             }
         }
 

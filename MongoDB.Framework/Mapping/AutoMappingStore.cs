@@ -42,15 +42,8 @@ namespace MongoDB.Framework.Mapping
             if (this.autoMaps.TryGetValue(type, out classMap) || this.mappingStore.TryGetClassMapFor(type, out classMap))
                 return classMap;
 
-            //automap
-            classMap = this.autoMapper.CreateClassMap(type, t =>
-            {
-                ClassMapBase cm = null;
-                if (this.autoMaps.TryGetValue(type, out cm) || this.mappingStore.TryGetClassMapFor(type, out cm))
-                    return cm;
-
-                return null;
-            });
+            //automap allowing for recursive calls.  WARNING!!! If any cycles show up, we are hosed...
+            classMap = this.autoMapper.CreateClassMap(type, GetClassMapFor);
 
             this.autoMaps.Add(type, classMap);
             return classMap;

@@ -15,13 +15,14 @@ namespace MongoDB.Framework.Inserts
     [TestFixture]
     public class ManyToOne : TestCase
     {
-        protected override IMapModelRegistry MapModelRegistry
+        protected override IMappingStore MappingStore
         {
             get 
             {
                 return new FluentMapModelRegistry()
                     .AddMap(new EntityMap())
-                    .AddMap(new EntityRefMap());
+                    .AddMap(new EntityRefMap())
+                    .BuildMappingStore();
             }
         }
 

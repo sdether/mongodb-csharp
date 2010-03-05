@@ -12,7 +12,7 @@ using MongoDB.Framework.Mapping.Auto;
 
 namespace MongoDB.Framework.Configuration
 {
-    public class MongoConfiguration : IMongoConfiguration
+    public class MongoConfiguration
     {
         /// <summary>
         /// Gets the name of the database.
@@ -48,12 +48,10 @@ namespace MongoDB.Framework.Configuration
                 throw new ArgumentException("Cannot be null or empty.", "databaseName");
 
             this.DatabaseName = databaseName;
-            this.MappingStore = new AutoMappingStore(new AutoMapper());
+            this.MappingStore = new AutoMappingStore();
             this.MongoFactory = new DefaultMongoFactory();
             this.ProxyGenerator = new CastleProxyGenerator();
         }
-
-
 
         /// <summary>
         /// Creates the mongo session factory.

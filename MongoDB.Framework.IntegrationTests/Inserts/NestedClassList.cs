@@ -15,13 +15,14 @@ namespace MongoDB.Framework.Inserts
     [TestFixture]
     public class NestedClassList : TestCase
     {
-        protected override IMapModelRegistry MapModelRegistry
+        protected override IMappingStore MappingStore
         {
             get 
             {
                 return new FluentMapModelRegistry()
                     .AddMap(new EntityMap())
-                    .AddMap(new SubEntityMap());
+                    .AddMap(new SubEntityMap())
+                    .BuildMappingStore();
             }
         }
 
