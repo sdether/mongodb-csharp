@@ -10,6 +10,8 @@ namespace MongoDB.Framework.Mapping.Conventions
         private IClassActivatorConvention classActivatorConvention;
         private ICollectionNameConvention collectionNameConvention;
         private ICollectionValueTypeConvention collectionValueTypeConvention;
+        private IDiscriminatorConvention discriminatorConvention;
+        private IDiscriminatorKeyConvention discriminatorKeyConvention;
         private IExtendedPropertiesConvention extendedPropertiesConvention;
         private IIdConvention idConvention;
         private IIdGeneratorConvention idGeneratorConvention;
@@ -50,6 +52,30 @@ namespace MongoDB.Framework.Mapping.Conventions
                     throw new ArgumentNullException("value");
 
                 this.collectionValueTypeConvention = value;
+            }
+        }
+
+        public IDiscriminatorConvention DiscriminatorConvention
+        {
+            get { return this.discriminatorConvention; }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("value");
+
+                this.discriminatorConvention = discriminatorConvention;
+            }
+        }
+
+        public IDiscriminatorKeyConvention DiscriminatorKeyConvention
+        {
+            get { return this.discriminatorKeyConvention; }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("value");
+
+                this.discriminatorKeyConvention = value;
             }
         }
 
@@ -130,6 +156,8 @@ namespace MongoDB.Framework.Mapping.Conventions
             this.classActivatorConvention = DefaultClassActivatorConvention.Instance;
             this.collectionNameConvention = new DelegateCollectionNameConvention(t => t.Name);
             this.collectionValueTypeConvention = DefaultCollectionValueTypeConvention.Instance;
+            this.discriminatorConvention = new DelegateDiscriminatorConvention(t => t.Name);
+            this.discriminatorKeyConvention = new DelegateDiscriminatorKeyConvention(t => "_t");
             this.extendedPropertiesConvention = new DelegateExtendedPropertiesConvention(m => m.ReflectedType == typeof(IDictionary<string, object>));
             this.idConvention = new DelegateIdConvention(m => m.Name == "Id");
             this.idGeneratorConvention = DefaultIdGeneratorConvention.Instance;

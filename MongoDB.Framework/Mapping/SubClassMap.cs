@@ -117,7 +117,7 @@ namespace MongoDB.Framework.Mapping
         /// Gets or sets the super class map.
         /// </summary>
         /// <value>The super class map.</value>
-        public ClassMap SuperClassMap { get; internal set; }
+        public ClassMapBase SuperClassMap { get; internal set; }
 
         #endregion
 

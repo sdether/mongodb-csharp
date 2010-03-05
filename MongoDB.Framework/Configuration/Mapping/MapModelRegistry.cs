@@ -16,7 +16,7 @@ using MongoDB.Framework.Configuration.Fluent.Mapping;
 
 namespace MongoDB.Framework.Configuration.Mapping
 {
-    public class MapModelRegistry : IMapModelRegistry
+    public class MapModelRegistry : IMappingStoreBuilder
     {
         #region Private Fields
 
@@ -152,7 +152,6 @@ namespace MongoDB.Framework.Configuration.Mapping
                 memberMaps.Add(this.BuildParentMemberMap(model.ParentMemberMap));
 
             subClassMap.AddMemberMaps(memberMaps);
-
 
             return subClassMap;
         }

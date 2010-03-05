@@ -7,6 +7,7 @@ using MongoDB.Framework.Configuration.Fluent.Mapping;
 using MongoDB.Framework.Mapping.Auto;
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Proxy.Castle;
+using MongoDB.Framework.Proxy;
 
 namespace MongoDB.Framework.Configuration.Fluent
 {
@@ -14,6 +15,8 @@ namespace MongoDB.Framework.Configuration.Fluent
     {
         private string databaseName;
         private IMappingStore mappingStore;
+        private IMongoFactory mongoFactory;
+        private IProxyGenerator proxyGenerator;
 
         public FluentConfiguration Database(string databaseName)
         {
@@ -29,13 +32,25 @@ namespace MongoDB.Framework.Configuration.Fluent
             return this;
         }
 
+        public FluentConfiguration MongoFactory(IMongoFactory mongoFactory)
+        {
+            this.mongoFactory = mongoFactory;
+            return this;
+        }
+
+        public FluentConfiguration ProxyGenerator(IProxyGenerator proxyGenerator)
+        {
+            this.proxyGenerator = proxyGenerator;
+            return this;
+        }
+
         public IMongoSessionFactory BuildSessionFactory()
         {
             return new MongoSessionFactory(
                 this.databaseName,
                 this.mappingStore ?? new AutoMappingStore(),
-                new DefaultMongoFactory(),
-                new CastleProxyGenerator());
+                this.mongoFactory ?? new DefaultMongoFactory(),
+                this.proxyGenerator ?? new CastleProxyGenerator());
         }
     }
 }

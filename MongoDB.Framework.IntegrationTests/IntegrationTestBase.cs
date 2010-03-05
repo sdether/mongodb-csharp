@@ -15,7 +15,6 @@ namespace MongoDB.Framework
 {
     public abstract class IntegrationTestBase
     {
-        private static IMongoConfiguration mongoConfiguration;
         private static IMongoSessionFactory mongoSessionFactory;
 
         static IntegrationTestBase()
@@ -26,17 +25,16 @@ namespace MongoDB.Framework
                 .AddMap(new OrganizationMap())
                 .AddMap(new PhoneNumberMap());
 
-            mongoConfiguration = new MongoConfiguration("tests") { MappingStore = fluentMapModelRegistry.BuildMappingStore() };
-            mongoSessionFactory = mongoConfiguration.CreateMongoSessionFactory();
+            mongoSessionFactory = new MongoSessionFactory("tests", fluentMapModelRegistry.BuildMappingStore(), new DefaultMongoFactory(), new CastleProxyGenerator());
         }
 
         protected void SetupEnvironment()
         {
-            var mongo = mongoConfiguration.MongoFactory.CreateMongo();
-            mongo.Connect();
-            Database db = mongo.getDB(mongoConfiguration.DatabaseName);
-            string collectionName = mongoSessionFactory.MappingStore.GetClassMapFor<Party>().CollectionName;
-            IMongoCollection collection = db.GetCollection(collectionName);
+            using (var session = CreateMongoSession())
+            {
+                Database db = session.Database;
+                string collectionName = mongoSessionFactory.MappingStore.GetClassMapFor<Party>().CollectionName;
+                IMongoCollection collection = db.GetCollection(collectionName);
 
             var party1 = new Document()
                 .Append("_id", Guid.NewGuid())
@@ -69,8 +67,8 @@ namespace MongoDB.Framework
                     .Append("Prefix", "654")
                     .Append("Number", "3210"));
 
-            collection.Insert(new[] { party1, party2, party3 });
-            mongo.Disconnect();
+                collection.Insert(new[] { party1, party2, party3 });
+            }
         }
 
         protected IMongoSession CreateMongoSession()
@@ -80,11 +78,8 @@ namespace MongoDB.Framework
 
         protected void TearDownEnvironment()
         {
-            var mongo = mongoConfiguration.MongoFactory.CreateMongo();
-            mongo.Connect();
-            Database db = mongo.getDB(mongoConfiguration.DatabaseName);
-            db.MetaData.DropDatabase();
-            mongo.Disconnect();
+            using (var session = CreateMongoSession())
+                session.Database.MetaData.DropDatabase();
         }
 
         public class PartyMap : FluentClass<Party>

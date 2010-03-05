@@ -13,7 +13,20 @@ namespace MongoDB.Framework.Configuration.Fluent
     public class FluentMapping : IMappingStoreBuilder
     {
         private IAutoMapper autoMapper;
+        private bool noAutoMapping;
         private FluentMapModelRegistry registry;
+        private List<Type> typesToAutoMap;
+
+        public FluentMapModelRegistry Registry
+        {
+            get 
+            {
+                if (this.registry == null)
+                    this.registry = new FluentMapModelRegistry();
+                return this.registry; 
+            }
+            set { this.registry = value; }
+        }
 
         public FluentMapping AddAutoMapper(IAutoMapper autoMapper)
         {
@@ -54,30 +67,54 @@ namespace MongoDB.Framework.Configuration.Fluent
             return this.AddAutoMapper(new AutoMapper(profile, filter));
         }
 
-        /// <summary>
-        /// Adds the maps from assembly containing.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public FluentMapping AddMapsFromAssemblyContaining<T>()
+        public FluentMapping EagerlyAutoMap<T>()
         {
-            this.registry.AddMapsFromAssemblyContaining<T>();
+            return this.EagerlyAutoMapTypes(new Type[1] { typeof(T) });
+        }
+
+        public FluentMapping EagerlyAutoMapTypes(IEnumerable<Type> types)
+        {
+            if (this.typesToAutoMap == null)
+                this.typesToAutoMap = new List<Type>();
+
+            this.typesToAutoMap.AddRange(types);
             return this;
         }
 
-        /// <summary>
-        /// Adds the maps from assembly.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        public FluentMapping AddMapsFromAssembly(Assembly assembly)
+        public FluentMapping NoAutoMapping()
         {
-            this.registry.AddMapsFromAssembly(assembly);
+            this.noAutoMapping = true;
             return this;
         }
 
         IMappingStore IMappingStoreBuilder.BuildMappingStore()
         {
+            if (this.autoMapper == null && this.registry == null)
+            {
+                if (this.noAutoMapping)
+                    throw new InvalidOperationException("Either AutoMapping should be enabled or maps should be added through the registry.");
+
+                return new AutoMappingStore();
+            }
+            else if (this.autoMapper == null && this.noAutoMapping)
+                return this.registry.BuildMappingStore();
+            else if (this.autoMapper == null)
+                return new AutoMappingStore(new AutoMapper(), this.registry.BuildMappingStore());
+            else if (this.registry == null)
+                return new AutoMappingStore(this.autoMapper);
+            
             return new AutoMappingStore(this.autoMapper, this.registry.BuildMappingStore());
+        }
+
+        private AutoMappingStore AutoMapEagerTypes(AutoMappingStore store)
+        {
+            if(typesToAutoMap == null)
+                return store;
+
+            foreach (var type in this.typesToAutoMap)
+                store.GetClassMapFor(type);
+
+            return store;
         }
     }
 }

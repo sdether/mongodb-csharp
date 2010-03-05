@@ -9,12 +9,12 @@ using MongoDB.Framework.Configuration.Mapping;
 using MongoDB.Framework.Mapping;
 
 using NUnit.Framework;
+using MongoDB.Framework.Proxy.Castle;
 
 namespace MongoDB.Framework
 {
     public abstract class TestCase
     {
-        protected IMongoConfiguration mongoConfiguration;
         protected IMongoSessionFactory mongoSessionFactory;
 
         protected virtual string DatabaseName
@@ -22,23 +22,24 @@ namespace MongoDB.Framework
             get { return this.GetType().Name.ToLower(); }
         }
 
-        protected abstract IMapModelRegistry MapModelRegistry { get; }
+        protected virtual IMongoFactory MongoFactory
+        {
+            get { return new DefaultMongoFactory(); }
+        }
+
+        protected abstract IMappingStore MappingStore { get; }
 
         [TestFixtureSetUp]
         public void TestFixtureSetup()
         {
-            mongoConfiguration = new MongoConfiguration(this.DatabaseName) { MappingStore = this.MapModelRegistry.BuildMappingStore() };
-            mongoSessionFactory = mongoConfiguration.CreateMongoSessionFactory();
+            mongoSessionFactory = new MongoSessionFactory(this.DatabaseName, this.MappingStore, this.MongoFactory, new CastleProxyGenerator());
         }
 
         [TestFixtureTearDown]
         public void TestFixtureTearDown()
         {
-            var mongo = mongoConfiguration.MongoFactory.CreateMongo();
-            mongo.Connect();
-            Database db = mongo.getDB(mongoConfiguration.DatabaseName);
-            db.MetaData.DropDatabase();
-            mongo.Disconnect();
+            using (var session = mongoSessionFactory.OpenMongoSession())
+                session.Database.MetaData.DropDatabase();
         }
 
         [SetUp]

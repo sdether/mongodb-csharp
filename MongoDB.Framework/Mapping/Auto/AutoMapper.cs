@@ -58,7 +58,8 @@ namespace MongoDB.Framework.Mapping.Auto
             ClassMap classMap = new ClassMap(type);
             classMap.ClassActivator = this.profile.Conventions.ClassActivatorConvention.GetClassActivator(type);
             classMap.CollectionName = this.profile.Conventions.CollectionNameConvention.GetCollectionName(type);
-
+            classMap.Discriminator = this.profile.Conventions.DiscriminatorConvention.GetDiscriminator(type);
+            classMap.DiscriminatorKey = this.profile.Conventions.DiscriminatorKeyConvention.GetDiscriminatorKey(type);
             foreach(var member in this.profile.MemberFinder.FindMembers(type))
             {
                 if (this.profile.Conventions.IdConvention.IsId(member))
@@ -72,11 +73,31 @@ namespace MongoDB.Framework.Mapping.Auto
             return classMap;
         }
 
-        private ClassMap CreateSubClassMap(Type type, Func<Type, ClassMapBase> existingClassMapFinder)
+        private SubClassMap CreateSubClassMap(Type type, Func<Type, ClassMapBase> existingClassMapFinder)
         {
-            //var sub = new SubClassMap(type);
-            //sub.SuperClassMap = existingClassMapFinder.
-            throw new NotSupportedException();
+            var superClassMap = existingClassMapFinder(type.BaseType);
+            if (superClassMap == null)
+                throw new InvalidOperationException(string.Format("Unable to find super class map for subclass {0}", type));
+            if (superClassMap is SubClassMap)
+                throw new NotSupportedException("2-level inheritance hierarchies are not currently supported.");
+
+            var subClassMap = new SubClassMap(type);
+            subClassMap.ClassActivator = this.profile.Conventions.ClassActivatorConvention.GetClassActivator(type);
+            subClassMap.Discriminator = this.profile.Conventions.DiscriminatorConvention.GetDiscriminator(type);
+
+            foreach (var member in this.profile.MemberFinder.FindMembers(type))
+            {
+                if(superClassMap.IdMap.MemberName == member.Name)
+                    continue;
+                if (superClassMap.ExtendedPropertiesMap.MemberName == member.Name)
+                    continue;
+                if (superClassMap.MemberMaps.Any(x => x.MemberName == member.Name))
+                    continue;
+                subClassMap.AddMemberMap(this.BuildMemberMap(member));
+            }
+
+            ((ClassMap)superClassMap).AddSubClassMap(subClassMap);
+            return subClassMap;
         }
 
         private ExtendedPropertiesMap BuildExtendedPropertiesMap(MemberInfo member)
