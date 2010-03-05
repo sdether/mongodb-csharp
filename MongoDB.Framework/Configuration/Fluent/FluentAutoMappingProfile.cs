@@ -5,6 +5,8 @@ using System.Text;
 using MongoDB.Framework.Mapping.Auto;
 using MongoDB.Framework.Mapping.Conventions;
 using System.Reflection;
+using System.Linq.Expressions;
+using MongoDB.Framework.Reflection;
 
 namespace MongoDB.Framework.Configuration.Fluent
 {
@@ -50,6 +52,18 @@ namespace MongoDB.Framework.Configuration.Fluent
         public void IdsAreNamed(string name)
         {
             this.Profile.Conventions.IdConvention = new DelegateIdConvention(x => x.Name == name);
+        }
+
+        public FluentClassOverrides Override<T>()
+        {
+            return new FluentClassOverrides(this.Profile.GetOverridesFor(typeof(T)));
+        }
+
+        public FluentMemberOverrides Override<T>(Expression<Func<T, object>> member)
+        {
+            var memberInfo = ReflectionUtil.GetSingleMember(member);
+            var overrides = this.Profile.GetOverridesFor(typeof(T)).GetOverridesFor(memberInfo);
+            return new FluentMemberOverrides(overrides);
         }
 
         public void SubClassesAre(Func<Type, bool> isSubClass)
