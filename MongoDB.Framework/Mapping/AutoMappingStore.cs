@@ -13,6 +13,10 @@ namespace MongoDB.Framework.Mapping
         private IMappingStore mappingStore;
         private IAutoMapper autoMapper;
 
+        public AutoMappingStore()
+            : this(new AutoMapper())
+        { }
+
         public AutoMappingStore(IAutoMapper autoMapper)
             : this(autoMapper, null)
         { }
