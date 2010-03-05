@@ -20,6 +20,9 @@ namespace MongoDB.Framework.Mapping.Conventions
         /// <returns></returns>
         public IValueConverter GetValueConverter(Type type)
         {
+            if (type == typeof(Guid))
+                return new GuidValueConverter();
+
             return new NullSafeValueConverter(type);
         }
     }

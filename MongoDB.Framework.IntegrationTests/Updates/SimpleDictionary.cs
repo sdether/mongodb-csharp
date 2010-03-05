@@ -15,16 +15,6 @@ namespace MongoDB.Framework.Updates
     [TestFixture]
     public class SimpleDictionary : TestCase
     {
-        protected override IMappingStore MappingStore
-        {
-            get
-            {
-                return new FluentMapModelRegistry()
-                    .AddMap(new EntityMap())
-                    .BuildMappingStore();
-            }
-        }
-
         protected override void BeforeTest()
         {
             using (var mongoSession = this.OpenMongoSession())
@@ -75,15 +65,6 @@ namespace MongoDB.Framework.Updates
             public Guid Id { get; private set; }
 
             public Dictionary<string,int> Integers { get; set; }
-        }
-
-        public class EntityMap : FluentClass<Entity>
-        {
-            public EntityMap()
-            {
-                Id(x => x.Id);
-                Map(x => x.Integers);
-            }
         }
     }
 }

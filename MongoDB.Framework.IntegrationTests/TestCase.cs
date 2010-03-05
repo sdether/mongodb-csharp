@@ -27,7 +27,10 @@ namespace MongoDB.Framework
             get { return new DefaultMongoFactory(); }
         }
 
-        protected abstract IMappingStore MappingStore { get; }
+        protected virtual IMappingStore MappingStore
+        {
+            get { return new AutoMappingStore(); }
+        }
 
         [TestFixtureSetUp]
         public void TestFixtureSetup()

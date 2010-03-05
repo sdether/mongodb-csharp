@@ -15,17 +15,6 @@ namespace MongoDB.Framework.Updates
     [TestFixture]
     public class NestedClass : TestCase
     {
-        protected override IMappingStore MappingStore
-        {
-            get
-            {
-                return new FluentMapModelRegistry()
-                    .AddMap(new EntityMap())
-                    .AddMap(new NestedEntityMap())
-                    .BuildMappingStore();
-            }
-        }
-
         protected override void BeforeTest()
         {
             using (var mongoSession = this.OpenMongoSession())
@@ -86,25 +75,6 @@ namespace MongoDB.Framework.Updates
             public double Double { get; set; }
 
             public int Integer { get; set; }
-        }
-
-        public class EntityMap : FluentClass<Entity>
-        {
-            public EntityMap()
-            {
-                Id(x => x.Id);
-                Map(x => x.NestedEntity);
-            }
-        }
-
-        public class NestedEntityMap : FluentClass<NestedEntity>
-        {
-            public NestedEntityMap()
-            {
-                Id(x => x.Id);
-                Map(x => x.Double);
-                Map(x => x.Integer);
-            }
         }
     }
 }

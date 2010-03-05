@@ -19,13 +19,20 @@ namespace MongoDB.Framework
 
         static IntegrationTestBase()
         {
-            var fluentMapModelRegistry = new FluentMapModelRegistry()
-                .AddMap(new PartyMap())
-                .AddMap(new PersonMap())
-                .AddMap(new OrganizationMap())
-                .AddMap(new PhoneNumberMap());
+            mongoSessionFactory = Fluently.Configure()
+                .Database("tests")
+                .Mappings(m => 
+                {
+                    m.CreateProfile(p =>
+                    {
+                        p.DiscriminatorKeysAre("Type");
+                        p.SubClassesAre(t => t.BaseType == typeof(Party));
+                    });
 
-            mongoSessionFactory = new MongoSessionFactory("tests", fluentMapModelRegistry.BuildMappingStore(), new DefaultMongoFactory(), new CastleProxyGenerator());
+                    m.EagerlyAutoMap<Person>();
+                    m.EagerlyAutoMap<Organization>();
+                })
+                .BuildSessionFactory();
         }
 
         protected void SetupEnvironment()
@@ -80,55 +87,6 @@ namespace MongoDB.Framework
         {
             using (var session = CreateMongoSession())
                 session.Database.MetaData.DropDatabase();
-        }
-
-        public class PartyMap : FluentClass<Party>
-        {
-            public PartyMap()
-            {
-                CollectionName = "parties";
-                EnsureIndex().Ascending("Name");
-
-                DiscrimatorKey = "Type";
-
-                Id(x => x.Id);
-
-                Map(x => x.Name);
-                Map(x => x.PhoneNumber);
-
-                Map(x => x.AlternatePhoneNumbers);
-                Map(x => x.Aliases);
-
-                ExtendedProperties(x => x.ExtendedProperties);
-            }
-        }
-
-        public class PersonMap : FluentSubClass<Person>
-        {
-            public PersonMap()
-            {
-                Discriminator = "Person";
-                Map(x => x.BirthDate);
-            }
-        }
-
-        public class OrganizationMap : FluentSubClass<Organization>
-        {
-            public OrganizationMap()
-            {
-                Discriminator = "Organization";
-                Map(x => x.EmployeeCount);
-            }
-        }
-
-        public class PhoneNumberMap : FluentClass<PhoneNumber>
-        {
-            public PhoneNumberMap()
-            {
-                Map(x => x.AreaCode);
-                Map(x => x.Prefix);
-                Map(x => x.Number);
-            }
         }
 
         public enum PartyType

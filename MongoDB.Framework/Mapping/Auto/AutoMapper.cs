@@ -58,7 +58,8 @@ namespace MongoDB.Framework.Mapping.Auto
             ClassMap classMap = new ClassMap(type);
             classMap.ClassActivator = this.profile.Conventions.ClassActivatorConvention.GetClassActivator(type);
             classMap.CollectionName = this.profile.Conventions.CollectionNameConvention.GetCollectionName(type);
-            classMap.Discriminator = this.profile.Conventions.DiscriminatorConvention.GetDiscriminator(type);
+            if(!type.IsInterface && !type.IsAbstract)
+                classMap.Discriminator = this.profile.Conventions.DiscriminatorConvention.GetDiscriminator(type);
             classMap.DiscriminatorKey = this.profile.Conventions.DiscriminatorKeyConvention.GetDiscriminatorKey(type);
             foreach(var member in this.profile.MemberFinder.FindMembers(type))
             {
@@ -87,9 +88,9 @@ namespace MongoDB.Framework.Mapping.Auto
 
             foreach (var member in this.profile.MemberFinder.FindMembers(type))
             {
-                if(superClassMap.IdMap.MemberName == member.Name)
+                if(superClassMap.HasId && superClassMap.IdMap.MemberName == member.Name)
                     continue;
-                if (superClassMap.ExtendedPropertiesMap.MemberName == member.Name)
+                if (superClassMap.HasExtendedProperties && superClassMap.ExtendedPropertiesMap.MemberName == member.Name)
                     continue;
                 if (superClassMap.MemberMaps.Any(x => x.MemberName == member.Name))
                     continue;

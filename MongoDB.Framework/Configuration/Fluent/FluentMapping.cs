@@ -94,16 +94,16 @@ namespace MongoDB.Framework.Configuration.Fluent
                 if (this.noAutoMapping)
                     throw new InvalidOperationException("Either AutoMapping should be enabled or maps should be added through the registry.");
 
-                return new AutoMappingStore();
+                return this.AutoMapEagerTypes(new AutoMappingStore());
             }
             else if (this.autoMapper == null && this.noAutoMapping)
                 return this.registry.BuildMappingStore();
             else if (this.autoMapper == null)
-                return new AutoMappingStore(new AutoMapper(), this.registry.BuildMappingStore());
+                return this.AutoMapEagerTypes(new AutoMappingStore(new AutoMapper(), this.registry.BuildMappingStore()));
             else if (this.registry == null)
-                return new AutoMappingStore(this.autoMapper);
-            
-            return new AutoMappingStore(this.autoMapper, this.registry.BuildMappingStore());
+                return this.AutoMapEagerTypes(new AutoMappingStore(this.autoMapper));
+
+            return this.AutoMapEagerTypes(new AutoMappingStore(this.autoMapper, this.registry.BuildMappingStore()));
         }
 
         private AutoMappingStore AutoMapEagerTypes(AutoMappingStore store)
