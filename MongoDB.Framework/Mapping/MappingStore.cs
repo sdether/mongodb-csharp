@@ -22,12 +22,12 @@ namespace MongoDB.Framework.Mapping
         /// <param name="classMaps">The class maps.</param>
         public MappingStore(IEnumerable<ClassMap> classMaps)
         {
-            if (classMaps == null)
-                throw new ArgumentNullException("classMaps");
-
             this.classMaps = new Dictionary<Type, ClassMapBase>();
-            foreach (var classMap in classMaps)
-                this.AddClassMap(classMap);
+            if (classMaps != null)
+            {
+                foreach (var classMap in classMaps)
+                    this.AddClassMap(classMap);
+            }
         }
 
         /// <summary>
