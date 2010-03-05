@@ -15,16 +15,6 @@ namespace MongoDB.Framework.Inserts
     [TestFixture]
     public class SimpleList : TestCase
     {
-        protected override IMappingStore MappingStore
-        {
-            get
-            {
-                return new FluentMapModelRegistry()
-                    .AddMap(new EntityMap())
-                    .BuildMappingStore();
-            }
-        }
-
         protected override void AfterTest()
         {
             using (var mongoSession = this.OpenMongoSession())
@@ -60,15 +50,6 @@ namespace MongoDB.Framework.Inserts
             public Guid Id { get; private set; }
 
             public List<string> Strings { get; set; }
-        }
-
-        public class EntityMap : FluentClass<Entity>
-        {
-            public EntityMap()
-            {
-                Id(x => x.Id);
-                Map(x => x.Strings);
-            }
         }
     }
 }
