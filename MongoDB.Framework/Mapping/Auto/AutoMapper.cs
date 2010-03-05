@@ -53,55 +53,59 @@ namespace MongoDB.Framework.Mapping.Auto
                 return this.CreateClassMap(type);
         }
 
-        private ClassMap CreateClassMap(Type type)
+        private ClassMap CreateClassMap(Type classType)
         {
-            ClassMap classMap = new ClassMap(type);
-            classMap.ClassActivator = this.profile.Conventions.ClassActivatorConvention.GetClassActivator(type);
-            classMap.CollectionName = this.profile.Conventions.CollectionNameConvention.GetCollectionName(type);
-            if(!type.IsInterface && !type.IsAbstract)
-                classMap.Discriminator = this.profile.Conventions.DiscriminatorConvention.GetDiscriminator(type);
-            classMap.DiscriminatorKey = this.profile.Conventions.DiscriminatorKeyConvention.GetDiscriminatorKey(type);
-            foreach(var member in this.profile.MemberFinder.FindMembers(type))
+            ClassMap classMap = new ClassMap(classType);
+            classMap.ClassActivator = this.profile.GetClassActivator(classType);
+            classMap.CollectionName = this.profile.GetCollectionName(classType);
+            if(!classType.IsInterface && !classType.IsAbstract)
+                classMap.Discriminator = this.profile.GetDiscriminator(classType);
+            classMap.DiscriminatorKey = this.profile.GetDiscriminatorKey(classType);
+            foreach(var member in this.profile.MemberFinder.FindMembers(classType))
             {
+                if (!this.profile.ShouldMapMember(classType, member))
+                    continue;
                 if (this.profile.Conventions.IdConvention.IsId(member))
-                    classMap.IdMap = this.BuildIdMap(member);
+                    classMap.IdMap = this.BuildIdMap(classType, member);
                 else if (this.profile.Conventions.ExtendedPropertiesConvention.IsExtendedProperties(member))
-                    classMap.ExtendedPropertiesMap = this.BuildExtendedPropertiesMap(member);
+                    classMap.ExtendedPropertiesMap = this.BuildExtendedPropertiesMap(classType, member);
                 else
-                    classMap.AddMemberMap(this.BuildMemberMap(member));
+                    classMap.AddMemberMap(this.BuildMemberMap(classType, member));
             }
 
             return classMap;
         }
 
-        private SubClassMap CreateSubClassMap(Type type, Func<Type, ClassMapBase> existingClassMapFinder)
+        private SubClassMap CreateSubClassMap(Type classType, Func<Type, ClassMapBase> existingClassMapFinder)
         {
-            var superClassMap = existingClassMapFinder(type.BaseType);
+            var superClassMap = existingClassMapFinder(classType.BaseType);
             if (superClassMap == null)
-                throw new InvalidOperationException(string.Format("Unable to find super class map for subclass {0}", type));
+                throw new InvalidOperationException(string.Format("Unable to find super class map for subclass {0}", classType));
             if (superClassMap is SubClassMap)
                 throw new NotSupportedException("2-level inheritance hierarchies are not currently supported.");
 
-            var subClassMap = new SubClassMap(type);
-            subClassMap.ClassActivator = this.profile.Conventions.ClassActivatorConvention.GetClassActivator(type);
-            subClassMap.Discriminator = this.profile.Conventions.DiscriminatorConvention.GetDiscriminator(type);
+            var subClassMap = new SubClassMap(classType);
+            subClassMap.ClassActivator = this.profile.GetClassActivator(classType);
+            subClassMap.Discriminator = this.profile.GetDiscriminator(classType);
 
-            foreach (var member in this.profile.MemberFinder.FindMembers(type))
+            foreach (var member in this.profile.MemberFinder.FindMembers(classType))
             {
+                if (!this.profile.ShouldMapMember(classType, member))
+                    continue;
                 if(superClassMap.HasId && superClassMap.IdMap.MemberName == member.Name)
                     continue;
                 if (superClassMap.HasExtendedProperties && superClassMap.ExtendedPropertiesMap.MemberName == member.Name)
                     continue;
                 if (superClassMap.MemberMaps.Any(x => x.MemberName == member.Name))
                     continue;
-                subClassMap.AddMemberMap(this.BuildMemberMap(member));
+                subClassMap.AddMemberMap(this.BuildMemberMap(classType, member));
             }
 
             ((ClassMap)superClassMap).AddSubClassMap(subClassMap);
             return subClassMap;
         }
 
-        private ExtendedPropertiesMap BuildExtendedPropertiesMap(MemberInfo member)
+        private ExtendedPropertiesMap BuildExtendedPropertiesMap(Type classType, MemberInfo member)
         {
             return new ExtendedPropertiesMap(
                 member.Name,
@@ -109,52 +113,63 @@ namespace MongoDB.Framework.Mapping.Auto
                 LateBoundReflection.GetSetter(member));
         }
 
-        private IdMap BuildIdMap(MemberInfo member)
+        private IdMap BuildIdMap(Type classType, MemberInfo member)
         {
-            var type = ReflectionUtil.GetMemberValueType(member);
             return new IdMap(
                 member.Name,
                 LateBoundReflection.GetGetter(member),
                 LateBoundReflection.GetSetter(member),
-                this.profile.Conventions.IdGeneratorConvention.GetGenerator(type),
-                this.profile.Conventions.ValueConverterConvention.GetValueConverter(type),
-                this.profile.Conventions.IdUnsavedValueConvention.GetUnsavedValue(type));
+                this.profile.GetIdGenerator(classType, member),
+                this.profile.GetValueConverter(classType, member),
+                this.profile.GetIdUnsavedValue(classType, member));
         }
 
-        private MemberMap BuildMemberMap(MemberInfo member)
+        private MemberMap BuildMemberMap(Type classType, MemberInfo member)
         {
-            var type = ReflectionUtil.GetMemberValueType(member);
             return new ValueTypeMemberMap(
-                this.profile.Conventions.MemberKeyConvention.GetMemberKey(member),
+                this.profile.GetMemberKey(classType, member),
                 member.Name,
                 LateBoundReflection.GetGetter(member),
                 LateBoundReflection.GetSetter(member),
                 false,
-                this.GetValueType(type));
+                this.GetValueType(classType, member));
         }
 
-        private ValueTypeBase GetValueType(Type type)
+        private ValueTypeBase GetValueType(Type classType, MemberInfo member)
         {
-            if (IsNativeToMongo(type))
+            return this.GetValueType(classType, member, ReflectionUtil.GetMemberValueType(member));
+        }
+
+        private ValueTypeBase GetValueType(Type classType, MemberInfo member, Type memberType)
+        {
+            if (this.profile.IsReference(classType, member))
+            {
+                return new ManyToOneValueType(
+                    memberType,
+                    true);
+            }
+            else if (IsNativeToMongo(memberType))
             {
                 return new SimpleValueType(
-                    type, 
-                    this.profile.Conventions.ValueConverterConvention.GetValueConverter(type));
+                    memberType,
+                    this.profile.GetValueConverter(classType, member));
             }
-            else if (this.profile.Conventions.CollectionValueTypeConvention.IsCollection(type))
+            else if (this.profile.Conventions.CollectionValueTypeConvention.IsCollection(memberType))
             {
+                var collectionType =  this.profile.Conventions.CollectionValueTypeConvention.GetCollectionType(memberType);
+                var elementType = this.profile.Conventions.CollectionValueTypeConvention.GetElementType(memberType);
                 return new CollectionValueType(
-                    this.profile.Conventions.CollectionValueTypeConvention.GetCollectionType(type),
-                    this.GetValueType(this.profile.Conventions.CollectionValueTypeConvention.GetElementType(type)));
+                   collectionType,
+                   this.GetValueType(classType, member, elementType));
             }
             else 
             {
                 return new NestedClassValueType(
-                    type, 
-                    this.profile.Conventions.ValueConverterConvention.GetValueConverter(type));
+                    memberType,
+                    this.profile.GetValueConverter(classType, member));
             }
 
-            throw new NotSupportedException(string.Format("The type {0} could not be mapped.", type));
+            throw new NotSupportedException(string.Format("The type {0} could not be mapped.", memberType));
         }
 
         private bool IsNativeToMongo(Type type)

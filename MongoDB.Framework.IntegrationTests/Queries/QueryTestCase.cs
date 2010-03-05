@@ -5,6 +5,8 @@ using System.Text;
 using MongoDB.Framework.Configuration.Fluent.Mapping;
 using MongoDB.Driver;
 using MongoDB.Framework.Mapping;
+using MongoDB.Framework.Configuration.Fluent;
+using MongoDB.Framework.Configuration;
 
 namespace MongoDB.Framework.Queries
 {
@@ -14,11 +16,19 @@ namespace MongoDB.Framework.Queries
         {
             get
             {
-                return new FluentMapModelRegistry()
-                    .AddMap(new BlogMap())
-                    .AddMap(new BlogEntryMap())
-                    .AddMap(new BlogEntryCommentMap())
-                    .BuildMappingStore();
+                var mapping = new FluentMapping()
+                    .CreateProfile(p =>
+                    {
+                        p.CollectionNamesAreCamelCasedAndPlural();
+                        p.MemberKeysAreCamelCased();
+                        p.Override<Blog>(b => b.Description).KeyIs("desc");
+                        p.Override<BlogEntry>().CollectionNameIs("entries");
+                        p.Override<BlogEntry>(e => e.Blog).IsReference().KeyIs("blogRef");
+                        p.Override<BlogEntry>(e => e.PostDate).KeyIs("date");
+                        p.Override<BlogEntryComment>(e => e.Comment).KeyIs("body");
+                    });
+
+                return ((IMappingStoreBuilder)mapping).BuildMappingStore();
             }
         }
 
@@ -76,45 +86,6 @@ namespace MongoDB.Framework.Queries
             {
                 mongoSession.Database.MetaData.DropCollection("blogs");
                 mongoSession.Database.MetaData.DropCollection("entries");
-            }
-        }
-
-        public class BlogMap : FluentClass<Blog>
-        {
-            public BlogMap()
-            {
-                CollectionName = "blogs";
-
-                Id(x => x.Id);
-                Map(x => x.Name).Key("name");
-                Map(x => x.Description).Key("desc");
-            }
-        }
-
-        public class BlogEntryMap : FluentClass<BlogEntry>
-        {
-            public BlogEntryMap()
-            {
-                CollectionName = "entries";
-
-                Id(x => x.Id);
-
-                Map(x => x.Title).Key("title");
-                Map(x => x.Body).Key("body");
-                Map(x => x.PostDate).Key("date");
-                Map(x => x.Comments).Key("comments");
-
-                Map(x => x.Blog).Key("blogRef").AsReference();
-            }
-        }
-
-        public class BlogEntryCommentMap : FluentClass<BlogEntryComment>
-        {
-            public BlogEntryCommentMap()
-            {
-                Map(x => x.CommenterEmail).Key("email");
-                Map(x => x.Comment).Key("body");
-                Map(x => x.Comments).Key("comments");
             }
         }
 
