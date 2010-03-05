@@ -79,7 +79,7 @@
     <Compile Include="Mapping\CollectionTypes\HashSetCollectionType.cs" />
     <Compile Include="Mapping\CollectionTypes\GenericListCollectionType.cs" />
     <Compile Include="Mapping\CollectionValueType.cs" />
-    <Compile Include="Mapping\Conventions\ConventionSetup.cs" />
+    <Compile Include="Mapping\Conventions\ConventionProfile.cs" />
     <Compile Include="Mapping\Conventions\DefaultClassActivatorConvention.cs" />
     <Compile Include="Mapping\Conventions\DefaultIdGeneratorConvention.cs" />
     <Compile Include="Mapping\Conventions\DefaultIdUnsavedValueConvention.cs" />

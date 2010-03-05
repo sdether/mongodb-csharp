@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using NUnit.Framework;
+using MongoDB.Framework.Configuration;
 
 namespace MongoDB.Framework.Mapping.Auto
 {
@@ -11,9 +12,7 @@ namespace MongoDB.Framework.Mapping.Auto
     {
         public void Syntax_exploration()
         {
-            //new AutoMapper()
-            //    .For<Entity>(x => x.Address, opt => opt.AsReference()
-
+            var mappingStore = new AutoMappingStore(new AutoMapper());
         }
 
 

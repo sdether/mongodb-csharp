@@ -26,7 +26,7 @@ namespace MongoDB.Framework
                 .AddMap(new OrganizationMap())
                 .AddMap(new PhoneNumberMap());
 
-            mongoConfiguration = new MongoConfiguration("tests", fluentMapModelRegistry);
+            mongoConfiguration = new MongoConfiguration("tests") { MappingStore = fluentMapModelRegistry.BuildMappingStore() };
             mongoSessionFactory = mongoConfiguration.CreateMongoSessionFactory();
         }
 

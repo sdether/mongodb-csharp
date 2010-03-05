@@ -18,12 +18,6 @@ namespace MongoDB.Framework.Configuration
         string DatabaseName { get; }
 
         /// <summary>
-        /// Gets the map model registry.
-        /// </summary>
-        /// <value>The map model registry.</value>
-        IMapModelRegistry MapModelRegistry { get; }
-
-        /// <summary>
         /// Gets the mongo factory.
         /// </summary>
         /// <value>The mongo factory.</value>

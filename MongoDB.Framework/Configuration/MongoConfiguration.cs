@@ -8,13 +8,12 @@ using MongoDB.Framework.Proxy;
 using MongoDB.Framework.Mapping;
 using MongoDB.Framework.Configuration.Mapping;
 using MongoDB.Framework.Proxy.Castle;
+using MongoDB.Framework.Mapping.Auto;
 
 namespace MongoDB.Framework.Configuration
 {
     public class MongoConfiguration : IMongoConfiguration
     {
-        #region Public Properties
-
         /// <summary>
         /// Gets the name of the database.
         /// </summary>
@@ -22,10 +21,10 @@ namespace MongoDB.Framework.Configuration
         public string DatabaseName { get; private set; }
 
         /// <summary>
-        /// Gets the mapping store.
+        /// Gets or sets the mapping store.
         /// </summary>
         /// <value>The mapping store.</value>
-        public IMapModelRegistry MapModelRegistry { get; private set; }
+        public IMappingStore MappingStore { get; set; }
 
         /// <summary>
         /// Gets the mongo factory.
@@ -39,31 +38,20 @@ namespace MongoDB.Framework.Configuration
         /// <value>The proxy generator.</value>
         public IProxyGenerator ProxyGenerator { get; set; }
 
-        #endregion
-
-        #region Constructors
-
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoConfiguration"/> class.
         /// </summary>
         /// <param name="databaseName">Name of the database.</param>
-        /// <param name="mappingStore">The mapping store.</param>
-        public MongoConfiguration(string databaseName, IMapModelRegistry mapModelRegistry)
+        public MongoConfiguration(string databaseName)
         {
             if (string.IsNullOrEmpty(databaseName))
                 throw new ArgumentException("Cannot be null or empty.", "databaseName");
-            if (mapModelRegistry == null)
-                throw new ArgumentNullException("mapModelRegistry");
 
             this.DatabaseName = databaseName;
-            this.MapModelRegistry = mapModelRegistry;
+            this.MappingStore = new AutoMappingStore(new AutoMapper());
             this.MongoFactory = new DefaultMongoFactory();
             this.ProxyGenerator = new CastleProxyGenerator();
         }
-
-        #endregion
-
-        #region Public Methods
 
         /// <summary>
         /// Creates the mongo session factory.
@@ -73,11 +61,9 @@ namespace MongoDB.Framework.Configuration
         {
             return new MongoSessionFactory(
                 this.DatabaseName,
-                this.MapModelRegistry.BuildMappingStore(),
+                this.MappingStore,
                 this.MongoFactory,
                 this.ProxyGenerator);
         }
-
-        #endregion
     }
 }

@@ -8,11 +8,11 @@ namespace MongoDB.Framework.Mapping.Auto
 {
     public class AutoMapperSetup
     {
-        private ConventionSetup conventions;
+        private ConventionProfile conventions;
         private Func<Type, bool> isSubClass;
         private IMemberFinder memberFinder;
 
-        public ConventionSetup Conventions
+        public ConventionProfile Conventions
         {
             get { return this.conventions; }
             set
@@ -50,7 +50,7 @@ namespace MongoDB.Framework.Mapping.Auto
 
         public AutoMapperSetup()
         {
-            this.conventions = new ConventionSetup();
+            this.conventions = new ConventionProfile();
             this.isSubClass = t => false;
             this.memberFinder = DefaultMemberFinder.Instance;
         }

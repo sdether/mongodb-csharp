@@ -27,7 +27,7 @@ namespace MongoDB.Framework
         [TestFixtureSetUp]
         public void TestFixtureSetup()
         {
-            mongoConfiguration = new MongoConfiguration(this.DatabaseName, this.MapModelRegistry);
+            mongoConfiguration = new MongoConfiguration(this.DatabaseName) { MappingStore = this.MapModelRegistry.BuildMappingStore() };
             mongoSessionFactory = mongoConfiguration.CreateMongoSessionFactory();
         }
 

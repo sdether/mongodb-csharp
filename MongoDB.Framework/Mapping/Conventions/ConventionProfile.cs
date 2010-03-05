@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MongoDB.Framework.Mapping.Conventions
 {
-    public class ConventionSetup
+    public class ConventionProfile
     {
         private IClassActivatorConvention classActivatorConvention;
         private ICollectionNameConvention collectionNameConvention;
@@ -125,7 +125,7 @@ namespace MongoDB.Framework.Mapping.Conventions
             }
         }
 
-        public ConventionSetup()
+        public ConventionProfile()
         {
             this.classActivatorConvention = DefaultClassActivatorConvention.Instance;
             this.collectionNameConvention = new DelegateCollectionNameConvention(t => t.Name);
