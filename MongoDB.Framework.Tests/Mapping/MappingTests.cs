@@ -27,7 +27,7 @@ namespace MongoDB.Framework.Configuration.Mapping
 
             Guid id = Guid.NewGuid();
             var document = new Document()
-                .Append("_id", new Binary(id.ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
+                .Append("_id", id)
                 .Append("Name", "Bob McBob")
                 .Append("PhoneNumber", new Document()
                     .Append("AreaCode", "123")
@@ -97,7 +97,7 @@ namespace MongoDB.Framework.Configuration.Mapping
 
             var document = mapper.MapToDocument(person);
 
-            Assert.AreEqual(person.Id.ToByteArray(), ((Binary)document["_id"]).Bytes);
+            Assert.AreEqual(person.Id, document["_id"]);
             Assert.AreEqual("Bob McBob", document["Name"]);
             Assert.AreEqual("Person", document["Type"]);
             Assert.AreEqual(new DateTime(1900, 1, 1), document["BirthDate"]);

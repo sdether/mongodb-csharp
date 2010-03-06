@@ -25,17 +25,17 @@ namespace MongoDB.Framework.Queries
             using (var mongoSession = this.OpenMongoSession())
             {
                 var party1 = new Document()
-                    .Append("_id", Guid.NewGuid().ToString("N"))
+                    .Append("_id", Guid.NewGuid())
                     .Append("Type", "Person")
                     .Append("Name", "Bob McBob")
                     .Append("BirthDate", new DateTime(1900, 1, 1));
                 var party2 = new Document()
-                    .Append("_id", Guid.NewGuid().ToString("N"))
+                    .Append("_id", Guid.NewGuid())
                     .Append("Type", "Person")
                     .Append("Name", "Jane McJane")
                     .Append("BirthDate", new DateTime(2000, 2, 2));
                 var party3 = new Document()
-                    .Append("_id", Guid.NewGuid().ToString("N"))
+                    .Append("_id", Guid.NewGuid())
                     .Append("Type", "Organization")
                     .Append("Name", "The Muffler Shop")
                     .Append("EmployeeCount", 23);

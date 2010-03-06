@@ -30,12 +30,12 @@ namespace MongoDB.Framework.Updates
         {
             using (var mongoSession = this.OpenMongoSession())
             {
-                var refId = new Binary(Guid.NewGuid().ToByteArray()) { Subtype = Binary.TypeCode.Uuid };
+                var refId = Guid.NewGuid();
                 mongoSession.Database.GetCollection("EntityRef")
                     .Insert(new Document().Append("_id", refId).Append("Name", "Jack"));
                 mongoSession.Database.GetCollection("Entity")
                     .Insert(new Document()
-                        .Append("_id", new Binary(Guid.NewGuid().ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
+                        .Append("_id", Guid.NewGuid())
                         .Append("Reference", new DBRef("EntityRef", refId)));
             }
         }

@@ -344,9 +344,6 @@ namespace MongoDB.Framework.Configuration.Mapping
 
         private IValueConverter GetValueConverter(Type type)
         {
-            if (type == typeof(Guid))
-                return new GuidValueConverter();
-
             return new NullSafeValueConverter(type);
         }
 

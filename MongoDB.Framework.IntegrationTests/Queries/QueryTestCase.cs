@@ -25,12 +25,12 @@ namespace MongoDB.Framework.Queries
             using (var mongoSession = this.OpenMongoSession())
             {
                 var blog = new Document()
-                    .Append("_id", new Binary(Guid.NewGuid().ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
+                    .Append("_id", Guid.NewGuid())
                     .Append("name", "Bob McBob's Blog")
                     .Append("desc", "What about Bob?");
 
                 var entry1 = new Document()
-                    .Append("_id", new Binary(Guid.NewGuid().ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
+                    .Append("_id", Guid.NewGuid())
                     .Append("title", "My First Post")
                     .Append("body", "blah blah blah...")
                     .Append("date", new DateTime(2009, 1, 1, 0, 0, 0, DateTimeKind.Utc))
@@ -48,14 +48,14 @@ namespace MongoDB.Framework.Queries
                                     .Append("body", "i iz nested")})});
 
                 var entry2 = new Document()
-                    .Append("_id", new Binary(Guid.NewGuid().ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
+                    .Append("_id", Guid.NewGuid())
                     .Append("title", "My Second Post")
                     .Append("body", "ooga booga")
                     .Append("date", new DateTime(2009, 1, 2, 0, 0, 0, DateTimeKind.Utc))
                     .Append("blogRef", new DBRef("blogs", blog["_id"]));
 
                 var entry3 = new Document()
-                    .Append("_id", new Binary(Guid.NewGuid().ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
+                    .Append("_id", Guid.NewGuid())
                     .Append("title", "Third Post")
                     .Append("body", "I finally have something to say.")
                     .Append("date", new DateTime(2009, 1, 3, 0, 0, 0, DateTimeKind.Utc))

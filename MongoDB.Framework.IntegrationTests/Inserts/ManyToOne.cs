@@ -54,8 +54,8 @@ namespace MongoDB.Framework.Inserts
             }
 
             Assert.IsNotNull(insertedDocument);
-            Assert.AreEqual(entity.Id, new Guid(((Binary)insertedDocument["_id"]).Bytes));
-            Assert.AreEqual(reference.Id, new Guid(((Binary)((DBRef)insertedDocument["Reference"]).Id).Bytes));
+            Assert.AreEqual(entity.Id, insertedDocument["_id"]);
+            Assert.AreEqual(reference.Id, ((DBRef)insertedDocument["Reference"]).Id);
         }
 
         public class Entity

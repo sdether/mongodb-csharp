@@ -23,7 +23,7 @@ namespace MongoDB.Framework.Mapping
 
             Guid id = Guid.NewGuid();
             var document = new Document()
-              .Append("_id", new Binary(id.ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
+              .Append("_id", id)
               .Append("Title", "test title");
 
             var entity = mapper.MapToEntity<EntityWithoutConstructor>(document);
@@ -42,7 +42,7 @@ namespace MongoDB.Framework.Mapping
 
             Guid id = Guid.NewGuid();
             var document = new Document()
-              .Append("_id", new Binary(id.ToByteArray()) { Subtype = Binary.TypeCode.Uuid })
+              .Append("_id", id)
               .Append("Title", "test title");
 
             var entity = mapper.MapToEntity<EntityWithConstructor>(document);
@@ -88,9 +88,7 @@ namespace MongoDB.Framework.Mapping
 
         public object Activate(Type type, Document doc)
         {
-            Binary bin = (Binary)doc["_id"];
-            Guid id = new Guid(bin.Bytes);
-            return Activator.CreateInstance(type, id, (string)doc["Title"]);
+            return Activator.CreateInstance(type, doc["id"], (string)doc["Title"]);
         }
     }
 
