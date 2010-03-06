@@ -32,7 +32,7 @@ namespace MongoDB.Framework.Mapping.Auto
 
             var document = mapper.MapToDocument(person);
 
-            Assert.AreEqual(person.Id, new Guid(((Binary)document["_id"]).Bytes));
+            Assert.AreEqual(person.Id, document["_id"]);
             Assert.AreEqual(person.Address.Street, ((Document)document["Address"])["Street"]);
             Assert.AreEqual(person.Address.City, ((Document)document["Address"])["City"]);
             Assert.AreEqual(person.Address.State, ((Document)document["Address"])["State"]);
@@ -47,7 +47,7 @@ namespace MongoDB.Framework.Mapping.Auto
 
             var id = Guid.NewGuid();
             var doc = new Document()
-                .Append("_id", new Binary(id.ToByteArray()))
+                .Append("_id", id)
                 .Append("Address", new Document()
                     .Append("Street", "123 Main ST")
                     .Append("City", "Anyplace")
