@@ -1,6 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
+# SharpDevelop 3.1.1.5327
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDB.Driver", "MongoDBDriver\MongoDB.Driver.csproj", "{B125BBA6-BFFD-44FA-9254-9B1754CD8AF3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDB.Driver.Tests", "MongoDB.Net-Tests\MongoDB.Driver.Tests.csproj", "{C8BC95AB-25C6-4133-BC9F-8B6BB782CA02}"
@@ -58,13 +59,12 @@ Global
 		{B42DBBF9-0A1F-4749-9787-013BF8D8F435}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B42DBBF9-0A1F-4749-9787-013BF8D8F435}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B42DBBF9-0A1F-4749-9787-013BF8D8F435}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0C293FE9-F670-4FEF-A60F-20F8C978B1CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0C293FE9-F670-4FEF-A60F-20F8C978B1CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0C293FE9-F670-4FEF-A60F-20F8C978B1CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0C293FE9-F670-4FEF-A60F-20F8C978B1CD}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
+		{C8BC95AB-25C6-4133-BC9F-8B6BB782CA02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8BC95AB-25C6-4133-BC9F-8B6BB782CA02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8BC95AB-25C6-4133-BC9F-8B6BB782CA02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8BC95AB-25C6-4133-BC9F-8B6BB782CA02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCBE47DD-59A6-4212-AA4A-142838088B69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCBE47DD-59A6-4212-AA4A-142838088B69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = MongoDBDriver\MongoDB.Driver.csproj

@@ -84,6 +84,11 @@
     <Compile Include="TestMapReduce.cs" />
     <Compile Include="TestMapReduceBuilder.cs" />
     <Compile Include="TestConcurrency.cs" />
+    <Compile Include="TestCollectionSafeMode.cs" />
+    <Compile Include="MongoTestBase.cs" />
+    <Compile Include="TestCollectionMetaData.cs" />
+    <Compile Include="TestBinary.cs" />
+    <Compile Include="Util\TestJsonUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MongoDBDriver\MongoDB.Driver.csproj">
@@ -111,5 +116,8 @@
     <EmbeddedResource Include="test-data\tests.binary.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Util\" />
   </ItemGroup>
 </Project>
