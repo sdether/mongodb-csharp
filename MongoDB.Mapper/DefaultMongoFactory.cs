@@ -15,7 +15,7 @@ namespace MongoDB.Mapper
         /// <returns></returns>
         public Mongo CreateMongo()
         {
-            return new Mongo();
+            return MongoFactory.CreateMongo();
         }
     }
 }
