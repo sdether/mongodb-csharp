@@ -56,7 +56,7 @@ namespace MongoDB.Mapper.Inserts
 
             Assert.IsNotNull(insertedDocument);
             Assert.AreEqual(entity.Id, insertedDocument["_id"]);
-            Assert.AreEqual(reference.Id, ((DBRef)insertedDocument["Reference"]).Id);
+            Assert.AreEqual(reference.Id, insertedDocument["Reference"]);
         }
 
         public class Entity

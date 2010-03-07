@@ -152,10 +152,7 @@ namespace MongoDB.Mapper.Mapping
                 var refType = ((ManyToOneValueType)memberMap.ValueType).ReferenceType;
                 var classMap = this.mappingStore.GetClassMapFor(refType);
                 if (classMap.IdMap.MemberName == nextMemberName)
-                {
-                    this.Key += ".$id";
                     return classMap.IdMap;
-                }
                 else
                     throw new NotSupportedException("Id is the only supported condition across a reference.");
             }

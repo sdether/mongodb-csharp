@@ -117,10 +117,7 @@ namespace MongoDB.Mapper.Mapping.Visitors
         {
             var referenceClassMap = this.mappingStore.GetClassMapFor(manyToOneValueType.ReferenceType);
             if (this.value != null)
-            {
-                var id = referenceClassMap.IdMap.ValueConverter.ToDocument(referenceClassMap.GetId(this.value));
-                this.value = new DBRef(referenceClassMap.CollectionName, id);
-            }
+                this.value = referenceClassMap.IdMap.ValueConverter.ToDocument(referenceClassMap.GetId(this.value));
             else
                 this.value = MongoDBNull.Value;
         }

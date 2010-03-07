@@ -46,7 +46,7 @@ namespace MongoDB.Mapper.Queries
                     .Append("title", "My First Post")
                     .Append("body", "blah blah blah...")
                     .Append("date", new DateTime(2009, 1, 1, 0, 0, 0, DateTimeKind.Utc))
-                    .Append("blogRef", new DBRef("blogs", blog["_id"]))
+                    .Append("blogRef", blog["_id"])
                     .Append("comments", new Document[2] {
                         new Document()
                             .Append("email", "a@abc.com")
@@ -64,14 +64,14 @@ namespace MongoDB.Mapper.Queries
                     .Append("title", "My Second Post")
                     .Append("body", "ooga booga")
                     .Append("date", new DateTime(2009, 1, 2, 0, 0, 0, DateTimeKind.Utc))
-                    .Append("blogRef", new DBRef("blogs", blog["_id"]));
+                    .Append("blogRef", blog["_id"]);
 
                 var entry3 = new Document()
                     .Append("_id", Guid.NewGuid())
                     .Append("title", "Third Post")
                     .Append("body", "I finally have something to say.")
                     .Append("date", new DateTime(2009, 1, 3, 0, 0, 0, DateTimeKind.Utc))
-                    .Append("blogRef", new DBRef("blogs", blog["_id"]));
+                    .Append("blogRef", blog["_id"]);
 
                 mongoSession.Database.GetCollection("blogs")
                     .Insert(new[] { blog });

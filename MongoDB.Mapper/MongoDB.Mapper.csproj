@@ -280,7 +280,7 @@
     <Compile Include="IMongoSessionFactory.cs" />
     <Compile Include="IMongoFactory.cs" />
     <Compile Include="Linq\ResultObjectMapping.cs" />
-    <Compile Include="Linq\Visitors\ValueMapPathBuilder.cs" />
+    <Compile Include="Linq\Visitors\MemberMapPathBuilder.cs" />
     <Compile Include="Linq\Visitors\ProjectionBuilder.cs" />
     <Compile Include="Linq\MongoQueryProjection.cs" />
     <Compile Include="Linq\Visitors\ScalarQueryModelVisitor.cs" />

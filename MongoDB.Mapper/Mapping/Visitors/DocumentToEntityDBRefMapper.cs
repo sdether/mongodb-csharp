@@ -23,16 +23,16 @@ namespace MongoDB.Mapper.Mapping.Visitors
 
         public override void Visit(ManyToOneValueType manyToOneValueType)
         {
-            var dbRef = this.value as DBRef;
-            if (dbRef == null)
+            var referenceClassMap = this.mongoSession.MappingStore.GetClassMapFor(manyToOneValueType.ReferenceType);
+            string collectionName = referenceClassMap.CollectionName;
+
+            if (this.value == null || this.value == MongoDBNull.Value)
             {
                 this.value = null;
                 return;
             }
 
-            var referenceClassMap = this.mongoSession.MappingStore.GetClassMapFor(manyToOneValueType.ReferenceType);
-            var id = referenceClassMap.IdMap.ValueConverter.FromDocument(dbRef.Id);
-
+            var id = referenceClassMap.IdMap.ValueConverter.FromDocument(this.value);
             if (this.mongoSession.SessionCache.TryToFind(referenceClassMap.CollectionName, id, out this.value))
                 return;
 
