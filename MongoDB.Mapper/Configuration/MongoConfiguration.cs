@@ -7,7 +7,6 @@ using MongoDB.Driver;
 using MongoDB.Mapper.Proxy;
 using MongoDB.Mapper.Mapping;
 using MongoDB.Mapper.Configuration.Mapping;
-using MongoDB.Mapper.Proxy.Castle;
 using MongoDB.Mapper.Mapping.Auto;
 
 namespace MongoDB.Mapper.Configuration
@@ -50,7 +49,6 @@ namespace MongoDB.Mapper.Configuration
             this.DatabaseName = databaseName;
             this.MappingStore = new AutoMappingStore();
             this.MongoFactory = new DefaultMongoFactory();
-            this.ProxyGenerator = new CastleProxyGenerator();
         }
 
         /// <summary>

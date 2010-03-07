@@ -100,8 +100,6 @@ namespace MongoDB.Mapper
         {
             if (mappingStore == null)
                 throw new ArgumentNullException("mappingStore");
-            if (proxyGenerator == null)
-                throw new ArgumentNullException("proxyGenerator");
             if (mongo == null)
                 throw new ArgumentNullException("mongo");
             if (database == null)

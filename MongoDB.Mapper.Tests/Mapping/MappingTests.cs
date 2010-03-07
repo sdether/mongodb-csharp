@@ -10,7 +10,6 @@ using MongoDB.Mapper.Mapping;
 using MongoDB.Mapper.Mapping.Visitors;
 
 using NUnit.Framework;
-using MongoDB.Mapper.Proxy.Castle;
 
 namespace MongoDB.Mapper.Configuration.Mapping
 {

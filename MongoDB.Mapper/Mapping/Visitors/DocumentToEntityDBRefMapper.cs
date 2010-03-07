@@ -36,7 +36,7 @@ namespace MongoDB.Mapper.Mapping.Visitors
             if (this.mongoSession.SessionCache.TryToFind(referenceClassMap.CollectionName, id, out this.value))
                 return;
 
-            if (!manyToOneValueType.IsLazy)
+            if (!manyToOneValueType.IsLazy || this.mongoSession.ProxyGenerator == null)
                 this.value = this.mongoSession.GetById(manyToOneValueType.ReferenceType, id);
             else
                 this.value = this.mongoSession.ProxyGenerator.GetProxy(referenceClassMap.Type, id, this.mongoSession);

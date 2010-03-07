@@ -52,8 +52,6 @@ namespace MongoDB.Mapper
                 throw new ArgumentNullException("mappingStore");
             if (mongoFactory == null)
                 throw new ArgumentNullException("mongoFactory");
-            if (proxyGenerator == null)
-                throw new ArgumentNullException("proxyGenerator");
 
             this.databaseName = databaseName;
             this.initialized = false;

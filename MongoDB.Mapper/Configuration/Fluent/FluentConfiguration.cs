@@ -6,7 +6,6 @@ using MongoDB.Mapper.Configuration.Mapping;
 using MongoDB.Mapper.Configuration.Fluent.Mapping;
 using MongoDB.Mapper.Mapping.Auto;
 using MongoDB.Mapper.Mapping;
-using MongoDB.Mapper.Proxy.Castle;
 using MongoDB.Mapper.Proxy;
 
 namespace MongoDB.Mapper.Configuration.Fluent
@@ -38,7 +37,7 @@ namespace MongoDB.Mapper.Configuration.Fluent
             return this;
         }
 
-        public FluentConfiguration ProxyGenerator(IProxyGenerator proxyGenerator)
+        public FluentConfiguration GenerateProxiesWith(IProxyGenerator proxyGenerator)
         {
             this.proxyGenerator = proxyGenerator;
             return this;
@@ -50,7 +49,7 @@ namespace MongoDB.Mapper.Configuration.Fluent
                 this.databaseName,
                 this.mappingStore ?? new AutoMappingStore(),
                 this.mongoFactory ?? new DefaultMongoFactory(),
-                this.proxyGenerator ?? new CastleProxyGenerator());
+                this.proxyGenerator);
         }
     }
 }

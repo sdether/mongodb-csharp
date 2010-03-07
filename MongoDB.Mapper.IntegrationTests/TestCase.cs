@@ -9,7 +9,6 @@ using MongoDB.Mapper.Configuration.Mapping;
 using MongoDB.Mapper.Mapping;
 
 using NUnit.Framework;
-using MongoDB.Mapper.Proxy.Castle;
 
 namespace MongoDB.Mapper
 {
@@ -35,7 +34,7 @@ namespace MongoDB.Mapper
         [TestFixtureSetUp]
         public void TestFixtureSetup()
         {
-            mongoSessionFactory = new MongoSessionFactory(this.DatabaseName, this.MappingStore, this.MongoFactory, new CastleProxyGenerator());
+            mongoSessionFactory = new MongoSessionFactory(this.DatabaseName, this.MappingStore, this.MongoFactory, null);
         }
 
         [TestFixtureTearDown]

@@ -9,7 +9,6 @@ using MongoDB.Mapper.Configuration.Fluent.Mapping;
 using MongoDB.Mapper.Mapping;
 
 using NUnit.Framework;
-using MongoDB.Mapper.Proxy.Castle;
 
 namespace MongoDB.Mapper
 {
