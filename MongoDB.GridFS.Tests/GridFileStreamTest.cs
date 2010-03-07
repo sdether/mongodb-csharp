@@ -10,7 +10,7 @@ namespace MongoDB.GridFS
     [TestFixture]
     public class GridFileStreamTest
     {
-        Mongo db = new Mongo();
+        Mongo db = MongoFactory.CreateMongo();
         GridFile fs;
 
         String filesystem = "gfstream";

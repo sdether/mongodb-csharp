@@ -65,6 +65,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -95,6 +96,7 @@
     <Compile Include="Cursor.cs" />
     <Compile Include="MongoDBNull.cs" />
     <Compile Include="MongoExceptions.cs" />
+    <Compile Include="MongoFactory.cs" />
     <Compile Include="Oid.cs" />
     <Compile Include="IO\DeleteMessage.cs" />
     <Compile Include="IO\UpdateMessage.cs" />
@@ -129,7 +131,4 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Util\" />
-  </ItemGroup>
 </Project>

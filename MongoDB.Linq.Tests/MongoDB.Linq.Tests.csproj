@@ -54,7 +54,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppSettingsFactory.cs" />
     <Compile Include="TestExpressions.cs" />
     <Compile Include="TestMongoDocumentQuerySyntax.cs" />
     <Compile Include="TestQueryExecution.cs" />

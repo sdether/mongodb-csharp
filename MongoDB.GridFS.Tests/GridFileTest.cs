@@ -9,7 +9,7 @@ namespace MongoDB.GridFS
 {
     [TestFixture]
     public class GridFileTest{
-        Mongo db = new Mongo();
+        Mongo db = MongoFactory.CreateMongo();
 
         [Test]
         public void TestFileDoesNotExist(){

@@ -18,7 +18,7 @@ namespace MongoDB.Driver
         [Test()]
         public void TestCase(){
             TcpClient client = new TcpClient();
-            client.Connect("localhost", 27017);
+            client.Connect(MongoFactory.Host, MongoFactory.Port);
             BufferedStream buff = new BufferedStream(client.GetStream());
             BinaryWriter writer = new BinaryWriter(buff);
 

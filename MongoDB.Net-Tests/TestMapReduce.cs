@@ -7,7 +7,7 @@ namespace MongoDB.Driver
     [TestFixture()]        
     public class TestMapReduce
     {
-        Mongo db = new Mongo();
+        Mongo db = MongoFactory.CreateMongo();
         Database tests;
         Collection mrcol;
         string mapfunction = "function(){\n" +

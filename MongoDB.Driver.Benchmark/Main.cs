@@ -24,7 +24,7 @@ namespace MongoDB.Driver.Benchmark
         {
             SetupDocuments();
 
-            Mongo m = new Mongo();
+            Mongo m = MongoFactory.CreateMongo();
             m.Connect();
             Database db = m["benchmark"];
 

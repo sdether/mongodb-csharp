@@ -15,7 +15,7 @@ namespace MongoDB.Driver
 	[TestFixture]
 	public class TestAuthentication
 	{
-        Mongo mongo = new Mongo();
+        Mongo mongo = MongoFactory.CreateMongo();
         
         Database db;
         String testuser = "testuser";

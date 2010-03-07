@@ -23,7 +23,7 @@ namespace MongoDB.Driver
         
         [Test()]
         public void TestExplicitConnection(){
-            Mongo m = new Mongo();
+            Mongo m = MongoFactory.CreateMongo();
             Assert.IsTrue(m.Connect());
         }
         
