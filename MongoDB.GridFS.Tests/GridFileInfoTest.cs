@@ -10,7 +10,7 @@ namespace MongoDB.GridFS
     [TestFixture]
     public class GridFileInfoTest
     {
-        Mongo db = new Mongo();
+        Mongo db = MongoFactory.CreateMongo();
         [Test]
         public void TestCreateNonExisting(){
             String filename = "newfile.txt";

@@ -9,7 +9,7 @@ namespace MongoDB.Driver
     [TestFixture]
     public class TestCollectionMetaData
     {
-        Mongo db = new Mongo();
+        Mongo db = MongoFactory.CreateMongo();
         
         [Test]
         public void TestGetOptions(){

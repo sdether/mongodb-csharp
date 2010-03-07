@@ -9,7 +9,7 @@ namespace MongoDB.Driver{
     [TestFixture()]
     public class TestDatabaseJS
     {
-        Mongo db = new Mongo();
+        Mongo db = MongoFactory.CreateMongo();
         Database tests;
         DatabaseJS js;
         

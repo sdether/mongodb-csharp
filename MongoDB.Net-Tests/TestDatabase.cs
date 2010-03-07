@@ -7,7 +7,7 @@ namespace MongoDB.Driver
     [TestFixture]
     public class TestDatabase
     {
-        Mongo mongo = new Mongo();
+        Mongo mongo = MongoFactory.CreateMongo();
         Database db;
         
         [Test]

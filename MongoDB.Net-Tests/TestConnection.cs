@@ -16,7 +16,7 @@ namespace MongoDB.Driver
         [Test]
         public void TestSendQueryMessage(){
             //Connection conn = new Connection("10.141.153.2");
-            Connection conn = new Connection();
+            Connection conn = MongoFactory.CreateConnection();
             conn.Open();
             
             QueryMessage qmsg = generateQueryMessage();
@@ -27,7 +27,7 @@ namespace MongoDB.Driver
         
         [Test]
         public void TestReconnectOnce(){
-            Connection conn = new Connection();
+            Connection conn = MongoFactory.CreateConnection();
             conn.Open();
                         
             WriteBadMessage(conn);

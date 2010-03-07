@@ -21,7 +21,7 @@ namespace MongoDB.Driver
 
         [TestFixtureSetUp]
         public virtual void Init(){
-            this.Mongo = new Mongo();
+            this.Mongo = MongoFactory.CreateMongo();
             this.Mongo.Connect();
             cleanDB();
         }

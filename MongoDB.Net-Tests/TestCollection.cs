@@ -7,7 +7,8 @@ namespace MongoDB.Driver
     [TestFixture]
     public class TestCollection
     {
-        Mongo db = new Mongo();
+        Mongo db = MongoFactory.CreateMongo();
+
         private string pound = "\u00a3";
 
         [Test]

@@ -10,7 +10,7 @@ namespace MongoDB.Driver
     [TestFixture]
     public class TestCursor
     {
-        Mongo db = new Mongo();
+        Mongo db = MongoFactory.CreateMongo();
         
         [Test]
         public void TestCanReadSmall()

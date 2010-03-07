@@ -12,7 +12,7 @@ namespace MongoDB.Linq.Tests {
         [TestFixtureSetUp]
         public void GlobalSetup() {
             Debug.WriteLine("initiallizing connection");
-            mongo = AppSettingsFactory.CreateMongo();
+            mongo = MongoFactory.CreateMongo();
             mongo.Connect();
         }
 

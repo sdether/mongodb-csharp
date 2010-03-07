@@ -14,11 +14,11 @@ namespace MongoDB.Driver
          * Having all of these tests enabled will slow the test suite down a lot.  In the future it may be better
          * to have them ifdef'ed so that the long running tests can be executed by just setting a compile flag.
          */
-        Mongo db = new Mongo();
+        Mongo db = MongoFactory.CreateMongo();
         
         //[Test]
         public void TestMultiThreadedWrites (){
-            Mongo db = new Mongo();
+            Mongo db = MongoFactory.CreateMongo();
             db.Connect();
             
             IMongoCollection col = db["tests"]["threadinserts"];
@@ -45,7 +45,7 @@ namespace MongoDB.Driver
 
         //[Test]
         public void TestMultiThreadedReads(){
-            Mongo db = new Mongo();
+            Mongo db = MongoFactory.CreateMongo();
             db.Connect();               
             
             List<string> colnames = new List<string>{"smallreads", "smallreads", "smallreads", "smallreads"};
@@ -74,7 +74,7 @@ namespace MongoDB.Driver
         
         [Test]
         public void TestMultiThreadedReadsAndWrites(){
-            Mongo db = new Mongo();
+            Mongo db = MongoFactory.CreateMongo();
             db.Connect();
             
             IMongoCollection col = db["tests"]["threadreadinserts"];
